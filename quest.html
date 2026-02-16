@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ライフ・クエスト・ボード</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: linear-gradient(160deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%); min-height: 100vh; color: #fff; }
+    .quest-card { transition: all 0.18s cubic-bezier(.4,2,.6,1); cursor: pointer; }
+    .quest-card:hover { transform: scale(1.04) translateY(-2px); }
+    .quest-card.done { opacity: 0.55; }
+    .tab-btn { border: none; cursor: pointer; transition: all 0.15s; font-family: 'Nunito', sans-serif; }
+    .tab-btn:hover { opacity: 0.85; }
+    .shop-item { transition: all 0.15s; cursor: pointer; }
+    .shop-item:hover { transform: scale(1.04); }
+    .progress-bar { transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+    .xp-toast {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: #fbbf24; color: #1e1b4b; font-size: 2rem; font-weight: 900;
+      padding: 16px 40px; border-radius: 999px; z-index: 9998;
+      animation: toast 1.6s ease forwards;
+      box-shadow: 0 8px 32px rgba(251,191,36,0.6);
+      pointer-events: none;
+    }
+    @keyframes toast { 0%{opacity:0;transform:translate(-50%,-60%)} 20%{opacity:1;transform:translate(-50%,-50%)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-40%)} }
+    @keyframes fall0 { to { top: 110%; transform: rotate(360deg) translateX(30px); } }
+    @keyframes fall1 { to { top: 110%; transform: rotate(-360deg) translateX(-20px); } }
+    @keyframes fall2 { to { top: 110%; transform: rotate(180deg) translateX(40px); } }
+    @keyframes fall3 { to { top: 110%; transform: rotate(-180deg) translateX(-35px); } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const QUESTS = [
+      { id: "teeth",     icon: "🦷", label: "歯みがき",     xp: 20, category: "morning" },
+      { id: "wash",      icon: "🧼", label: "てあらい",     xp: 15, category: "morning" },
+      { id: "dress",     icon: "👕", label: "きがえ",       xp: 25, category: "morning" },
+      { id: "breakfast", icon: "🍚", label: "ごはん",       xp: 30, category: "morning" },
+      { id: "bag",       icon: "🎒", label: "かばんの準備", xp: 20, category: "morning" },
+      { id: "homework",  icon: "📝", label: "しゅくだい",   xp: 50, category: "afternoon" },
+      { id: "reading",   icon: "📚", label: "よみきかせ",   xp: 30, category: "afternoon" },
+      { id: "tidy",      icon: "🧹", label: "おかたづけ",   xp: 25, category: "afternoon" },
+      { id: "bath",      icon: "🛁", label: "おふろ",       xp: 30, category: "night" },
+      { id: "pyjamas",   icon: "🌙", label: "パジャマ",     xp: 20, category: "night" },
+      { id: "lights",    icon: "💡", label: "でんきを消す", xp: 15, category: "night" },
+      { id: "sleep",     icon: "😴", label: "おやすみ",     xp: 40, category: "night" },
+    ];
+
+    const ITEMS = [
+      { id: "sword", icon: "⚔️", label: "けんし",       cost: 100 },
+      { id: "shield", icon: "🛡️", label: "たて",         cost: 80  },
+      { id: "hat",   icon: "🎩", label: "まほうのぼうし", cost: 120 },
+      { id: "gem",   icon: "💎", label: "まほうのたま",  cost: 200 },
+      { id: "cape",  icon: "🦸", label: "ヒーローマント", cost: 150 },
+      { id: "crown", icon: "👑", label: "おうかん",      cost: 300 },
+      { id: "wand",  icon: "🪄", label: "まほうのつえ",  cost: 180 },
+      { id: "star",  icon: "⭐", label: "スーパースター", cost: 250 },
+    ];
+
+    const RANKS = [
+      { name: "みならいぼうけんしゃ", min: 0,    color: "#94a3b8" },
+      { name: "みならいきし",         min: 100,  color: "#a78bfa" },
+      { name: "ゆうかんなきし",       min: 300,  color: "#60a5fa" },
+      { name: "まものたいじのきし",   min: 600,  color: "#34d399" },
+      { name: "でんせつのゆうしゃ",   min: 1000, color: "#fbbf24" },
+      { name: "ちょうぜつのまおう",   min: 2000, color: "#f87171" },
+    ];
+
+    const CATEGORY_META = {
+      morning:   { label: "🌅 あさのミッション" },
+      afternoon: { label: "☀️ ひるのミッション" },
+      night:     { label: "🌙 よるのミッション" },
+    };
+
+    function getRank(xp) {
+      let rank = RANKS[0];
+      for (const r of RANKS) { if (xp >= r.min) rank = r; }
+      return rank;
+    }
+
+    function getLevelProgress(xp) {
+      const idx = RANKS.findIndex(r => r === getRank(xp));
+      const next = RANKS[idx + 1];
+      if (!next) return 100;
+      const prev = RANKS[idx];
+      return Math.round(((xp - prev.min) / (next.min - prev.min)) * 100);
+    }
+
+    function Confetti({ active }) {
+      if (!active) return null;
+      const colors = ["#fbbf24","#f87171","#34d399","#60a5fa","#a78bfa","#fb923c"];
+      return (
+        <div style={{ position:"fixed", top:0, left:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:9999 }}>
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div key={i} style={{
+              position: "absolute", top: "-20px",
+              left: `${(i * 4.2) % 100}%`,
+              width: "10px", height: "10px", borderRadius: "2px",
+              background: colors[i % 6],
+              animation: `fall${i % 4} ${0.9 + (i % 4) * 0.2}s ease-in forwards`,
+              animationDelay: `${(i % 5) * 0.1}s`,
+              transform: `rotate(${i * 15}deg)`,
+            }} />
+          ))}
+        </div>
+      );
+    }
+
+    function QuestBoard() {
+      const [tab, setTab] = useState("board");
+      const [completed, setCompleted] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("tdl_completed") || "[]"); } catch { return []; }
+      });
+      const [totalXP, setTotalXP] = useState(() => {
+        try { return parseInt(localStorage.getItem("tdl_xp") || "0"); } catch { return 0; }
+      });
+      const [coins, setCoins] = useState(() => {
+        try { return parseInt(localStorage.getItem("tdl_coins") || "0"); } catch { return 0; }
+      });
+      const [inventory, setInventory] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("tdl_inv") || "[]"); } catch { return []; }
+      });
+      const [heroEquip, setHeroEquip] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("tdl_equip") || "[]"); } catch { return []; }
+      });
+      const [showConfetti, setShowConfetti] = useState(false);
+      const [justGot, setJustGot] = useState(null);
+
+      useEffect(() => {
+        localStorage.setItem("tdl_completed", JSON.stringify(completed));
+        localStorage.setItem("tdl_xp", totalXP);
+        localStorage.setItem("tdl_coins", coins);
+        localStorage.setItem("tdl_inv", JSON.stringify(inventory));
+        localStorage.setItem("tdl_equip", JSON.stringify(heroEquip));
+      }, [completed, totalXP, coins, inventory, heroEquip]);
+
+      const rank = getRank(totalXP);
+      const progress = getLevelProgress(totalXP);
+      const todayDone = completed.length;
+      const allDone = todayDone === QUESTS.length;
+
+      function completeQuest(quest) {
+        if (completed.includes(quest.id)) return;
+        setCompleted(prev => [...prev, quest.id]);
+        setTotalXP(prev => prev + quest.xp);
+        setCoins(prev => prev + Math.floor(quest.xp / 5));
+        setJustGot(`+${quest.xp} XP！`);
+        setShowConfetti(true);
+        setTimeout(() => { setShowConfetti(false); setJustGot(null); }, 1800);
+      }
+
+      function resetDay() {
+        if (window.confirm("今日のクエストをリセットしますか？")) setCompleted([]);
+      }
+
+      function buyItem(item) {
+        if (coins < item.cost || inventory.includes(item.id)) return;
+        setCoins(prev => prev - item.cost);
+        setInventory(prev => [...prev, item.id]);
+      }
+
+      function toggleEquip(itemId) {
+        setHeroEquip(prev => prev.includes(itemId) ? prev.filter(x => x !== itemId) : [...prev, itemId]);
+      }
+
+      return (
+        <div>
+          <Confetti active={showConfetti} />
+          {justGot && <div className="xp-toast">{justGot}</div>}
+
+          {/* Header */}
+          <div style={{ background:"rgba(0,0,0,0.3)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"16px 20px" }}>
+            <div style={{ maxWidth:600, margin:"0 auto", display:"flex", alignItems:"center", gap:14 }}>
+              <div style={{ fontSize:36 }}>🗡️</div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, color:"#a5b4fc", fontWeight:700, letterSpacing:1 }}>ライフ・クエスト・ボード</div>
+                <div style={{ fontSize:18, fontWeight:900, color:rank.color }}>{rank.name}</div>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:4 }}>
+                  <div style={{ flex:1, height:10, background:"rgba(255,255,255,0.15)", borderRadius:99, overflow:"hidden" }}>
+                    <div className="progress-bar" style={{ height:"100%", width:`${progress}%`, background:`linear-gradient(90deg,${rank.color},#fff)`, borderRadius:99 }} />
+                  </div>
+                  <span style={{ fontSize:12, color:"#c4b5fd", fontWeight:700 }}>{progress}%</span>
+                </div>
+              </div>
+              <div style={{ textAlign:"center" }}>
+                <div style={{ fontSize:22, fontWeight:900, color:"#fbbf24" }}>{totalXP}<span style={{ fontSize:11, marginLeft:2, color:"#fde68a" }}>XP</span></div>
+                <div style={{ fontSize:16, fontWeight:900, color:"#34d399" }}>🪙{coins}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div style={{ background:"rgba(0,0,0,0.2)", borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ maxWidth:600, margin:"0 auto", display:"flex" }}>
+              {[
+                { id:"board", label:"🗺️ クエスト" },
+                { id:"hero",  label:"🧝 ヒーロー" },
+                { id:"shop",  label:"🏪 ショップ" },
+              ].map(t => (
+                <button key={t.id} className="tab-btn" onClick={() => setTab(t.id)} style={{
+                  flex:1, padding:"14px 0", fontSize:14, fontWeight:800,
+                  background:"none",
+                  color: tab === t.id ? "#a5b4fc" : "#7c3aed",
+                  borderBottom: tab === t.id ? "3px solid #a5b4fc" : "3px solid transparent",
+                }}>{t.label}</button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ maxWidth:600, margin:"0 auto", padding:"20px 16px 100px" }}>
+
+            {/* BOARD */}
+            {tab === "board" && (
+              <div>
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:16, padding:"16px 20px", marginBottom:20, display:"flex", alignItems:"center", gap:16 }}>
+                  <div style={{ fontSize:40 }}>{allDone ? "🏆" : "⚔️"}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontWeight:900, fontSize:16 }}>{allDone ? "全クエストクリア！ すごい！" : `今日の進行 ${todayDone}/${QUESTS.length}`}</div>
+                    <div style={{ height:8, background:"rgba(255,255,255,0.15)", borderRadius:99, marginTop:6, overflow:"hidden" }}>
+                      <div className="progress-bar" style={{ height:"100%", width:`${(todayDone/QUESTS.length)*100}%`, background:"linear-gradient(90deg,#34d399,#6ee7b7)", borderRadius:99 }} />
+                    </div>
+                  </div>
+                  <button onClick={resetDay} style={{ fontSize:11, background:"rgba(255,255,255,0.1)", border:"none", color:"#c4b5fd", borderRadius:8, padding:"6px 10px", cursor:"pointer", fontFamily:"inherit", fontWeight:700 }}>リセット</button>
+                </div>
+
+                {["morning","afternoon","night"].map(cat => (
+                  <div key={cat} style={{ marginBottom:24 }}>
+                    <div style={{ fontWeight:900, fontSize:15, marginBottom:10, color:"#c4b5fd" }}>{CATEGORY_META[cat].label}</div>
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                      {QUESTS.filter(q => q.category === cat).map(quest => {
+                        const done = completed.includes(quest.id);
+                        return (
+                          <div key={quest.id} className={`quest-card${done ? " done" : ""}`} onClick={() => completeQuest(quest)} style={{
+                            background: done ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.07)",
+                            border: done ? "2px solid #34d399" : "2px solid rgba(255,255,255,0.1)",
+                            borderRadius:16, padding:"16px 14px", display:"flex", flexDirection:"column", alignItems:"center", gap:8,
+                          }}>
+                            <div style={{ fontSize:36 }}>{quest.icon}</div>
+                            <div style={{ fontWeight:800, fontSize:13, textAlign:"center" }}>{quest.label}</div>
+                            <div style={{ fontSize:11, fontWeight:700, color: done ? "#34d399" : "#a5b4fc", background: done ? "rgba(52,211,153,0.15)" : "rgba(165,180,252,0.15)", padding:"3px 10px", borderRadius:99 }}>
+                              {done ? "✅ クリア！" : `+${quest.xp} XP`}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* HERO */}
+            {tab === "hero" && (
+              <div>
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:24, padding:28, marginBottom:20, textAlign:"center" }}>
+                  <div style={{ fontSize:80, lineHeight:1, marginBottom:8 }}>
+                    🧝{heroEquip.map(id => ITEMS.find(i => i.id === id)?.icon || "").join("")}
+                  </div>
+                  <div style={{ fontWeight:900, fontSize:18, color:rank.color }}>{rank.name}</div>
+                  <div style={{ color:"#a5b4fc", fontSize:13, marginTop:4 }}>そうびちゅう：{heroEquip.length === 0 ? "なし" : heroEquip.map(id => ITEMS.find(i => i.id === id)?.label).join("・")}</div>
+                </div>
+
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:16, padding:20, marginBottom:20 }}>
+                  <div style={{ fontWeight:900, fontSize:15, marginBottom:14, color:"#c4b5fd" }}>📊 ステータス</div>
+                  {[
+                    { label:"けいけんちXP",   value:totalXP,          max:2000,        color:"#a78bfa" },
+                    { label:"コイン",          value:coins,            max:500,         color:"#fbbf24" },
+                    { label:"クリアクエスト", value:completed.length, max:QUESTS.length, color:"#34d399" },
+                    { label:"アイテム数",      value:inventory.length, max:ITEMS.length,  color:"#60a5fa" },
+                  ].map(s => (
+                    <div key={s.label} style={{ marginBottom:12 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4, fontSize:13, fontWeight:700 }}>
+                        <span>{s.label}</span><span style={{ color:s.color }}>{s.value}</span>
+                      </div>
+                      <div style={{ height:8, background:"rgba(255,255,255,0.12)", borderRadius:99, overflow:"hidden" }}>
+                        <div className="progress-bar" style={{ height:"100%", width:`${Math.min(100,(s.value/s.max)*100)}%`, background:s.color, borderRadius:99 }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:16, padding:20 }}>
+                  <div style={{ fontWeight:900, fontSize:15, marginBottom:14, color:"#c4b5fd" }}>🎒 もちもの</div>
+                  {inventory.length === 0 ? (
+                    <div style={{ color:"#7c3aed", textAlign:"center", padding:20, fontSize:14 }}>ショップでアイテムをゲットしよう！</div>
+                  ) : (
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10 }}>
+                      {inventory.map(id => {
+                        const item = ITEMS.find(i => i.id === id);
+                        if (!item) return null;
+                        const equipped = heroEquip.includes(id);
+                        return (
+                          <div key={id} className="shop-item" onClick={() => toggleEquip(id)} style={{
+                            background: equipped ? "rgba(167,139,250,0.25)" : "rgba(255,255,255,0.07)",
+                            border: equipped ? "2px solid #a78bfa" : "2px solid rgba(255,255,255,0.1)",
+                            borderRadius:14, padding:"14px 10px", textAlign:"center",
+                          }}>
+                            <div style={{ fontSize:30 }}>{item.icon}</div>
+                            <div style={{ fontSize:11, fontWeight:800, marginTop:4 }}>{item.label}</div>
+                            <div style={{ fontSize:10, color: equipped ? "#a78bfa" : "#6b7280", marginTop:2 }}>{equipped ? "そうびちゅう" : "タップでそうび"}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* SHOP */}
+            {tab === "shop" && (
+              <div>
+                <div style={{ background:"rgba(251,191,36,0.1)", border:"1px solid rgba(251,191,36,0.3)", borderRadius:14, padding:"12px 16px", marginBottom:20, display:"flex", alignItems:"center", gap:10 }}>
+                  <span style={{ fontSize:24 }}>🪙</span>
+                  <span style={{ fontWeight:900, fontSize:18, color:"#fbbf24" }}>{coins} コイン</span>
+                  <span style={{ color:"#a5b4fc", fontSize:12, marginLeft:"auto" }}>クエストをクリアするとGET！</span>
+                </div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                  {ITEMS.map(item => {
+                    const owned = inventory.includes(item.id);
+                    const canBuy = coins >= item.cost && !owned;
+                    return (
+                      <div key={item.id} className="shop-item" onClick={() => buyItem(item)} style={{
+                        background: owned ? "rgba(52,211,153,0.1)" : "rgba(255,255,255,0.07)",
+                        border: owned ? "2px solid #34d399" : canBuy ? "2px solid rgba(251,191,36,0.4)" : "2px solid rgba(255,255,255,0.1)",
+                        borderRadius:18, padding:"20px 14px", textAlign:"center",
+                        opacity: (!canBuy && !owned) ? 0.5 : 1,
+                        cursor: canBuy ? "pointer" : "default",
+                      }}>
+                        <div style={{ fontSize:44 }}>{item.icon}</div>
+                        <div style={{ fontWeight:800, fontSize:14, marginTop:8 }}>{item.label}</div>
+                        <div style={{ marginTop:8, fontSize:13, fontWeight:900, color: owned ? "#34d399" : "#fbbf24" }}>
+                          {owned ? "✅ もっている" : `🪙 ${item.cost}`}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<QuestBoard />);
+  </script>
+</body>
+</html>

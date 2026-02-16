@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>感覚プロファイル観察ノート</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; min-height: 100vh; background: #f8fafc; }
+    .card      { transition: all 0.18s cubic-bezier(.4,2,.6,1); cursor: pointer; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.1); }
+    .btn       { border: none; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.15s; }
+    .btn:hover  { filter: brightness(1.07); transform: scale(1.02); }
+    .btn:active { transform: scale(0.97); }
+    .freq-btn  { transition: all 0.15s; cursor: pointer; border: none; font-family: 'Nunito', sans-serif; }
+    .freq-btn:hover { transform: scale(1.05); }
+    .bar { transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+    textarea, input { font-family: 'Nunito', sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const SENSORY_CATEGORIES = [
+      { id:"visual",         icon:"👁️", label:"視覚",     color:"#3b82f6", light:"#eff6ff",
+        items:[{id:"v1",label:"まぶしいひかりをいやがる"},{id:"v2",label:"うごくものにすぐきをとられる"},{id:"v3",label:"ごちゃごちゃしたばしょがにがて"},{id:"v4",label:"細かいものをじっとみつめる"},{id:"v5",label:"くらいばしょをこわがる"}]},
+      { id:"audio",          icon:"👂", label:"聴覚",     color:"#8b5cf6", light:"#f5f3ff",
+        items:[{id:"a1",label:"おおきなおとにびっくりする"},{id:"a2",label:"さわがしいばしょでパニックになる"},{id:"a3",label:"とくていのおとをとてもきらう"},{id:"a4",label:"こえかけにきづかないことがある"},{id:"a5",label:"じぶんのこえがおおきすぎる"}]},
+      { id:"touch",          icon:"🤲", label:"触覚",     color:"#f59e0b", light:"#fffbeb",
+        items:[{id:"t1",label:"ふくのタグやソックスをいやがる"},{id:"t2",label:"かみのけをとかされるのをいやがる"},{id:"t3",label:"ねんどや絵の具をさわりたがらない"},{id:"t4",label:"いたみにきづきにくい"},{id:"t5",label:"ものをさわり続ける"}]},
+      { id:"vestibular",     icon:"🌀", label:"前庭覚",   color:"#10b981", light:"#ecfdf5",
+        items:[{id:"ve1",label:"ブランコやすべりだいをこわがる"},{id:"ve2",label:"くるくるまわることがだいすき"},{id:"ve3",label:"たかいところにのぼりたがる"},{id:"ve4",label:"じっとしていられない"},{id:"ve5",label:"のりものでよいやすい"}]},
+      { id:"proprioception", icon:"💪", label:"固有受容覚", color:"#ef4444", light:"#fef2f2",
+        items:[{id:"p1",label:"ものをよくおとす・こぼす"},{id:"p2",label:"ちからかげんがむずかしい"},{id:"p3",label:"かべやはしらによりかかる"},{id:"p4",label:"ものをつよくにぎりすぎる"},{id:"p5",label:"からだがつかれやすい"}]},
+      { id:"oral",           icon:"👄", label:"口腔感覚", color:"#f97316", light:"#fff7ed",
+        items:[{id:"o1",label:"とくていのたべもののかたちがにがて"},{id:"o2",label:"ものをよくかじる・なめる"},{id:"o3",label:"からいもの・すっぱいものがだいすき"},{id:"o4",label:"はみがきをとてもいやがる"},{id:"o5",label:"ほおばりすぎる"}]},
+    ];
+
+    const FREQ = [
+      { value:0, label:"ほぼない",  color:"#94a3b8" },
+      { value:1, label:"ときどき",  color:"#fbbf24" },
+      { value:2, label:"よくある",  color:"#f97316" },
+      { value:3, label:"ほぼいつも", color:"#ef4444" },
+    ];
+
+    const SITUATIONS   = ["あさ","ひるま","よる","がっこう","そと","おうち"];
+    const MEMO_PROMPTS = ["どんなとき？どこで？","まえぶれはあった？","どのくらいつづいた？","どうしたらおちついた？"];
+    const MOODS        = ["😢","😕","😐","😊","😄"];
+
+    function SensoryProfile() {
+      const [screen, setScreen]           = useState("home");
+      const [ratings, setRatings]         = useState(() => { try { return JSON.parse(localStorage.getItem("tdl_sp_ratings")||"{}"); } catch { return {}; } });
+      const [diary, setDiary]             = useState(() => { try { return JSON.parse(localStorage.getItem("tdl_sp_diary")||"[]"); } catch { return []; } });
+      const [addingEntry, setAddingEntry] = useState(false);
+      const [expandedCat, setExpandedCat] = useState(null);
+      const [newEntry, setNewEntry]       = useState({ date:new Date().toLocaleDateString("ja-JP"), situation:"", category:"", note:"", mood:3 });
+
+      useEffect(() => { localStorage.setItem("tdl_sp_ratings", JSON.stringify(ratings)); }, [ratings]);
+      useEffect(() => { localStorage.setItem("tdl_sp_diary",   JSON.stringify(diary));   }, [diary]);
+
+      function getCategoryScore(catId) {
+        const cat = SENSORY_CATEGORIES.find(c => c.id===catId);
+        if (!cat) return 0;
+        const total = cat.items.reduce((s,item) => s+(ratings[item.id]||0), 0);
+        return Math.round((total/(cat.items.length*3))*100);
+      }
+
+      function saveEntry() {
+        if (!newEntry.note.trim()) return;
+        setDiary(prev => [{ ...newEntry, id:Date.now() }, ...prev]);
+        setNewEntry({ date:new Date().toLocaleDateString("ja-JP"), situation:"", category:"", note:"", mood:3 });
+        setAddingEntry(false);
+      }
+
+      // HOME
+      if (screen === "home") return (
+        <div style={{ minHeight:"100vh", background:"#f8fafc" }}>
+          <div style={{ background:"linear-gradient(135deg,#f97316,#fb923c)", padding:"24px 20px 32px", color:"#fff" }}>
+            <div style={{ maxWidth:600, margin:"0 auto" }}>
+              <div style={{ fontSize:13, color:"#fed7aa", fontWeight:700, letterSpacing:1 }}>感覚プロファイル観察ノート</div>
+              <div style={{ fontSize:24, fontWeight:900, marginTop:4 }}>🔍 かんさつ＆きろく</div>
+              <div style={{ fontSize:14, color:"#ffedd5", marginTop:6 }}>お子さんの感覚の特性を観察・記録するツール</div>
+            </div>
+          </div>
+          <div style={{ maxWidth:600, margin:"0 auto", padding:"20px 16px 80px" }}>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:24 }}>
+              {[
+                { id:"profile", icon:"📊", title:"感覚プロファイル", desc:"6つの感覚をチェック", color:"#f97316" },
+                { id:"diary",   icon:"📓", title:"かんさつにっき",   desc:"気になることを記録",   color:"#8b5cf6" },
+                { id:"report",  icon:"📈", title:"まとめレポート",   desc:"記録を見やすく整理",   color:"#3b82f6" },
+              ].map(item => (
+                <div key={item.id} className="card" onClick={() => setScreen(item.id)} style={{
+                  background:"#fff", borderRadius:20, padding:"22px 16px", textAlign:"center",
+                  boxShadow:"0 2px 8px rgba(0,0,0,0.06)", border:`2px solid ${item.color}22`,
+                  gridColumn: item.id==="report" ? "span 2" : "span 1",
+                }}>
+                  <div style={{ fontSize:40, marginBottom:10 }}>{item.icon}</div>
+                  <div style={{ fontWeight:900, fontSize:15, color:"#1e293b" }}>{item.title}</div>
+                  <div style={{ fontSize:12, color:"#94a3b8", marginTop:4 }}>{item.desc}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ background:"#fff7ed", borderRadius:16, padding:"16px 20px", border:"1px solid #fed7aa" }}>
+              <div style={{ fontWeight:900, fontSize:14, color:"#9a3412", marginBottom:8 }}>⚠️ ご注意</div>
+              <div style={{ fontSize:12, color:"#7c2d12", lineHeight:1.7 }}>
+                このアプリは医療的診断を行うものではありません。<br/>
+                日常の観察と工夫をサポートするためのツールです。<br/>
+                専門家への相談は別途ご検討ください。
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+      // PROFILE
+      if (screen === "profile") return (
+        <div style={{ minHeight:"100vh", background:"#f8fafc" }}>
+          <div style={{ background:"linear-gradient(135deg,#f97316,#fb923c)", padding:"20px 20px 28px", color:"#fff" }}>
+            <div style={{ maxWidth:640, margin:"0 auto" }}>
+              <button className="btn" onClick={() => setScreen("home")} style={{ background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:10, padding:"6px 14px", fontSize:13, fontWeight:800, marginBottom:12 }}>← もどる</button>
+              <div style={{ fontSize:20, fontWeight:900 }}>📊 感覚プロファイル</div>
+              <div style={{ fontSize:13, color:"#fed7aa", marginTop:4 }}>それぞれの様子をえらんでください</div>
+            </div>
+          </div>
+          <div style={{ maxWidth:640, margin:"0 auto", padding:"20px 16px 80px" }}>
+            {SENSORY_CATEGORIES.map(cat => (
+              <div key={cat.id} style={{ background:"#fff", borderRadius:20, marginBottom:14, boxShadow:"0 2px 8px rgba(0,0,0,0.06)", overflow:"hidden" }}>
+                <div onClick={() => setExpandedCat(expandedCat===cat.id ? null : cat.id)}
+                  style={{ padding:"16px 20px", display:"flex", alignItems:"center", gap:12, cursor:"pointer", background:expandedCat===cat.id?cat.light:"#fff", transition:"background 0.2s" }}>
+                  <div style={{ width:44, height:44, borderRadius:14, background:`${cat.color}20`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24 }}>{cat.icon}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontWeight:900, fontSize:15, color:"#1e293b" }}>{cat.label}</div>
+                    <div style={{ fontSize:12, color:"#94a3b8", marginTop:2 }}>{cat.items.length}項目</div>
+                  </div>
+                  <div style={{ textAlign:"right" }}>
+                    <div style={{ fontSize:18, fontWeight:900, color:cat.color }}>{getCategoryScore(cat.id)}%</div>
+                    <div style={{ fontSize:20 }}>{expandedCat===cat.id?"▲":"▼"}</div>
+                  </div>
+                </div>
+                {expandedCat===cat.id && (
+                  <div style={{ padding:"0 16px 16px" }}>
+                    {cat.items.map(item => (
+                      <div key={item.id} style={{ padding:"12px 0", borderBottom:"1px solid #f1f5f9" }}>
+                        <div style={{ fontSize:14, fontWeight:700, color:"#374151", marginBottom:10 }}>{item.label}</div>
+                        <div style={{ display:"flex", gap:6 }}>
+                          {FREQ.map(opt => (
+                            <button key={opt.value} className="freq-btn" onClick={() => setRatings(p => ({ ...p, [item.id]:opt.value }))} style={{
+                              flex:1, padding:"8px 4px", borderRadius:10,
+                              background: ratings[item.id]===opt.value ? opt.color : "#f1f5f9",
+                              color: ratings[item.id]===opt.value ? "#fff" : "#64748b",
+                              fontSize:11, fontWeight:800,
+                            }}>{opt.label}</button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+      // DIARY
+      if (screen === "diary") return (
+        <div style={{ minHeight:"100vh", background:"#f8fafc" }}>
+          <div style={{ background:"linear-gradient(135deg,#7c3aed,#8b5cf6)", padding:"20px 20px 28px", color:"#fff" }}>
+            <div style={{ maxWidth:640, margin:"0 auto" }}>
+              <button className="btn" onClick={() => setScreen("home")} style={{ background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:10, padding:"6px 14px", fontSize:13, fontWeight:800, marginBottom:12 }}>← もどる</button>
+              <div style={{ fontSize:20, fontWeight:900 }}>📓 かんさつにっき</div>
+              <div style={{ fontSize:13, color:"#ddd6fe", marginTop:4 }}>気になったことをメモしよう</div>
+            </div>
+          </div>
+          <div style={{ maxWidth:640, margin:"0 auto", padding:"20px 16px 80px" }}>
+            {!addingEntry && (
+              <button className="btn" onClick={() => setAddingEntry(true)} style={{ width:"100%", padding:"16px", borderRadius:16, fontSize:15, fontWeight:900, background:"linear-gradient(135deg,#7c3aed,#8b5cf6)", color:"#fff", boxShadow:"0 4px 16px rgba(124,58,237,0.3)", marginBottom:20 }}>
+                ＋ きろくをついか
+              </button>
+            )}
+            {addingEntry && (
+              <div style={{ background:"#fff", borderRadius:20, padding:20, marginBottom:20, boxShadow:"0 4px 16px rgba(0,0,0,0.08)" }}>
+                <div style={{ fontWeight:900, fontSize:15, marginBottom:16, color:"#374151" }}>📝 あたらしいきろく</div>
+                <div style={{ marginBottom:16 }}>
+                  <div style={{ fontSize:13, fontWeight:800, color:"#64748b", marginBottom:8 }}>子どもの様子</div>
+                  <div style={{ display:"flex", gap:10, justifyContent:"center" }}>
+                    {MOODS.map((m,i) => (
+                      <span key={i} onClick={() => setNewEntry(e => ({ ...e, mood:i }))}
+                        style={{ fontSize:32, cursor:"pointer", opacity:newEntry.mood===i?1:0.35, transition:"all 0.15s", transform:newEntry.mood===i?"scale(1.3)":"scale(1)" }}>{m}</span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginBottom:12 }}>
+                  <div style={{ fontSize:13, fontWeight:800, color:"#64748b", marginBottom:8 }}>いつ・どこで</div>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                    {SITUATIONS.map(s => (
+                      <span key={s} onClick={() => setNewEntry(e => ({ ...e, situation:s }))}
+                        style={{ padding:"6px 14px", borderRadius:99, fontSize:13, fontWeight:800, cursor:"pointer", background:newEntry.situation===s?"#7c3aed":"#f1f5f9", color:newEntry.situation===s?"#fff":"#64748b", transition:"all 0.15s" }}>{s}</span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginBottom:12 }}>
+                  <div style={{ fontSize:13, fontWeight:800, color:"#64748b", marginBottom:8 }}>かんかくのしゅるい</div>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                    {SENSORY_CATEGORIES.map(c => (
+                      <span key={c.id} onClick={() => setNewEntry(e => ({ ...e, category:c.id }))}
+                        style={{ padding:"6px 14px", borderRadius:99, fontSize:13, fontWeight:800, cursor:"pointer", background:newEntry.category===c.id?c.color:"#f1f5f9", color:newEntry.category===c.id?"#fff":"#64748b", transition:"all 0.15s" }}>
+                        {c.icon} {c.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ background:"#f5f3ff", borderRadius:12, padding:"10px 14px", marginBottom:10 }}>
+                  <div style={{ fontSize:12, color:"#7c3aed", fontWeight:800, marginBottom:4 }}>💡 かくポイント</div>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                    {MEMO_PROMPTS.map(p => <span key={p} style={{ fontSize:11, color:"#6d28d9", background:"#ede9fe", padding:"3px 8px", borderRadius:6 }}>{p}</span>)}
+                  </div>
+                </div>
+                <textarea value={newEntry.note} onChange={e => setNewEntry(n => ({ ...n, note:e.target.value }))}
+                  placeholder="気になったことを自由にメモ…"
+                  style={{ width:"100%", border:"2px solid #e5e7eb", borderRadius:12, padding:"12px", fontSize:14, resize:"vertical", minHeight:100, outline:"none", lineHeight:1.6 }} />
+                <div style={{ display:"flex", gap:10, marginTop:12 }}>
+                  <button className="btn" onClick={() => setAddingEntry(false)} style={{ flex:1, padding:"12px", borderRadius:12, background:"#f1f5f9", color:"#64748b", fontWeight:900, fontSize:14 }}>キャンセル</button>
+                  <button className="btn" onClick={saveEntry} style={{ flex:2, padding:"12px", borderRadius:12, background:"#7c3aed", color:"#fff", fontWeight:900, fontSize:14, boxShadow:"0 3px 10px rgba(124,58,237,0.3)" }}>💾 ほぞんする</button>
+                </div>
+              </div>
+            )}
+            {diary.length===0 ? (
+              <div style={{ textAlign:"center", padding:"40px 20px", color:"#94a3b8", fontSize:14, fontWeight:700 }}>
+                <div style={{ fontSize:48, marginBottom:12 }}>📓</div>
+                きろくがまだありません<br/>「＋きろくをついか」からはじめよう
+              </div>
+            ) : (
+              <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                {diary.map(entry => {
+                  const cat = SENSORY_CATEGORIES.find(c => c.id===entry.category);
+                  return (
+                    <div key={entry.id} style={{ background:"#fff", borderRadius:16, padding:"16px 18px", boxShadow:"0 2px 8px rgba(0,0,0,0.05)", borderLeft:`4px solid ${cat?.color||"#e5e7eb"}` }}>
+                      <div style={{ display:"flex", alignItems:"flex-start", gap:10, marginBottom:8 }}>
+                        <span style={{ fontSize:24 }}>{MOODS[entry.mood]}</span>
+                        <div style={{ flex:1 }}>
+                          <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:4 }}>
+                            {entry.situation && <span style={{ fontSize:11, fontWeight:800, background:"#f1f5f9", color:"#64748b", padding:"2px 8px", borderRadius:99 }}>{entry.situation}</span>}
+                            {cat && <span style={{ fontSize:11, fontWeight:800, background:`${cat.color}15`, color:cat.color, padding:"2px 8px", borderRadius:99 }}>{cat.icon} {cat.label}</span>}
+                          </div>
+                          <div style={{ fontSize:12, color:"#94a3b8" }}>{entry.date}</div>
+                        </div>
+                        <button className="btn" onClick={() => setDiary(p => p.filter(e => e.id!==entry.id))} style={{ color:"#ef4444", background:"#fee2e2", borderRadius:8, padding:"4px 8px", fontSize:11, fontWeight:900 }}>削除</button>
+                      </div>
+                      <div style={{ fontSize:14, color:"#374151", lineHeight:1.6 }}>{entry.note}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+
+      // REPORT
+      return (
+        <div style={{ minHeight:"100vh", background:"#f8fafc" }}>
+          <div style={{ background:"linear-gradient(135deg,#1d4ed8,#3b82f6)", padding:"20px 20px 28px", color:"#fff" }}>
+            <div style={{ maxWidth:640, margin:"0 auto" }}>
+              <button className="btn" onClick={() => setScreen("home")} style={{ background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:10, padding:"6px 14px", fontSize:13, fontWeight:800, marginBottom:12 }}>← もどる</button>
+              <div style={{ fontSize:20, fontWeight:900 }}>📈 まとめレポート</div>
+            </div>
+          </div>
+          <div style={{ maxWidth:640, margin:"0 auto", padding:"20px 16px 80px" }}>
+            <div style={{ background:"#fff", borderRadius:20, padding:24, marginBottom:16, boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
+              <div style={{ fontWeight:900, fontSize:15, marginBottom:20, color:"#1e293b" }}>感覚ごとの傾向</div>
+              {SENSORY_CATEGORIES.map(cat => {
+                const score = getCategoryScore(cat.id);
+                const label = score<20?"おだやか":score<50?"ふつう":score<75?"やや過敏":"とても過敏";
+                return (
+                  <div key={cat.id} style={{ marginBottom:14 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6 }}>
+                      <span style={{ fontSize:20 }}>{cat.icon}</span>
+                      <span style={{ fontSize:13, fontWeight:800, flex:1, color:"#374151" }}>{cat.label}</span>
+                      <span style={{ fontSize:12, fontWeight:900, color:cat.color }}>{label}</span>
+                      <span style={{ fontSize:13, fontWeight:900, color:cat.color, width:36, textAlign:"right" }}>{score}%</span>
+                    </div>
+                    <div style={{ height:10, background:"#f1f5f9", borderRadius:99, overflow:"hidden" }}>
+                      <div className="bar" style={{ height:"100%", width:`${score}%`, background:cat.color, borderRadius:99 }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ background:"#fff", borderRadius:20, padding:24, marginBottom:16, boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
+              <div style={{ fontWeight:900, fontSize:15, marginBottom:16, color:"#1e293b" }}>📓 にっきのまとめ</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12 }}>
+                {[
+                  { label:"きろく数", value:diary.length, color:"#3b82f6", display: String(diary.length) },
+                  { label:"平均きぶん", value:0, color:"#f59e0b", display: diary.length>0 ? MOODS[Math.round(diary.reduce((s,e)=>s+e.mood,0)/diary.length)] : "—" },
+                  { label:"多いかんかく", value:0, color:"#8b5cf6", display: (() => { if (!diary.length) return "—"; const c={}; diary.forEach(e=>{if(e.category)c[e.category]=(c[e.category]||0)+1;}); const t=Object.entries(c).sort((a,b)=>b[1]-a[1])[0]; return t?SENSORY_CATEGORIES.find(x=>x.id===t[0])?.icon||"—":"—"; })() },
+                ].map(s => (
+                  <div key={s.label} style={{ textAlign:"center", background:"#f8fafc", borderRadius:14, padding:"14px 8px" }}>
+                    <div style={{ fontSize:24, fontWeight:900, color:s.color }}>{s.display}</div>
+                    <div style={{ fontSize:11, color:"#64748b", fontWeight:700 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {diary.length>0 && (
+              <div style={{ background:"#fff", borderRadius:20, padding:24, boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
+                <div style={{ fontWeight:900, fontSize:15, marginBottom:16, color:"#1e293b" }}>📍 どこでおおい？</div>
+                {SITUATIONS.filter(s => diary.some(e => e.situation===s)).map(sit => {
+                  const count = diary.filter(e => e.situation===sit).length;
+                  const pct   = Math.round((count/diary.length)*100);
+                  return (
+                    <div key={sit} style={{ marginBottom:10 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                        <span style={{ fontSize:13, fontWeight:800, color:"#374151" }}>{sit}</span>
+                        <span style={{ fontSize:13, fontWeight:900, color:"#f97316" }}>{count}件</span>
+                      </div>
+                      <div style={{ height:8, background:"#f1f5f9", borderRadius:99, overflow:"hidden" }}>
+                        <div className="bar" style={{ height:"100%", width:`${pct}%`, background:"#f97316", borderRadius:99 }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<SensoryProfile />);
+  </script>
+</body>
+</html>

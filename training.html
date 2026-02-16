@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>巧緻性×言語トレーニングカード</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; min-height: 100vh; background: #f8fafc; }
+    .card-item { transition: all 0.18s cubic-bezier(.4,2,.6,1); cursor: pointer; }
+    .card-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+    .btn { border: none; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.15s; }
+    .btn:hover { filter: brightness(1.08); transform: scale(1.03); }
+    .btn:active { transform: scale(0.97); }
+    .bounce-in { animation: bounceIn 0.4s cubic-bezier(.4,2,.6,1); }
+    @keyframes bounceIn { 0%{transform:scale(0.7);opacity:0} 100%{transform:scale(1);opacity:1} }
+    .step-enter { animation: stepIn 0.3s cubic-bezier(.4,2,.6,1); }
+    @keyframes stepIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const CARDS = [
+      { id:"c1", type:"kichousei", icon:"🧵", title:"ひもとおし",
+        instruction:"あなのなかにひもをとおしてみよう！",
+        steps:["ひものさきをつまむ","あなのまんなかにめがけて","ゆっくりとおす","むこうからひっぱる"],
+        tip:"💡 ひものさきをすこしかたくするとやりやすいよ",
+        color:"#f43f5e", light:"#ffeef1", time:180,
+        question:"ひもをとおしたら、なんていう？", answer:"「とおりました！」" },
+      { id:"c2", type:"kichousei", icon:"✂️", title:"はさみきり",
+        instruction:"せんのうえをじょうずにきってみよう！",
+        steps:["はさみをただしくもつ","せんのはじからきりはじめる","ゆっくりすすむ","さいごまできる"],
+        tip:"💡 かみをもつてをうごかすのがコツ",
+        color:"#f97316", light:"#fff3ec", time:120,
+        question:"はさみをつかうとききをつけることは？", answer:"「まえにむけない・はしらない」" },
+      { id:"c3", type:"kichousei", icon:"📄", title:"おりがみ",
+        instruction:"かどとかどをぴったりあわせてたたもう！",
+        steps:["かみをひらいておく","かどとかどをあわせる","まんなかからゆびでなでる","かくっとおりめをつける"],
+        tip:"💡 おりめはつめでしっかりつけよう",
+        color:"#eab308", light:"#fefce8", time:150,
+        question:"おりがみをするときのやくそくは？", answer:"「かどをそろえる・ていねいにおる」" },
+      { id:"c4", type:"kichousei", icon:"🧩", title:"ぞうけい",
+        instruction:"ねんどでまるいかたちをつくろう！",
+        steps:["ねんどをやわらかくこねる","てのひらにのせる","くるくるまわす","まんまるになったらかんせい"],
+        tip:"💡 りょうてをつかうとまるくなりやすいよ",
+        color:"#10b981", light:"#ecfdf5", time:200,
+        question:"まるをつくるときてをどうする？", answer:"「てのひらでくるくるまわす」" },
+      { id:"l1", type:"gengo", icon:"👂", title:"しじきき",
+        instruction:"せんせいのいうことをよくきいてやってみよう！",
+        steps:["しずかにきく","あたまのなかでくりかえす","じゅんばんをおぼえる","やってみる"],
+        tip:"💡 おてほんをみながらやってみよう",
+        color:"#6366f1", light:"#eef2ff", time:120,
+        question:"「まず〇〇して、つぎに△△してください」のじゅんばんは？", answer:"さいしょにいったことからやる" },
+      { id:"l2", type:"gengo", icon:"🗣️", title:"はなしかた",
+        instruction:"おおきなこえで、はっきりはなしてみよう！",
+        steps:["せすじをのばす","あいてのめをみる","ゆっくりはなす","さいごまでいう"],
+        tip:"💡 おなかからこえをだすとよくきこえるよ",
+        color:"#8b5cf6", light:"#f5f3ff", time:90,
+        question:"じぶんのなまえをはっきりいうれんしゅうをしよう", answer:"「わたしの なまえは ○○です」" },
+      { id:"l3", type:"gengo", icon:"📖", title:"おはなし",
+        instruction:"えをみて、おはなしをつくろう！",
+        steps:["えをよくみる","だれがいる？","なにをしている？","ひとつのおはなしにする"],
+        tip:"💡 「はじめ・なか・おわり」でかんがえよう",
+        color:"#0ea5e9", light:"#f0f9ff", time:180,
+        question:"このえのこはなぜわらっているの？", answer:"えをみてじぶんでかんがえてみよう！" },
+      { id:"l4", type:"gengo", icon:"🎭", title:"どうさぼうけん",
+        instruction:"いわれたとおりにからだをうごかそう！",
+        steps:["「おおかみのまねをして」","せなかをまるめてあるく","「うさぎのまねをして」","ぴょんぴょんはねる"],
+        tip:"💡 どうぶつのとくちょうをかんがえよう",
+        color:"#14b8a6", light:"#f0fdfa", time:120,
+        question:"うさぎとかめはどっちがはやい？なぜ？", answer:"「うさぎ。あしがながいから」など" },
+    ];
+
+    const TYPE_META = {
+      kichousei: { label:"✋ 巧緻性", color:"#f43f5e" },
+      gengo:     { label:"💬 言語",  color:"#6366f1" },
+    };
+
+    function Timer({ seconds, running, onDone }) {
+      const [left, setLeft] = useState(seconds);
+      const ref = useRef();
+      useEffect(() => { setLeft(seconds); }, [seconds]);
+      useEffect(() => {
+        if (!running) { clearInterval(ref.current); return; }
+        ref.current = setInterval(() => {
+          setLeft(prev => {
+            if (prev <= 1) { clearInterval(ref.current); onDone(); return 0; }
+            return prev - 1;
+          });
+        }, 1000);
+        return () => clearInterval(ref.current);
+      }, [running]);
+      const pct = (left / seconds) * 100;
+      const color = pct > 50 ? "#10b981" : pct > 25 ? "#f59e0b" : "#ef4444";
+      return (
+        <div style={{ textAlign:"center" }}>
+          <div style={{ fontSize:36, fontWeight:900, color }}>
+            {String(Math.floor(left/60)).padStart(2,"0")}:{String(left%60).padStart(2,"0")}
+          </div>
+          <div style={{ height:8, background:"#e5e7eb", borderRadius:99, overflow:"hidden", marginTop:6 }}>
+            <div style={{ height:"100%", width:`${pct}%`, background:color, borderRadius:99, transition:"width 1s linear, background 0.3s" }} />
+          </div>
+        </div>
+      );
+    }
+
+    function StarRating({ value, onChange }) {
+      return (
+        <div style={{ display:"flex", gap:6, justifyContent:"center" }}>
+          {[1,2,3].map(n => (
+            <span key={n} onClick={() => onChange(n)} style={{ fontSize:32, cursor:"pointer", filter: n<=value ? "none" : "grayscale(1) opacity(0.4)", transition:"all 0.15s" }}>⭐</span>
+          ))}
+        </div>
+      );
+    }
+
+    function TrainingCard() {
+      const [filter, setFilter]         = useState("all");
+      const [selected, setSelected]     = useState(null);
+      const [phase, setPhase]           = useState("intro");
+      const [stepIdx, setStepIdx]       = useState(0);
+      const [timerRunning, setTimerRunning] = useState(false);
+      const [showAnswer, setShowAnswer] = useState(false);
+      const [stars, setStars]           = useState(0);
+      const [records, setRecords]       = useState(() => {
+        try { return JSON.parse(localStorage.getItem("tdl_tc_records") || "{}"); } catch { return {}; }
+      });
+
+      useEffect(() => {
+        localStorage.setItem("tdl_tc_records", JSON.stringify(records));
+      }, [records]);
+
+      const filtered = filter === "all" ? CARDS : CARDS.filter(c => c.type === filter);
+
+      function openCard(card) {
+        setSelected(card); setPhase("intro"); setStepIdx(0);
+        setTimerRunning(false); setShowAnswer(false); setStars(0);
+      }
+
+      function nextStep() {
+        if (stepIdx < selected.steps.length - 1) { setStepIdx(i => i+1); }
+        else { setTimerRunning(false); setPhase("quiz"); }
+      }
+
+      function saveRecord() {
+        setRecords(prev => ({ ...prev, [selected.id]: { stars, date: new Date().toLocaleDateString("ja-JP") } }));
+        setSelected(null);
+      }
+
+      const card = selected;
+
+      return (
+        <div>
+          {/* Header */}
+          <div style={{ background:"linear-gradient(135deg,#1e40af,#6d28d9)", padding:"20px 20px 28px", color:"#fff" }}>
+            <div style={{ maxWidth:640, margin:"0 auto" }}>
+              {selected && (
+                <button className="btn" onClick={() => setSelected(null)}
+                  style={{ background:"rgba(255,255,255,0.15)", color:"#fff", borderRadius:10, padding:"6px 14px", fontSize:13, fontWeight:800, marginBottom:12 }}>
+                  ← もどる
+                </button>
+              )}
+              <div style={{ fontSize:13, color:"#bfdbfe", fontWeight:700, letterSpacing:1 }}>巧緻性 × 言語トレーニングカード</div>
+              <div style={{ fontSize:22, fontWeight:900, marginTop:2 }}>
+                {selected ? `${card.icon} ${card.title}` : "✋💬 トレーニングカード"}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ maxWidth:640, margin:"0 auto", padding:"20px 16px 80px" }}>
+
+            {/* CARD LIST */}
+            {!selected && (
+              <>
+                <div style={{ display:"flex", gap:8, marginBottom:20 }}>
+                  {[["all","すべて"],["kichousei","✋ 巧緻性"],["gengo","💬 言語"]].map(([v,l]) => (
+                    <button key={v} className="btn" onClick={() => setFilter(v)} style={{
+                      padding:"8px 16px", borderRadius:99, fontSize:13, fontWeight:800,
+                      background: filter===v ? "#1e40af" : "#e0e7ff",
+                      color: filter===v ? "#fff" : "#3730a3",
+                    }}>{l}</button>
+                  ))}
+                </div>
+
+                <div style={{ background:"#eef2ff", borderRadius:14, padding:"12px 16px", marginBottom:20, display:"flex", gap:20 }}>
+                  <div style={{ textAlign:"center" }}>
+                    <div style={{ fontSize:22, fontWeight:900, color:"#4f46e5" }}>{Object.keys(records).length}</div>
+                    <div style={{ fontSize:11, color:"#6366f1", fontWeight:700 }}>クリア済み</div>
+                  </div>
+                  <div style={{ width:1, background:"#c7d2fe" }} />
+                  <div style={{ textAlign:"center" }}>
+                    <div style={{ fontSize:22, fontWeight:900, color:"#f59e0b" }}>
+                      {Object.values(records).reduce((s,r) => s+(r.stars||0), 0)}
+                    </div>
+                    <div style={{ fontSize:11, color:"#d97706", fontWeight:700 }}>あわせて⭐</div>
+                  </div>
+                  <div style={{ width:1, background:"#c7d2fe" }} />
+                  <div style={{ textAlign:"center", flex:1 }}>
+                    <div style={{ fontSize:22, fontWeight:900, color:"#10b981" }}>{CARDS.length - Object.keys(records).length}</div>
+                    <div style={{ fontSize:11, color:"#059669", fontWeight:700 }}>のこりカード</div>
+                  </div>
+                </div>
+
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                  {filtered.map(card => {
+                    const rec = records[card.id];
+                    return (
+                      <div key={card.id} className="card-item" onClick={() => openCard(card)} style={{
+                        background: rec ? card.light : "#fff",
+                        border: `2px solid ${rec ? card.color : "#e5e7eb"}`,
+                        borderRadius:20, padding:"18px 14px", textAlign:"center",
+                        boxShadow:"0 2px 8px rgba(0,0,0,0.06)",
+                      }}>
+                        <div style={{ fontSize:42, marginBottom:8 }}>{card.icon}</div>
+                        <div style={{ fontWeight:900, fontSize:15, color:"#1e293b" }}>{card.title}</div>
+                        <div style={{ fontSize:11, color:TYPE_META[card.type].color, fontWeight:700, marginTop:4 }}>{TYPE_META[card.type].label}</div>
+                        {rec
+                          ? <div style={{ marginTop:8, fontSize:13 }}>{"⭐".repeat(rec.stars)}</div>
+                          : <div style={{ marginTop:8, fontSize:11, color:"#94a3b8" }}>タップしてはじめる</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {/* CARD DETAIL */}
+            {selected && (
+              <div>
+                {phase === "intro" && (
+                  <div className="bounce-in">
+                    <div style={{ background:"#fff", borderRadius:24, padding:28, boxShadow:"0 4px 20px rgba(0,0,0,0.08)", marginBottom:16 }}>
+                      <div style={{ fontSize:64, textAlign:"center", marginBottom:16 }}>{card.icon}</div>
+                      <div style={{ background:card.light, borderRadius:16, padding:"16px 20px", marginBottom:16 }}>
+                        <div style={{ fontWeight:900, fontSize:16, color:card.color, marginBottom:8 }}>📋 おだい</div>
+                        <div style={{ fontSize:18, fontWeight:800, color:"#1e293b", lineHeight:1.5 }}>{card.instruction}</div>
+                      </div>
+                      <div style={{ background:"#fffbeb", borderRadius:12, padding:"12px 16px", fontSize:14, color:"#78350f", fontWeight:700 }}>{card.tip}</div>
+                    </div>
+                    <div style={{ textAlign:"center", marginBottom:16, fontSize:13, color:"#64748b", fontWeight:700 }}>
+                      ⏱ じかん：{Math.floor(card.time/60)}ふん{card.time%60 ? `${card.time%60}びょう` : ""}
+                    </div>
+                    <button className="btn" onClick={() => { setPhase("steps"); setStepIdx(0); setTimerRunning(true); }} style={{
+                      width:"100%", padding:"18px", borderRadius:18, fontSize:18, fontWeight:900,
+                      background:`linear-gradient(135deg,${card.color},${card.color}cc)`,
+                      color:"#fff", boxShadow:`0 6px 24px ${card.color}55`,
+                    }}>▶ れんしゅうをはじめる！</button>
+                  </div>
+                )}
+
+                {phase === "steps" && (
+                  <div>
+                    <div style={{ background:"#fff", borderRadius:20, padding:20, marginBottom:16, boxShadow:"0 2px 12px rgba(0,0,0,0.07)" }}>
+                      <Timer seconds={card.time} running={timerRunning} onDone={() => setTimerRunning(false)} />
+                    </div>
+                    <div className="step-enter" style={{ background:"#fff", borderRadius:24, padding:28, boxShadow:"0 4px 20px rgba(0,0,0,0.08)", marginBottom:16 }}>
+                      <div style={{ display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" }}>
+                        {card.steps.map((_,i) => (
+                          <div key={i} style={{ width:28, height:28, borderRadius:99, fontSize:13, fontWeight:900,
+                            display:"flex", alignItems:"center", justifyContent:"center",
+                            background: i<=stepIdx ? card.color : "#e5e7eb",
+                            color: i<=stepIdx ? "#fff" : "#94a3b8", transition:"all 0.3s" }}>{i+1}</div>
+                        ))}
+                      </div>
+                      <div style={{ fontSize:14, color:"#94a3b8", fontWeight:700, marginBottom:8 }}>てじゅん {stepIdx+1} / {card.steps.length}</div>
+                      <div style={{ fontSize:22, fontWeight:900, color:"#1e293b", lineHeight:1.5, marginBottom:24 }}>{card.steps[stepIdx]}</div>
+                      <button className="btn" onClick={nextStep} style={{
+                        width:"100%", padding:"16px", borderRadius:16, fontSize:16, fontWeight:900,
+                        background:card.color, color:"#fff", boxShadow:`0 4px 16px ${card.color}44`,
+                      }}>{stepIdx < card.steps.length-1 ? "つぎへ ▶" : "できた！ ✅"}</button>
+                    </div>
+                    <div style={{ background:"#fffbeb", borderRadius:14, padding:"12px 16px", fontSize:13, color:"#92400e", fontWeight:700 }}>{card.tip}</div>
+                  </div>
+                )}
+
+                {phase === "quiz" && (
+                  <div className="bounce-in">
+                    <div style={{ background:"#fff", borderRadius:24, padding:28, boxShadow:"0 4px 20px rgba(0,0,0,0.08)", marginBottom:16 }}>
+                      <div style={{ textAlign:"center", fontSize:48, marginBottom:16 }}>🎤</div>
+                      <div style={{ fontSize:14, color:"#64748b", fontWeight:700, marginBottom:12 }}>こたえてみよう！</div>
+                      <div style={{ fontSize:18, fontWeight:900, color:"#1e293b", lineHeight:1.6, marginBottom:24 }}>{card.question}</div>
+                      {!showAnswer ? (
+                        <button className="btn" onClick={() => setShowAnswer(true)} style={{ width:"100%", padding:"14px", borderRadius:14, fontSize:15, fontWeight:900, background:"#eef2ff", color:"#4f46e5" }}>
+                          こたえをみる 👀
+                        </button>
+                      ) : (
+                        <div>
+                          <div style={{ background:"#f0fdf4", border:"2px solid #86efac", borderRadius:16, padding:"16px 20px", marginBottom:20 }}>
+                            <div style={{ fontSize:13, color:"#16a34a", fontWeight:700, marginBottom:6 }}>✅ こたえのれい</div>
+                            <div style={{ fontSize:17, fontWeight:900, color:"#14532d" }}>{card.answer}</div>
+                          </div>
+                          <button className="btn" onClick={() => setPhase("result")} style={{ width:"100%", padding:"16px", borderRadius:16, fontSize:16, fontWeight:900, background:"#4f46e5", color:"#fff", boxShadow:"0 4px 16px rgba(79,70,229,0.3)" }}>
+                            つぎへ ▶
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {phase === "result" && (
+                  <div className="bounce-in">
+                    <div style={{ background:"#fff", borderRadius:24, padding:32, boxShadow:"0 4px 20px rgba(0,0,0,0.08)", textAlign:"center", marginBottom:16 }}>
+                      <div style={{ fontSize:64, marginBottom:12 }}>🎉</div>
+                      <div style={{ fontSize:24, fontWeight:900, color:"#1e293b", marginBottom:6 }}>れんしゅうかんりょう！</div>
+                      <div style={{ fontSize:14, color:"#64748b", marginBottom:28 }}>どうだった？ほしをつけよう！</div>
+                      <StarRating value={stars} onChange={setStars} />
+                      <div style={{ fontSize:13, color:"#94a3b8", marginTop:12, marginBottom:28 }}>
+                        {["","もういちかいやろう！","いいかんじ！","かんぺき！！🏆"][stars]||""}
+                      </div>
+                      <button className="btn" onClick={saveRecord} disabled={stars===0} style={{
+                        width:"100%", padding:"16px", borderRadius:16, fontSize:16, fontWeight:900,
+                        background: stars>0 ? card.color : "#e5e7eb",
+                        color: stars>0 ? "#fff" : "#94a3b8",
+                        cursor: stars>0 ? "pointer" : "not-allowed",
+                        transition:"all 0.2s",
+                      }}>きろくする ✅</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<TrainingCard />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>survival_mom | こどもと生きるツール集</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0e17;
+      --surface: #1a1828;
+      --border: rgba(255,255,255,0.07);
+      --text: #fffffe;
+      --muted: #a7a9be;
+      --accent: #ff8906;
+      --accent2: #f25f4c;
+      --accent3: #e53170;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── 背景装飾 ── */
+    .bg-blobs {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.18;
+    }
+    .blob-1 { width: 500px; height: 500px; background: #ff8906; top: -100px; left: -100px; }
+    .blob-2 { width: 400px; height: 400px; background: #e53170; bottom: 10%; right: -80px; }
+    .blob-3 { width: 300px; height: 300px; background: #3da9fc; top: 40%; left: 30%; }
+
+    /* ── レイアウト ── */
+    .container { max-width: 700px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+
+    /* ── ヒーロー ── */
+    .hero {
+      padding: 72px 0 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px; font-weight: 800; letter-spacing: 2px;
+      color: var(--accent); background: rgba(255,137,6,0.12);
+      border: 1px solid rgba(255,137,6,0.3);
+      padding: 6px 16px; border-radius: 99px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(36px, 8vw, 60px);
+      font-weight: 900; line-height: 1.1;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero-title span {
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 15px; color: var(--muted); margin-top: 16px; line-height: 1.8;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .hero-note {
+      display: inline-block; margin-top: 24px;
+      font-size: 12px; color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 8px 18px; border-radius: 8px;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    /* ── セグメントバッジ ── */
+    .segments {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+      margin: 40px 0 32px;
+      animation: fadeUp 0.6s 0.35s ease both;
+    }
+    .seg-badge {
+      font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 99px;
+      border: 1px solid;
+    }
+    .seg-exam    { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.08); }
+    .seg-gray    { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.08); }
+    .seg-home    { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.08); }
+
+    /* ── アプリカード ── */
+    .section-label {
+      font-size: 11px; font-weight: 800; letter-spacing: 2px;
+      color: var(--muted); text-transform: uppercase;
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    .cards { display: flex; flex-direction: column; gap: 14px; }
+
+    .app-card {
+      display: flex; align-items: center; gap: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 24px;
+      text-decoration: none; color: inherit;
+      transition: all 0.25s cubic-bezier(.4,2,.3,1);
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+    .app-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .app-card:hover { transform: translateY(-4px) scale(1.01); border-color: rgba(255,255,255,0.18); box-shadow: 0 20px 48px rgba(0,0,0,0.4); }
+    .app-card:hover::before { opacity: 1; }
+    .app-card:nth-child(1) { animation-delay: 0.45s; }
+    .app-card:nth-child(2) { animation-delay: 0.52s; }
+    .app-card:nth-child(3) { animation-delay: 0.59s; }
+    .app-card:nth-child(4) { animation-delay: 0.66s; }
+    .app-card:nth-child(5) { animation-delay: 0.73s; }
+
+    .card-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0;
+    }
+    .card-body { flex: 1; }
+    .card-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px; font-weight: 900; margin-bottom: 4px;
+    }
+    .card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .card-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .card-tag {
+      font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px;
+      border: 1px solid rgba(255,255,255,0.12); color: var(--muted);
+    }
+    .card-arrow {
+      font-size: 20px; color: var(--muted); flex-shrink: 0;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .app-card:hover .card-arrow { transform: translateX(4px); color: var(--accent); }
+
+    /* カードごとのアクセントカラー */
+    .c-quest    .card-icon { background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.2); }
+    .c-training .card-icon { background: rgba(59,130,246,0.15);  border: 1px solid rgba(59,130,246,0.2); }
+    .c-step     .card-icon { background: rgba(16,185,129,0.15);  border: 1px solid rgba(16,185,129,0.2); }
+    .c-sensory  .card-icon { background: rgba(249,115,22,0.15);  border: 1px solid rgba(249,115,22,0.2); }
+    .c-dialog   .card-icon { background: rgba(229,49,112,0.15);  border: 1px solid rgba(229,49,112,0.2); }
+
+    .c-quest    .card-title { color: #a78bfa; }
+    .c-training .card-title { color: #60a5fa; }
+    .c-step     .card-title { color: #34d399; }
+    .c-sensory  .card-title { color: #fb923c; }
+    .c-dialog   .card-title { color: #f472b6; }
+
+    /* ── フッター ── */
+    .footer {
+      text-align: center; padding: 60px 0 40px;
+      font-size: 12px; color: var(--muted);
+      animation: fadeUp 0.6s 0.8s ease both;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer-note {
+      margin-top: 12px;
+      font-size: 11px; color: rgba(167,169,190,0.5);
+      line-height: 1.8;
+    }
+
+    /* ── アニメーション ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── レスポンシブ ── */
+    @media (max-width: 480px) {
+      .app-card { padding: 18px; gap: 14px; }
+      .card-icon { width: 48px; height: 48px; font-size: 24px; border-radius: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="container">
+
+    <!-- ヒーロー -->
+    <div class="hero">
+      <div class="hero-badge">🌱 time design labo</div>
+      <h1 class="hero-title">survival<br/><span>_mom</span></h1>
+      <p class="hero-sub">
+        子育ての「こまった」を「できた」に変える<br/>
+        5つの無料ツール
+      </p>
+      <div class="hero-note">⚠️ 医療的診断を行うものではありません</div>
+    </div>
+
+    <!-- セグメント -->
+    <div class="segments">
+      <span class="seg-badge seg-exam">✏️ お受験対策</span>
+      <span class="seg-badge seg-gray">🌀 発達グレーゾーン</span>
+      <span class="seg-badge seg-home">🏠 ホームスクール</span>
+    </div>
+
+    <!-- アプリ一覧 -->
+    <div class="section-label">── ツール一覧</div>
+
+    <div class="cards">
+
+      <a class="app-card c-quest" href="quest.html">
+        <div class="card-icon">🗡️</div>
+        <div class="card-body">
+          <div class="card-title">ライフ・クエスト・ボード</div>
+          <div class="card-desc">毎日のルーティンをRPG感覚でクリアしよう。XPを貯めてヒーローを育てる習慣トラッカー。</div>
+          <div class="card-tags">
+            <span class="card-tag">習慣化</span>
+            <span class="card-tag">ゲーミフィケーション</span>
+            <span class="card-tag">全年齢</span>
+          </div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="app-card c-training" href="training.html">
+        <div class="card-icon">✋</div>
+        <div class="card-body">
+          <div class="card-title">巧緻性×言語トレーニングカード</div>
+          <div class="card-desc">お受験で問われる「手先の力」と「ことば力」をカード形式で楽しくトレーニング。</div>
+          <div class="card-tags">
+            <span class="card-tag">お受験対策</span>
+            <span class="card-tag">巧緻性</span>
+            <span class="card-tag">言語</span>
+          </div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="app-card c-step" href="smallstep.html">
+        <div class="card-icon">✅</div>
+        <div class="card-body">
+          <div class="card-title">スモールステップカード</div>
+          <div class="card-desc">「できない」をとことん細かく分解。一歩ずつ積み上げる達成体験サポートツール。</div>
+          <div class="card-tags">
+            <span class="card-tag">発達グレー</span>
+            <span class="card-tag">実行機能</span>
+            <span class="card-tag">自己肯定感</span>
+          </div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="app-card c-sensory" href="sensory.html">
+        <div class="card-icon">🔍</div>
+        <div class="card-body">
+          <div class="card-title">感覚プロファイル観察ノート</div>
+          <div class="card-desc">視覚・聴覚・触覚など6つの感覚特性を記録・可視化。専門家への相談にも役立つ観察ノート。</div>
+          <div class="card-tags">
+            <span class="card-tag">発達グレー</span>
+            <span class="card-tag">感覚統合</span>
+            <span class="card-tag">観察記録</span>
+          </div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="app-card c-dialog" href="dialog.html">
+        <div class="card-icon">💬</div>
+        <div class="card-body">
+          <div class="card-title">対話プロンプト100</div>
+          <div class="card-desc">「叱る」を「問う」に変える魔法のことば集。朝・宿題・きもち・食事など場面別30選。</div>
+          <div class="card-tags">
+            <span class="card-tag">コミュニケーション</span>
+            <span class="card-tag">不登校</span>
+            <span class="card-tag">発達グレー</span>
+          </div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+    </div>
+
+    <!-- フッター -->
+    <div class="footer">
+      <div>© 2025 <a href="https://SurvivalMam.github.io/survival_mom/">time design labo</a> — survival_mom</div>
+      <div class="footer-note">
+        このサイトのツールは医療的診断を行うものではありません。<br/>
+        日常の観察・工夫・習慣づくりをサポートする目的で提供しています。
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

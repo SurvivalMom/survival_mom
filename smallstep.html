@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>スモールステップカード</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; min-height: 100vh; background: #f0fdf4; }
+    .card  { transition: all 0.18s cubic-bezier(.4,2,.6,1); cursor: pointer; }
+    .card:hover  { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
+    .btn   { border: none; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.15s; }
+    .btn:hover  { filter: brightness(1.07); transform: scale(1.02); }
+    .btn:active { transform: scale(0.97); }
+    .step-card  { transition: all 0.25s cubic-bezier(.4,2,.6,1); cursor: pointer; }
+    .step-card:hover  { transform: scale(1.03); }
+    .step-card:active { transform: scale(0.97); }
+    .pop { animation: pop 0.35s cubic-bezier(.4,2,.6,1); }
+    @keyframes pop { 0%{transform:scale(0.8)} 60%{transform:scale(1.15)} 100%{transform:scale(1)} }
+    @keyframes celebIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+    input { font-family: 'Nunito', sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const PRESET_TASKS = [
+      { id:"homework", icon:"📝", title:"しゅくだい", color:"#3b82f6", light:"#eff6ff",
+        steps:[{id:"s1",label:"ふでばこをだす",icon:"✏️"},{id:"s2",label:"ノートをひらく",icon:"📖"},{id:"s3",label:"きょうかしょをよむ",icon:"📚"},{id:"s4",label:"もんだいをとく",icon:"🤔"},{id:"s5",label:"こたえをかく",icon:"✍️"},{id:"s6",label:"まるつけをする",icon:"⭕"}]},
+      { id:"morning", icon:"🌅", title:"あさのしたく", color:"#f59e0b", light:"#fffbeb",
+        steps:[{id:"s1",label:"めをさます",icon:"👀"},{id:"s2",label:"パジャマをぬぐ",icon:"👕"},{id:"s3",label:"きがえる",icon:"🧥"},{id:"s4",label:"かおをあらう",icon:"💧"},{id:"s5",label:"ごはんをたべる",icon:"🍚"},{id:"s6",label:"はをみがく",icon:"🦷"}]},
+      { id:"bath", icon:"🛁", title:"おふろ", color:"#06b6d4", light:"#ecfeff",
+        steps:[{id:"s1",label:"おふろにはいる",icon:"🚿"},{id:"s2",label:"あたまをあらう",icon:"🧴"},{id:"s3",label:"からだをあらう",icon:"🧼"},{id:"s4",label:"あわをながす",icon:"💦"},{id:"s5",label:"タオルでふく",icon:"🏊"},{id:"s6",label:"パジャマをきる",icon:"🌙"}]},
+      { id:"tidy", icon:"🧹", title:"おかたづけ", color:"#10b981", light:"#ecfdf5",
+        steps:[{id:"s1",label:"ちらかっているものをさがす",icon:"🔍"},{id:"s2",label:"おもちゃをあつめる",icon:"🪀"},{id:"s3",label:"ほんをならべる",icon:"📚"},{id:"s4",label:"ごみをひろう",icon:"🗑️"},{id:"s5",label:"もとのばしょにもどす",icon:"📦"},{id:"s6",label:"さいごにかくにんする",icon:"✅"}]},
+      { id:"sleep", icon:"😴", title:"ねるじゅんび", color:"#8b5cf6", light:"#f5f3ff",
+        steps:[{id:"s1",label:"はをみがく",icon:"🦷"},{id:"s2",label:"トイレにいく",icon:"🚽"},{id:"s3",label:"パジャマにきがえる",icon:"🌙"},{id:"s4",label:"あしたのじゅんびをする",icon:"🎒"},{id:"s5",label:"でんきをけす",icon:"💡"},{id:"s6",label:"ふとんにはいる",icon:"🛏️"}]},
+    ];
+
+    const STICKERS = ["⭐","🌟","🏆","🎉","🥇","💎","🦁","🐯","🚀","🌈","🍭","🎈"];
+
+    function ProgressRing({ pct, color, size=80 }) {
+      const r = (size-10)/2, circ = 2*Math.PI*r, offset = circ*(1-pct/100);
+      return (
+        <svg width={size} height={size} style={{ transform:"rotate(-90deg)" }}>
+          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#e5e7eb" strokeWidth={8} />
+          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={8}
+            strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
+            style={{ transition:"stroke-dashoffset 0.5s cubic-bezier(.4,0,.2,1)" }} />
+        </svg>
+      );
+    }
+
+    function Celebration() {
+      return (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:999, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ background:"#fff", borderRadius:32, padding:"40px", textAlign:"center", boxShadow:"0 20px 60px rgba(0,0,0,0.3)", animation:"celebIn 0.4s cubic-bezier(.4,2,.6,1)" }}>
+            <div style={{ fontSize:80, marginBottom:12 }}>🎊</div>
+            <div style={{ fontSize:26, fontWeight:900, color:"#1e293b" }}>ぜんぶできた！！</div>
+            <div style={{ fontSize:16, color:"#64748b", marginTop:8 }}>すごい！さいこうだよ！</div>
+          </div>
+        </div>
+      );
+    }
+
+    function SmallStepCard() {
+      const [screen, setScreen]               = useState("home");
+      const [selectedTask, setSelectedTask]   = useState(null);
+      const [completedSteps, setCompletedSteps] = useState([]);
+      const [showCelebration, setShowCelebration] = useState(false);
+      const [selfChoice, setSelfChoice]       = useState(false);
+      const [history, setHistory]             = useState(() => { try { return JSON.parse(localStorage.getItem("tdl_ss_history")||"{}"); } catch { return {}; } });
+      const [customTasks, setCustomTasks]     = useState(() => { try { return JSON.parse(localStorage.getItem("tdl_ss_custom")||"[]"); } catch { return []; } });
+      const [editTask, setEditTask]           = useState(null);
+      const [newStepLabel, setNewStepLabel]   = useState("");
+      const [newStepIcon, setNewStepIcon]     = useState("⭐");
+      const [customTitle, setCustomTitle]     = useState("");
+      const [customIcon, setCustomIcon]       = useState("📋");
+
+      useEffect(() => { localStorage.setItem("tdl_ss_history", JSON.stringify(history)); }, [history]);
+      useEffect(() => { localStorage.setItem("tdl_ss_custom", JSON.stringify(customTasks)); }, [customTasks]);
+
+      const allTasks = [...PRESET_TASKS, ...customTasks];
+
+      function startTask(task) {
+        setSelectedTask(task); setCompletedSteps([]); setShowCelebration(false); setSelfChoice(false); setScreen("task");
+      }
+
+      function toggleStep(stepId) {
+        setCompletedSteps(prev => {
+          const next = prev.includes(stepId) ? prev.filter(x => x!==stepId) : [...prev, stepId];
+          if (selectedTask.steps.every(s => next.includes(s.id))) {
+            setShowCelebration(true);
+            setTimeout(() => setShowCelebration(false), 2800);
+            setHistory(h => ({ ...h, [selectedTask.id]: (h[selectedTask.id]||0)+1 }));
+          }
+          return next;
+        });
+      }
+
+      function startNewCustom() {
+        setEditTask({ id:`custom_${Date.now()}`, icon:"📋", title:"", color:"#6366f1", light:"#eef2ff", steps:[] });
+        setCustomTitle(""); setCustomIcon("📋"); setNewStepLabel(""); setNewStepIcon("⭐");
+        setScreen("custom-edit");
+      }
+
+      function addStepToEdit() {
+        if (!newStepLabel.trim()) return;
+        setEditTask(prev => ({ ...prev, steps:[...prev.steps, { id:`step_${Date.now()}`, label:newStepLabel.trim(), icon:newStepIcon }] }));
+        setNewStepLabel("");
+      }
+
+      function saveCustomTask() {
+        if (!customTitle.trim() || !editTask?.steps.length) return;
+        setCustomTasks(prev => [...prev, { ...editTask, title:customTitle.trim(), icon:customIcon }]);
+        setScreen("home");
+      }
+
+      // HOME
+      if (screen === "home") return (
+        <div style={{ minHeight:"100vh", background:"linear-gradient(160deg,#f0fdf4,#ecfdf5,#d1fae5)" }}>
+          <div style={{ background:"linear-gradient(135deg,#059669,#10b981)", padding:"24px 20px 32px", color:"#fff" }}>
+            <div style={{ maxWidth:600, margin:"0 auto" }}>
+              <div style={{ fontSize:13, color:"#a7f3d0", fontWeight:700, letterSpacing:1 }}>スモールステップカード</div>
+              <div style={{ fontSize:24, fontWeight:900, marginTop:4 }}>✅ やることをわけよう！</div>
+              <div style={{ fontSize:14, color:"#d1fae5", marginTop:6 }}>「できない」を「できた」にかえる分解術</div>
+            </div>
+          </div>
+          <div style={{ maxWidth:600, margin:"0 auto", padding:"20px 16px 80px" }}>
+            <div style={{ fontWeight:900, fontSize:15, color:"#065f46", marginBottom:12 }}>📋 タスクをえらぼう</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:24 }}>
+              {allTasks.map(task => {
+                const count = history[task.id]||0;
+                const isCustom = customTasks.some(c => c.id===task.id);
+                return (
+                  <div key={task.id} className="card" onClick={() => startTask(task)} style={{
+                    background:"#fff", borderRadius:20, padding:"18px 14px", textAlign:"center",
+                    border:`2px solid ${task.color}33`, boxShadow:"0 2px 8px rgba(0,0,0,0.06)", position:"relative",
+                  }}>
+                    {isCustom && (
+                      <button className="btn" onClick={e => { e.stopPropagation(); setCustomTasks(p => p.filter(t => t.id!==task.id)); }}
+                        style={{ position:"absolute", top:8, right:8, width:22, height:22, borderRadius:99, background:"#fee2e2", color:"#ef4444", fontSize:11, fontWeight:900, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+                    )}
+                    <div style={{ fontSize:40, marginBottom:8 }}>{task.icon}</div>
+                    <div style={{ fontWeight:900, fontSize:14, color:"#1e293b", marginBottom:4 }}>{task.title}</div>
+                    <div style={{ fontSize:11, color:task.color, fontWeight:700, background:`${task.color}15`, padding:"3px 10px", borderRadius:99, display:"inline-block" }}>{task.steps.length}ステップ</div>
+                    {count>0 && <div style={{ marginTop:6, fontSize:11, color:"#64748b" }}>{count}かいクリア🎉</div>}
+                  </div>
+                );
+              })}
+              <div className="card" onClick={startNewCustom} style={{ background:"#f8fafc", borderRadius:20, padding:"18px 14px", textAlign:"center", border:"2px dashed #cbd5e1" }}>
+                <div style={{ fontSize:40, marginBottom:8 }}>➕</div>
+                <div style={{ fontWeight:900, fontSize:14, color:"#64748b" }}>オリジナルを作る</div>
+                <div style={{ fontSize:11, color:"#94a3b8", marginTop:4 }}>じぶんでステップをつくろう</div>
+              </div>
+            </div>
+            <div style={{ background:"#fff", borderRadius:16, padding:"16px 20px", border:"1px solid #d1fae5" }}>
+              <div style={{ fontWeight:900, fontSize:14, color:"#065f46", marginBottom:8 }}>💡 つかいかた</div>
+              <div style={{ fontSize:13, color:"#374151", lineHeight:1.7 }}>タスクをえらんで、ひとつずつタップしながらすすもう。<br/>「できた！」をあつめて、じしんをつけよう✨</div>
+            </div>
+          </div>
+        </div>
+      );
+
+      // CUSTOM EDIT
+      if (screen === "custom-edit") return (
+        <div style={{ minHeight:"100vh", background:"#f8fafc" }}>
+          <div style={{ background:"linear-gradient(135deg,#4f46e5,#7c3aed)", padding:"20px 20px 28px", color:"#fff" }}>
+            <div style={{ maxWidth:600, margin:"0 auto" }}>
+              <button className="btn" onClick={() => setScreen("home")} style={{ background:"rgba(255,255,255,0.15)", color:"#fff", borderRadius:10, padding:"6px 14px", fontSize:13, fontWeight:800, marginBottom:12 }}>← もどる</button>
+              <div style={{ fontSize:20, fontWeight:900 }}>📋 オリジナルタスクをつくる</div>
+            </div>
+          </div>
+          <div style={{ maxWidth:600, margin:"0 auto", padding:"20px 16px 80px" }}>
+            <div style={{ background:"#fff", borderRadius:16, padding:"20px", marginBottom:16, boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
+              <div style={{ fontWeight:900, color:"#374151", marginBottom:10 }}>タスクのなまえ</div>
+              <div style={{ display:"flex", gap:10 }}>
+                <input value={customIcon} onChange={e => setCustomIcon(e.target.value)} style={{ width:56, textAlign:"center", fontSize:24, border:"2px solid #e5e7eb", borderRadius:10, padding:"6px" }} />
+                <input value={customTitle} onChange={e => setCustomTitle(e.target.value)} placeholder="タスクのなまえ（例：おべんきょう）"
+                  style={{ flex:1, border:"2px solid #e5e7eb", borderRadius:10, padding:"10px 14px", fontSize:14, fontWeight:700, outline:"none" }} />
+              </div>
+            </div>
+            <div style={{ background:"#fff", borderRadius:16, padding:"20px", marginBottom:16, boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
+              <div style={{ fontWeight:900, color:"#374151", marginBottom:12 }}>ステップをついか</div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:12 }}>
+                {STICKERS.map(s => (
+                  <span key={s} onClick={() => setNewStepIcon(s)} style={{ fontSize:24, cursor:"pointer", padding:"4px 6px", borderRadius:8, background:newStepIcon===s?"#eef2ff":"transparent", border:newStepIcon===s?"2px solid #6366f1":"2px solid transparent", transition:"all 0.12s" }}>{s}</span>
+                ))}
+              </div>
+              <div style={{ display:"flex", gap:8 }}>
+                <input value={newStepLabel} onChange={e => setNewStepLabel(e.target.value)} onKeyDown={e => e.key==="Enter"&&addStepToEdit()}
+                  placeholder="ステップのないよう（例：えんぴつをだす）"
+                  style={{ flex:1, border:"2px solid #e5e7eb", borderRadius:10, padding:"10px 14px", fontSize:14, outline:"none" }} />
+                <button className="btn" onClick={addStepToEdit} style={{ background:"#6366f1", color:"#fff", borderRadius:10, padding:"10px 16px", fontSize:16, fontWeight:900 }}>＋</button>
+              </div>
+            </div>
+            {editTask?.steps.length>0 && (
+              <div style={{ background:"#fff", borderRadius:16, padding:"20px", marginBottom:20, boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
+                <div style={{ fontWeight:900, color:"#374151", marginBottom:12 }}>つくったステップ</div>
+                {editTask.steps.map((step,i) => (
+                  <div key={step.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 0", borderBottom:"1px solid #f1f5f9" }}>
+                    <div style={{ width:28, height:28, borderRadius:99, background:"#eef2ff", color:"#6366f1", fontSize:13, fontWeight:900, display:"flex", alignItems:"center", justifyContent:"center" }}>{i+1}</div>
+                    <div style={{ fontSize:20 }}>{step.icon}</div>
+                    <div style={{ flex:1, fontSize:14, fontWeight:700 }}>{step.label}</div>
+                    <button className="btn" onClick={() => setEditTask(prev => ({ ...prev, steps:prev.steps.filter(s => s.id!==step.id) }))} style={{ color:"#ef4444", background:"#fee2e2", borderRadius:8, padding:"4px 10px", fontSize:13, fontWeight:900 }}>削除</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button className="btn" onClick={saveCustomTask} disabled={!customTitle.trim()||!editTask?.steps.length} style={{
+              width:"100%", padding:"18px", borderRadius:16, fontSize:16, fontWeight:900,
+              background: customTitle.trim()&&editTask?.steps.length ? "linear-gradient(135deg,#4f46e5,#7c3aed)" : "#e5e7eb",
+              color: customTitle.trim()&&editTask?.steps.length ? "#fff" : "#9ca3af",
+              cursor: customTitle.trim()&&editTask?.steps.length ? "pointer" : "not-allowed",
+            }}>💾 タスクをほぞんする</button>
+          </div>
+        </div>
+      );
+
+      // TASK RUN
+      const pct = selectedTask ? Math.round((completedSteps.length/selectedTask.steps.length)*100) : 0;
+      const currentStepIndex = selectedTask ? selectedTask.steps.findIndex(s => !completedSteps.includes(s.id)) : -1;
+
+      return (
+        <div style={{ minHeight:"100vh", background:selectedTask?.light||"#f8fafc" }}>
+          {showCelebration && <Celebration />}
+          <div style={{ background:`linear-gradient(135deg,${selectedTask.color},${selectedTask.color}cc)`, padding:"20px 20px 28px", color:"#fff" }}>
+            <div style={{ maxWidth:600, margin:"0 auto" }}>
+              <button className="btn" onClick={() => setScreen("home")} style={{ background:"rgba(255,255,255,0.2)", color:"#fff", borderRadius:10, padding:"6px 14px", fontSize:13, fontWeight:800, marginBottom:12 }}>← もどる</button>
+              <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                <div style={{ fontSize:48 }}>{selectedTask.icon}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:22, fontWeight:900 }}>{selectedTask.title}</div>
+                  <div style={{ fontSize:14, color:"rgba(255,255,255,0.8)", marginTop:2 }}>{completedSteps.length}/{selectedTask.steps.length} ステップ</div>
+                </div>
+                <div style={{ position:"relative", width:80, height:80 }}>
+                  <ProgressRing pct={pct} color="#fff" size={80} />
+                  <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, fontWeight:900, color:"#fff" }}>{pct}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ maxWidth:600, margin:"0 auto", padding:"20px 16px 80px" }}>
+            <div style={{ background:"#fff", borderRadius:14, padding:"12px 16px", marginBottom:20, display:"flex", alignItems:"center", gap:12, boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, fontWeight:900, color:"#374151" }}>じぶんでえらぶモード</div>
+                <div style={{ fontSize:11, color:"#64748b" }}>すきなじゅんばんでやってみよう</div>
+              </div>
+              <div onClick={() => setSelfChoice(v => !v)} style={{ width:48, height:28, borderRadius:99, background:selfChoice?selectedTask.color:"#e5e7eb", cursor:"pointer", transition:"background 0.2s", position:"relative" }}>
+                <div style={{ position:"absolute", top:4, left:selfChoice?24:4, width:20, height:20, borderRadius:99, background:"#fff", boxShadow:"0 1px 4px rgba(0,0,0,0.2)", transition:"left 0.2s" }} />
+              </div>
+            </div>
+
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              {selectedTask.steps.map((step,i) => {
+                const done = completedSteps.includes(step.id);
+                const isCurrent = !selfChoice && i===currentStepIndex;
+                const locked = !selfChoice && i>currentStepIndex;
+                return (
+                  <div key={step.id} className={`step-card${done?" pop":""}`} onClick={() => !locked&&toggleStep(step.id)} style={{
+                    background: done?`${selectedTask.color}18`:locked?"#f1f5f9":"#fff",
+                    border: done?`2px solid ${selectedTask.color}`:isCurrent?`2px solid ${selectedTask.color}88`:"2px solid #e5e7eb",
+                    borderRadius:18, padding:"16px 18px", display:"flex", alignItems:"center", gap:14,
+                    opacity:locked?0.5:1, cursor:locked?"not-allowed":"pointer",
+                    boxShadow:isCurrent?`0 4px 16px ${selectedTask.color}30`:"0 1px 4px rgba(0,0,0,0.05)",
+                    transform:isCurrent?"scale(1.01)":"scale(1)",
+                  }}>
+                    <div style={{ width:44, height:44, borderRadius:99, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center",
+                      background:done?selectedTask.color:isCurrent?`${selectedTask.color}20`:"#f1f5f9", fontSize:done?22:24, transition:"all 0.3s" }}>
+                      {done?"✅":step.icon}
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                        <span style={{ fontSize:11, fontWeight:900, color:done?selectedTask.color:"#94a3b8", background:done?`${selectedTask.color}15`:"#f1f5f9", padding:"2px 8px", borderRadius:99 }}>{i+1}</span>
+                        {isCurrent && <span style={{ fontSize:11, fontWeight:900, color:selectedTask.color }}>← いまここ！</span>}
+                      </div>
+                      <div style={{ fontSize:16, fontWeight:done?700:900, color:done?"#64748b":"#1e293b", marginTop:4, textDecoration:done?"line-through":"none" }}>{step.label}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {completedSteps.length===selectedTask.steps.length && (
+              <div style={{ marginTop:24, background:"#fff", borderRadius:20, padding:"24px", textAlign:"center", boxShadow:"0 4px 16px rgba(0,0,0,0.08)" }}>
+                <div style={{ fontSize:48, marginBottom:8 }}>🎉</div>
+                <div style={{ fontSize:20, fontWeight:900, color:"#065f46" }}>ぜんぶクリア！！</div>
+                <div style={{ fontSize:14, color:"#64748b", marginTop:4 }}>よくできました！</div>
+                <button className="btn" onClick={() => { setCompletedSteps([]); setShowCelebration(false); }}
+                  style={{ marginTop:16, background:selectedTask.color, color:"#fff", borderRadius:12, padding:"12px 28px", fontSize:14, fontWeight:900, boxShadow:`0 4px 12px ${selectedTask.color}44` }}>
+                  もういちど ↩
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<SmallStepCard />);
+  </script>
+</body>
+</html>

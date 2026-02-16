@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>対話プロンプト100</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; min-height: 100vh; background: #f8fafc; }
+    .card      { transition: all 0.18s cubic-bezier(.4,2,.6,1); cursor: pointer; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.1); }
+    .btn       { border: none; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.15s; }
+    .btn:hover  { filter: brightness(1.07); transform: scale(1.02); }
+    .btn:active { transform: scale(0.97); }
+    .fav-btn   { transition: all 0.2s cubic-bezier(.4,2,.6,1); border: none; background: none; cursor: pointer; }
+    .fav-btn:hover { transform: scale(1.2); }
+    .modal-bg  { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal     { background: #fff; border-radius: 28px; padding: 28px; max-width: 500px; width: 100%; animation: modalIn 0.3s cubic-bezier(.4,2,.6,1); max-height: 90vh; overflow-y: auto; }
+    @keyframes modalIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const PROMPTS = [
+      // あさ
+      { id:1,  situation:"morning",  tag:"きりかえ",   ng:"早く起きなさい！",           ok:"起きたら何がしたい？",                         tip:"「やりたいこと」で自発的に動くスイッチを入れます。",               color:"#f59e0b" },
+      { id:2,  situation:"morning",  tag:"したく",     ng:"ごはん食べなさい！",         ok:"今日のごはん、どれが好きそう？",                 tip:"選択肢を与えることで「自分で決めた感」が生まれます。",             color:"#f59e0b" },
+      { id:3,  situation:"morning",  tag:"したく",     ng:"早く着替えて！",             ok:"どの服がきょうの気分？",                         tip:"自己決定を引き出すことで動きが速くなります。",                     color:"#f59e0b" },
+      { id:4,  situation:"morning",  tag:"もちもの",   ng:"また忘れ物した！",           ok:"カバンに入ってるか一緒に確認しようか？",           tip:"責めずに「チームで解決」の姿勢を示します。",                       color:"#f59e0b" },
+      { id:5,  situation:"morning",  tag:"きりかえ",   ng:"テレビ消して！",             ok:"テレビは何分後に消す？",                         tip:"子ども自身に終わりの時間を決めさせます。",                         color:"#f59e0b" },
+      // しゅくだい
+      { id:6,  situation:"homework", tag:"とりかかり", ng:"宿題しなさい！",             ok:"筆箱を出すだけやってみよう。",                   tip:"最初の一歩をとても小さくするのがコツです。",                       color:"#3b82f6" },
+      { id:7,  situation:"homework", tag:"しゅうちゅう",ng:"ちゃんとやって！",          ok:"まず3問だけやったら教えて。",                     tip:"「ゴールを見える形」にすることで集中できます。",                   color:"#3b82f6" },
+      { id:8,  situation:"homework", tag:"もとめる",   ng:"なんでこんなのわからないの！",ok:"どこがわからなかった？一緒に見てみよう。",       tip:"「わからない」を言える安全な場を作ります。",                       color:"#3b82f6" },
+      { id:9,  situation:"homework", tag:"ほめる",     ng:"(何も言わない)",             ok:"最後まで頑張ったね。どこが一番むずかしかった？", tip:"努力のプロセスを言語化することで自己肯定感が育ちます。",           color:"#3b82f6" },
+      { id:10, situation:"homework", tag:"とりかかり", ng:"まだやってないの！",         ok:"宿題、今日はどれから始めたい？",                 tip:"順番の自己決定が取り組みを後押しします。",                         color:"#3b82f6" },
+      // きもち
+      { id:11, situation:"emotion",  tag:"おちつき",   ng:"泣かないの！",               ok:"泣きたいよね。どうしたの？",                     tip:"感情を受け止めてから話し合いに入ります。",                         color:"#ef4444" },
+      { id:12, situation:"emotion",  tag:"きもちをきく",ng:"また怒って！",              ok:"いまどんな気持ち？",                             tip:"感情の名前を言語化することが落ち着きの第一歩です。",               color:"#ef4444" },
+      { id:13, situation:"emotion",  tag:"けんか",     ng:"謝りなさい！",               ok:"どうしたらよかったと思う？",                     tip:"自分で考えさせることで、本当の理解が生まれます。",                 color:"#ef4444" },
+      { id:14, situation:"emotion",  tag:"こうかん",   ng:"そんなことしちゃダメ！",     ok:"〇〇したかったんだね。でもどうしたらよかったかな？",tip:"気持ちを認めてから行動を一緒に考えます。",                       color:"#ef4444" },
+      { id:15, situation:"emotion",  tag:"おちつき",   ng:"うるさい！",                 ok:"大きな声は、何か伝えたいことがある？",           tip:"行動の背景にある「気持ち」を探ります。",                           color:"#ef4444" },
+      // ごはん
+      { id:16, situation:"meal",     tag:"しょくじ",   ng:"残したらダメ！",             ok:"一口だけ食べてみようか。どんな味がする？",       tip:"「一口」というハードルを最小化します。",                           color:"#10b981" },
+      { id:17, situation:"meal",     tag:"しょくじ",   ng:"野菜食べなさい！",           ok:"野菜、今日はにんじんとブロッコリーどっちから？", tip:"二択で自己決定の感覚を引き出します。",                             color:"#10b981" },
+      { id:18, situation:"meal",     tag:"ながたべ",   ng:"早く食べて！",               ok:"どれが一番おいしい？",                           tip:"食事への興味が自然と早食いにつながります。",                       color:"#10b981" },
+      { id:19, situation:"meal",     tag:"しょくじ",   ng:"遊ばないで食べて！",         ok:"ご飯中に何か気になることがある？",               tip:"落ち着かない理由を探ります。",                                     color:"#10b981" },
+      { id:20, situation:"meal",     tag:"ほめる",     ng:"(何も言わない)",             ok:"全部食べられたね！どれが好きだった？",           tip:"完食後の会話が次の食事への動機になります。",                       color:"#10b981" },
+      // よる
+      { id:21, situation:"night",    tag:"きりかえ",   ng:"お風呂入りなさい！",         ok:"お風呂、今日は何のシャンプー使う？",             tip:"「楽しい要素」で自発的に動くきっかけを作ります。",                 color:"#8b5cf6" },
+      { id:22, situation:"night",    tag:"ねる",       ng:"早く寝なさい！",             ok:"布団に入ったら何の話をしようか？",               tip:"「布団でのご褒美（お話）」を作ります。",                           color:"#8b5cf6" },
+      { id:23, situation:"night",    tag:"きりかえ",   ng:"ゲームやめて！",             ok:"あと何分でやめられる？",                         tip:"子ども自身に終了時間を決めさせます。",                             color:"#8b5cf6" },
+      { id:24, situation:"night",    tag:"ふりかえり", ng:"(何も言わない)",             ok:"今日一番うれしかったことは何だった？",           tip:"1日のポジティブな締めくくりが翌日の意欲につながります。",         color:"#8b5cf6" },
+      { id:25, situation:"night",    tag:"ねる",       ng:"電気消して！",               ok:"電気消すの、今日は自分でできる？",               tip:"小さな「自分でできた」体験を積み重ねます。",                       color:"#8b5cf6" },
+      // がっこう
+      { id:26, situation:"school",   tag:"ほうこく",   ng:"学校どうだった？(だまる)",   ok:"今日、給食は何だった？",                         tip:"具体的な質問が答えやすい入口になります。",                         color:"#f97316" },
+      { id:27, situation:"school",   tag:"ともだち",   ng:"友達と仲良くしなさい！",     ok:"今日、誰かと一緒に遊んだ？",                     tip:"事実確認から始めて、感情に近づきます。",                           color:"#f97316" },
+      { id:28, situation:"school",   tag:"もんだい",   ng:"なんでそんなことしたの！",   ok:"そのとき、どんな気持ちだった？",                 tip:"行動より先に「気持ち」を聞きます。",                               color:"#f97316" },
+      { id:29, situation:"school",   tag:"はげます",   ng:"がんばりなさい！",           ok:"むずかしいことがあったら、どう乗り越えた？",     tip:"乗り越えた経験を言語化させてレジリエンスを育てます。",             color:"#f97316" },
+      { id:30, situation:"school",   tag:"ほうこく",   ng:"先生に何か言われた？",       ok:"今日、先生がおもしろいと思ったことを教えて。",   tip:"ネガティブな情報より楽しい情報を引き出します。",                   color:"#f97316" },
+    ];
+
+    const SITUATIONS = [
+      { id:"all",      label:"すべて",     icon:"📋", color:"#64748b" },
+      { id:"morning",  label:"あさ",       icon:"🌅", color:"#f59e0b" },
+      { id:"homework", label:"しゅくだい", icon:"📝", color:"#3b82f6" },
+      { id:"emotion",  label:"きもち",     icon:"💝", color:"#ef4444" },
+      { id:"meal",     label:"ごはん",     icon:"🍚", color:"#10b981" },
+      { id:"night",    label:"よる",       icon:"🌙", color:"#8b5cf6" },
+      { id:"school",   label:"がっこう",   icon:"🏫", color:"#f97316" },
+    ];
+
+    function DialogPrompt() {
+      const [filter, setFilter]           = useState("all");
+      const [selected, setSelected]       = useState(null);
+      const [showFavOnly, setShowFavOnly] = useState(false);
+      const [favorites, setFavorites]     = useState(() => { try { return JSON.parse(localStorage.getItem("tdl_dp_fav")||"[]"); } catch { return []; } });
+      const [used, setUsed]               = useState(() => { try { return JSON.parse(localStorage.getItem("tdl_dp_used")||"[]"); } catch { return []; } });
+
+      useEffect(() => { localStorage.setItem("tdl_dp_fav",  JSON.stringify(favorites)); }, [favorites]);
+      useEffect(() => { localStorage.setItem("tdl_dp_used", JSON.stringify(used));      }, [used]);
+
+      function toggleFav(id) {
+        setFavorites(prev => prev.includes(id) ? prev.filter(x => x!==id) : [...prev, id]);
+      }
+      function markUsed(id) {
+        setUsed(prev => prev.includes(id) ? prev : [...prev, id]);
+      }
+
+      let filtered = filter==="all" ? PROMPTS : PROMPTS.filter(p => p.situation===filter);
+      if (showFavOnly) filtered = filtered.filter(p => favorites.includes(p.id));
+
+      function getRandomPrompt() {
+        const pool = filtered.filter(p => !used.includes(p.id));
+        if (!pool.length) return;
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        setSelected(pick);
+        markUsed(pick.id);
+      }
+
+      const sitMap = Object.fromEntries(SITUATIONS.map(s => [s.id, s]));
+
+      return (
+        <div style={{ minHeight:"100vh", background:"#f8fafc" }}>
+
+          {/* Header */}
+          <div style={{ background:"linear-gradient(135deg,#7c3aed,#a78bfa)", padding:"24px 20px 32px", color:"#fff" }}>
+            <div style={{ maxWidth:640, margin:"0 auto" }}>
+              <div style={{ fontSize:13, color:"#ddd6fe", fontWeight:700, letterSpacing:1 }}>対話プロンプト100</div>
+              <div style={{ fontSize:24, fontWeight:900, marginTop:4 }}>💬 魔法のことば</div>
+              <div style={{ fontSize:14, color:"#ede9fe", marginTop:6 }}>「叱る」を「問う」に変える言葉のレシピ</div>
+              <div style={{ display:"flex", gap:16, marginTop:16 }}>
+                {[
+                  { label:"つかった",   value:used.length,              icon:"✅" },
+                  { label:"お気に入り", value:favorites.length,          icon:"❤️" },
+                  { label:"のこり",     value:PROMPTS.length-used.length, icon:"📋" },
+                ].map(s => (
+                  <div key={s.label} style={{ background:"rgba(255,255,255,0.15)", borderRadius:12, padding:"8px 14px", textAlign:"center" }}>
+                    <div style={{ fontSize:18, fontWeight:900 }}>{s.icon} {s.value}</div>
+                    <div style={{ fontSize:10, color:"#ddd6fe", marginTop:2 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ maxWidth:640, margin:"0 auto", padding:"20px 16px 80px" }}>
+
+            {/* Random button */}
+            <button className="btn" onClick={getRandomPrompt} style={{
+              width:"100%", padding:"16px", borderRadius:16, fontSize:15, fontWeight:900,
+              background:"linear-gradient(135deg,#7c3aed,#a78bfa)", color:"#fff",
+              boxShadow:"0 4px 16px rgba(124,58,237,0.3)", marginBottom:20,
+              display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+            }}>🎲 ランダムにひとつえらぶ</button>
+
+            {/* Filters */}
+            <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:4, marginBottom:12 }}>
+              {SITUATIONS.map(s => (
+                <button key={s.id} className="btn" onClick={() => setFilter(s.id)} style={{
+                  padding:"8px 14px", borderRadius:99, fontSize:12, fontWeight:800, whiteSpace:"nowrap",
+                  background: filter===s.id ? s.color : "#f1f5f9",
+                  color:       filter===s.id ? "#fff"  : "#64748b",
+                  flexShrink:0,
+                }}>{s.icon} {s.label}</button>
+              ))}
+            </div>
+
+            {/* Fav toggle + count */}
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
+              <span onClick={() => setShowFavOnly(v => !v)} style={{
+                fontSize:13, fontWeight:800, cursor:"pointer", padding:"6px 14px", borderRadius:99,
+                background: showFavOnly ? "#fce7f3" : "#f1f5f9",
+                color:       showFavOnly ? "#be185d" : "#64748b",
+                transition:"all 0.15s",
+              }}>❤️ お気に入りだけ見る</span>
+              <span style={{ fontSize:12, color:"#94a3b8", marginLeft:"auto" }}>{filtered.length}件</span>
+            </div>
+
+            {/* Cards */}
+            {filtered.length===0 ? (
+              <div style={{ textAlign:"center", padding:"40px 20px", color:"#94a3b8", fontSize:14, fontWeight:700 }}>
+                <div style={{ fontSize:48, marginBottom:12 }}>💬</div>
+                ここにはまだプロンプトがありません
+              </div>
+            ) : (
+              <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                {filtered.map(prompt => {
+                  const isFav  = favorites.includes(prompt.id);
+                  const isUsed = used.includes(prompt.id);
+                  const sit    = sitMap[prompt.situation];
+                  return (
+                    <div key={prompt.id} className="card" onClick={() => { setSelected(prompt); markUsed(prompt.id); }} style={{
+                      background:"#fff", borderRadius:18, padding:"16px 18px",
+                      boxShadow:"0 2px 8px rgba(0,0,0,0.05)",
+                      borderLeft:`4px solid ${prompt.color}`,
+                      opacity: isUsed ? 0.75 : 1,
+                    }}>
+                      <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
+                        <div style={{ flex:1 }}>
+                          <div style={{ display:"flex", gap:6, marginBottom:8, flexWrap:"wrap" }}>
+                            <span style={{ fontSize:11, fontWeight:800, background:`${prompt.color}15`, color:prompt.color, padding:"2px 8px", borderRadius:99 }}>
+                              {sit?.icon} {sit?.label}
+                            </span>
+                            <span style={{ fontSize:11, fontWeight:800, background:"#f1f5f9", color:"#64748b", padding:"2px 8px", borderRadius:99 }}>
+                              #{prompt.tag}
+                            </span>
+                            {isUsed && <span style={{ fontSize:11, fontWeight:800, background:"#f0fdf4", color:"#16a34a", padding:"2px 8px", borderRadius:99 }}>✅ つかった</span>}
+                          </div>
+                          <div style={{ fontSize:11, color:"#ef4444", fontWeight:800, marginBottom:4 }}>
+                            🚫 よくある言い方：<span style={{ color:"#94a3b8", textDecoration:"line-through" }}>{prompt.ng}</span>
+                          </div>
+                          <div style={{ fontSize:15, fontWeight:900, color:"#1e293b" }}>💬 「{prompt.ok}」</div>
+                        </div>
+                        <button className="fav-btn" onClick={e => { e.stopPropagation(); toggleFav(prompt.id); }} style={{ fontSize:24, padding:4 }}>
+                          {isFav ? "❤️" : "🤍"}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Modal */}
+          {selected && (
+            <div className="modal-bg" onClick={() => setSelected(null)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <div style={{ display:"flex", gap:8, marginBottom:20, flexWrap:"wrap", alignItems:"center" }}>
+                  <span style={{ fontSize:12, fontWeight:800, background:`${selected.color}15`, color:selected.color, padding:"4px 12px", borderRadius:99 }}>
+                    {sitMap[selected.situation]?.icon} {sitMap[selected.situation]?.label}
+                  </span>
+                  <span style={{ fontSize:12, fontWeight:800, background:"#f1f5f9", color:"#64748b", padding:"4px 12px", borderRadius:99 }}>
+                    #{selected.tag}
+                  </span>
+                  <button className="fav-btn" onClick={() => toggleFav(selected.id)} style={{ marginLeft:"auto", fontSize:24, padding:"0 4px" }}>
+                    {favorites.includes(selected.id) ? "❤️" : "🤍"}
+                  </button>
+                </div>
+
+                <div style={{ background:"#fef2f2", borderRadius:16, padding:"14px 18px", marginBottom:16 }}>
+                  <div style={{ fontSize:12, color:"#dc2626", fontWeight:800, marginBottom:6 }}>🚫 よくある言い方</div>
+                  <div style={{ fontSize:17, fontWeight:800, color:"#7f1d1d", textDecoration:"line-through" }}>「{selected.ng}」</div>
+                </div>
+
+                <div style={{ background:"#f0fdf4", borderRadius:16, padding:"16px 18px", marginBottom:16, border:`2px solid ${selected.color}44` }}>
+                  <div style={{ fontSize:12, color:"#16a34a", fontWeight:800, marginBottom:8 }}>✨ かわりのことば</div>
+                  <div style={{ fontSize:22, fontWeight:900, color:"#14532d", lineHeight:1.4 }}>「{selected.ok}」</div>
+                </div>
+
+                <div style={{ background:"#faf5ff", borderRadius:14, padding:"14px 16px", marginBottom:20 }}>
+                  <div style={{ fontSize:12, color:"#7c3aed", fontWeight:800, marginBottom:6 }}>💡 なぜ効くのか</div>
+                  <div style={{ fontSize:14, color:"#4c1d95", lineHeight:1.6 }}>{selected.tip}</div>
+                </div>
+
+                <button className="btn" onClick={() => setSelected(null)} style={{
+                  width:"100%", padding:"14px", borderRadius:14, fontSize:15, fontWeight:900,
+                  background:"linear-gradient(135deg,#7c3aed,#a78bfa)", color:"#fff",
+                }}>とじる</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<DialogPrompt />);
+  </script>
+</body>
+</html>
