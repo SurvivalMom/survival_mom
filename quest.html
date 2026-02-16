@@ -32,7 +32,19 @@
     @keyframes fall1 { to { top: 110%; transform: rotate(-360deg) translateX(-20px); } }
     @keyframes fall2 { to { top: 110%; transform: rotate(180deg) translateX(40px); } }
     @keyframes fall3 { to { top: 110%; transform: rotate(-180deg) translateX(-35px); } }
-  </style>
+  
+    .home-btn {
+      position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+      background: rgba(15,14,23,0.88); backdrop-filter: blur(8px);
+      color: #fff; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 99px; padding: 10px 20px;
+      font-family: "Nunito", sans-serif; font-size: 13px; font-weight: 800;
+      text-decoration: none; display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: all 0.2s cubic-bezier(.4,2,.3,1);
+    }
+    .home-btn:hover { transform: scale(1.08); background: rgba(255,137,6,0.92); border-color: transparent; }
+</style>
 </head>
 <body>
   <div id="root"></div>
@@ -355,5 +367,6 @@
     const root = ReactDOM.createRoot(document.getElementById("root"));
     root.render(<QuestBoard />);
   </script>
+  <a class="home-btn" href="index.html">🏠 ホームへ</a>
 </body>
 </html>
