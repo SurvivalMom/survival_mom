@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <style>
+        /* あなたのオリジナルのstyle.cssを完全に反映 */
         body { margin: 0; background: #0f172a; color: #f8fafc; font-family: sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .glass-panel { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 40px; width: 100%; max-width: 480px; margin: 20px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .thermometer-container { background: rgba(0, 0, 0, 0.5); border-radius: 50px; width: 50px; height: 220px; position: relative; overflow: hidden; border: 4px solid rgba(255, 255, 255, 0.3); }
@@ -24,6 +25,7 @@
         const { useState, useEffect, useMemo } = React;
         const SECRET_PASSWORD = "master2025"; 
 
+        // --- パスワードゲート ---
         const PasswordGate = ({ onAuthorized }) => {
             const [input, setInput] = useState("");
             const [error, setError] = useState(false);
@@ -31,21 +33,45 @@
                 if (input === SECRET_PASSWORD) { onAuthorized(); } 
                 else { setError(true); setInput(""); }
             };
-            return React.createElement("div", { className: "glass-panel flex flex-col items-center justify-center min-h-[300px]" },
-                React.createElement("h2", { className: "text-xl font-bold mb-4" }, "🔐 survival_mam 限定公開"),
+            return React.createElement("div", { className: "glass-panel flex flex-col items-center justify-center min-h-[400px]" },
+                React.createElement("h2", { className: "text-xl font-bold mb-4" }, "🔐 限定公開ツール"),
                 React.createElement("input", {
                     type: "password", value: input, 
                     onChange: (e) => setInput(e.target.value),
                     onKeyDown: (e) => e.key === 'Enter' && check(),
-                    className: "w-full p-3 rounded-xl bg-white/10 border border-white/20 text-center mb-4 text-white outline-none focus:border-pink-500",
-                    placeholder: "Password"
+                    className: "w-full p-4 rounded-xl bg-white/10 border border-white/20 text-center mb-4 text-white text-lg",
+                    placeholder: "パスワードを入力"
                 }),
                 error && React.createElement("p", { className: "text-red-400 text-xs mb-4" }, "パスワードが正しくありません"),
-                React.createElement("button", { onClick: check, className: "w-full py-3 bg-pink-600 rounded-xl font-bold hover:bg-pink-500 transition-all" }, "ロックを解除")
+                React.createElement("button", { onClick: check, className: "w-full py-4 bg-pink-600 rounded-xl font-bold text-lg" }, "アプリを起動する")
             );
         };
 
+        // --- あなたのオリジナルのscript.js全内容 ---
         const App = () => {
+            const STORAGE_KEY = 'survival_mam_v_safe_logs';
+            const USERS_KEY = 'survival_mam_v_safe_names';
+            const VOICE_LIB = {
+                'ASD傾向': { s: '予定変更に混乱', v: '今日は〇〇が変わったけど、△△はいつもどおりだよ。大丈夫。', h: '予定変更への声かけ' },
+                'ADHD傾向': { s: '気持ちの切り替え', v: 'あと3分だけ！タイマーが鳴ったら終わりにしようね。', h: '切り替えの声かけ' },
+                '感覚過敏': { s: '音や光で辛い', v: 'ここは安全だよ。ゆっくり息を吐いて、吸ってごらん。', h: '感覚過敏への声かけ' },
+                '分離不安': { s: '離れるのが不安', v: 'お母さんは必ず〇時に迎えに来るよ。ぎゅーして充電しよう。', h: '分離不安への声かけ' },
+                '無気力': { s: '動けない・だるい', v: 'ゆっくり息をはいてみて。お母さんも一緒にするよ。', h: '無気力への声かけ' }
+            };
+            const MONSTERS = [
+                { id: 'iraira', name: 'イライラザウルス', emoji: '🦖', correctId: 1, voiceKey: 'ASD傾向' },
+                { id: 'shikushiku', name: 'シクシクゴースト', emoji: '👻', correctId: 2, voiceKey: 'ADHD傾向' },
+                { id: 'moyamoya', name: 'モヤモヤスモッグ', emoji: '🌫️', correctId: 1, voiceKey: '感覚過敏' },
+                { id: 'zukizuki', name: 'ズキズキニードル', emoji: '📍', correctId: 2, voiceKey: '分離不安' },
+                { id: 'mushimushi', name: 'ムシムシ・ムシ', emoji: '😶', correctId: 1, voiceKey: '無気力' }
+            ];
+            const COPING_CARDS = [
+                { id: 1, name: 'いきを はく', emoji: '🌬️' },
+                { id: 2, name: 'ぎゅーする', emoji: '🫂' },
+                { id: 3, name: 'かきだす', emoji: '✍️' },
+                { id: 4, name: 'おやすみ', emoji: '🛌' }
+            ];
+
             const [scene, setScene] = useState('user-select');
             const [user, setUser] = useState('');
             const [userNames, setUserNames] = useState(['ママ', 'こども 1', 'こども 2']);
@@ -57,62 +83,126 @@
             const [startTime, setStartTime] = useState(null);
             const [questions, setQuestions] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '' });
 
-            const VOICE_LIB = {
-                'ASD傾向': { v: '今日は〇〇が変わったけど、△△はいつもどおりだよ。大丈夫。', h: '予定変更への声かけ' },
-                'ADHD傾向': { v: 'あと3分だけ！タイマーが鳴ったら終わりにしようね。', h: '切り替えの声かけ' },
-                '感覚過敏': { v: 'ここは安全だよ。ゆっくり息を吐いて、吸ってごらん。', h: '感覚過敏への声かけ' },
-                '分離不安': { v: 'お母さんは必ず〇時に迎えに来るよ。ぎゅーして充電しよう。', h: '分離不安への声かけ' },
-                '無気力': { v: 'ゆっくり息をはいてみて。お母さんも一緒にするよ。', h: '無気力への声かけ' }
+            useEffect(() => {
+                const savedNames = localStorage.getItem(USERS_KEY);
+                if (savedNames) setUserNames(JSON.parse(savedNames));
+                const savedLogs = localStorage.getItem(STORAGE_KEY);
+                if (savedLogs) setHistory(JSON.parse(savedLogs));
+            }, []);
+
+            const saveNames = (newNames) => {
+                setUserNames(newNames);
+                localStorage.setItem(USERS_KEY, JSON.stringify(newNames));
             };
 
-            const MONSTERS = [
-                { id: 'iraira', name: 'イライラザウルス', emoji: '🦖', correctId: 1, voiceKey: 'ASD傾向' },
-                { id: 'shikushiku', name: 'シクシクゴースト', emoji: '👻', correctId: 2, voiceKey: 'ADHD傾向' },
-                { id: 'moyamoya', name: 'モヤモヤスモッグ', emoji: '🌫️', correctId: 1, voiceKey: '感覚過敏' }
-            ];
+            const handleReset = () => {
+                if (window.confirm("記録とお名前をすべて消して、新しくスタートしますか？")) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(USERS_KEY);
+                    setUserNames(['ママ', 'こども 1', 'こども 2']);
+                    setHistory([]);
+                    setQuestions({ q1: '', q2: '', q3: '', q4: '', q5: '' });
+                    setScene('user-select');
+                }
+            };
 
-            const COPING_CARDS = [
-                { id: 1, name: 'いきを はく', emoji: '🌬️' },
-                { id: 2, name: 'ぎゅーする', emoji: '🫂' }
-            ];
-
-            const handleAction = card => {
+            const handleAction = (card) => {
                 if (card.id === monster.correctId) {
                     const nextTemp = Math.max(0, temp - 25);
                     setTemp(nextTemp);
-                    if (nextTemp <= 10) setScene('result-win');
+                    if (nextTemp <= 10) {
+                        const duration = Math.floor((Date.now() - startTime) / 1000);
+                        const newLog = { user, monster: monster.name, time: duration, timestamp: Date.now() };
+                        const newHistory = [newLog, ...history];
+                        setHistory(newHistory);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
+                        setScene('result-win');
+                    }
                 } else {
                     setTemp(Math.min(100, temp + 15));
                 }
+            };
+
+            const monthlyLogs = useMemo(() => {
+                const now = new Date();
+                return history.filter(l => {
+                    const d = new Date(l.timestamp);
+                    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() && l.user === user;
+                });
+            }, [history, user]);
+
+            const generateReport = (target) => {
+                if (monthlyLogs.length === 0) return "記録を溜めてから選んでください。";
+                const total = monthlyLogs.length;
+                const avg = Math.round(monthlyLogs.reduce((s, l) => s + l.time, 0) / total);
+                const base = `対応数：${total}件。平均落ち着き時間：${avg}秒。`;
+                const t = {
+                    'pro': `（専門家へ）${base}客観的データに基づき相談します。`,
+                    'school': `（先生へ）${base}家庭での成功事例を共有します。`,
+                    'partner': `（家族へ）${base}負荷を可視化しました。`,
+                    'work': `（職場へ）${base}データに基づいた柔軟な調整をお願いします。` 
+                };
+                return t[target];
             };
 
             return React.createElement("div", { className: "glass-panel text-center" },
                 scene === 'user-select' && React.createElement("div", null,
                     React.createElement("h2", { className: "text-3xl font-black mb-8" }, "だれが あそぶ？"),
                     React.createElement("div", { className: "flex flex-col gap-4" },
-                        userNames.slice(0, 2).map((u, i) => React.createElement("button", { key: i, onClick: () => {setUser(u);setScene('start');}, className: `p-6 rounded-2xl text-2xl font-bold shadow-lg ${i === 0 ? 'bg-pink-500/70' : 'bg-blue-500/70'}` }, u))
+                        userNames.map((u, i) => React.createElement("div", { key: i, className: "flex gap-2" },
+                            isEditing 
+                                ? React.createElement("input", { className: "flex-1 p-4 rounded-xl bg-white/20 text-white", value: u, onChange: e => { const n = [...userNames]; n[i] = e.target.value; saveNames(n); } })
+                                : React.createElement("button", { onClick: () => { setUser(u); setScene('start'); }, className: `flex-1 p-6 rounded-2xl text-2xl font-bold shadow-lg ${i === 0 ? 'bg-pink-500/70' : 'bg-blue-500/70'}` }, u)
+                        ))
+                    ),
+                    React.createElement("div", { className: "mt-8 space-y-4" },
+                        React.createElement("button", { onClick: () => setIsEditing(!isEditing), className: "opacity-60 text-xs underline block mx-auto" }, isEditing ? "✅ 決定" : "⚙️ なまえを かえる"),
+                        React.createElement("button", { onClick: handleReset, className: "opacity-40 text-xs text-red-400 block mx-auto" }, "🗑️ データをリセット")
                     )
                 ),
                 scene === 'start' && React.createElement("div", { className: "text-left" },
+                    React.createElement("button", { onClick: () => setScene('user-select'), className: "mb-4 opacity-50 text-sm" }, "← もどる"),
                     React.createElement("h2", { className: "text-xl font-bold mb-6 text-blue-300" }, user, " の ぼうけん"),
-                    MONSTERS.map((m) => React.createElement("div", { key: m.id, className: "monster-card flex items-center justify-between", onClick: () => {setMonster(m);setTemp(60);setScene('playing');} },
+                    MONSTERS.map(m => React.createElement("div", { key: m.id, className: "monster-card flex items-center justify-between", onClick: () => { setMonster(m); setTemp(60); setStartTime(Date.now()); setScene('playing'); } },
                         React.createElement("span", { className: "text-3xl animate-float" }, m.emoji),
                         React.createElement("span", { className: "font-bold flex-1 ml-4" }, m.name),
                         React.createElement("button", { className: "bg-white text-black text-xs px-3 py-1 rounded-md" }, "はじめる")
-                    ))
+                    )),
+                    user === userNames[0] && React.createElement("div", { className: "mt-6 space-y-2" },
+                        React.createElement("button", { onClick: () => setScene('evidence-report'), className: "w-full py-4 bg-blue-500/20 rounded-xl font-bold text-blue-200" }, "武器②：エビデンス相談術"),
+                        React.createElement("button", { onClick: () => setScene('career-map'), className: "w-full py-4 bg-yellow-500/20 rounded-xl font-bold text-yellow-200" }, "武器③：キャリア再設計マップ")
+                    )
                 ),
                 scene === 'playing' && React.createElement("div", { className: "flex flex-col items-center" },
                     React.createElement("div", { className: "flex gap-8 items-center mb-6" },
                         React.createElement("div", { className: "thermometer-container" }, React.createElement("div", { className: "thermometer-fill", style: { height: `${temp}%`, background: temp > 80 ? '#ef4444' : '#60a5fa' } })),
                         React.createElement("div", { className: "text-4xl font-black" }, temp, "°C")
                     ),
+                    React.createElement("button", { onClick: () => setShowVoice(!showVoice), className: "w-full py-2 bg-pink-500/30 rounded-lg text-[10px] mb-4" }, "👩 ママへの魔法の声掛けを表示"),
+                    showVoice && React.createElement("div", { className: "p-4 bg-pink-900/40 rounded-xl mb-4 text-xs" }, VOICE_LIB[monster.voiceKey].v),
                     React.createElement("div", { className: "grid grid-cols-2 gap-4 w-full" },
-                        COPING_CARDS.map(c => React.createElement("button", { key: c.id, onClick: () => handleAction(c), className: "bg-white/10 p-4 rounded-xl border border-white/10 text-xs" }, c.emoji, " ", c.name))
+                        COPING_CARDS.map(c => React.createElement("button", { key: c.id, onClick: () => handleAction(c), className: "bg-white/10 p-4 rounded-xl text-xs" }, c.emoji, " ", c.name))
                     )
                 ),
                 scene === 'result-win' && React.createElement("div", { className: "py-20 text-center" },
                     React.createElement("h2", { className: "text-4xl font-black text-yellow-300 mb-10" }, "クリア！"),
                     React.createElement("button", { onClick: () => setScene('start'), className: "p-4 bg-pink-500 rounded-full font-bold w-full" }, "もういちど")
+                ),
+                scene === 'evidence-report' && React.createElement("div", { className: "text-left" },
+                    React.createElement("button", { onClick: () => setScene('start'), className: "mb-4 opacity-50 text-sm" }, "← もどる"),
+                    React.createElement("textarea", { id: "rb", className: "w-full p-4 rounded-xl bg-black/40 text-xs mb-4", rows: "6", readOnly: true }),
+                    React.createElement("div", { className: "grid grid-cols-2 gap-2" },
+                        ['pro', 'school', 'partner', 'work'].map(t => React.createElement("button", { key: t, onClick: () => document.getElementById('rb').value = generateReport(t), className: "bg-white/10 p-2 rounded text-[10px]" }, t))
+                    )
+                ),
+                scene === 'career-map' && React.createElement("div", { className: "text-left" },
+                    React.createElement("button", { onClick: () => setScene('start'), className: "mb-4 opacity-50 text-sm" }, "← もどる"),
+                    React.createElement("div", { className: "space-y-2 mb-4" },
+                        ['感謝', '欲求', 'スキル', 'ビジョン', '第一歩'].map((q, i) => React.createElement("input", { key: i, className: "w-full p-2 rounded bg-white/10 text-xs", placeholder: q, onChange: e => setQuestions({ ...questions, [`q${i + 1}`]: e.target.value }) }))
+                    ),
+                    React.createElement("div", { className: "flex flex-wrap gap-2" },
+                        Object.values(questions).filter(v => v).map((v, i) => React.createElement("div", { key: i, className: "map-node" }, v))
+                    )
                 )
             );
         };
@@ -121,7 +211,6 @@
             const [isAuthorized, setIsAuthorized] = useState(false);
             return isAuthorized ? React.createElement(App) : React.createElement(PasswordGate, { onAuthorized: () => setIsAuthorized(true) });
         };
-
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(React.createElement(Main));
     </script>
