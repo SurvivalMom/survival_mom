@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>survival_mam テンプレート集</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2d5a4a;
+      --primary-light: #4a8570;
+      --accent: #d4a574;
+      --accent-light: #e6c9a0;
+      --bg-cream: #faf8f5;
+      --text-dark: #2c2c2c;
+      --text-gray: #666666;
+      --text-light: #999999;
+      --border: #e0ddd8;
+      --success: #5a9a7a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: linear-gradient(135deg, var(--bg-cream) 0%, #f0ede8 100%);
+      color: var(--text-dark);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ========== パスワード画面 ========== */
+    #passwordScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    }
+
+    .password-box {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+
+    .password-box h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--primary);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .password-box p {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .password-box input[type="password"] {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+      outline: none;
+    }
+
+    .password-box input[type="password"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(212,165,116,0.15);
+    }
+
+    .password-box button {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .password-box button:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(45,90,74,0.3);
+    }
+
+    .error-msg {
+      color: #c9746e;
+      font-size: 0.88rem;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    /* ========== メインコンテンツ ========== */
+    #mainContent { display: none; }
+
+    /* Header */
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+      font-weight: 300;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Welcome Message */
+    .welcome-message {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border-left: 4px solid var(--accent);
+    }
+
+    .welcome-message h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--primary);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Template Grid */
+    .template-grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .template-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      overflow: hidden;
+      border: 2px solid transparent;
+    }
+
+    .template-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border-color: var(--accent-light);
+    }
+
+    .template-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .template-icon { font-size: 2rem; }
+
+    .template-header h3 { font-size: 1.2rem; font-weight: 500; }
+
+    .template-body { padding: 1.5rem; }
+
+    .template-description {
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .template-features {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .template-features li {
+      padding: 0.5rem 0;
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .template-features li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-size: 0.95rem;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+
+    .btn-primary { background: var(--accent); color: white; }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn-secondary {
+      background: var(--bg-cream);
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover { background: var(--accent-light); }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px 16px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.3);
+      transform: rotate(90deg);
+    }
+
+    .modal-body { padding: 2rem; }
+
+    /* Pattern Selection */
+    .pattern-select {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pattern-option {
+      padding: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .pattern-option:hover { border-color: var(--accent); background: var(--bg-cream); }
+
+    .pattern-option.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+
+    .pattern-option h4 { font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .pattern-option p  { font-size: 0.75rem; opacity: 0.8; }
+
+    /* Form */
+    .form-group { margin-bottom: 1.5rem; }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(212,165,116,0.1);
+    }
+
+    .form-group textarea { min-height: 120px; resize: vertical; }
+
+    .form-hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Document Preview */
+    .document-preview {
+      margin-top: 2rem;
+      padding: 2rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .document-preview h3 {
+      margin-bottom: 1rem;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+
+    .document-preview > div {
+      background: white;
+      padding: 2rem;
+      border: 1px solid #ddd;
+      font-family: serif;
+      line-height: 2;
+      white-space: pre-wrap;
+    }
+
+    .document-preview > p {
+      margin-top: 1rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* Saved Indicator */
+    .saved-indicator {
+      background: var(--success);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      display: none;
+      animation: slideInRight 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 2000;
+    }
+
+    .saved-indicator.show { display: block; }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(100px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-gray);
+      font-size: 0.9rem;
+    }
+
+    .footer p { margin-bottom: 0.5rem; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.5rem; }
+      .container { padding: 1.5rem 1rem; }
+      .modal-content { width: 95%; }
+      .modal-body { padding: 1.5rem; }
+      .form-actions { flex-direction: column; }
+      .btn { width: 100%; }
+      .password-box { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== パスワード画面 ========== -->
+  <div id="passwordScreen">
+    <div class="password-box">
+      <h2>survival_mam</h2>
+      <p>このツール集にアクセスするにはパスワードが必要です</p>
+      <input type="password" id="passwordInput" placeholder="パスワードを入力してください"
+             onkeypress="if(event.key==='Enter') checkPassword()">
+      <button onclick="checkPassword()">ログイン</button>
+      <p class="error-msg" id="errorMsg">パスワードが正しくありません</p>
+    </div>
+  </div>
+
+  <!-- ========== メインコンテンツ ========== -->
+  <div id="mainContent">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>survival_mam テンプレート集</h1>
+      <p>合格後の地獄を終わらせる、今すぐ使える実践ツール</p>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+      <!-- Welcome Message -->
+      <div class="welcome-message">
+        <h2>ようこそ、あなたの安全基地へ</h2>
+        <p>
+          ここにある5つのテンプレートは、あなたの負担を軽くし、子どもを守るための具体的なツールです。<br>
+          各テンプレートは、ブラウザ上で必要事項を入力するだけで文書を生成できます。<br>
+          記入内容は自動保存されますので、いつでも編集が可能です。安心してご利用ください。
+        </p>
+      </div>
+
+      <!-- Template Grid -->
+      <div class="template-grid">
+
+        <!-- Template 1 -->
+        <div class="template-card" onclick="openTemplate('template1')">
+          <div class="template-header">
+            <span class="template-icon">📄</span>
+            <div><h3>学校への「合理的配慮」要望書</h3></div>
+          </div>
+          <div class="template-body">
+            <p class="template-description">学校に合理的配慮を求めるための正式な要望書です。法的根拠も自動挿入されます。</p>
+            <ul class="template-features">
+              <li>3パターン選択可能（軽度・中度・重度）</li>
+              <li>記入例付きで迷わない</li>
+              <li>文書プレビュー生成</li>
+              <li>法的根拠を自動挿入</li>
+            </ul>
+            <button class="btn btn-primary" onclick="event.stopPropagation(); openTemplate('template1')">テンプレートを開く</button>
+          </div>
+        </div>
+
+        <!-- Template 2 -->
+        <div class="template-card" onclick="openTemplate('template2')">
+          <div class="template-header">
+            <span class="template-icon">✉️</span>
+            <div><h3>メンタル不調による欠席連絡文</h3></div>
+          </div>
+          <div class="template-body">
+            <p class="template-description">子どもの心身の不調を理由に欠席する際の連絡文です。罪悪感なく使えます。</p>
+            <ul class="template-features">
+              <li>3種類から選択（罪悪感ゼロ版・丁寧版・長期版）</li>
+              <li>日付・名前入力で即完成</li>
+              <li>コピーしてメール送信可能</li>
+            </ul>
+            <button class="btn btn-primary" onclick="event.stopPropagation(); openTemplate('template2')">テンプレートを開く</button>
+          </div>
+        </div>
+
+        <!-- Template 3 -->
+        <div class="template-card" onclick="openTemplate('template3')">
+          <div class="template-header">
+            <span class="template-icon">📋</span>
+            <div><h3>担任との個人面談・必勝アジェンダ</h3></div>
+          </div>
+          <div class="template-body">
+            <p class="template-description">担任との面談を成功させるためのアジェンダです。伝え漏れを防ぎます。</p>
+            <ul class="template-features">
+              <li>準備チェックリスト付き</li>
+              <li>伝えるべきポイントを自動整理</li>
+              <li>印刷して面談に持参可能</li>
+            </ul>
+            <button class="btn btn-primary" onclick="event.stopPropagation(); openTemplate('template3')">テンプレートを開く</button>
+          </div>
+        </div>
+
+        <!-- Template 4 -->
+        <div class="template-card" onclick="openTemplate('template4')">
+          <div class="template-header">
+            <span class="template-icon">💬</span>
+            <div><h3>自己肯定感を守る声かけ例文50選</h3></div>
+          </div>
+          <div class="template-body">
+            <p class="template-description">シチュエーション別に検索できる声かけ例文集。困った時の強い味方です。</p>
+            <ul class="template-features">
+              <li>シチュエーション別検索機能</li>
+              <li>NGワード・OKワード対比表</li>
+              <li>お気に入り登録機能</li>
+            </ul>
+            <button class="btn btn-primary" onclick="event.stopPropagation(); openTemplate('template4')">テンプレートを開く</button>
+          </div>
+        </div>
+
+        <!-- Template 5 -->
+        <div class="template-card" onclick="openTemplate('template5')">
+          <div class="template-header">
+            <span class="template-icon">📊</span>
+            <div><h3>課題優先順位づけシート</h3></div>
+          </div>
+          <div class="template-body">
+            <p class="template-description">膨大な課題を整理し、「捨てる勇気」を持つためのシートです。</p>
+            <ul class="template-features">
+              <li>課題を入力して優先度を設定</li>
+              <li>判断フローチャート付き</li>
+              <li>週間スケジュール自動作成</li>
+              <li>プレビュー出力で冷蔵庫に貼れる</li>
+            </ul>
+            <button class="btn btn-primary" onclick="event.stopPropagation(); openTemplate('template5')">テンプレートを開く</button>
+          </div>
+        </div>
+
+      </div><!-- /template-grid -->
+    </div><!-- /container -->
+
+    <!-- ===== Modal 1: 合理的配慮要望書 ===== -->
+    <div id="modal-template1" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" onclick="closeModal('template1')">×</button>
+          <h2>学校への「合理的配慮」要望書</h2>
+          <p>以下の項目を入力して、要望書を作成してください</p>
+        </div>
+        <div class="modal-body">
+          <div class="pattern-select">
+            <div class="pattern-option selected" onclick="selectPattern(this,'mild')">
+              <h4>軽度版</h4><p>軽微な配慮を求める場合</p>
+            </div>
+            <div class="pattern-option" onclick="selectPattern(this,'moderate')">
+              <h4>中度版</h4><p>複数の配慮を求める場合</p>
+            </div>
+            <div class="pattern-option" onclick="selectPattern(this,'severe')">
+              <h4>重度版</h4><p>包括的な配慮を求める場合</p>
+            </div>
+          </div>
+          <form id="form-template1">
+            <div class="form-group">
+              <label>提出日</label>
+              <input type="date" name="date" required>
+              <div class="form-hint">要望書を提出する日付を選択してください</div>
+            </div>
+            <div class="form-group">
+              <label>学校名</label>
+              <input type="text" name="school" placeholder="例：○○中学校" required>
+            </div>
+            <div class="form-group">
+              <label>校長先生の氏名</label>
+              <input type="text" name="principal" placeholder="例：山田 太郎" required>
+            </div>
+            <div class="form-group">
+              <label>保護者氏名</label>
+              <input type="text" name="parent" placeholder="例：田中 花子" required>
+            </div>
+            <div class="form-group">
+              <label>生徒氏名</label>
+              <input type="text" name="student" placeholder="例：田中 一郎" required>
+            </div>
+            <div class="form-group">
+              <label>学年・クラス</label>
+              <input type="text" name="grade" placeholder="例：1年A組" required>
+            </div>
+            <div class="form-group">
+              <label>診断名（ある場合）</label>
+              <input type="text" name="diagnosis" placeholder="例：起立性調節障害、ADHD など">
+              <div class="form-hint">診断がない場合は「困りごとの状況」のみ記載してください</div>
+            </div>
+            <div class="form-group">
+              <label>困りごとの状況（具体的に）</label>
+              <textarea name="issues" placeholder="例：朝の起床が困難で、午前中は強い倦怠感により授業への集中が難しい状況です。" required></textarea>
+              <div class="form-hint">できるだけ具体的に、いつ・どこで・どのような困難があるかを記載してください</div>
+            </div>
+            <div class="form-group">
+              <label>求める配慮の内容</label>
+              <textarea name="accommodations" placeholder="例：&#10;1. 午前中の遅刻を出席扱いとしていただきたい&#10;2. 体調不良時に保健室での休息を許可いただきたい&#10;3. 体育の授業は見学を認めていただきたい" required></textarea>
+              <div class="form-hint">具体的な配慮内容を箇条書きで記載してください</div>
+            </div>
+            <div class="form-group">
+              <label>診断書・意見書の有無</label>
+              <select name="hasDocs">
+                <option value="yes">あり（添付します）</option>
+                <option value="no">なし</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="saveTemplate('template1')">保存</button>
+              <button type="button" class="btn btn-primary" onclick="generateDocument('template1')">文書を生成</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Modal 2: 欠席連絡文 ===== -->
+    <div id="modal-template2" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" onclick="closeModal('template2')">×</button>
+          <h2>メンタル不調による欠席連絡文</h2>
+          <p>状況に合わせたタイプを選んで、必要事項を入力してください</p>
+        </div>
+        <div class="modal-body">
+          <div class="pattern-select">
+            <div class="pattern-option selected" onclick="selectPattern(this,'zero')">
+              <h4>罪悪感ゼロ版</h4><p>シンプルに伝える</p>
+            </div>
+            <div class="pattern-option" onclick="selectPattern(this,'polite')">
+              <h4>丁寧版</h4><p>丁寧に詳しく伝える</p>
+            </div>
+            <div class="pattern-option" onclick="selectPattern(this,'longterm')">
+              <h4>長期版</h4><p>長期休みを伝える</p>
+            </div>
+          </div>
+          <form id="form-template2">
+            <div class="form-group">
+              <label>欠席日</label>
+              <input type="date" name="absenceDate" required>
+            </div>
+            <div class="form-group">
+              <label>担任の先生の名前</label>
+              <input type="text" name="teacher" placeholder="例：山田先生" required>
+            </div>
+            <div class="form-group">
+              <label>生徒氏名</label>
+              <input type="text" name="student" placeholder="例：田中 一郎" required>
+            </div>
+            <div class="form-group">
+              <label>学年・クラス</label>
+              <input type="text" name="grade" placeholder="例：1年A組">
+            </div>
+            <div class="form-group">
+              <label>保護者氏名</label>
+              <input type="text" name="parent" placeholder="例：田中 花子" required>
+            </div>
+            <div class="form-group">
+              <label>欠席理由（任意補足）</label>
+              <textarea name="reason" placeholder="例：体調不良のため。詳細は後日改めてご連絡いたします。"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="saveTemplate('template2')">保存</button>
+              <button type="button" class="btn btn-primary" onclick="generateAbsenceLetter()">文書を生成</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Modal 3: 面談アジェンダ ===== -->
+    <div id="modal-template3" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" onclick="closeModal('template3')">×</button>
+          <h2>担任との個人面談・必勝アジェンダ</h2>
+          <p>面談前に準備しておきたい内容を整理します</p>
+        </div>
+        <div class="modal-body">
+          <form id="form-template3">
+            <div class="form-group">
+              <label>面談日</label>
+              <input type="date" name="meetingDate" required>
+            </div>
+            <div class="form-group">
+              <label>担任の先生の名前</label>
+              <input type="text" name="teacher" placeholder="例：山田先生" required>
+            </div>
+            <div class="form-group">
+              <label>生徒氏名</label>
+              <input type="text" name="student" placeholder="例：田中 一郎" required>
+            </div>
+            <div class="form-group">
+              <label>現在の子どもの状況（箇条書き）</label>
+              <textarea name="currentStatus" placeholder="例：&#10;・朝の起床が難しく、午前中は体調が優れない&#10;・学校に行けていないが、自宅での生活は安定&#10;・趣味の時間は楽しんでいる"></textarea>
+            </div>
+            <div class="form-group">
+              <label>学校側にお願いしたいこと</label>
+              <textarea name="requests" placeholder="例：&#10;・登校を急かさないでほしい&#10;・クラスメイトへの説明をお任せしたい&#10;・別室でのテスト受験を検討してほしい"></textarea>
+            </div>
+            <div class="form-group">
+              <label>確認しておきたいこと</label>
+              <textarea name="questions" placeholder="例：&#10;・出席日数の現状と進級への影響&#10;・別室登校・保健室登校の可能性&#10;・学習サポートの方法"></textarea>
+            </div>
+            <div class="form-group">
+              <label>絶対に言わないこと（事前メモ）</label>
+              <textarea name="dontSay" placeholder="例：&#10;・謝罪から入らない&#10;・「なんとかします」と言わない&#10;・その場で約束しない"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="saveTemplate('template3')">保存</button>
+              <button type="button" class="btn btn-primary" onclick="generateAgenda()">アジェンダを生成</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Modal 4: 声かけ例文50選 ===== -->
+    <div id="modal-template4" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" onclick="closeModal('template4')">×</button>
+          <h2>自己肯定感を守る声かけ例文50選</h2>
+          <p>シチュエーション別に声かけを選べます</p>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>シチュエーションで絞り込む</label>
+            <select id="situationFilter" onchange="filterPhrases()">
+              <option value="all">すべて表示</option>
+              <option value="morning">朝・起床の場面</option>
+              <option value="school">学校・勉強の話題</option>
+              <option value="negative">ネガティブな発言への返し</option>
+              <option value="praise">日常の声かけ・褒め方</option>
+              <option value="crisis">落ち込んでいる時</option>
+            </select>
+          </div>
+          <div id="phraseList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Modal 5: 優先順位シート ===== -->
+    <div id="modal-template5" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="modal-close" onclick="closeModal('template5')">×</button>
+          <h2>課題優先順位づけシート</h2>
+          <p>今抱えている課題を書き出して、整理しましょう</p>
+        </div>
+        <div class="modal-body">
+          <form id="form-template5">
+            <div class="form-group">
+              <label>対象期間</label>
+              <input type="text" name="period" placeholder="例：今週（○月○日〜○日）">
+            </div>
+            <div class="form-group">
+              <label>課題リスト（1行に1つずつ書いてください）</label>
+              <textarea name="tasks" style="min-height:200px;"
+                placeholder="例：&#10;学校への連絡&#10;面談の準備&#10;子どもの病院予約&#10;自分の睡眠を確保する&#10;夕飯の献立を考える&#10;洗濯物を片付ける"></textarea>
+              <div class="form-hint">思いつくままに全部書き出してください。完璧じゃなくてOK</div>
+            </div>
+            <div class="form-group">
+              <label>今週、絶対にやること（最大3つ）</label>
+              <input type="text" name="must1" placeholder="必須タスク1">
+              <input type="text" name="must2" placeholder="必須タスク2" style="margin-top:0.5rem;">
+              <input type="text" name="must3" placeholder="必須タスク3" style="margin-top:0.5rem;">
+            </div>
+            <div class="form-group">
+              <label>今週、やらないと決めること</label>
+              <textarea name="skip" placeholder="例：完璧な料理、SNSのチェック、他の子との比較"></textarea>
+              <div class="form-hint">「捨てる」ことを決めると、心が楽になります</div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="saveTemplate('template5')">保存</button>
+              <button type="button" class="btn btn-primary" onclick="generatePrioritySheet()">シートを生成</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2025 survival_mam - あなたとお子さんの未来を守るために</p>
+      <p>このツールは、note記事「合格後の地獄を終わらせる、今すぐ使える生存戦略」の購入者限定コンテンツです</p>
+    </div>
+
+  </div><!-- /mainContent -->
+
+  <!-- Saved Indicator -->
+  <div class="saved-indicator" id="savedIndicator">✓ 保存しました</div>
+
+  <script>
+    // ========== パスワード認証 ==========
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === 'senryaku') {
+        document.getElementById('passwordScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('errorMsg').style.display = 'none';
+        initApp();
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+      }
+    }
+
+    function initApp() {
+      // 自動保存リスナーを設定
+      document.querySelectorAll('form[id^="form-"]').forEach(form => {
+        form.querySelectorAll('input, textarea, select').forEach(input => {
+          input.addEventListener('change', () => {
+            saveTemplate(form.id.replace('form-', ''));
+          });
+        });
+      });
+      // モーダル外クリックで閉じる
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', e => {
+          if (e.target === modal) closeModal(modal.id.replace('modal-', ''));
+        });
+      });
+      // 声かけ例文を初期化
+      filterPhrases();
+    }
+
+    // ========== モーダル ==========
+    function openTemplate(id) {
+      document.getElementById('modal-' + id).classList.add('active');
+      loadSavedData(id);
+      if (id === 'template4') filterPhrases();
+    }
+
+    function closeModal(id) {
+      document.getElementById('modal-' + id).classList.remove('active');
+    }
+
+    function selectPattern(el, pattern) {
+      el.parentElement.querySelectorAll('.pattern-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    // ========== 保存・読み込み ==========
+    function saveTemplate(id) {
+      const form = document.getElementById('form-' + id);
+      if (!form) return;
+      const data = {};
+      new FormData(form).forEach((v, k) => data[k] = v);
+      localStorage.setItem(id, JSON.stringify(data));
+      showSaved();
+    }
+
+    function loadSavedData(id) {
+      const raw = localStorage.getItem(id);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      const form = document.getElementById('form-' + id);
+      if (!form) return;
+      for (let key in data) {
+        const el = form.querySelector(`[name="${key}"]`);
+        if (el) el.value = data[key];
+      }
+    }
+
+    function showSaved() {
+      const el = document.getElementById('savedIndicator');
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    // ========== 文書生成: Template1 合理的配慮要望書 ==========
+    function generateDocument(id) {
+      saveTemplate(id);
+      const form = document.getElementById('form-' + id);
+      const data = {};
+      new FormData(form).forEach((v, k) => data[k] = v);
+
+      const text = generateRequestLetter(data);
+      showPreview(form.parentElement, text, '生成された要望書（プレビュー）');
+    }
+
+    function generateRequestLetter(d) {
+      return `${d.date || '　　　年　　月　　日'}
+
+${d.school || '○○学校'}
+校長 ${d.principal || '　　　　'} 様
+
+保護者氏名：${d.parent || '　　　　'}
+
+
+合理的配慮に関する要望書
+
+
+　拝啓　時下ますますご清栄のこととお慶び申し上げます。
+　平素より、${d.student || 'お子様'}の教育にご尽力いただき、厚く御礼申し上げます。
+
+　この度、${d.student || 'お子様'}（${d.grade || '　年　組'}）について、学校生活における合理的配慮をお願いしたく、本書面を提出いたします。
+
+
+【現在の状況】
+${d.diagnosis ? '診断名：' + d.diagnosis + '\n' : ''}
+${d.issues || '（状況を記入してください）'}
+
+
+【お願いしたい配慮の内容】
+${d.accommodations || '（配慮内容を記入してください）'}
+
+
+【法的根拠】
+　障害者差別解消法（平成28年4月施行、令和6年4月改正）第8条において、学校等には合理的配慮を提供することが法的義務として定められております。また、文部科学省の「合理的配慮の提供に関する通知」においても、個々の児童生徒の特性に応じた適切な配慮が求められています。
+${d.hasDocs === 'yes' ? '\n　なお、医師の診断書・意見書を別紙にて添付いたします。' : ''}
+
+
+　つきましては、上記の配慮について、ご検討いただきますようお願い申し上げます。
+　ご不明な点がございましたら、いつでもご連絡ください。今後とも、${d.student || 'お子様'}の健やかな成長のため、ご協力のほど、何卒よろしくお願い申し上げます。
+
+敬具
+
+
+連絡先：
+保護者氏名：${d.parent || '　　　　'}
+電話番号：
+メールアドレス：
+
+以上`;
+    }
+
+    // ========== 文書生成: Template2 欠席連絡文 ==========
+    function generateAbsenceLetter() {
+      saveTemplate('template2');
+      const form = document.getElementById('form-template2');
+      const data = {};
+      new FormData(form).forEach((v, k) => data[k] = v);
+
+      const selected = form.closest('.modal-content').querySelector('.pattern-option.selected h4').textContent;
+      let text = '';
+      const s = data.student || '○○';
+      const t = data.teacher || '担任の先生';
+      const d = data.absenceDate || '本日';
+      const p = data.parent || '保護者';
+      const reason = data.reason || '体調不良のため';
+
+      if (selected === '罪悪感ゼロ版') {
+        text = `${t}
+
+${s}の保護者の${p}です。
+本日（${d}）、${s}は体調不良のため欠席いたします。
+${reason}
+よろしくお願いいたします。
+
+${p}`;
+      } else if (selected === '丁寧版') {
+        text = `${t}
+
+いつもお世話になっております。${s}の保護者の${p}です。
+誠に恐れ入りますが、本日（${d}）は${s}の体調が優れず、欠席させていただきたくご連絡いたしました。
+${reason}
+ご迷惑をおかけして申し訳ございません。回復次第、またよろしくお願いいたします。
+
+${p}`;
+      } else {
+        text = `${t}
+
+いつもお世話になっております。${s}の保護者の${p}です。
+現在、${s}は心身の疲弊により、しばらくの間、学校を休ませていただく予定でご連絡いたしました。
+本人のペースで回復を優先したいと考えております。学習等については、状況が落ち着いた段階で改めてご相談させていただければ幸いです。
+引き続き、どうぞよろしくお願いいたします。
+
+${p}`;
+      }
+      showPreview(form.parentElement, text, '欠席連絡文（プレビュー）');
+    }
+
+    // ========== 文書生成: Template3 面談アジェンダ ==========
+    function generateAgenda() {
+      saveTemplate('template3');
+      const form = document.getElementById('form-template3');
+      const data = {};
+      new FormData(form).forEach((v, k) => data[k] = v);
+
+      const text = `【個人面談 アジェンダ】
+面談日：${data.meetingDate || '　　年　月　日'}
+相手：${data.teacher || '担任の先生'}
+生徒名：${data.student || ''}
+
+─────────────────────────
+■ 現在の子どもの状況
+─────────────────────────
+${data.currentStatus || '（記入してください）'}
+
+─────────────────────────
+■ 学校側へのお願い
+─────────────────────────
+${data.requests || '（記入してください）'}
+
+─────────────────────────
+■ 確認したいこと
+─────────────────────────
+${data.questions || '（記入してください）'}
+
+─────────────────────────
+■ 面談で言わないこと（自分メモ）
+─────────────────────────
+${data.dontSay || '（記入してください）'}
+
+─────────────────────────
+■ 面談の心得
+─────────────────────────
+・謝罪から入らない
+・「子どもの状態」を報告する立場で臨む
+・その場で約束しない（「検討します」でOK）
+・録音または議事録メモを取る`;
+
+      showPreview(form.parentElement, text, '面談アジェンダ（プレビュー）');
+    }
+
+    // ========== 文書生成: Template5 優先順位シート ==========
+    function generatePrioritySheet() {
+      saveTemplate('template5');
+      const form = document.getElementById('form-template5');
+      const data = {};
+      new FormData(form).forEach((v, k) => data[k] = v);
+
+      const tasks = (data.tasks || '').split('\n').filter(t => t.trim()).map((t, i) => `  ${i + 1}. ${t.trim()}`).join('\n');
+      const text = `【課題優先順位シート】
+対象期間：${data.period || '今週'}
+
+─────────────────────────
+■ 全課題リスト
+─────────────────────────
+${tasks || '（課題を入力してください）'}
+
+─────────────────────────
+■ 今週、絶対やること（TOP3）
+─────────────────────────
+  1. ${data.must1 || ''}
+  2. ${data.must2 || ''}
+  3. ${data.must3 || ''}
+
+─────────────────────────
+■ 今週、やらないと決めたこと
+─────────────────────────
+${data.skip || '（記入してください）'}
+
+─────────────────────────
+■ 判断のポイント
+─────────────────────────
+・今日やらなくて、1週間後に困るか？
+・自分以外がやれるか？
+・やらなくても誰も死なないか？
+→ NOなら「やらない」でOK
+
+「捨てる」は手抜きじゃない。戦略です。`;
+
+      showPreview(form.parentElement, text, '優先順位シート（プレビュー）');
+    }
+
+    // ========== プレビュー共通処理 ==========
+    function showPreview(container, text, title) {
+      const existing = container.querySelector('.document-preview');
+      if (existing) existing.remove();
+
+      const preview = document.createElement('div');
+      preview.className = 'document-preview';
+      preview.innerHTML = `
+        <h3>${title}</h3>
+        <div>${text.replace(/\n/g, '<br>')}</div>
+        <p>※このテキストをコピーしてご利用ください</p>
+      `;
+      container.appendChild(preview);
+      preview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ========== 声かけ例文50選 ==========
+    const phrases = [
+      // 朝・起床
+      { sit: 'morning', ng: '早く起きなさい！', ok: '起きてるだけで今日は十分だよ' },
+      { sit: 'morning', ng: 'また寝てるの？', ok: '昨日、ゆっくり眠れた？' },
+      { sit: 'morning', ng: '学校に行かないならゲームはダメ', ok: '今日、体はどんな感じ？' },
+      { sit: 'morning', ng: 'みんなは学校行ってるんだよ', ok: '今日は何が食べたい？' },
+      { sit: 'morning', ng: 'いつまでこんな生活を続けるつもり？', ok: '今日もここにいるよ' },
+      // 学校・勉強
+      { sit: 'school', ng: '勉強が遅れるよ', ok: '好きなこと、今日もやってたね' },
+      { sit: 'school', ng: '学校くらい行けるでしょ', ok: '行けない日もある。それだけのことだよ' },
+      { sit: 'school', ng: 'テストどうするの？', ok: '勉強は、あなたのペースでやれば追いつける' },
+      { sit: 'school', ng: '将来どうなるかわかってるの？', ok: '今は休む時間。それも大事な時間だよ' },
+      { sit: 'school', ng: '友達が心配してるって先生から連絡あったよ', ok: '先生とのこと、何かあったら話してね' },
+      // ネガティブな発言への返し
+      { sit: 'negative', ng: 'そんなことないよ！', ok: 'そう感じてるんだね。聞かせて' },
+      { sit: 'negative', ng: 'もっとポジティブに考えて', ok: 'そう思う気持ち、わかる気がする' },
+      { sit: 'negative', ng: '大げさだよ', ok: 'それ、つらかったね' },
+      { sit: 'negative', ng: '気持ちの持ちようだよ', ok: '今、何が一番しんどい？' },
+      { sit: 'negative', ng: '自分のことが嫌いなんておかしい', ok: 'そう感じる日もあるよね。ここにいるよ' },
+      { sit: 'negative', ng: '死にたいなんて言わないで', ok: 'そこまで追い詰められてたんだね。話してくれてありがとう' },
+      { sit: 'negative', ng: '弱いことを言わないの', ok: 'よく言えたね。ずっと抱えてたんだね' },
+      // 日常の声かけ・褒め方
+      { sit: 'praise', ng: '○○ちゃんは毎日学校行ってるのに', ok: 'あなたはあなたのペースがある' },
+      { sit: 'praise', ng: '（無言）', ok: 'ご飯食べてくれてよかった' },
+      { sit: 'praise', ng: 'なんで○○できないの？', ok: 'それが好きなんだね。教えて' },
+      { sit: 'praise', ng: 'もっと頑張れるでしょ', ok: '今日も一日、ここにいてくれてありがとう' },
+      { sit: 'praise', ng: '役に立つことをしなさい', ok: 'あなたがいるだけで、お母さんは安心する' },
+      // 落ち込んでいる時
+      { sit: 'crisis', ng: 'しっかりして', ok: '隣にいてもいい？' },
+      { sit: 'crisis', ng: 'なんで泣いてるの？', ok: '泣いていいよ。全部出して' },
+      { sit: 'crisis', ng: '泣いても何も変わらないよ', ok: 'そっか。それはしんどかったね' },
+      { sit: 'crisis', ng: 'もう少し頑張れば変わるよ', ok: '今は頑張らなくていい' },
+      { sit: 'crisis', ng: 'お母さんも大変なんだよ', ok: 'あなたの気持ちを聞かせてほしい' },
+    ];
+
+    function filterPhrases() {
+      const filter = document.getElementById('situationFilter');
+      if (!filter) return;
+      const val = filter.value;
+      const list = document.getElementById('phraseList');
+      const filtered = val === 'all' ? phrases : phrases.filter(p => p.sit === val);
+
+      list.innerHTML = filtered.map((p, i) => `
+        <div style="background:#faf8f5;border-radius:10px;padding:1rem;margin-bottom:1rem;border-left:4px solid #e0ddd8;">
+          <div style="display:flex;gap:1rem;margin-bottom:0.5rem;">
+            <span style="background:rgba(201,116,110,0.15);color:#c9746e;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.82rem;font-weight:600;white-space:nowrap;">❌ NG</span>
+            <span style="color:#2c2c2c;">${p.ng}</span>
+          </div>
+          <div style="display:flex;gap:1rem;">
+            <span style="background:rgba(90,154,122,0.15);color:#5a9a7a;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.82rem;font-weight:600;white-space:nowrap;">⭕ OK</span>
+            <span style="color:#2c2c2c;font-weight:500;">${p.ok}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
