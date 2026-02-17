@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不登校サポート実践ツール集</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2D5F5D;
+            --primary-light: #4A8B87;
+            --accent: #E8B4B8;
+            --accent-dark: #D89BA0;
+            --bg: #F8F6F1;
+            --card-bg: #FFFFFF;
+            --text: #2C2C2C;
+            --text-light: #6B6B6B;
+            --border: #E5DFD6;
+            --success: #5FA777;
+            --warning: #E8A55C;
+            --danger: #C9746E;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ========== パスワード画面 ========== */
+        #passwordScreen {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .password-box {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .password-box h2 {
+            font-family: 'Zen Maru Gothic', serif;
+            color: var(--primary);
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .password-box p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .password-box input[type="password"] {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+
+        .password-box input[type="password"]:focus {
+            border-color: var(--primary-light);
+        }
+
+        .password-box button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Zen Maru Gothic', serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .password-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(45, 95, 93, 0.35);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+            display: none;
+        }
+
+        /* ========== メインコンテンツ ========== */
+        #mainContent {
+            display: none;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-30px, 30px) rotate(180deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Zen Maru Gothic', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            font-family: 'Zen Maru Gothic', serif;
+            font-size: 1rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            bottom: -2px;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tool-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tool-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-family: 'Zen Maru Gothic', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card h3 {
+            font-family: 'Zen Maru Gothic', serif;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin: 1.5rem 0 1rem;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checklist-item:hover {
+            background: rgba(45, 95, 93, 0.03);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .checklist-item.checked {
+            opacity: 0.6;
+        }
+
+        .checklist-item.checked label {
+            text-decoration: line-through;
+        }
+
+        .progress-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(45, 95, 93, 0.05) 0%, rgba(74, 139, 135, 0.05) 100%);
+            border-radius: 12px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            transition: width 0.5s ease;
+            border-radius: 6px;
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .result-box.rest {
+            background: rgba(201, 116, 110, 0.1);
+            border-left-color: var(--danger);
+        }
+
+        .result-box.charge {
+            background: rgba(232, 165, 92, 0.1);
+            border-left-color: var(--warning);
+        }
+
+        .result-box.recovery {
+            background: rgba(95, 167, 119, 0.1);
+            border-left-color: var(--success);
+        }
+
+        .result-title {
+            font-family: 'Zen Maru Gothic', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-description {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .type-option {
+            padding: 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .type-option:hover {
+            border-color: var(--primary-light);
+            background: rgba(45, 95, 93, 0.03);
+        }
+
+        .type-option.selected {
+            border-color: var(--primary);
+            background: rgba(45, 95, 93, 0.08);
+        }
+
+        .type-option h4 {
+            font-family: 'Zen Maru Gothic', serif;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .advice-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .advice-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background: var(--bg);
+        }
+
+        .advice-item.good {
+            border-left: 4px solid var(--success);
+        }
+
+        .advice-item.bad {
+            border-left: 4px solid var(--danger);
+        }
+
+        .advice-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .advice-item.good .advice-label {
+            background: rgba(95, 167, 119, 0.2);
+            color: var(--success);
+        }
+
+        .advice-item.bad .advice-label {
+            background: rgba(201, 116, 110, 0.2);
+            color: var(--danger);
+        }
+
+        .selfcare-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .selfcare-item {
+            padding: 1.5rem;
+            background: var(--bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .selfcare-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .icon {
+            width: 28px;
+            height: 28px;
+            display: inline-block;
+            line-height: 28px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .mail-box {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: monospace;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        .footer-heart {
+            color: var(--accent-dark);
+            animation: pulse 2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .tabs { gap: 0.5rem; }
+            .tab { padding: 0.75rem 1rem; font-size: 0.9rem; }
+            .card { padding: 1.5rem; }
+            .type-selector { grid-template-columns: 1fr; }
+            .password-box { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== パスワード入力画面 ========== -->
+    <div id="passwordScreen">
+        <div class="password-box">
+            <h2>🌱 不登校サポート実践ツール集</h2>
+            <p>このツールにアクセスするにはパスワードが必要です</p>
+            <input type="password" id="passwordInput" placeholder="パスワードを入力してください"
+                   onkeypress="if(event.key==='Enter') checkPassword()">
+            <button onclick="checkPassword()">ログイン</button>
+            <p class="error-message" id="errorMessage">パスワードが正しくありません</p>
+        </div>
+    </div>
+
+    <!-- ========== メインコンテンツ ========== -->
+    <div id="mainContent">
+        <div class="hero">
+            <h1>🌱 不登校サポート実践ツール集</h1>
+            <p>お子さんとご自身の回復を見守るための、5つのインタラクティブツール</p>
+        </div>
+
+        <div class="container">
+            <div class="tabs">
+                <button class="tab active" onclick="showTool('recovery', event)">
+                    <span class="icon">📊</span> エネルギー回復度チェック
+                </button>
+                <button class="tab" onclick="showTool('type', event)">
+                    <span class="icon">🎯</span> タイプ別診断
+                </button>
+                <button class="tab" onclick="showTool('advice', event)">
+                    <span class="icon">💬</span> 声かけ集
+                </button>
+                <button class="tab" onclick="showTool('school', event)">
+                    <span class="icon">🏫</span> 学校対応
+                </button>
+                <button class="tab" onclick="showTool('selfcare', event)">
+                    <span class="icon">❤️</span> ママのセルフケア
+                </button>
+            </div>
+
+            <!-- ツール1: エネルギー回復度チェック -->
+            <div id="recovery" class="tool-section active">
+                <div class="card">
+                    <h2><span class="icon">📊</span> エネルギー回復度チェックリスト</h2>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">
+                        お子さんの現在の状態をチェックしてみましょう。月に1回程度の確認がおすすめです。
+                    </p>
+                    <ul class="checklist" id="recoveryChecklist">
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check1" onchange="updateRecovery()">
+                            <label for="check1">食事を家族と一緒に取ることがある</label>
+                        </li>
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check2" onchange="updateRecovery()">
+                            <label for="check2">自分から話しかけてくることがある</label>
+                        </li>
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check3" onchange="updateRecovery()">
+                            <label for="check3">笑顔を見せることがある</label>
+                        </li>
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check4" onchange="updateRecovery()">
+                            <label for="check4">「〇〇したい」という言葉が出る</label>
+                        </li>
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check5" onchange="updateRecovery()">
+                            <label for="check5">外出を提案すると、考える素振りを見せる</label>
+                        </li>
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check6" onchange="updateRecovery()">
+                            <label for="check6">生活リズムが少し整ってきた</label>
+                        </li>
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check7" onchange="updateRecovery()">
+                            <label for="check7">ゲーム以外のことに興味を示す</label>
+                        </li>
+                        <li class="checklist-item">
+                            <input type="checkbox" id="check8" onchange="updateRecovery()">
+                            <label for="check8">将来の話を（軽くでも）する</label>
+                        </li>
+                    </ul>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>回復度</span>
+                            <span id="recoveryScore">0 / 8</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="recoveryProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div id="recoveryResult"></div>
+                </div>
+            </div>
+
+            <!-- ツール2: タイプ別診断 -->
+            <div id="type" class="tool-section">
+                <div class="card">
+                    <h2><span class="icon">🎯</span> お子さんのタイプ別診断</h2>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">
+                        お子さんに最も当てはまるタイプを選んでください。それぞれに合った対応方法をご提案します。
+                    </p>
+                    <div class="type-selector">
+                        <div class="type-option" onclick="selectType('relationship', event)">
+                            <h4>👥 人間関係がしんどい</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">友達とのトラブル、集団行動が苦手</p>
+                        </div>
+                        <div class="type-option" onclick="selectType('sensory', event)">
+                            <h4>🎨 感覚過敏がある</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">音、光、匂いに敏感、変化が苦手</p>
+                        </div>
+                        <div class="type-option" onclick="selectType('study', event)">
+                            <h4>📚 勉強についていけない</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">授業が分からない、自信がない</p>
+                        </div>
+                        <div class="type-option" onclick="selectType('value', event)">
+                            <h4>💭 学校に価値を感じてない</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">やりたいことが明確、効率重視</p>
+                        </div>
+                    </div>
+                    <div id="typeResult"></div>
+                </div>
+            </div>
+
+            <!-- ツール3: 声かけ集 -->
+            <div id="advice" class="tool-section">
+                <div class="card">
+                    <h2><span class="icon">💬</span> タイプ別・声かけアドバイス</h2>
+
+                    <h3>👥 人間関係がしんどいタイプ</h3>
+                    <ul class="advice-list">
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「友達と仲直りしなよ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「無理に友達作らなくていいよ。気の合う人は、そのうち見つかるから」</div>
+                        </li>
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「クラスのみんな、待ってるよ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「今は、自分のペースでいいよ」</div>
+                        </li>
+                    </ul>
+
+                    <h3>🎨 感覚過敏タイプ</h3>
+                    <ul class="advice-list">
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「気にしすぎだよ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「そっか、しんどいんだね。どうしたら楽になる？」</div>
+                        </li>
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「慣れればなんとかなるよ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「無理に慣れなくていいよ。環境を変えよう」</div>
+                        </li>
+                    </ul>
+
+                    <h3>📚 勉強についていけないタイプ</h3>
+                    <ul class="advice-list">
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「もっと頑張れば分かるよ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「分からないところ、一緒にやってみる？」</div>
+                        </li>
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「テストの点数、上げなきゃ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「点数より、分かる楽しさを見つけよう」</div>
+                        </li>
+                    </ul>
+
+                    <h3>💭 学校に価値を感じてないタイプ</h3>
+                    <ul class="advice-list">
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「学校は行かなきゃダメ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「学校以外で学ぶ方法、一緒に探そう」</div>
+                        </li>
+                        <li class="advice-item bad">
+                            <div class="advice-label">❌ NG</div>
+                            <div>「みんな我慢して行ってるんだよ」</div>
+                        </li>
+                        <li class="advice-item good">
+                            <div class="advice-label">⭕ OK</div>
+                            <div>「あなたに合った学び方を見つけよう」</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ツール4: 学校対応 -->
+            <div id="school" class="tool-section">
+                <div class="card">
+                    <h2><span class="icon">🏫</span> 学校・先生との関わり方ガイド</h2>
+
+                    <h3>基本スタンス</h3>
+                    <ul style="margin-left: 1.5rem; line-height: 2;">
+                        <li>敵対しない</li>
+                        <li>でも、息子の味方であることを明確にする</li>
+                        <li>協力はするが、学校の都合に振り回されない</li>
+                    </ul>
+
+                    <h3>📧 担任への連絡メール例文</h3>
+                    <div class="mail-box">
+                        いつもお世話になっております。<br>
+                        〇〇の母です。<br><br>
+                        〇〇ですが、現在も自宅で休養しております。<br>
+                        本人のペースで回復を見守っておりますので、<br>
+                        引き続き、登校を急かさないようお願いいたします。<br><br>
+                        学習面については、自宅で進めておりますので、<br>
+                        プリント等は不要です。<br><br>
+                        また、クラスメイトからの連絡等も、<br>
+                        本人の負担になりますので、控えていただけると助かります。<br><br>
+                        何か学校側で必要なことがあれば、<br>
+                        私の方で対応いたしますので、ご連絡ください。<br><br>
+                        よろしくお願いいたします。
+                    </div>
+
+                    <h3>🏠 家庭訪問を断る例文</h3>
+                    <div class="mail-box">
+                        お忙しい中、ご連絡ありがとうございます。<br><br>
+                        家庭訪問のお申し出、ありがたいのですが、<br>
+                        現在、〇〇は来客に対して強い不安を感じている状態です。<br><br>
+                        回復を優先したいので、今回は遠慮させていただきます。<br><br>
+                        何か必要なことがあれば、私が学校に伺いますので、<br>
+                        その際はお時間いただけますと幸いです。<br><br>
+                        よろしくお願いいたします。
+                    </div>
+
+                    <h3>💬 面談での会話例</h3>
+                    <div style="background: var(--bg); padding: 1.5rem; border-radius: 8px; margin: 1rem 0; line-height: 1.8;">
+                        <div style="margin-bottom: 1rem;">
+                            <strong style="color: var(--text-light);">先生：</strong>「そろそろ、学校に来られそうですか？」<br>
+                            <strong style="color: var(--primary);">あなた：</strong>「本人の様子を見ながら、慎重に進めています。焦らず、本人のペースで」
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <strong style="color: var(--text-light);">先生：</strong>「でも、勉強が遅れると…」<br>
+                            <strong style="color: var(--primary);">あなた：</strong>「勉強は自宅でフォローしています。今は心の回復が最優先です」
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-light);">先生：</strong>「周りの子も心配していますよ」<br>
+                            <strong style="color: var(--primary);">あなた：</strong>「ご心配ありがとうございます。落ち着いたら、本人から連絡するかもしれません」
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ツール5: ママのセルフケア -->
+            <div id="selfcare" class="tool-section">
+                <div class="card">
+                    <h2><span class="icon">❤️</span> ママのセルフケアチェックリスト</h2>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">
+                        あなた自身のケアも大切です。週に1回、自分の状態を確認してみましょう。
+                    </p>
+                    <div class="selfcare-grid" id="selfcareGrid">
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self1" onchange="updateSelfcare()">
+                            <label for="self1">1日1回、外に出ている</label>
+                        </div>
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self2" onchange="updateSelfcare()">
+                            <label for="self2">週に1回、自分だけの時間を作っている</label>
+                        </div>
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self3" onchange="updateSelfcare()">
+                            <label for="self3">月に1回、友達と会っている（オンラインでもOK）</label>
+                        </div>
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self4" onchange="updateSelfcare()">
+                            <label for="self4">好きなことを我慢していない</label>
+                        </div>
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self5" onchange="updateSelfcare()">
+                            <label for="self5">泣きたい時に泣いている</label>
+                        </div>
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self6" onchange="updateSelfcare()">
+                            <label for="self6">「頑張ってる」と自分を褒めている</label>
+                        </div>
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self7" onchange="updateSelfcare()">
+                            <label for="self7">誰かに弱音を吐いている</label>
+                        </div>
+                        <div class="selfcare-item">
+                            <input type="checkbox" id="self8" onchange="updateSelfcare()">
+                            <label for="self8">睡眠時間を確保している</label>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>セルフケア度</span>
+                            <span id="selfcareScore">0 / 8</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="selfcareProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div id="selfcareResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>あなたと息子さんの未来に、笑顔が溢れますように <span class="footer-heart">❤️</span></p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">一緒に、この暗いトンネルを抜けましょう。</p>
+        </div>
+    </div>
+
+    <script>
+        // ========== パスワード認証 ==========
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const correct = 'support';
+
+            if (input === correct) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                initApp();
+            } else {
+                const err = document.getElementById('errorMessage');
+                err.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        function initApp() {
+            updateRecovery();
+            updateSelfcare();
+        }
+
+        // ========== タブ切り替え ==========
+        function showTool(toolId, e) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tool-section').forEach(s => s.classList.remove('active'));
+            e.target.closest('.tab').classList.add('active');
+            document.getElementById(toolId).classList.add('active');
+        }
+
+        // ========== エネルギー回復度チェック ==========
+        function updateRecovery() {
+            const checkboxes = document.querySelectorAll('#recoveryChecklist input[type="checkbox"]');
+            let count = 0;
+            checkboxes.forEach(cb => {
+                const item = cb.closest('.checklist-item');
+                if (cb.checked) { count++; item.classList.add('checked'); }
+                else { item.classList.remove('checked'); }
+            });
+
+            const pct = (count / 8) * 100;
+            document.getElementById('recoveryScore').textContent = `${count} / 8`;
+            document.getElementById('recoveryProgress').style.width = `${pct}%`;
+
+            let html = '';
+            if (count <= 2) {
+                html = `<div class="result-box rest">
+                    <div class="result-title">休息期（そのまま見守り）</div>
+                    <div class="result-description">お子さんは今、エネルギーを回復している最中です。焦らず、Wi-Fiと食事だけ提供して、静かに見守ってあげてください。この時期に無理をすると、回復が遅れてしまいます。</div>
+                </div>`;
+            } else if (count <= 5) {
+                html = `<div class="result-box charge">
+                    <div class="result-title">充電期（選択肢を置き始めてOK）</div>
+                    <div class="result-description">少しずつエネルギーが溜まってきています。無理に提案するのではなく、「こんなのあるよ」と選択肢をそっと見せてみてください。反応を見ながら、お子さんのペースを尊重することが大切です。</div>
+                </div>`;
+            } else {
+                html = `<div class="result-box recovery">
+                    <div class="result-title">回復期（一緒に未来を描いていい）</div>
+                    <div class="result-description">エネルギーが十分に回復してきています。「何かやってみたいことある？」と一緒に未来について話し合ってみてもいい時期です。ただし、押し付けにならないよう、常にお子さんの意思を確認しながら進めましょう。</div>
+                </div>`;
+            }
+            document.getElementById('recoveryResult').innerHTML = html;
+        }
+
+        // ========== タイプ診断 ==========
+        function selectType(type, e) {
+            document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+            e.target.closest('.type-option').classList.add('selected');
+
+            const data = {
+                relationship: {
+                    title: '👥 人間関係がしんどいタイプ',
+                    features: '友達とのトラブルがきっかけ、集団行動が苦手、一人の時間が好き、でも完全孤立は嫌',
+                    options: ['オンラインフリースクール（少人数、顔出しなしも可）', 'ホームスクーリング＋習い事（好きな分野で仲間を作る）', '個別指導塾＋フリースクールの併用']
+                },
+                sensory: {
+                    title: '🎨 感覚過敏があるタイプ',
+                    features: '音、光、匂いに敏感、人混みが苦手、予定変更がストレス、ルーティンを好む',
+                    options: ['完全ホームスクーリング（環境を自分でコントロール）', 'メタバース登校（刺激を最小限に）', '通信制＋週1回の個別サポート']
+                },
+                study: {
+                    title: '📚 勉強についていけないタイプ',
+                    features: 'テストの点数が低い、授業が分からない、「自分は頭が悪い」と思い込んでる、でも好きなことには集中できる',
+                    options: ['個別指導で基礎から学び直し＋好きな分野を伸ばす', '習い事特化型（得意を武器にする）', '職業体験型フリースクール（手を動かして学ぶ）']
+                },
+                value: {
+                    title: '💭 学校に価値を感じてないタイプ',
+                    features: '「なんで学校行かなきゃいけないの？」と聞く、自分のやりたいことが明確、大人びている、効率を重視する',
+                    options: ['ホームスクーリング＋好きな分野の専門教育', 'オンライン習い事＋プロジェクト型学習', '起業家教育プログラム']
+                }
+            };
+
+            const d = data[type];
+            document.getElementById('typeResult').innerHTML = `
+                <div class="result-box">
+                    <div class="result-title">${d.title}</div>
+                    <div class="result-description">
+                        <strong>特徴：</strong><br>${d.features}
+                        <br><br><strong>おすすめの選択肢：</strong>
+                        <ul style="margin-top:0.5rem;margin-left:1.5rem;line-height:2;">
+                            ${d.options.map(o => `<li>${o}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>`;
+        }
+
+        // ========== セルフケアチェック ==========
+        function updateSelfcare() {
+            const checkboxes = document.querySelectorAll('#selfcareGrid input[type="checkbox"]');
+            let count = 0;
+            checkboxes.forEach(cb => { if (cb.checked) count++; });
+
+            const pct = (count / 8) * 100;
+            document.getElementById('selfcareScore').textContent = `${count} / 8`;
+            document.getElementById('selfcareProgress').style.width = `${pct}%`;
+
+            let html = '';
+            if (count <= 3) {
+                html = `<div class="result-box rest">
+                    <div class="result-title">⚠️ 危険信号：あなたが倒れます</div>
+                    <div class="result-description">お母さん、頑張りすぎです。このままではあなた自身が壊れてしまいます。今すぐ、誰かに助けを求めてください。家族、友人、カウンセラー、誰でも構いません。あなたが倒れたら、お子さんを支えられなくなります。まず、あなた自身を大切にしてください。</div>
+                </div>`;
+            } else if (count <= 6) {
+                html = `<div class="result-box charge">
+                    <div class="result-title">要注意：もう少し自分を大事に</div>
+                    <div class="result-description">お子さんのことで精一杯なのは分かります。でも、あなた自身のケアも大切です。週に1回、30分でもいいので、「自分だけの時間」を作ってください。それは「逃げ」ではなく、「メンテナンス」です。飛行機の安全説明のように、まず自分が酸素マスクをつけてから、子どもにつけるのです。</div>
+                </div>`;
+            } else {
+                html = `<div class="result-box recovery">
+                    <div class="result-title">✨ 良い状態：その調子で</div>
+                    <div class="result-description">素晴らしいです。お子さんのケアをしながら、自分自身も大切にできています。この調子を続けてください。でも、無理は禁物。しんどい時は休んでいいし、泣きたい時は泣いていい。完璧な母親である必要はありません。あなたは十分頑張っています。</div>
+                </div>`;
+            }
+            document.getElementById('selfcareResult').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
