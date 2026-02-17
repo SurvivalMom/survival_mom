@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survival mam 生存戦略ジェネレーター</title>
+  <style>
+    /* 全体の設定 */
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background-color: #f5f0e6; /* ラボっぽいベージュ */
+      color: #4a4a4a;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    /* パスワード画面 */
+    #passwordScreen {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    #passwordScreen h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    #passwordScreen input {
+      width: 80%;
+      max-width: 300px;
+      padding: 12px;
+      font-size: 1rem;
+      border: 2px solid #d4a373;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    #passwordScreen button {
+      padding: 12px 30px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #passwordScreen button:hover {
+      opacity: 0.9;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* メインコンテンツ */
+    #mainContent {
+      display: none;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e0d8c3;
+      padding-bottom: 10px;
+    }
+    header h1 {
+      font-size: 1.4rem;
+      color: #2c3e50;
+    }
+    header p {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    /* タブのデザイン */
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: #eee;
+      cursor: pointer;
+      font-weight: bold;
+      color: #777;
+    }
+    .tab-btn.active {
+      background: #d4a373; /* 落ち着いたオレンジ */
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* フォーム要素 */
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    textarea {
+      height: 80px;
+    }
+    .checkbox-group label {
+      font-weight: normal;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* ボタン */
+    .action-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #2c3e50; /* ネイビー */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .action-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* 出力エリア */
+    .output-area {
+      margin-top: 25px;
+      background: #fdfbf7;
+      padding: 15px;
+      border: 2px dashed #d4a373;
+      border-radius: 8px;
+    }
+    .result-box {
+      background: white;
+      padding: 15px;
+      border: 1px solid #eee;
+      white-space: pre-wrap; /* 改行を反映 */
+      font-size: 0.95rem;
+    }
+    .copy-btn {
+      margin-top: 10px;
+      background: #d4a373;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .desc {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- パスワード入力画面 -->
+    <div id="passwordScreen">
+      <h2>🔒 パスワードを入力してください</h2>
+      <p style="color: #888; font-size: 0.9rem;">このツールにアクセスするにはパスワードが必要です</p>
+      <input type="password" id="passwordInput" placeholder="パスワードを入力" onkeypress="if(event.key==='Enter') checkPassword()">
+      <br>
+      <button onclick="checkPassword()">ログイン</button>
+      <p class="error-message" id="errorMessage">パスワードが正しくありません</p>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div id="mainContent">
+      <header>
+        <h1>Survival mam<br>生存戦略ジェネレーター</h1>
+        <p>泥臭く生き抜くための武器庫</p>
+      </header>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('trisetsu')">①我が子のトリセツ</button>
+        <button class="tab-btn" onclick="openTab('school')">②学校への依頼文</button>
+      </div>
+
+      <div id="trisetsu" class="tab-content active">
+        <h2>🧒 我が子の取扱説明書</h2>
+        <p class="desc">特性を選んで、周囲に伝えるカードを作ります。</p>
+        
+        <label>入力タイプ(情報の入り方)</label>
+        <select id="inputType">
+          <option value="👀 視覚優位(見て覚える)">👀 視覚優位(見て覚えるのが得意)</option>
+          <option value="👂 聴覚優位(聞いて覚える)">👂 聴覚優位(聞いて覚えるのが得意)</option>
+          <option value="✋ 体感覚優位(やって覚える)">✋ 体感覚優位(実際に動いて覚える)</option>
+        </select>
+
+        <label>集中力スイッチ</label>
+        <select id="focusType">
+          <option value="🚀 過集中タイプ(一度入ると聞こえない)">🚀 過集中(一度入ると聞こえない)</option>
+          <option value="🦋 拡散タイプ(興味が移りやすい)">🦋 拡散(興味が移りやすい)</option>
+        </select>
+
+        <label>特に苦手な環境(地雷)</label>
+        <input type="text" id="weakness" placeholder="例:大きな音、急な予定変更">
+
+        <label>こうすると動きます(攻略法)</label>
+        <textarea id="hacks" placeholder="例:図解で見せる、5分前に予告する"></textarea>
+
+        <button class="action-btn" onclick="generateTrisetsu()">トリセツを生成する</button>
+
+        <div class="output-area" id="trisetsuOutput" style="display:none;">
+          <h3>完成したトリセツ</h3>
+          <div id="trisetsuText" class="result-box"></div>
+          <button class="copy-btn" onclick="copyText('trisetsuText')">コピーする</button>
+        </div>
+      </div>
+
+      <div id="school" class="tab-content">
+        <h2>🏫 学校への「配慮」依頼文</h2>
+        <p class="desc">先生を敵に回さず、味方につける魔法の文章。</p>
+
+        <label>お子さんの名前</label>
+        <input type="text" id="childName" placeholder="例:田中 太郎">
+
+        <label>困りごと(複数選択可)</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="黒板の文字をノートに写すのが苦手です。"> 板書が苦手</label>
+          <label><input type="checkbox" value="大きな音やざわざわした環境でパニックになりやすいです。"> 音に敏感</label>
+          <label><input type="checkbox" value="一度に複数の指示を出されると混乱してしまいます。"> 複数指示が苦手</label>
+          <label><input type="checkbox" value="急な予定変更に不安を感じて動けなくなります。"> 予定変更が苦手</label>
+        </div>
+
+        <label>お願いしたい具体的配慮</label>
+        <textarea id="requestDetail" placeholder="例:教室の前方の席にする、タブレット撮影を許可する"></textarea>
+
+        <button class="action-btn" onclick="generateLetter()">依頼文を生成する</button>
+
+        <div class="output-area" id="schoolOutput" style="display:none;">
+          <h3>完成した依頼文</h3>
+          <div id="schoolText" class="result-box"></div>
+          <button class="copy-btn" onclick="copyText('schoolText')">コピーする</button>
+        </div>
+      </div>
+      
+      <footer>
+        <small>© Time Design Lab | 無断転載禁止</small>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // パスワードチェック機能
+    function checkPassword() {
+      const password = document.getElementById('passwordInput').value;
+      const correctPassword = 'dekoboko';
+      
+      if (password === correctPassword) {
+        document.getElementById('passwordScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+      } else {
+        document.getElementById('errorMessage').style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+      }
+    }
+
+    // タブ切り替え
+    function openTab(tabName) {
+      var i;
+      var x = document.getElementsByClassName("tab-content");
+      var tablinks = document.getElementsByClassName("tab-btn");
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+      }
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+      }
+      document.getElementById(tabName).style.display = "block";
+      event.currentTarget.classList.add("active");
+    }
+
+    // ①トリセツ生成ロジック
+    function generateTrisetsu() {
+      const inputType = document.getElementById("inputType").value;
+      const focusType = document.getElementById("focusType").value;
+      const weakness = document.getElementById("weakness").value;
+      const hacks = document.getElementById("hacks").value;
+
+      const result = `【🧪 Time Design Labo式:我が子のトリセツ】
+
+■基本スペック(特性)
+・タイプ:${inputType}
+・集中力:${focusType}
+
+■取り扱い注意(地雷)
+⚠️ ${weakness}
+(※この環境下ではパフォーマンスが著しく低下します)
+
+■攻略法(こうすると動きます)
+✅ ${hacks}
+
+💡 親からの補足
+この子は「できない」のではなく、合う方法が違うだけです。
+上記の方法でサポートしていただけると、驚くほど力を発揮します。
+よろしくお願いいたします。`;
+
+      document.getElementById("trisetsuText").innerText = result;
+      document.getElementById("trisetsuOutput").style.display = "block";
+    }
+
+    // ②依頼文生成ロジック
+    function generateLetter() {
+      const name = document.getElementById("childName").value;
+      const requestDetail = document.getElementById("requestDetail").value;
+      
+      // チェックボックスの値を取得
+      let problems = [];
+      const checks = document.querySelectorAll('.checkbox-group input:checked');
+      checks.forEach(check => {
+        problems.push("・" + check.value);
+      });
+      const problemText = problems.join("\n");
+
+      const result = `担任の先生へ
+
+いつも${name}がお世話になっております。
+本日は、${name}の学校生活における「特性」と、お願いしたい「配慮」についてご相談したく連絡いたしました。
+
+家庭での様子や医師の助言を踏まえると、${name}には以下の特性(困りごと)が見られます。
+
+【学校生活での課題】
+${problemText}
+
+本人は「頑張りたい」という気持ちを持っていますが、上記の環境下では本来の力を発揮しづらい状況です。
+つきましては、可能な範囲で構いませんので、以下のご配慮をいただけますと幸いです。
+
+【お願いしたい配慮(合理的配慮の相談)】
+${requestDetail}
+
+特別扱いを求めているわけではなく、${name}がクラスの一員としてスムーズに参加するための「環境調整」のご相談です。
+お忙しい中恐縮ですが、一度お話しするお時間をいただけますでしょうか。
+どうぞよろしくお願いいたします。`;
+
+      document.getElementById("schoolText").innerText = result;
+      document.getElementById("schoolOutput").style.display = "block";
+    }
+
+    // コピー機能
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("コピーしました！\nLINEやメールに貼り付けて使ってね。");
+      });
+    }
+  </script>
+</body>
+</html>
