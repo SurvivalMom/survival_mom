@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心を鎮火するシート</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* パスワード画面 */
+        #passwordScreen {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        #passwordScreen h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        #passwordScreen p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        #passwordScreen input {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        #passwordScreen button {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #passwordScreen button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* メインコンテンツ */
+        #mainContent {
+            display: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .sheet {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .sheet.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sheet h2 {
+            color: #667eea;
+            font-size: 22px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .sheet h3 {
+            color: #764ba2;
+            font-size: 18px;
+            margin: 25px 0 15px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"],
+        .checkbox-item input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .scale-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .scale-input input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e0e0e0;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .scale-input input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .scale-input input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .scale-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .breathing-guide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .breathing-circle {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .breathing-circle.breathing {
+            animation: breathe 4s infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); background: rgba(255, 255, 255, 0.3); }
+            25% { transform: scale(1.3); background: rgba(255, 255, 255, 0.6); }
+            50% { transform: scale(1); background: rgba(255, 255, 255, 0.3); }
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-card .unit {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .emergency-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .emergency-card h3 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .emergency-card ol {
+            text-align: left;
+            display: inline-block;
+            font-size: 18px;
+            line-height: 2;
+        }
+
+        .notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        @media (max-width: 600px) {
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+            }
+
+            .sheet {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            #passwordScreen {
+                margin: 50px auto;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- パスワード入力画面 -->
+    <div id="passwordScreen">
+        <h2>🧠 心を鎮火するシート</h2>
+        <p>このツールにアクセスするにはパスワードが必要です</p>
+        <input type="password" id="passwordInput" placeholder="パスワードを入力" onkeypress="if(event.key==='Enter') checkPassword()">
+        <br>
+        <button onclick="checkPassword()">ログイン</button>
+        <p class="error-message" id="errorMessage">パスワードが正しくありません</p>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div id="mainContent">
+        <div class="container">
+            <div class="header">
+                <h1>🧠 心を鎮火するシート</h1>
+                <p>子どもが黙る前に - Time Design Lab</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showSheet(1)">朝版</button>
+                <button class="tab" onclick="showSheet(2)">報告時</button>
+                <button class="tab" onclick="showSheet(3)">1週間振り返り</button>
+                <button class="tab" onclick="showSheet(4)">緊急カード</button>
+            </div>
+
+            <!-- シート1: 朝版 -->
+            <div class="sheet active" id="sheet1">
+                <h2>朝の心の準備チェック (30秒)</h2>
+                
+                <div class="form-group">
+                    <label>日付</label>
+                    <input type="date" id="morning-date">
+                </div>
+
+                <div class="form-group">
+                    <label>今、私の心の状態は? (1〜10で)</label>
+                    <div class="scale-input">
+                        <span>1</span>
+                        <input type="range" id="morning-scale" min="1" max="10" value="5" oninput="updateScale('morning')">
+                        <span>10</span>
+                        <div class="scale-value" id="morning-scale-value">5</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="morning-check1">
+                            <label for="morning-check1">子どもは、結果じゃなくて「親の反応」を見てる。覚えてる?</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breathing-guide">
+                    <h3 style="color: white; margin: 0 0 10px 0;">深呼吸を3回</h3>
+                    <p>1秒かけて吸って、3秒かけて吐く</p>
+                    <div class="breathing-circle" id="breathing-circle">呼吸</div>
+                    <button class="btn" style="background: rgba(255,255,255,0.3); margin-top: 15px;" onclick="startBreathing()">深呼吸スタート</button>
+                </div>
+
+                <div class="form-group">
+                    <label>今日の心がけ</label>
+                    <textarea id="morning-note" placeholder="何が起きても、まず子どもの話を最後まで聞く"></textarea>
+                </div>
+
+                <button class="btn" onclick="saveMorning()">保存する</button>
+            </div>
+
+            <!-- シート2: 報告を聞く時版 -->
+            <div class="sheet" id="sheet2">
+                <h2>報告を聞く時版 (1分)</h2>
+
+                <div class="form-group">
+                    <label>日付</label>
+                    <input type="date" id="report-date">
+                </div>
+
+                <div class="form-group">
+                    <label>時刻</label>
+                    <input type="time" id="report-time">
+                </div>
+
+                <h3>ステップ1：まず、自分の状態を確認</h3>
+
+                <div class="form-group">
+                    <label>今、私の心の状態は? (1〜10で)</label>
+                    <div class="scale-input">
+                        <span>1</span>
+                        <input type="range" id="report-scale" min="1" max="10" value="5" oninput="updateScale('report')">
+                        <span>10</span>
+                        <div class="scale-value" id="report-scale-value">5</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="report-check1">
+                            <label for="report-check1">胸がざわざわしてる?</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="report-check2">
+                            <label for="report-check2">深呼吸を3回した?</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>ステップ2：子どもの話を記録</h3>
+
+                <div class="form-group">
+                    <label>子どもが言ったこと (そのまま書く)</label>
+                    <textarea id="child-words" placeholder="例: テスト、落ちちゃった"></textarea>
+                </div>
+
+                <h3>ステップ3：自分の感情を分離</h3>
+
+                <div class="form-group">
+                    <label>私が感じた感情 (心の中だけ)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emotion-1">
+                            <label for="emotion-1">焦り</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emotion-2">
+                            <label for="emotion-2">不安</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emotion-3">
+                            <label for="emotion-3">怒り</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emotion-4">
+                            <label for="emotion-4">悲しみ</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>親の本音 (心の中だけ、ここに吐き出す)</label>
+                    <textarea id="parent-true-feelings" placeholder="例: え、なんで落ちたの? またか..."></textarea>
+                </div>
+
+                <h3>ステップ4：子どもへの言葉を選ぶ</h3>
+
+                <div class="form-group">
+                    <label>子どもが一番聞きたい言葉は?</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-wants" id="wants-1">
+                            <label for="wants-1">「そっか、頑張ったんだね」</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-wants" id="wants-2">
+                            <label for="wants-2">「話してくれてありがとう」</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-wants" id="wants-3">
+                            <label for="wants-3">「次、どうしたい?」</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>実際に言った言葉</label>
+                    <textarea id="actual-words" placeholder="実際に口に出した言葉を記録"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>子どもの反応</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-reaction" id="reaction-1">
+                            <label for="reaction-1">安心した顔</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-reaction" id="reaction-2">
+                            <label for="reaction-2">まだ不安そう</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-reaction" id="reaction-3">
+                            <label for="reaction-3">話し続けた</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-reaction" id="reaction-4">
+                            <label for="reaction-4">黙った</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="saveReport()">保存する</button>
+            </div>
+
+            <!-- シート3: 1週間の振り返り -->
+            <div class="sheet" id="sheet3">
+                <h2>1週間の振り返りシート</h2>
+
+                <div class="form-group">
+                    <label>期間</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="date" id="week-start" style="flex: 1;">
+                        <span>〜</span>
+                        <input type="date" id="week-end" style="flex: 1;">
+                    </div>
+                </div>
+
+                <h3>今週の記録</h3>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>爆発した回数</h4>
+                        <div class="value" id="explosion-count">0</div>
+                        <div class="unit">回</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>会話時間(1日平均)</h4>
+                        <div class="value" id="talk-time">0</div>
+                        <div class="unit">分</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>自発的報告</h4>
+                        <div class="value" id="voluntary-reports">0</div>
+                        <div class="unit">回</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>爆発した回数</label>
+                    <input type="number" id="week-explosions" min="0" placeholder="今週" oninput="updateWeekStats()">
+                </div>
+
+                <div class="form-group">
+                    <label>子どもとの会話時間 (1日平均・分)</label>
+                    <input type="number" id="week-talk-time" min="0" placeholder="今週" oninput="updateWeekStats()">
+                </div>
+
+                <div class="form-group">
+                    <label>子どもからの自発的報告</label>
+                    <input type="number" id="week-reports" min="0" placeholder="今週" oninput="updateWeekStats()">
+                </div>
+
+                <h3>今週の気づき</h3>
+
+                <div class="form-group">
+                    <label>爆発しそうになった瞬間</label>
+                    <textarea id="week-moments" placeholder="月: &#10;火: &#10;水: &#10;木: &#10;金: &#10;土: &#10;日: "></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>シートを使って防げた回数</label>
+                    <input type="number" id="prevented-count" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>一番効果があったのは?</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="effective-1">
+                            <label for="effective-1">朝のチェック</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="effective-2">
+                            <label for="effective-2">深呼吸</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="effective-3">
+                            <label for="effective-3">感情の分離</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>子どもの変化</h3>
+
+                <div class="form-group">
+                    <label>表情</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-expression" id="expr-1">
+                            <label for="expr-1">明るくなった</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-expression" id="expr-2">
+                            <label for="expr-2">変わらない</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" name="child-expression" id="expr-3">
+                            <label for="expr-3">まだ様子見</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>来週の目標</h3>
+
+                <div class="form-group">
+                    <label>爆発回数</label>
+                    <input type="number" id="next-goal-explosions" min="0" placeholder="回以下">
+                </div>
+
+                <div class="form-group">
+                    <label>会話時間</label>
+                    <input type="number" id="next-goal-time" min="0" placeholder="分以上">
+                </div>
+
+                <div class="form-group">
+                    <label>意識すること</label>
+                    <textarea id="next-week-focus" placeholder="来週、特に意識したいこと"></textarea>
+                </div>
+
+                <button class="btn" onclick="saveWeekly()">保存する</button>
+                <button class="btn btn-secondary" onclick="exportData()">データをエクスポート</button>
+            </div>
+
+            <!-- シート4: 緊急カード -->
+            <div class="sheet" id="sheet4">
+                <div class="emergency-card">
+                    <h3>🚨 爆発しそうな時、これを読んで</h3>
+                    <ol>
+                        <li>深呼吸を3回 (今すぐ)</li>
+                        <li>子どもは、あなたの「反応」を見てる</li>
+                        <li>本音は心の中で。口に出すのは別の言葉</li>
+                        <li>今日は爆発しなかった。それだけで合格</li>
+                    </ol>
+                </div>
+
+                <div class="breathing-guide">
+                    <h3 style="color: white; margin: 0 0 10px 0;">緊急深呼吸ガイド</h3>
+                    <p>この円を見ながら、ゆっくり呼吸してください</p>
+                    <div class="breathing-circle breathing">呼吸</div>
+                    <p style="margin-top: 15px; font-size: 18px;">大丈夫。あなたは今、止まった。</p>
+                </div>
+
+                <div class="notice">
+                    <strong>💡 覚えておいて</strong><br>
+                    爆発しそうになるのは、あなたの「努力不足」じゃない。<br>
+                    脳の生理反応。それを知ってるだけで、あなたは既に変わり始めてる。
+                </div>
+
+                <button class="btn" onclick="showSheet(2)">落ち着いたら、記録する</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // パスワードチェック機能
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const correctPassword = 'kokoro';
+            
+            if (password === correctPassword) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                
+                // 初期化処理
+                initApp();
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        // アプリ初期化
+        function initApp() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('morning-date').value = today;
+            document.getElementById('report-date').value = today;
+            
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('report-time').value = time;
+
+            loadData();
+        }
+
+        function showSheet(sheetNum) {
+            document.querySelectorAll('.sheet').forEach(sheet => {
+                sheet.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById('sheet' + sheetNum).classList.add('active');
+            document.querySelectorAll('.tab')[sheetNum - 1].classList.add('active');
+        }
+
+        function updateScale(type) {
+            const scale = document.getElementById(type + '-scale').value;
+            document.getElementById(type + '-scale-value').textContent = scale;
+        }
+
+        let breathingInterval;
+        function startBreathing() {
+            const circle = document.getElementById('breathing-circle');
+            circle.classList.add('breathing');
+            let count = 0;
+            const texts = ['吸って...', '吐いて...', '吸って...', '吐いて...', '吸って...', '吐いて...'];
+            
+            circle.textContent = texts[0];
+            
+            if (breathingInterval) clearInterval(breathingInterval);
+            
+            breathingInterval = setInterval(() => {
+                count++;
+                if (count < texts.length) {
+                    circle.textContent = texts[count];
+                } else {
+                    circle.textContent = '完了!';
+                    setTimeout(() => {
+                        circle.textContent = '呼吸';
+                        clearInterval(breathingInterval);
+                    }, 2000);
+                }
+            }, 4000);
+        }
+
+        function saveMorning() {
+            const data = {
+                date: document.getElementById('morning-date').value,
+                scale: document.getElementById('morning-scale').value,
+                check: document.getElementById('morning-check1').checked,
+                note: document.getElementById('morning-note').value
+            };
+            
+            const saved = JSON.parse(localStorage.getItem('morningData') || '[]');
+            saved.push(data);
+            localStorage.setItem('morningData', JSON.stringify(saved));
+            
+            alert('✅ 保存しました！今日も頑張りましょう。');
+        }
+
+        function saveReport() {
+            const data = {
+                date: document.getElementById('report-date').value,
+                time: document.getElementById('report-time').value,
+                scale: document.getElementById('report-scale').value,
+                childWords: document.getElementById('child-words').value,
+                parentFeelings: document.getElementById('parent-true-feelings').value,
+                actualWords: document.getElementById('actual-words').value,
+                emotions: {
+                    anxiety: document.getElementById('emotion-1').checked,
+                    worry: document.getElementById('emotion-2').checked,
+                    anger: document.getElementById('emotion-3').checked,
+                    sadness: document.getElementById('emotion-4').checked
+                }
+            };
+            
+            const saved = JSON.parse(localStorage.getItem('reportData') || '[]');
+            saved.push(data);
+            localStorage.setItem('reportData', JSON.stringify(saved));
+            
+            alert('✅ 記録しました！よく止まれましたね。');
+        }
+
+        function saveWeekly() {
+            const data = {
+                weekStart: document.getElementById('week-start').value,
+                weekEnd: document.getElementById('week-end').value,
+                explosions: document.getElementById('week-explosions').value,
+                talkTime: document.getElementById('week-talk-time').value,
+                reports: document.getElementById('week-reports').value,
+                moments: document.getElementById('week-moments').value,
+                prevented: document.getElementById('prevented-count').value,
+                nextGoalExplosions: document.getElementById('next-goal-explosions').value,
+                nextGoalTime: document.getElementById('next-goal-time').value,
+                nextFocus: document.getElementById('next-week-focus').value
+            };
+            
+            const saved = JSON.parse(localStorage.getItem('weeklyData') || '[]');
+            saved.push(data);
+            localStorage.setItem('weeklyData', JSON.stringify(saved));
+            
+            alert('✅ 1週間の記録を保存しました！継続は力なり。');
+        }
+
+        function updateWeekStats() {
+            document.getElementById('explosion-count').textContent = document.getElementById('week-explosions').value || '0';
+            document.getElementById('talk-time').textContent = document.getElementById('week-talk-time').value || '0';
+            document.getElementById('voluntary-reports').textContent = document.getElementById('week-reports').value || '0';
+        }
+
+        function loadData() {
+        }
+
+        function exportData() {
+            const allData = {
+                morning: JSON.parse(localStorage.getItem('morningData') || '[]'),
+                reports: JSON.parse(localStorage.getItem('reportData') || '[]'),
+                weekly: JSON.parse(localStorage.getItem('weeklyData') || '[]')
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'shinka-sheet-data-' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+            
+            alert('✅ データをエクスポートしました！');
+        }
+    </script>
+</body>
+</html>
