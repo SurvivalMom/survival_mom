@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>才能はっくつシート</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* パスワード画面 */
+        #passwordScreen {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+        }
+
+        #passwordScreen h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        #passwordScreen p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        #passwordScreen input {
+            width: 80%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        #passwordScreen button {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #passwordScreen button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* メインコンテンツ */
+        #mainContent {
+            display: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            background: #fafafa;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .concentration-scale {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .concentration-scale label {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: normal;
+        }
+
+        .concentration-scale input[type="radio"] {
+            display: none;
+        }
+
+        .concentration-scale input[type="radio"]:checked + label {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .record-list {
+            margin-top: 30px;
+        }
+
+        .record-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .record-date {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .record-time {
+            color: #666;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .record-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .record-detail {
+            display: flex;
+            gap: 5px;
+        }
+
+        .record-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .chart-container {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bar-label {
+            width: 120px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .bar-container {
+            flex: 1;
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+            }
+            
+            .tab {
+                padding: 12px 20px;
+                white-space: nowrap;
+            }
+            
+            .bar-label {
+                width: 80px;
+                font-size: 12px;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- パスワード入力画面 -->
+        <div id="passwordScreen">
+            <h2>🧪 才能はっくつシート</h2>
+            <p>このツールにアクセスするにはパスワードが必要です</p>
+            <input type="password" id="passwordInput" placeholder="パスワードを入力" onkeypress="if(event.key==='Enter') checkPassword()">
+            <br>
+            <button onclick="checkPassword()">ログイン</button>
+            <p class="error-message" id="errorMessage">パスワードが正しくありません</p>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div id="mainContent">
+            <div class="header">
+                <h1>🧪 才能はっくつシート</h1>
+                <p>子どもの行動を「問題」ではなく「データ」として記録しよう</p>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('input')">記録する</button>
+                <button class="tab" onclick="switchTab('list')">記録一覧</button>
+                <button class="tab" onclick="switchTab('analysis')">分析結果</button>
+            </div>
+            
+            <div class="content">
+                <div id="input-tab">
+                    <div class="input-section">
+                        <div class="input-group">
+                            <label>日付</label>
+                            <input type="date" id="record-date">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>時間帯</label>
+                            <select id="record-time">
+                                <option value="6:00-9:00">朝(6:00-9:00)</option>
+                                <option value="9:00-12:00">午前(9:00-12:00)</option>
+                                <option value="12:00-15:00">昼(12:00-15:00)</option>
+                                <option value="15:00-18:00" selected>夕方(15:00-18:00)</option>
+                                <option value="18:00-21:00">夜(18:00-21:00)</option>
+                                <option value="21:00-24:00">深夜(21:00-24:00)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>活動内容</label>
+                            <select id="record-activity">
+                                <option value="ゲーム">ゲーム</option>
+                                <option value="YouTube">YouTube/動画視聴</option>
+                                <option value="読書">読書</option>
+                                <option value="工作">工作/創作活動</option>
+                                <option value="外遊び">外遊び</option>
+                                <option value="勉強">勉強</option>
+                                <option value="食事">食事</option>
+                                <option value="睡眠">睡眠/休息</option>
+                                <option value="その他">その他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>集中度(1=低い 〜 5=高い)</label>
+                            <div class="concentration-scale">
+                                <input type="radio" name="concentration" value="1" id="conc1">
+                                <label for="conc1">1</label>
+                                <input type="radio" name="concentration" value="2" id="conc2">
+                                <label for="conc2">2</label>
+                                <input type="radio" name="concentration" value="3" id="conc3" checked>
+                                <label for="conc3">3</label>
+                                <input type="radio" name="concentration" value="4" id="conc4">
+                                <label for="conc4">4</label>
+                                <input type="radio" name="concentration" value="5" id="conc5">
+                                <label for="conc5">5</label>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>反応</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="reaction" value="ポジティブ" checked>
+                                    😊 ポジティブ(楽しそう)
+                                </label>
+                                <label>
+                                    <input type="radio" name="reaction" value="ニュートラル">
+                                    😐 ニュートラル(普通)
+                                </label>
+                                <label>
+                                    <input type="radio" name="reaction" value="ネガティブ">
+                                    😞 ネガティブ(イライラ/悲しそう)
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>メモ(気づいたこと、発言内容など)</label>
+                            <textarea id="record-memo" placeholder="例: マインクラフトで複雑な建築をしていた。「これ作るの3時間かかった」と満足そう"></textarea>
+                        </div>
+                        
+                        <button class="btn" onclick="addRecord()">記録を追加</button>
+                    </div>
+                </div>
+                
+                <div id="list-tab" style="display:none;">
+                    <div class="record-list" id="record-list"></div>
+                </div>
+                
+                <div id="analysis-tab" style="display:none;">
+                    <div class="chart-container">
+                        <div class="chart-title">活動別の記録回数</div>
+                        <div class="bar-chart" id="activity-chart"></div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-title">時間帯別の集中度</div>
+                        <div class="bar-chart" id="time-chart"></div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-title">反応別の割合</div>
+                        <div class="bar-chart" id="reaction-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // パスワードチェック機能
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const correctPassword = 'hakkutsu';
+            
+            if (password === correctPassword) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                
+                // 初期化処理
+                document.getElementById('record-date').valueAsDate = new Date();
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        // メインアプリケーションのコード
+        let records = [];
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('input-tab').style.display = 'none';
+            document.getElementById('list-tab').style.display = 'none';
+            document.getElementById('analysis-tab').style.display = 'none';
+            
+            document.getElementById(tab + '-tab').style.display = 'block';
+            
+            if (tab === 'list') {
+                renderRecordList();
+            } else if (tab === 'analysis') {
+                renderAnalysis();
+            }
+        }
+
+        function addRecord() {
+            const date = document.getElementById('record-date').value;
+            const time = document.getElementById('record-time').value;
+            const activity = document.getElementById('record-activity').value;
+            const concentration = document.querySelector('input[name="concentration"]:checked').value;
+            const reaction = document.querySelector('input[name="reaction"]:checked').value;
+            const memo = document.getElementById('record-memo').value;
+            
+            if (!date) {
+                alert('日付を入力してください');
+                return;
+            }
+            
+            const record = {
+                id: Date.now(),
+                date,
+                time,
+                activity,
+                concentration: parseInt(concentration),
+                reaction,
+                memo
+            };
+            
+            records.push(record);
+            
+            document.getElementById('record-memo').value = '';
+            
+            alert('記録を追加しました!');
+        }
+
+        function renderRecordList() {
+            const listEl = document.getElementById('record-list');
+            
+            if (records.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>まだ記録がありません<br>「記録する」タブから追加してみましょう</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            listEl.innerHTML = sortedRecords.map(r => `
+                <div class="record-item">
+                    <div class="record-header">
+                        <div>
+                            <span class="record-date">${r.date}</span>
+                            <span class="record-time">${r.time}</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteRecord(${r.id})">削除</button>
+                    </div>
+                    <div class="record-content">
+                        <div class="record-detail">
+                            <span class="record-label">活動:</span>
+                            <span>${r.activity}</span>
+                        </div>
+                        <div class="record-detail">
+                            <span class="record-label">集中度:</span>
+                            <span>${'★'.repeat(r.concentration)}${'☆'.repeat(5-r.concentration)}</span>
+                        </div>
+                        <div class="record-detail">
+                            <span class="record-label">反応:</span>
+                            <span>${r.reaction}</span>
+                        </div>
+                    </div>
+                    ${r.memo ? `<div style="margin-top:10px;font-size:13px;color:#666;"><span class="record-label">メモ:</span> ${r.memo}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteRecord(id) {
+            if (confirm('この記録を削除しますか?')) {
+                records = records.filter(r => r.id !== id);
+                renderRecordList();
+            }
+        }
+
+        function renderAnalysis() {
+            if (records.length === 0) {
+                document.getElementById('activity-chart').innerHTML = '<div class="empty-state"><p>記録が0件です</p></div>';
+                document.getElementById('time-chart').innerHTML = '<div class="empty-state"><p>記録が0件です</p></div>';
+                document.getElementById('reaction-chart').innerHTML = '<div class="empty-state"><p>記録が0件です</p></div>';
+                return;
+            }
+            
+            const activityCount = {};
+            records.forEach(r => {
+                activityCount[r.activity] = (activityCount[r.activity] || 0) + 1;
+            });
+            
+            const maxActivity = Math.max(...Object.values(activityCount));
+            document.getElementById('activity-chart').innerHTML = Object.entries(activityCount)
+                .sort((a, b) => b[1] - a[1])
+                .map(([activity, count]) => `
+                    <div class="bar-item">
+                        <div class="bar-label">${activity}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${(count/maxActivity)*100}%">${count}回</div>
+                        </div>
+                    </div>
+                `).join('');
+            
+            const timeConcentration = {};
+            records.forEach(r => {
+                if (!timeConcentration[r.time]) {
+                    timeConcentration[r.time] = [];
+                }
+                timeConcentration[r.time].push(r.concentration);
+            });
+            
+            const timeAvg = {};
+            Object.entries(timeConcentration).forEach(([time, concentrations]) => {
+                timeAvg[time] = concentrations.reduce((a, b) => a + b, 0) / concentrations.length;
+            });
+            
+            document.getElementById('time-chart').innerHTML = Object.entries(timeAvg)
+                .sort((a, b) => b[1] - a[1])
+                .map(([time, avg]) => `
+                    <div class="bar-item">
+                        <div class="bar-label">${time}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${(avg/5)*100}%">${avg.toFixed(1)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            
+            const reactionCount = {};
+            records.forEach(r => {
+                reactionCount[r.reaction] = (reactionCount[r.reaction] || 0) + 1;
+            });
+            
+            const maxReaction = Math.max(...Object.values(reactionCount));
+            document.getElementById('reaction-chart').innerHTML = Object.entries(reactionCount)
+                .sort((a, b) => b[1] - a[1])
+                .map(([reaction, count]) => `
+                    <div class="bar-item">
+                        <div class="bar-label">${reaction}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${(count/maxReaction)*100}%">${count}回 (${((count/records.length)*100).toFixed(0)}%)</div>
+                        </div>
+                    </div>
+                `).join('');
+        }
+    </script>
+</body>
+</html>
