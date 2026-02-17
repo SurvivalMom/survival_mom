@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題→データ変換アプリ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* パスワード画面 */
+        #passwordScreen {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        #passwordScreen h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        #passwordScreen p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        #passwordScreen input {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        #passwordScreen button {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #passwordScreen button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* メインコンテンツ */
+        #mainContent {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .quick-buttons {
+            margin-bottom: 30px;
+        }
+
+        .quick-buttons h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .quick-btn {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .quick-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .input-section textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+        }
+
+        .input-section textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .transformation {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .problem-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .problem-label {
+            font-size: 12px;
+            color: #c62828;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .problem-text {
+            font-size: 15px;
+            color: #333;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 30px;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .data-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .data-text {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .observation-points {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .observation-points h4 {
+            font-size: 14px;
+            color: #f57c00;
+            margin-bottom: 10px;
+        }
+
+        .observation-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .observation-points li {
+            padding: 8px 0;
+            padding-left: 20px;
+            font-size: 13px;
+            color: #666;
+            position: relative;
+        }
+
+        .observation-points li:before {
+            content: "📊";
+            position: absolute;
+            left: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-save, .btn-edit {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #45a049;
+        }
+
+        .btn-edit {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-edit:hover {
+            background: #e0e0e0;
+        }
+
+        .history-section {
+            margin-top: 20px;
+        }
+
+        .history-item {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .history-problem {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .history-data {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .delete-history {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .modal-save {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-cancel {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .main-card {
+                padding: 20px;
+            }
+            
+            .button-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            #passwordScreen {
+                margin: 50px auto;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- パスワード入力画面 -->
+    <div id="passwordScreen">
+        <h2>🔄 問題→データ変換アプリ</h2>
+        <p>このツールにアクセスするにはパスワードが必要です</p>
+        <input type="password" id="passwordInput" placeholder="パスワードを入力" onkeypress="if(event.key==='Enter') checkPassword()">
+        <br>
+        <button onclick="checkPassword()">ログイン</button>
+        <p class="error-message" id="errorMessage">パスワードが正しくありません</p>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div id="mainContent">
+        <div class="container">
+            <div class="header">
+                <h1>🔄 問題→データ変換アプリ</h1>
+                <p>「困った行動」を「才能の観察対象」に変えるツール</p>
+            </div>
+            
+            <div class="main-card">
+                <div class="quick-buttons">
+                    <h3>よくある「困った行動」から選ぶ</h3>
+                    <div class="button-grid">
+                        <button class="quick-btn" onclick="selectQuickProblem('ゲームばっかりやってる')">ゲーム依存</button>
+                        <button class="quick-btn" onclick="selectQuickProblem('YouTube無限に見てる')">YouTube漬け</button>
+                        <button class="quick-btn" onclick="selectQuickProblem('昼夜逆転してる')">昼夜逆転</button>
+                        <button class="quick-btn" onclick="selectQuickProblem('朝起きない')">朝起きない</button>
+                        <button class="quick-btn" onclick="selectQuickProblem('暴言を吐く')">暴言・癇癪</button>
+                        <button class="quick-btn" onclick="selectQuickProblem('偏食がひどい')">偏食</button>
+                        <button class="quick-btn" onclick="selectQuickProblem('こだわりが強すぎる')">強いこだわり</button>
+                        <button class="quick-btn" onclick="selectQuickProblem('友達と遊ばない')">孤立</button>
+                    </div>
+                </div>
+                
+                <div class="input-section">
+                    <label>または、今困っている行動を自由に書いてください</label>
+                    <textarea id="problem-input" placeholder="例: 宿題を全くやらない、部屋に引きこもってる、など"></textarea>
+                </div>
+                
+                <button class="convert-btn" onclick="convertProblem()">🔄 データに変換する</button>
+                
+                <div class="result-section" id="result-section">
+                    <div class="transformation">
+                        <div class="problem-box">
+                            <div class="problem-label">❌ 問題として見た時</div>
+                            <div class="problem-text" id="problem-display"></div>
+                        </div>
+                        
+                        <div class="arrow">↓</div>
+                        
+                        <div class="data-box">
+                            <div class="data-label">✅ データとして見た時</div>
+                            <div class="data-text" id="data-display"></div>
+                        </div>
+                        
+                        <div class="observation-points">
+                            <h4>📊 観察・記録すべきポイント</h4>
+                            <ul id="observation-list"></ul>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-save" onclick="saveConversion()">💾 変換結果を保存</button>
+                        <button class="btn-edit" onclick="openEditModal()">✏️ 編集する</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-card history-section" id="history-section" style="display:none;">
+                <h3 style="margin-bottom: 15px; color: #333;">📚 保存した変換履歴</h3>
+                <div id="history-list"></div>
+            </div>
+        </div>
+
+        <div class="edit-modal" id="edit-modal">
+            <div class="modal-content">
+                <h3>変換結果を編集</h3>
+                <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666;">データとしての見方</label>
+                <textarea id="edit-data" rows="3"></textarea>
+                <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666;">観察ポイント(1行に1つずつ)</label>
+                <textarea id="edit-observations" rows="5"></textarea>
+                <div class="modal-buttons">
+                    <button class="modal-save" onclick="saveEdit()">保存</button>
+                    <button class="modal-cancel" onclick="closeEditModal()">キャンセル</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // パスワードチェック機能
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const correctPassword = 'henkan';
+            
+            if (password === correctPassword) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        // メインアプリケーションのコード
+        const conversions = {
+            'ゲームばっかりやってる': {
+                data: '驚異的な集中力と戦略的思考能力の発揮',
+                observations: [
+                    '何時間連続で集中できるか',
+                    'どんなジャンルのゲームを選ぶか(戦略系、アクション系、創作系など)',
+                    '攻略法を自分で編み出しているか',
+                    'ゲーム中の表情や感情の変化',
+                    'マルチプレイでのコミュニケーション能力'
+                ]
+            },
+            'YouTube無限に見てる': {
+                data: '情報収集能力と興味・関心の方向性の分析',
+                observations: [
+                    'どんなジャンルの動画を見ているか',
+                    '同じ系統の動画を見続けるか、色々なジャンルを見るか',
+                    '動画の長さの傾向(短い動画 vs 長時間動画)',
+                    '見た後の反応(笑う、考え込む、真似する など)',
+                    '動画の内容について話すか'
+                ]
+            },
+            '昼夜逆転してる': {
+                data: '活動エネルギーのピークタイム測定と生体リズムの特性把握',
+                observations: [
+                    '実際の就寝時刻と起床時刻',
+                    '夜間の活動内容と集中度',
+                    '日中の眠気のパターン',
+                    '食事のタイミングと食欲',
+                    '週末と平日の差'
+                ]
+            },
+            '朝起きない': {
+                data: '最適な覚醒タイミングと睡眠サイクルの特性分析',
+                observations: [
+                    '何時になれば自然に起きるか',
+                    '起きた時の機嫌や体調',
+                    '前日の就寝時刻との関係',
+                    '季節や天候による変化',
+                    '起床後の活動開始までの時間'
+                ]
+            },
+            '暴言を吐く': {
+                data: '感情表現のパターンとストレス反応の可視化',
+                observations: [
+                    'どんな状況で暴言が出るか(朝、疲れた時、思い通りにいかない時など)',
+                    '暴言の前兆となる行動や表情',
+                    '暴言を吐いた後の様子',
+                    '何を言われると落ち着くか',
+                    '暴言が出ない日の共通点'
+                ]
+            },
+            '偏食がひどい': {
+                data: '感覚特性と食の好みパターンの研究',
+                observations: [
+                    '食べられるものの共通点(食感、色、温度など)',
+                    '食べられないものの共通点',
+                    '調理法による違い(生 vs 加熱、など)',
+                    '環境による変化(外食 vs 家、など)',
+                    '新しい食べ物への挑戦頻度'
+                ]
+            },
+            'こだわりが強すぎる': {
+                data: '独自の価値観とルール体系の構築能力',
+                observations: [
+                    'どんなことにこだわるか(順番、配置、時間など)',
+                    'こだわりが満たされた時の反応',
+                    'こだわりを崩された時の対処法',
+                    'こだわりの変化や進化',
+                    '他者のこだわりへの反応'
+                ]
+            },
+            '友達と遊ばない': {
+                data: '対人距離感の設定能力と単独活動への適性',
+                observations: [
+                    '一人で何をして過ごすか',
+                    '集団にいる時の様子(観察している、避けている、など)',
+                    '特定の人とだけ関わることはあるか',
+                    'オンラインでのコミュニケーションはどうか',
+                    '一人の時間の後の様子'
+                ]
+            }
+        };
+
+        let currentConversion = null;
+        let savedHistory = [];
+
+        function selectQuickProblem(problem) {
+            document.getElementById('problem-input').value = problem;
+        }
+
+        function convertProblem() {
+            const input = document.getElementById('problem-input').value.trim();
+            
+            if (!input) {
+                alert('困っている行動を入力してください');
+                return;
+            }
+            
+            let conversion = conversions[input];
+            
+            if (!conversion) {
+                conversion = generateCustomConversion(input);
+            }
+            
+            currentConversion = {
+                problem: input,
+                data: conversion.data,
+                observations: conversion.observations,
+                timestamp: new Date()
+            };
+            
+            displayResult(currentConversion);
+        }
+
+        function generateCustomConversion(problem) {
+            const patterns = [
+                { keywords: ['しない', 'やらない'], data: '自己選択能力と優先順位の判断', observations: ['何を選んでいるか', 'どんな時なら取り組むか', '代わりに何をしているか'] },
+                { keywords: ['すぐ', 'イライラ', '怒る'], data: '感情の起伏パターンと発散方法の分析', observations: ['何がきっかけか', '怒った後の行動', '落ち着くまでの時間'] },
+                { keywords: ['集中', '没頭'], data: '高い集中力と没入能力', observations: ['何に集中しているか', '集中している時間', '中断時の反応'] }
+            ];
+            
+            for (let pattern of patterns) {
+                if (pattern.keywords.some(kw => problem.includes(kw))) {
+                    return {
+                        data: pattern.data,
+                        observations: pattern.observations
+                    };
+                }
+            }
+            
+            return {
+                data: '独自の行動パターンと特性の表れ',
+                observations: [
+                    'いつ、どんな時にその行動をするか',
+                    'その行動をしている時の様子',
+                    'その行動の前後の変化',
+                    'その行動が起きない日の共通点'
+                ]
+            };
+        }
+
+        function displayResult(conversion) {
+            document.getElementById('problem-display').textContent = conversion.problem;
+            document.getElementById('data-display').textContent = conversion.data;
+            
+            const observationList = document.getElementById('observation-list');
+            observationList.innerHTML = '';
+            conversion.observations.forEach(obs => {
+                const li = document.createElement('li');
+                li.textContent = obs;
+                observationList.appendChild(li);
+            });
+            
+            const resultSection = document.getElementById('result-section');
+            resultSection.classList.add('show');
+            
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function saveConversion() {
+            if (!currentConversion) return;
+            
+            savedHistory.unshift(currentConversion);
+            renderHistory();
+            
+            alert('保存しました!');
+        }
+
+        function renderHistory() {
+            if (savedHistory.length === 0) {
+                document.getElementById('history-section').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('history-section').style.display = 'block';
+            
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            
+            savedHistory.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div class="history-header">
+                        <div class="history-date">${item.timestamp.toLocaleDateString('ja-JP')} ${item.timestamp.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'})}</div>
+                        <button class="delete-history" onclick="deleteHistory(${index})">削除</button>
+                    </div>
+                    <div class="history-problem">問題: ${item.problem}</div>
+                    <div class="history-data">→ ${item.data}</div>
+                `;
+                historyList.appendChild(div);
+            });
+        }
+
+        function deleteHistory(index) {
+            if (confirm('この履歴を削除しますか?')) {
+                savedHistory.splice(index, 1);
+                renderHistory();
+            }
+        }
+
+        function openEditModal() {
+            if (!currentConversion) return;
+            
+            document.getElementById('edit-data').value = currentConversion.data;
+            document.getElementById('edit-observations').value = currentConversion.observations.join('\n');
+            document.getElementById('edit-modal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('show');
+        }
+
+        function saveEdit() {
+            const newData = document.getElementById('edit-data').value.trim();
+            const newObservations = document.getElementById('edit-observations').value
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+            
+            if (!newData || newObservations.length === 0) {
+                alert('データと観察ポイントを入力してください');
+                return;
+            }
+            
+            currentConversion.data = newData;
+            currentConversion.observations = newObservations;
+            
+            displayResult(currentConversion);
+            closeEditModal();
+        }
+
+        document.getElementById('edit-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+    </script>
+</body>
+</html>
