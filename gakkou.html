@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学校連携用コミュニケーション・テンプレート</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* パスワード画面 */
+        #passwordScreen {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        #passwordScreen h2 {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        #passwordScreen p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        #passwordScreen input {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #43cea2;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        #passwordScreen button {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #passwordScreen button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 206, 162, 0.4);
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* メインコンテンツ */
+        #mainContent {
+            display: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            color: white;
+            padding: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .template-selector {
+            background: #fafafa;
+            padding: 20px 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .template-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .template-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tips {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+
+        .tips-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tips-content {
+            color: #856404;
+            font-size: 13px;
+        }
+
+        .tips-content ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .tips-content li {
+            margin-bottom: 5px;
+        }
+
+        .template-area {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 25px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .placeholder {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: #43cea2;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #3ab890;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .example-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .example-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .example-box {
+            background: #f0f8ff;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+
+            #passwordScreen {
+                margin: 50px auto;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- パスワード入力画面 -->
+    <div id="passwordScreen">
+        <h2>📧 学校連携用コミュニケーション・テンプレート</h2>
+        <p>このツールにアクセスするにはパスワードが必要です</p>
+        <input type="password" id="passwordInput" placeholder="パスワードを入力" onkeypress="if(event.key==='Enter') checkPassword()">
+        <br>
+        <button onclick="checkPassword()">ログイン</button>
+        <p class="error-message" id="errorMessage">パスワードが正しくありません</p>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div id="mainContent">
+        <div class="container">
+            <div class="header">
+                <h1>📧 学校連携用コミュニケーション・テンプレート</h1>
+                <p>感情的にならず、でも要求はしっかり伝えるための「武装する文章」</p>
+            </div>
+            
+            <div class="template-selector">
+                <label>テンプレートを選択してください</label>
+                <select id="template-select" onchange="changeTemplate()">
+                    <option value="initial">初回連絡(不登校が始まった時)</option>
+                    <option value="progress">経過報告(1〜2週間後)</option>
+                    <option value="partial">部分登校の相談</option>
+                    <option value="request">具体的なお願い(給食だけ参加など)</option>
+                    <option value="thanks">感謝を伝える連絡</option>
+                </select>
+            </div>
+            
+            <div class="content">
+                <div class="tips">
+                    <div class="tips-title">💡 使い方のコツ</div>
+                    <div class="tips-content">
+                        <ul>
+                            <li>青いハイライト部分を、あなたの状況に合わせて書き換えてください</li>
+                            <li>謝罪から始めない。現状報告と提案をする立場で</li>
+                            <li>感情的な表現は削除し、事実を淡々と伝える</li>
+                            <li>お願いは具体的に、選択肢を提示する形で</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="template-content"></div>
+                
+                <div class="btn-container">
+                    <button class="btn" onclick="copyTemplate()">
+                        📋 テンプレートをコピー
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadTemplate()">
+                        💾 テキストファイルでダウンロード
+                    </button>
+                </div>
+                
+                <div class="success-message" id="success-message">
+                    ✓ コピーしました! メールやメモ帳に貼り付けてお使いください
+                </div>
+                
+                <div class="example-section">
+                    <div class="example-title">📝 実際の使用例</div>
+                    <div class="example-box" id="example-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // パスワードチェック機能
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const correctPassword = 'renraku';
+            
+            if (password === correctPassword) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                
+                // 初期化処理
+                changeTemplate();
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        // メインアプリケーションのコード
+        const templates = {
+            initial: {
+                content: `件名: 【<span class="placeholder">担任の先生のお名前</span>先生へ】現状のご報告
+
+<span class="placeholder">担任の先生のお名前</span>先生
+
+いつもお世話になっております。<span class="placeholder">お子さんの名前</span>の母、<span class="placeholder">あなたの名前</span>です。
+
+<span class="placeholder">お子さんの名前</span>の登校について、現状をご報告させていただきます。
+
+現在、朝の登校時刻になると強い不安を訴え、登校が難しい状態が続いております。
+本人は「学校に行きたい」という気持ちと「行けない」という状態の間で葛藤しており、
+心身ともに疲弊している様子が見られます。
+
+家庭では、無理に登校を促すことは控え、
+本人の心身の状態を観察しながら、安心して過ごせる環境づくりに努めております。
+
+つきましては、以下についてご相談させていただけますでしょうか。
+
+・当面の間、出席の扱いについてご配慮いただくこと
+・週に1度程度、学校での様子や学習内容について情報共有させていただくこと
+・本人の状態が落ち着いた際の、段階的な登校再開の可能性について
+
+お忙しい中恐れ入りますが、ご検討いただけますと幸いです。
+どうぞよろしくお願いいたします。
+
+<span class="placeholder">あなたの名前</span>
+連絡先: <span class="placeholder">電話番号</span>
+メール: <span class="placeholder">メールアドレス</span>`,
+                example: `件名: 【山田先生へ】現状のご報告
+
+山田先生
+
+いつもお世話になっております。太郎の母、佐藤花子です。
+
+太郎の登校について、現状をご報告させていただきます。
+
+現在、朝の登校時刻になると強い不安を訴え、登校が難しい状態が続いております。
+本人は「学校に行きたい」という気持ちと「行けない」という状態の間で葛藤しており、
+心身ともに疲弊している様子が見られます。
+
+家庭では、無理に登校を促すことは控え、
+本人の心身の状態を観察しながら、安心して過ごせる環境づくりに努めております。
+
+つきましては、以下についてご相談させていただけますでしょうか。
+
+・当面の間、出席の扱いについてご配慮いただくこと
+・週に1度程度、学校での様子や学習内容について情報共有させていただくこと
+・本人の状態が落ち着いた際の、段階的な登校再開の可能性について
+
+お忙しい中恐れ入りますが、ご検討いただけますと幸いです。
+どうぞよろしくお願いいたします。
+
+佐藤花子
+連絡先: 090-1234-5678
+メール: hanako@example.com`
+            },
+            progress: {
+                content: `件名: 【<span class="placeholder">担任の先生のお名前</span>先生へ】経過のご報告
+
+<span class="placeholder">担任の先生のお名前</span>先生
+
+いつもお世話になっております。<span class="placeholder">お子さんの名前</span>の母、<span class="placeholder">あなたの名前</span>です。
+
+先日ご相談させていただいた件について、経過をご報告いたします。
+
+現在の<span class="placeholder">お子さんの名前</span>の様子:
+・生活リズム: <span class="placeholder">例: 徐々に朝型に戻りつつあります</span>
+・活動内容: <span class="placeholder">例: 読書や工作など、自宅での活動に意欲を見せています</span>
+・心身の状態: <span class="placeholder">例: 以前より表情が明るくなってきました</span>
+
+家庭での取り組み:
+・本人の興味関心を記録し、特性の把握に努めています
+・無理のない範囲で、学習面でのサポートを行っています
+
+今後について、以下のご相談をさせていただけますでしょうか。
+
+・<span class="placeholder">例: 保健室での短時間の滞在から始めることの可否</span>
+・<span class="placeholder">例: 週に1度、放課後に先生とお話しする時間の設定</span>
+
+引き続き、どうぞよろしくお願いいたします。
+
+<span class="placeholder">あなたの名前</span>`,
+                example: `件名: 【山田先生へ】経過のご報告
+
+山田先生
+
+いつもお世話になっております。太郎の母、佐藤花子です。
+
+先日ご相談させていただいた件について、経過をご報告いたします。
+
+現在の太郎の様子:
+・生活リズム: 徐々に朝型に戻りつつあります
+・活動内容: 読書や工作など、自宅での活動に意欲を見せています
+・心身の状態: 以前より表情が明るくなってきました
+
+家庭での取り組み:
+・本人の興味関心を記録し、特性の把握に努めています
+・無理のない範囲で、学習面でのサポートを行っています
+
+今後について、以下のご相談をさせていただけますでしょうか。
+
+・保健室での短時間の滞在から始めることの可否
+・週に1度、放課後に先生とお話しする時間の設定
+
+引き続き、どうぞよろしくお願いいたします。
+
+佐藤花子`
+            },
+            partial: {
+                content: `件名: 【<span class="placeholder">担任の先生のお名前</span>先生へ】部分登校のご相談
+
+<span class="placeholder">担任の先生のお名前</span>先生
+
+いつもお世話になっております。<span class="placeholder">お子さんの名前</span>の母、<span class="placeholder">あなたの名前</span>です。
+
+<span class="placeholder">お子さんの名前</span>の登校について、ご相談させていただきたいことがあります。
+
+最近、本人から「<span class="placeholder">例: 給食の時間だけなら行けるかも</span>」という発言がありました。
+全日登校は難しい状況ですが、できる範囲での学校との繋がりを持つことは、
+本人にとって良い影響があるのではないかと考えております。
+
+つきましては、以下のような部分登校について、ご検討いただけますでしょうか。
+
+【ご相談内容】
+・登校時間: <span class="placeholder">例: 給食開始時刻の11:45頃</span>
+・参加内容: <span class="placeholder">例: 給食と昼休みのみ</span>
+・下校時間: <span class="placeholder">例: 5時間目開始前の13:15頃</span>
+・頻度: <span class="placeholder">例: まずは週2日程度から</span>
+
+【配慮いただきたい点】
+・当日の体調により、急な欠席の可能性があること
+・最初は保健室や別室での食事も検討させていただきたいこと
+・徐々に時間を延ばしていく可能性があること
+
+ご多忙の中恐れ入りますが、ご検討いただけますと幸いです。
+
+<span class="placeholder">あなたの名前</span>`,
+                example: `件名: 【山田先生へ】部分登校のご相談
+
+山田先生
+
+いつもお世話になっております。太郎の母、佐藤花子です。
+
+太郎の登校について、ご相談させていただきたいことがあります。
+
+最近、本人から「給食の時間だけなら行けるかも」という発言がありました。
+全日登校は難しい状況ですが、できる範囲での学校との繋がりを持つことは、
+本人にとって良い影響があるのではないかと考えております。
+
+つきましては、以下のような部分登校について、ご検討いただけますでしょうか。
+
+【ご相談内容】
+・登校時間: 給食開始時刻の11:45頃
+・参加内容: 給食と昼休みのみ
+・下校時間: 5時間目開始前の13:15頃
+・頻度: まずは週2日程度から
+
+【配慮いただきたい点】
+・当日の体調により、急な欠席の可能性があること
+・最初は保健室や別室での食事も検討させていただきたいこと
+・徐々に時間を延ばしていく可能性があること
+
+ご多忙の中恐れ入りますが、ご検討いただけますと幸いです。
+
+佐藤花子`
+            },
+            request: {
+                content: `件名: 【<span class="placeholder">担任の先生のお名前</span>先生へ】ご協力のお願い
+
+<span class="placeholder">担任の先生のお名前</span>先生
+
+いつもお世話になっております。<span class="placeholder">お子さんの名前</span>の母、<span class="placeholder">あなたの名前</span>です。
+
+<span class="placeholder">お子さんの名前</span>の学習面について、ご協力をお願いしたくご連絡いたしました。
+
+現在、自宅での学習を進めておりますが、
+学校での学習内容との進度に差が生じないよう、以下についてご協力いただけますと幸いです。
+
+【お願いしたいこと】
+1. <span class="placeholder">例: 週1回程度、学習プリントや資料を郵送またはメール添付でご共有いただくこと</span>
+2. <span class="placeholder">例: 月に1度程度、本人と先生がお話しする機会を設けていただくこと</span>
+3. <span class="placeholder">例: クラスでの出来事や行事予定を、簡単にお知らせいただくこと</span>
+
+【こちらで対応できること】
+・提出物がある場合は、郵送または保護者が学校まで持参いたします
+・自宅学習の進捗状況を、定期的にご報告いたします
+
+ご多忙の中、お手数をおかけして誠に申し訳ございませんが、
+ご検討いただけますと幸いです。
+
+<span class="placeholder">あなたの名前</span>`,
+                example: `件名: 【山田先生へ】ご協力のお願い
+
+山田先生
+
+いつもお世話になっております。太郎の母、佐藤花子です。
+
+太郎の学習面について、ご協力をお願いしたくご連絡いたしました。
+
+現在、自宅での学習を進めておりますが、
+学校での学習内容との進度に差が生じないよう、以下についてご協力いただけますと幸いです。
+
+【お願いしたいこと】
+1. 週1回程度、学習プリントや資料を郵送またはメール添付でご共有いただくこと
+2. 月に1度程度、本人と先生がお話しする機会を設けていただくこと
+3. クラスでの出来事や行事予定を、簡単にお知らせいただくこと
+
+【こちらで対応できること】
+・提出物がある場合は、郵送または保護者が学校まで持参いたします
+・自宅学習の進捗状況を、定期的にご報告いたします
+
+ご多忙の中、お手数をおかけして誠に申し訳ございませんが、
+ご検討いただけますと幸いです。
+
+佐藤花子`
+            },
+            thanks: {
+                content: `件名: 【<span class="placeholder">担任の先生のお名前</span>先生へ】お礼
+
+<span class="placeholder">担任の先生のお名前</span>先生
+
+いつもお世話になっております。<span class="placeholder">お子さんの名前</span>の母、<span class="placeholder">あなたの名前</span>です。
+
+この度は、<span class="placeholder">例: 部分登校についてご配慮いただき</span>、誠にありがとうございます。
+
+<span class="placeholder">お子さんの名前</span>は、<span class="placeholder">例: 給食の時間に参加できたこと</span>をとても喜んでおり、
+「<span class="placeholder">例: また行きたい</span>」と話しております。
+
+先生の温かいご対応のおかげで、本人の心に少しずつ前向きな変化が見られてきました。
+引き続き、無理のない範囲で学校との繋がりを持たせていただければと思います。
+
+今後ともどうぞよろしくお願いいたします。
+
+<span class="placeholder">あなたの名前</span>`,
+                example: `件名: 【山田先生へ】お礼
+
+山田先生
+
+いつもお世話になっております。太郎の母、佐藤花子です。
+
+この度は、部分登校についてご配慮いただき、誠にありがとうございます。
+
+太郎は、給食の時間に参加できたことをとても喜んでおり、
+「また行きたい」と話しております。
+
+先生の温かいご対応のおかげで、本人の心に少しずつ前向きな変化が見られてきました。
+引き続き、無理のない範囲で学校との繋がりを持たせていただければと思います。
+
+今後ともどうぞよろしくお願いいたします。
+
+佐藤花子`
+            }
+        };
+
+        function changeTemplate() {
+            const select = document.getElementById('template-select');
+            const templateKey = select.value;
+            const template = templates[templateKey];
+            
+            document.getElementById('template-content').innerHTML = `
+                <div class="template-area">${template.content}</div>
+            `;
+            
+            document.getElementById('example-content').innerHTML = template.example;
+        }
+
+        function copyTemplate() {
+            const templateArea = document.querySelector('.template-area');
+            const text = templateArea.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const successMsg = document.getElementById('success-message');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        function downloadTemplate() {
+            const templateArea = document.querySelector('.template-area');
+            const text = templateArea.innerText;
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '学校連絡テンプレート.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
