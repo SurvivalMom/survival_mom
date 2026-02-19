@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>受験戦略ツールキット — survival_mam式</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Design tokens ─── */
+    :root {
+      --ink:       #1c1814;
+      --ink-soft:  #4a3f35;
+      --ink-mute:  #8a7a6e;
+      --cream:     #fdf8f2;
+      --warm:      #f5ede0;
+      --gold:      #c4973a;
+      --gold-lt:   #e8c97a;
+      --gold-dk:   #8a6520;
+      --rose:      #c97a85;
+      --rose-lt:   #f0d0d5;
+      --sage:      #7a9e85;
+      --sage-lt:   #d0e5d5;
+      --card:      #ffffff;
+      --border:    #e8ddd0;
+      --shadow:    rgba(60,40,20,0.10);
+      --shadow-md: rgba(60,40,20,0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 400;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* ─── 背景テクスチャ ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(196,151,58,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 85% 75%, rgba(201,122,133,0.06) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    }
+
+    /* ─── パスワード画面 ─── */
+    #pw-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      transition: opacity 0.6s ease;
+    }
+    #pw-overlay.hidden { opacity: 0; pointer-events: none; }
+
+    .pw-box {
+      background: var(--cream);
+      border-radius: 4px;
+      padding: 56px 48px;
+      max-width: 400px; width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .pw-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--rose), var(--gold));
+    }
+    .pw-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; letter-spacing: 0.15em;
+      color: var(--gold); margin-bottom: 8px;
+    }
+    .pw-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--ink); margin-bottom: 4px;
+    }
+    .pw-sub {
+      font-size: 0.78rem; color: var(--ink-mute);
+      margin-bottom: 40px; letter-spacing: 0.05em;
+    }
+    .pw-label {
+      font-size: 0.72rem; letter-spacing: 0.18em;
+      color: var(--ink-mute); text-transform: uppercase;
+      display: block; margin-bottom: 10px; text-align: left;
+    }
+    .pw-input {
+      width: 100%; padding: 14px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 2px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1rem; letter-spacing: 0.2em;
+      color: var(--ink);
+      background: var(--cream);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 20px;
+    }
+    .pw-input:focus { border-color: var(--gold); }
+    .pw-input.error { border-color: var(--rose); animation: shake 0.4s; }
+    .pw-btn {
+      width: 100%; padding: 14px;
+      background: var(--ink);
+      color: var(--cream);
+      border: none; cursor: pointer;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.85rem; font-weight: 500;
+      letter-spacing: 0.2em;
+      transition: background 0.2s, transform 0.15s;
+      border-radius: 2px;
+    }
+    .pw-btn:hover { background: var(--gold-dk); }
+    .pw-btn:active { transform: scale(0.98); }
+    .pw-error-msg {
+      margin-top: 14px; font-size: 0.8rem;
+      color: var(--rose); height: 20px;
+      transition: opacity 0.3s;
+    }
+
+    /* ─── メインラッパー ─── */
+    #app {
+      position: relative; z-index: 1;
+      max-width: 780px; margin: 0 auto;
+      padding: 60px 24px 100px;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s;
+    }
+    #app.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── ヘッダー ─── */
+    .header {
+      text-align: center; margin-bottom: 64px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .header-eyebrow {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; letter-spacing: 0.3em;
+      color: var(--gold); margin-bottom: 12px;
+      display: block;
+    }
+    .header-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; line-height: 1.4;
+      color: var(--ink); margin-bottom: 12px;
+    }
+    .header-title span { color: var(--gold); }
+    .header-sub {
+      font-size: 0.85rem; color: var(--ink-mute);
+      letter-spacing: 0.05em;
+    }
+    .header-ornament {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; margin-top: 32px;
+    }
+    .header-ornament::before,
+    .header-ornament::after {
+      content: ''; flex: 1; max-width: 120px;
+      height: 1px; background: linear-gradient(90deg, transparent, var(--gold));
+    }
+    .header-ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
+    .header-ornament-center {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; color: var(--gold);
+    }
+
+    /* ─── セクション共通 ─── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 40px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 20px var(--shadow);
+      position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+    }
+    .section.visible { opacity: 1; transform: translateY(0); }
+    .section:hover { box-shadow: 0 6px 40px var(--shadow-md); }
+    .section::before {
+      content: attr(data-num);
+      position: absolute; top: -12px; right: 32px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem; font-weight: 600; line-height: 1;
+      color: rgba(196,151,58,0.08);
+      pointer-events: none; user-select: none;
+    }
+
+    /* ─── セクションヘッダー ─── */
+    .sec-eyebrow {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem; letter-spacing: 0.25em;
+      color: var(--gold); text-transform: uppercase;
+      display: block; margin-bottom: 6px;
+    }
+    .sec-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--ink); margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── ラベル ─── */
+    .field-label {
+      font-size: 0.75rem; letter-spacing: 0.15em;
+      color: var(--ink-mute); display: block;
+      margin-bottom: 8px; font-weight: 500;
+    }
+    .field-wrap { margin-bottom: 24px; }
+
+    /* ─── インプット共通 ─── */
+    input[type="text"], textarea {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 2px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.9rem; color: var(--ink);
+      background: var(--cream);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(196,151,58,0.1);
+    }
+    textarea[readonly] {
+      background: var(--warm);
+      color: var(--ink-soft);
+      cursor: default;
+      resize: none;
+    }
+
+    /* ─── トーンボタン ─── */
+    .tone-group {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .tone-btn {
+      padding: 9px 22px;
+      border: 1.5px solid var(--border);
+      border-radius: 2px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.1em;
+      cursor: pointer; color: var(--ink-soft);
+      background: var(--cream);
+      transition: all 0.2s;
+    }
+    .tone-btn:hover { border-color: var(--gold); color: var(--gold-dk); }
+    .tone-btn.active-polite  { background: #e8f4f0; border-color: var(--sage); color: var(--sage); font-weight: 700; }
+    .tone-btn.active-nego    { background: #fef9e6; border-color: var(--gold); color: var(--gold-dk); font-weight: 700; }
+    .tone-btn.active-strong  { background: #fce8ea; border-color: var(--rose); color: var(--rose); font-weight: 700; }
+
+    /* ─── コピーボタン ─── */
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; margin-top: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 2px; background: var(--cream);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.75rem; letter-spacing: 0.12em;
+      color: var(--ink-mute); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { border-color: var(--gold); color: var(--gold-dk); background: #fffbf0; }
+    .copy-btn.copied { border-color: var(--sage); color: var(--sage); background: var(--sage-lt); }
+
+    /* ─── ルール入力リスト ─── */
+    .rule-item {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 10px;
+    }
+    .rule-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--gold);
+      min-width: 24px; text-align: center;
+      line-height: 1;
+    }
+
+    /* ─── バッジ ─── */
+    .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border: 1px solid var(--sage);
+      border-radius: 2px;
+      font-size: 0.72rem; letter-spacing: 0.15em;
+      color: var(--sage); background: var(--sage-lt);
+      margin-top: 10px;
+      opacity: 0; transform: scale(0.8);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .badge.show { opacity: 1; transform: scale(1); }
+
+    /* ─── mam子バブル ─── */
+    #mamkoBubble {
+      position: fixed; bottom: 28px; right: 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px 20px;
+      max-width: 260px;
+      font-size: 0.82rem; line-height: 1.6;
+      color: var(--ink-soft);
+      box-shadow: 0 8px 32px var(--shadow-md);
+      z-index: 100;
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      opacity: 0; transform: translateY(10px) scale(0.95);
+    }
+    #mamkoBubble.show { opacity: 1; transform: translateY(0) scale(1); }
+    #mamkoBubble::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--rose), var(--gold));
+      border-radius: 4px 4px 0 0;
+    }
+    .mamko-name {
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--rose); letter-spacing: 0.12em;
+      margin-bottom: 4px; display: block;
+    }
+
+    /* ─── アニメ ─── */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      60%      { transform: translateX(6px); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── フッター ─── */
+    .footer {
+      text-align: center; padding-top: 48px;
+      border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem; color: var(--ink-mute);
+      letter-spacing: 0.15em;
+    }
+
+    /* ─── レスポンシブ ─── */
+    @media (max-width: 600px) {
+      .section { padding: 28px 20px; }
+      .pw-box  { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ パスワード画面 ══════════ -->
+<div id="pw-overlay">
+  <div class="pw-box">
+    <span class="pw-logo">✦ survival_mam式 ✦</span>
+    <h1 class="pw-title">受験戦略ツールキット</h1>
+    <p class="pw-sub">ご利用にはパスワードが必要です</p>
+    <label class="pw-label" for="pwInput">Password</label>
+    <input class="pw-input" type="password" id="pwInput" placeholder="パスワードを入力" autocomplete="off" />
+    <button class="pw-btn" id="pwBtn">ひらく &nbsp;→</button>
+    <p class="pw-error-msg" id="pwError"></p>
+  </div>
+</div>
+
+<!-- ══════════ メインアプリ ══════════ -->
+<div id="app">
+
+  <!-- ヘッダー -->
+  <header class="header">
+    <span class="header-eyebrow">survival_mam 式</span>
+    <h1 class="header-title">親子で作る<br><span>受験戦略</span>ツールキット</h1>
+    <p class="header-sub">中学受験を、戦略的に・穏やかに乗り越えるために</p>
+    <div class="header-ornament">
+      <span class="header-ornament-center">✦</span>
+    </div>
+  </header>
+
+  <!-- ① お子さんの名前 -->
+  <section class="section" data-num="01" id="sec-name">
+    <span class="sec-eyebrow">Basic Info</span>
+    <h2 class="sec-title">お子さんの名前</h2>
+    <div class="field-wrap">
+      <label class="field-label" for="childName">お名前（例：たろう）</label>
+      <input type="text" id="childName" placeholder="お子さんのお名前" />
+    </div>
+  </section>
+
+  <!-- ② 塾への要望文 -->
+  <section class="section" data-num="02" id="sec-letter">
+    <span class="sec-eyebrow">Letter Generator</span>
+    <h2 class="sec-title">塾への宿題削減 要望文</h2>
+
+    <div class="field-wrap">
+      <label class="field-label" for="reason">削減をお願いしたい理由</label>
+      <textarea id="reason" rows="3" placeholder="例：毎晩23時まで終わらず、睡眠不足が続いています"></textarea>
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">文章のトーン</label>
+      <div class="tone-group">
+        <button class="tone-btn" id="btn-polite"  onclick="setTone('丁寧')">丁寧にお願い</button>
+        <button class="tone-btn" id="btn-nego"    onclick="setTone('交渉')">交渉スタイル</button>
+        <button class="tone-btn" id="btn-strong"  onclick="setTone('強硬')">強めに伝える</button>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">生成された要望文</label>
+      <textarea id="output" rows="8" readonly placeholder="上のトーンを選ぶと文章が生成されます"></textarea>
+      <button class="copy-btn" id="copyLetter" onclick="copyText('output','copyLetter')">
+        ✦ コピーする
+      </button>
+    </div>
+  </section>
+
+  <!-- ③ 捨て科目チェックリスト -->
+  <section class="section" data-num="03" id="sec-checklist">
+    <span class="sec-eyebrow">Score Strategy</span>
+    <h2 class="sec-title">配点戦略 · 捨て科目チェックリスト</h2>
+
+    <div class="field-wrap">
+      <label class="field-label" for="strengths">得意な科目・分野</label>
+      <input type="text" id="strengths" placeholder="例：算数、理科の計算" />
+    </div>
+    <div class="field-wrap">
+      <label class="field-label" for="weak">苦手または配点の低い科目</label>
+      <input type="text" id="weak" placeholder="例：国語の記述、社会の細かい暗記" />
+    </div>
+
+    <div class="field-wrap">
+      <label class="field-label">配点戦略メモ</label>
+      <textarea id="checklist" rows="5" readonly placeholder="得意・苦手科目を入力すると戦略メモが生成されます"></textarea>
+      <div id="badgeArea" class="badge">✦ 戦略メモ 完成</div>
+      <button class="copy-btn" id="copyCheck" onclick="copyText('checklist','copyCheck')" style="margin-top:10px">
+        ✦ コピーする
+      </button>
+    </div>
+  </section>
+
+  <!-- ④ 我が家の受験ルール -->
+  <section class="section" data-num="04" id="sec-rules">
+    <span class="sec-eyebrow">House Rules</span>
+    <h2 class="sec-title">我が家の受験ルール（10項目）</h2>
+    <p style="font-size:0.82rem;color:var(--ink-mute);margin-bottom:24px;">
+      家族で決めたルールを書き留めておきましょう。入力した内容はプレビューに反映されます。
+    </p>
+
+    <div id="rules" style="margin-bottom:24px;"></div>
+
+    <div class="field-wrap">
+      <label class="field-label">ルール一覧プレビュー</label>
+      <textarea id="rulesOutput" rows="10" readonly placeholder="ルールを入力するとここにまとめられます"></textarea>
+      <button class="copy-btn" id="copyRules" onclick="copyText('rulesOutput','copyRules')">
+        ✦ コピーする
+      </button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>✦ survival_mam式 受験戦略ツールキット ✦</p>
+    <p style="font-size:0.75rem;margin-top:6px;color:var(--gold)">
+      入力内容はブラウザのみに保存されます
+    </p>
+  </footer>
+</div>
+
+<!-- mam子バブル -->
+<div id="mamkoBubble">
+  <span class="mamko-name">📚 mam子より</span>
+  <span id="mamkoText">今日もお疲れさまです。<br>一緒に乗り越えましょう！</span>
+</div>
+
+<script>
+  /* ══════ パスワード ══════ */
+  const CORRECT_PW = 'syukudai';
+  const overlay = document.getElementById('pw-overlay');
+  const appEl   = document.getElementById('app');
+  const pwInput = document.getElementById('pwInput');
+  const pwBtn   = document.getElementById('pwBtn');
+  const pwError = document.getElementById('pwError');
+
+  function tryUnlock() {
+    if (pwInput.value === CORRECT_PW) {
+      overlay.classList.add('hidden');
+      setTimeout(() => { overlay.style.display = 'none'; }, 700);
+      appEl.classList.add('visible');
+      initSections();
+      showMamko('パスワード認証OK！ようこそ ✦', 4000);
+    } else {
+      pwInput.classList.add('error');
+      pwError.textContent = 'パスワードが違います。もう一度お試しください。';
+      setTimeout(() => {
+        pwInput.classList.remove('error');
+        pwInput.value = '';
+        pwInput.focus();
+      }, 500);
+    }
+  }
+
+  pwBtn.addEventListener('click', tryUnlock);
+  pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+  /* ══════ セクションのスクロールアニメ ══════ */
+  function initSections() {
+    const sections = document.querySelectorAll('.section');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    sections.forEach(s => io.observe(s));
+  }
+
+  /* ══════ ツールロジック ══════ */
+  let tone = '丁寧';
+
+  const templates = {
+    '丁寧': () => `いつもお世話になっております。\n\n${val('childName')}の家庭学習状況を踏まえ、現在の宿題の分量について再検討いただけないかご相談させていただければと思います。\n\n特に「${val('reason')}」という状況において負担が大きく、このままでは今後の学習継続に支障をきたす可能性があると感じております。\n\nお子さまの学習効果を最大化するため、宿題の量を調整いただけますと幸いです。何卒よろしくお願いいたします。`,
+
+    '交渉': () => `お世話になっております。\n\n${val('childName')}の学習進捗を踏まえ、「${val('reason')}」という点で現在の宿題内容に過剰な負荷がかかっております。\n\nこのままでは、本来の目的である理解と定着が損なわれかねません。つきましては、該当科目の宿題量の見直しをお願いできればと存じます。\n\n具体的なご提案をいただけますと、協力して参りたいと思っております。どうぞよろしくお願いいたします。`,
+
+    '強硬': () => `${val('childName')}の現状を踏まえ、「${val('reason')}」のような過剰な課題は、教育的観点から見ても逆効果と判断しております。\n\n学習効果よりも疲弊が先行している現状を深刻に受け止めており、今後も現状が続くようであれば、転塾を含めた選択肢も検討せざるを得ません。\n\n速やかにご対応いただけますよう、お願いいたします。`
+  };
+
+  function val(id) {
+    return document.getElementById(id).value.trim() || '〇〇';
+  }
+
+  function setTone(t) {
+    tone = t;
+    // ボタンのスタイル切り替え
+    ['polite','nego','strong'].forEach(k => {
+      document.getElementById(`btn-${k}`).className = 'tone-btn';
+    });
+    const map = { '丁寧':'polite','交渉':'nego','強硬':'strong' };
+    document.getElementById(`btn-${map[t]}`).className = `tone-btn active-${map[t]}`;
+
+    const txt = templates[t]();
+    document.getElementById('output').value = txt;
+    localStorage.setItem('tone_output', txt);
+    localStorage.setItem('tone_key', t);
+    showMamko(`「${t}」スタイルの要望文を生成しました ✦`);
+  }
+
+  // 得意・苦手入力でチェックリスト更新
+  ['strengths','weak'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateChecklist);
+  });
+
+  function updateChecklist() {
+    const s = val('strengths'), w = val('weak');
+    const txt =
+`【配点戦略メモ】
+
+▶ 強化ポイント（得意を伸ばす）
+  ${s}
+  → 満点・高得点を狙う「稼ぎ場」として徹底強化
+
+▶ 取捨選択（配分を考える科目）
+  ${w}
+  → 最低限の得点ラインを設定し、学習時間を効率化
+
+▶ 方針
+  得意科目でリードし、苦手科目の失点を最小化。
+  合計点で合格ラインを超えることを目標とする。`;
+
+    document.getElementById('checklist').value = txt;
+    localStorage.setItem('checklist_output', txt);
+    const badge = document.getElementById('badgeArea');
+    badge.classList.add('show');
+    showMamko('配点戦略がまとまりました ✦');
+  }
+
+  // ルール入力
+  const rulesArea = document.getElementById('rules');
+  const ruleInputs = [];
+  for (let i = 0; i < 10; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'rule-item';
+    const num = document.createElement('span');
+    num.className = 'rule-num'; num.textContent = i + 1;
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = `ルール ${i + 1}`;
+    inp.style.marginBottom = '0';
+    inp.addEventListener('input', updateRules);
+    wrap.appendChild(num); wrap.appendChild(inp);
+    rulesArea.appendChild(wrap);
+    ruleInputs.push(inp);
+  }
+
+  function updateRules() {
+    const lines = ruleInputs
+      .map((r, i) => r.value.trim() ? `${i+1}. ${r.value.trim()}` : null)
+      .filter(Boolean).join('\n');
+    const txt = lines
+      ? `【我が家の受験ルール】\n\n${lines}\n\n— ${new Date().getFullYear()}年 作成`
+      : '';
+    document.getElementById('rulesOutput').value = txt;
+    localStorage.setItem('rules_output', txt);
+    showMamko('ルールを記録しました ✦');
+  }
+
+  /* ══════ コピー ══════ */
+  function copyText(textareaId, btnId) {
+    const ta  = document.getElementById(textareaId);
+    const btn = document.getElementById(btnId);
+    if (!ta.value.trim()) return;
+    navigator.clipboard.writeText(ta.value).then(() => {
+      btn.textContent = '✓ コピーしました';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '✦ コピーする';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  /* ══════ mam子バブル ══════ */
+  let mamkoTimer = null;
+  function showMamko(msg, duration = 3500) {
+    const bubble = document.getElementById('mamkoBubble');
+    document.getElementById('mamkoText').innerHTML = msg;
+    bubble.classList.add('show');
+    clearTimeout(mamkoTimer);
+    mamkoTimer = setTimeout(() => bubble.classList.remove('show'), duration);
+  }
+
+  /* ══════ localStorage 復元 ══════ */
+  window.addEventListener('load', () => {
+    const savedTone  = localStorage.getItem('tone_key');
+    const savedOut   = localStorage.getItem('tone_output');
+    const savedCheck = localStorage.getItem('checklist_output');
+    const savedRules = localStorage.getItem('rules_output');
+    if (savedOut)   document.getElementById('output').value   = savedOut;
+    if (savedCheck) { document.getElementById('checklist').value = savedCheck; document.getElementById('badgeArea').classList.add('show'); }
+    if (savedRules) document.getElementById('rulesOutput').value = savedRules;
+    if (savedTone) {
+      const map = { '丁寧':'polite','交渉':'nego','強硬':'strong' };
+      const k = map[savedTone];
+      if (k) document.getElementById(`btn-${k}`).className = `tone-btn active-${k}`;
+    }
+  });
+</script>
+</body>
+</html>
