@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Automation Checklist</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════ Tokens ══════════ */
+    :root {
+      --bg:        #f7f4f0;
+      --bg2:       #efe9e1;
+      --white:     #ffffff;
+      --surface:   #fdfbf8;
+
+      --ink:       #1a1714;
+      --ink2:      #4a4540;
+      --ink3:      #8a8078;
+      --ink4:      #b8b0a6;
+
+      --blush:     #e8b4b8;
+      --blush2:    #d4868c;
+      --blush3:    #f5dde0;
+      --blush-dk:  #a05a60;
+
+      --sage:      #8aaa90;
+      --sage2:     #6a9070;
+      --sage3:     #d4e8d8;
+      --sage-dk:   #4a7050;
+
+      --gold:      #c8a85a;
+      --gold2:     #e8d0a0;
+      --gold3:     #f5ead0;
+
+      --border:    rgba(26,23,20,0.10);
+      --border2:   rgba(26,23,20,0.06);
+
+      --shadow-sm: 0 1px 3px rgba(26,23,20,0.06), 0 1px 2px rgba(26,23,20,0.04);
+      --shadow:    0 4px 16px rgba(26,23,20,0.08), 0 1px 4px rgba(26,23,20,0.05);
+      --shadow-lg: 0 12px 40px rgba(26,23,20,0.12), 0 4px 12px rgba(26,23,20,0.06);
+
+      --r-xl: 24px;
+      --r-lg: 16px;
+      --r-md: 10px;
+      --r-sm: 6px;
+
+      --tab-h: 60px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--ink);
+      line-height: 1.7;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* grain overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+    }
+
+    /* ══════════ パスワード画面 ══════════ */
+    #pw-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      background: var(--bg);
+      transition: opacity 0.5s ease, visibility 0.5s;
+    }
+    #pw-overlay::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(232,180,184,0.25), transparent 65%),
+        radial-gradient(ellipse 50% 45% at 80% 75%, rgba(138,170,144,0.18), transparent 65%);
+    }
+    #pw-overlay.hide { opacity: 0; visibility: hidden; }
+
+    .pw-wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 400px;
+    }
+
+    /* 小さな装飾ラベル */
+    .pw-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink3);
+      text-align: center; margin-bottom: 28px;
+      display: flex; align-items: center; gap: 12px; justify-content: center;
+    }
+    .pw-eyebrow::before, .pw-eyebrow::after {
+      content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--border);
+    }
+
+    .pw-card {
+      background: var(--white);
+      border-radius: var(--r-xl);
+      padding: 44px 36px 40px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    /* top accent line */
+    .pw-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--blush), var(--gold), var(--sage));
+    }
+
+    .pw-icon {
+      text-align: center; font-size: 2.8rem; margin-bottom: 10px;
+      animation: sway 4s ease-in-out infinite;
+    }
+    @keyframes sway {
+      0%,100% { transform: rotate(-3deg); }
+      50%      { transform: rotate(3deg); }
+    }
+
+    .pw-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.55rem; color: var(--ink);
+      text-align: center; margin-bottom: 6px; line-height: 1.3;
+    }
+    .pw-title em { font-style: italic; color: var(--blush2); }
+
+    .pw-sub {
+      font-size: 0.78rem; color: var(--ink3); text-align: center;
+      margin-bottom: 32px; line-height: 1.7;
+    }
+
+    .pw-field-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--ink3);
+      display: block; margin-bottom: 8px;
+    }
+    .pw-input {
+      width: 100%; padding: 13px 18px;
+      border: 1.5px solid var(--border2);
+      border-radius: var(--r-md);
+      font-family: 'Noto Sans JP', sans-serif; font-size: 1rem; color: var(--ink);
+      background: var(--bg);
+      outline: none; letter-spacing: 0.15em; text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 14px;
+    }
+    .pw-input:focus  { border-color: var(--blush); box-shadow: 0 0 0 4px rgba(232,180,184,0.18); }
+    .pw-input.error  { border-color: var(--blush2); animation: shake 0.35s; }
+
+    .pw-btn {
+      width: 100%; padding: 14px;
+      background: var(--ink); color: var(--bg);
+      border: none; border-radius: var(--r-md);
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+      letter-spacing: 0.06em; cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      position: relative; overflow: hidden;
+    }
+    .pw-btn:hover  { background: var(--ink2); transform: translateY(-1px); }
+    .pw-btn:active { transform: translateY(1px); }
+
+    .pw-error { text-align: center; font-size: 0.78rem; color: var(--blush2); margin-top: 12px; min-height: 18px; font-weight: 500; }
+
+    /* ══════════ App shell ══════════ */
+    #app {
+      position: relative; z-index: 1;
+      max-width: 820px; margin: 0 auto;
+      padding: 0 0 80px;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+    }
+    #app.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── App Header ── */
+    .app-header {
+      padding: 48px 32px 36px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .app-header-inner {
+      max-width: 560px;
+    }
+    .header-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink3);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .header-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blush2); }
+    .header-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      color: var(--ink); line-height: 1.25; margin-bottom: 10px;
+    }
+    .header-title em { font-style: italic; color: var(--blush2); }
+    .header-sub { font-size: 0.82rem; color: var(--ink3); font-weight: 300; max-width: 480px; }
+
+    /* ── Tab Nav ── */
+    .tab-nav {
+      display: flex; border-bottom: 1px solid var(--border);
+      overflow-x: auto; scrollbar-width: none; gap: 0;
+      padding: 0 32px;
+      background: var(--white);
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 0 24px; height: var(--tab-h);
+      background: transparent; border: none; cursor: pointer;
+      font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+      font-size: 0.8rem; font-weight: 500; color: var(--ink3);
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--ink2); }
+    .tab-btn.active { color: var(--ink); border-bottom-color: var(--ink); }
+    .tab-btn-icon { font-size: 1rem; }
+
+    /* ── Tab Pane ── */
+    .tab-pane { display: none; padding: 36px 32px; }
+    .tab-pane.active { display: block; animation: fade-in 0.3s ease; }
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Progress ── */
+    .progress-card {
+      background: var(--ink);
+      border-radius: var(--r-lg);
+      padding: 22px 26px;
+      margin-bottom: 36px;
+      display: flex; align-items: center; gap: 24px;
+      flex-wrap: wrap;
+    }
+    .progress-info { flex: 1; min-width: 160px; }
+    .progress-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 600; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(247,244,240,0.45);
+      margin-bottom: 4px;
+    }
+    .progress-pct {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem; color: var(--bg); line-height: 1;
+    }
+    .progress-bar-wrap { flex: 2; min-width: 200px; }
+    .progress-bg {
+      background: rgba(247,244,240,0.12);
+      border-radius: 99px; height: 6px; overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--blush), var(--gold));
+      transition: width 0.6s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+    .progress-count { font-size: 0.72rem; color: rgba(247,244,240,0.5); font-weight: 500; }
+
+    /* ── Category ── */
+    .category { margin-bottom: 44px; }
+    .cat-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .cat-icon-wrap {
+      width: 38px; height: 38px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .ci-kaji   { background: var(--blush3); }
+    .ci-gaku   { background: var(--sage3); }
+    .ci-kokoro { background: var(--gold3); }
+    .cat-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.15rem; color: var(--ink);
+    }
+
+    /* ── Period ── */
+    .period { margin-bottom: 20px; }
+    .period-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--ink3);
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .period-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ── Checklist Item ── */
+    .cl-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      border-radius: var(--r-md);
+      margin-bottom: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+    }
+    .cl-item:hover { background: var(--white); border-color: var(--border2); }
+    .cl-item.checked { opacity: 0.55; }
+
+    .cl-checkbox {
+      width: 20px; height: 20px; border-radius: 5px;
+      border: 1.5px solid var(--border);
+      background: var(--white); flex-shrink: 0; margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+      cursor: pointer;
+    }
+    .cl-item.checked .cl-checkbox {
+      background: var(--ink); border-color: var(--ink);
+    }
+    .cl-checkmark {
+      width: 10px; height: 6px; border-bottom: 2px solid white; border-left: 2px solid white;
+      transform: rotate(-45deg) translate(1px, -1px);
+      opacity: 0; transition: opacity 0.15s;
+    }
+    .cl-item.checked .cl-checkmark { opacity: 1; }
+
+    .cl-body { flex: 1; }
+    .cl-title {
+      font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 3px;
+    }
+    .cl-item.checked .cl-title { text-decoration: line-through; color: var(--ink4); }
+    .cl-desc { font-size: 0.78rem; color: var(--ink3); font-weight: 300; line-height: 1.65; }
+    .cl-item.checked .cl-desc { color: var(--ink4); }
+
+    /* ── Reset ── */
+    .reset-btn {
+      margin-top: 8px; padding: 12px 24px;
+      background: transparent;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+      font-size: 0.78rem; font-weight: 500; color: var(--ink3);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .reset-btn:hover { border-color: var(--blush2); color: var(--blush2); }
+
+    /* ── Template Intro ── */
+    .tmpl-intro {
+      margin-bottom: 32px; padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tmpl-intro-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem; color: var(--ink); margin-bottom: 6px;
+    }
+    .tmpl-intro-sub { font-size: 0.8rem; color: var(--ink3); font-weight: 300; }
+
+    /* ── Template Category ── */
+    .tmpl-cat { margin-bottom: 36px; }
+    .tmpl-cat-title {
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--ink2); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── Template Card ── */
+    .tmpl-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 22px;
+      margin-bottom: 12px;
+      transition: box-shadow 0.2s;
+    }
+    .tmpl-card:hover { box-shadow: var(--shadow); }
+    .tmpl-card.hidden { display: none; }
+
+    .tmpl-card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .tmpl-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 4px 12px; border-radius: 99px;
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--ink2);
+    }
+
+    .fav-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.1rem; padding: 4px 6px;
+      transition: transform 0.2s, opacity 0.2s;
+      opacity: 0.35; line-height: 1;
+    }
+    .fav-btn:hover { opacity: 0.65; transform: scale(1.15); }
+    .fav-btn.active { opacity: 1; }
+
+    .tmpl-text {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--r-sm);
+      padding: 16px; margin-bottom: 14px;
+      font-size: 0.83rem; line-height: 1.85; color: var(--ink);
+      white-space: pre-line; font-weight: 300;
+    }
+
+    .copy-btn {
+      width: 100%; padding: 11px;
+      background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+      font-size: 0.78rem; font-weight: 600; color: var(--ink2);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .copy-btn.copied { background: var(--sage2); color: white; border-color: var(--sage2); }
+
+    /* ── Filter ── */
+    .filter-row {
+      display: flex; gap: 8px; margin-top: 28px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .filter-btn {
+      padding: 8px 18px;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 99px;
+      font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+      font-size: 0.75rem; font-weight: 600; color: var(--ink3);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover  { border-color: var(--ink2); color: var(--ink2); }
+    .filter-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+    /* ── Footer ── */
+    .app-footer {
+      text-align: center; padding: 28px 32px;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--ink4); line-height: 2;
+      font-weight: 300;
+    }
+
+    /* ══════════ Anim ══════════ */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+
+    /* ══════════ Responsive ══════════ */
+    @media (max-width: 600px) {
+      .app-header { padding: 32px 20px 24px; }
+      .tab-nav { padding: 0 20px; }
+      .tab-pane { padding: 24px 20px; }
+      .tab-btn { padding: 0 14px; font-size: 0.75rem; }
+      .progress-card { flex-direction: column; gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ パスワード画面 ══════════ -->
+<div id="pw-overlay">
+  <div class="pw-wrap">
+    <div class="pw-eyebrow">survival mam · private tool</div>
+    <div class="pw-card">
+      <div class="pw-icon">🏠</div>
+      <h1 class="pw-title">Home <em>Automation</em><br>Checklist</h1>
+      <p class="pw-sub">あなただけの家庭内自動化ツール。<br>パスワードを入力してはじめましょう。</p>
+      <label class="pw-field-label" for="pwInput">Password</label>
+      <input class="pw-input" type="password" id="pwInput" placeholder="••••••" autocomplete="off">
+      <button class="pw-btn" id="pwBtn">はじめる</button>
+      <p class="pw-error" id="pwError"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ App ══════════ -->
+<div id="app">
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="app-header-inner">
+      <div class="header-eyebrow">
+        <span class="header-dot"></span>
+        Home Automation Toolkit · survival mam
+      </div>
+      <h1 class="header-title">母親が<em>「放置」</em>できる<br>家庭内自動化ツール</h1>
+      <p class="header-sub">あなたのペースで、できることから少しずつ。完璧を目指さなくていい。</p>
+    </div>
+  </div>
+
+  <!-- Tab Nav -->
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="checklist">
+      <span class="tab-btn-icon">✓</span> チェックリスト
+    </button>
+    <button class="tab-btn" data-tab="husband">
+      <span class="tab-btn-icon">💬</span> 夫への交渉
+    </button>
+    <button class="tab-btn" data-tab="children">
+      <span class="tab-btn-icon">🗣️</span> 子どもへの声かけ
+    </button>
+  </nav>
+
+  <!-- ━━━━ チェックリスト ━━━━ -->
+  <div class="tab-pane active" id="pane-checklist">
+
+    <!-- Progress -->
+    <div class="progress-card">
+      <div class="progress-info">
+        <div class="progress-eyebrow">Automation Progress</div>
+        <div class="progress-pct" id="progressPct">0%</div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bg">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-count" id="progressCount">0 / 0 完了</div>
+      </div>
+    </div>
+
+    <!-- 家事の自動化 -->
+    <div class="category" id="cat-kaji">
+      <div class="cat-header">
+        <div class="cat-icon-wrap ci-kaji">🍳</div>
+        <div class="cat-title">家事の自動化</div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">今すぐできる</div>
+        <div class="cl-item" data-id="kaji-1" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">献立を1週間分パターン化する</div>
+            <div class="cl-desc">月曜カレー、火曜魚、水曜パスタ…のように曜日ごとにカテゴリーを決める。考える時間をゼロに。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kaji-2" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">Amazon定期便に登録する</div>
+            <div class="cl-desc">洗剤、ティッシュ、消耗品を定期配送に。買い忘れのストレスから解放される。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kaji-3" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">冷凍食品のストックを増やす</div>
+            <div class="cl-desc">疲れた日用の「逃げ道」を確保。罪悪感を感じる必要は一切ありません。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">今月中に取り組みたい</div>
+        <div class="cl-item" data-id="kaji-4" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">食材宅配サービスに登録する</div>
+            <div class="cl-desc">コープデリ、オイシックス、パルシステムなど。スーパーに行く回数を週1回以下に。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kaji-5" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">冷凍宅配弁当を試してみる</div>
+            <div class="cl-desc">nosh、三ツ星ファームなど。週に1〜2回、料理をしない日を作りましょう。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">3ヶ月以内に導入したい</div>
+        <div class="cl-item" data-id="kaji-6" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">食洗機を購入する</div>
+            <div class="cl-desc">毎日30分の時短。10年使えば1日あたり10円以下の投資です。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kaji-7" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">電気圧力鍋 or ホットクックを購入する</div>
+            <div class="cl-desc">材料を入れてボタンを押すだけ。夕食準備が「放置」でOKに。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kaji-8" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">ロボット掃除機を購入する</div>
+            <div class="cl-desc">床掃除から完全解放。外出中に自動で掃除が終わる幸せを。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kaji-9" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">乾燥機付き洗濯機を購入する</div>
+            <div class="cl-desc">洗濯物を干す時間ゼロ。雨の日のストレスからも解放されます。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学習の自動化 -->
+    <div class="category" id="cat-gakushu">
+      <div class="cat-header">
+        <div class="cat-icon-wrap ci-gaku">📚</div>
+        <div class="cat-title">学習の自動化</div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">今すぐできる</div>
+        <div class="cl-item" data-id="gakushu-1" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">学習計画を子どもと一緒に立てる</div>
+            <div class="cl-desc">ホワイトボードに1週間の計画を書き出してリビングに貼る。子ども自身に管理させる第一歩。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="gakushu-2" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">「勉強しなさい」を「何時からやる？」に変える</div>
+            <div class="cl-desc">命令ではなく、選択肢を与える声かけに。子どもの自主性が育ちます。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">今月中に取り組みたい</div>
+        <div class="cl-item" data-id="gakushu-3" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">無料学習アプリを試してみる</div>
+            <div class="cl-desc">トドさんすう、漢字検定アプリなど。まずは無料版で子どもの反応を見てみましょう。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="gakushu-4" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">YouTubeの教育チャンネルを活用する</div>
+            <div class="cl-desc">とある男が授業してみた、ヨビノリなど。親が教えなくても、プロが教えてくれます。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">3ヶ月以内に導入したい</div>
+        <div class="cl-item" data-id="gakushu-5" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">オンライン教材に投資する</div>
+            <div class="cl-desc">スタディサプリ、進研ゼミ、RISU算数など。プロに学習管理を任せましょう。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="gakushu-6" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">AI学習アプリを導入する</div>
+            <div class="cl-desc">Qubena、スマイルゼミなど。AIが苦手分野を自動分析し、最適な問題を出題してくれます。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 心の自動化 -->
+    <div class="category" id="cat-kokoro">
+      <div class="cat-header">
+        <div class="cat-icon-wrap ci-kokoro">💝</div>
+        <div class="cat-title">心の自動化</div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">今すぐできる</div>
+        <div class="cl-item" data-id="kokoro-1" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">感情日記を3日間続けてみる</div>
+            <div class="cl-desc">寝る前3分だけ。今日嬉しかったこと、イライラしたこと、悲しかったことを書き出す。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kokoro-2" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">SNSの鍵アカウントを作る</div>
+            <div class="cl-desc">誰にも見られない、評価されない場所。本音を吐き出すための安全基地を。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">今月中に取り組みたい</div>
+        <div class="cl-item" data-id="kokoro-3" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">「母親を休む」時間をスケジュールに入れる</div>
+            <div class="cl-desc">週に1時間でOK。スマホのカレンダーに登録し通知をON。その時間は何もしない。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kokoro-4" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">夫に「疲れている」と正直に伝える</div>
+            <div class="cl-desc">責めるのではなく、事実を伝える。「最近疲れてて、助けてほしい」でOK。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="period">
+        <div class="period-label">3ヶ月以内に導入したい</div>
+        <div class="cl-item" data-id="kokoro-5" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">オンラインカウンセリングを試してみる</div>
+            <div class="cl-desc">cotree、うららか相談室など。プロに話を聞いてもらう贅沢を、自分に許しましょう。</div>
+          </div>
+        </div>
+        <div class="cl-item" data-id="kokoro-6" onclick="toggleItem(this)">
+          <div class="cl-checkbox"><div class="cl-checkmark"></div></div>
+          <div class="cl-body">
+            <div class="cl-title">月1回の「自分だけの時間」を確保する</div>
+            <div class="cl-desc">美容院、カフェ、映画、何でもいい。家族から離れて、自分だけの時間を持つ。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="reset-btn" onclick="resetProgress()">進捗をリセットする</button>
+  </div>
+
+  <!-- ━━━━ 夫への交渉 ━━━━ -->
+  <div class="tab-pane" id="pane-husband">
+    <div class="tmpl-intro">
+      <div class="tmpl-intro-title">夫を動かす「家事分担」交渉術テンプレート</div>
+      <div class="tmpl-intro-sub">そのままコピーして使えます。責めるのではなく、二人で協力する姿勢が大切です。</div>
+    </div>
+
+    <div class="tmpl-cat">
+      <div class="tmpl-cat-title">📱 LINEで切り出すとき</div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">軽めの相談</span>
+          <button class="fav-btn" data-tid="h1" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-h1">ねえ、ちょっと相談があるんだけど、今夜時間ある？
+最近ちょっと疲れがたまってて、家事の分担を見直したいなと思ってるの。
+責めるとかじゃなくて、二人で相談しながら決められたら嬉しいな。</div>
+        <button class="copy-btn" onclick="copyText('tt-h1', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">正直に伝える</span>
+          <button class="fav-btn" data-tid="h2" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-h2">正直に言うと、最近本当にきつくて。
+一人で全部やるのが、もう限界みたい。
+助けてほしい。一緒に家事を分担し直してもらえないかな。</div>
+        <button class="copy-btn" onclick="copyText('tt-h2', this)">📋 コピーする</button>
+      </div>
+    </div>
+
+    <div class="tmpl-cat">
+      <div class="tmpl-cat-title">💬 対面で話すとき</div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">感謝を伝えつつ</span>
+          <button class="fav-btn" data-tid="h3" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-h3">いつもありがとう。でも正直に言うと、私、今すごく疲れてて。
+二人で家事を分担し直したいんだけど、一緒に考えてもらえる？
+私が全部やるっていうのは、もう無理みたい。</div>
+        <button class="copy-btn" onclick="copyText('tt-h3', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">具体的に依頼</span>
+          <button class="fav-btn" data-tid="h4" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-h4">これから毎週〇曜日は、あなたに△△をお願いしたいんだけど、大丈夫かな？
+私が□□をやるから、役割分担したい。
+二人で協力できたら、もっと家族の時間も増えると思うの。</div>
+        <button class="copy-btn" onclick="copyText('tt-h4', this)">📋 コピーする</button>
+      </div>
+    </div>
+
+    <div class="tmpl-cat">
+      <div class="tmpl-cat-title">🤔 夫が渋っているとき</div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">現状を可視化</span>
+          <button class="fav-btn" data-tid="h5" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-h5">私が毎日やってることをリストアップしてみたんだけど、見てもらえる？
+これ全部、毎日やってるの。
+全部は無理でも、いくつか手伝ってもらえないかな。</div>
+        <button class="copy-btn" onclick="copyText('tt-h5', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">選択肢を提示</span>
+          <button class="fav-btn" data-tid="h6" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-h6">じゃあ、この3つの中から、あなたができそうなのを選んでもらえる？
+①ゴミ出し ②お風呂掃除 ③週末の買い物
+どれか一つでもいいから、お願いしたい。</div>
+        <button class="copy-btn" onclick="copyText('tt-h6', this)">📋 コピーする</button>
+      </div>
+    </div>
+
+    <div class="filter-row" id="filter-husband">
+      <button class="filter-btn active" onclick="filterCards('husband','all',this)">すべて</button>
+      <button class="filter-btn" onclick="filterCards('husband','fav',this)">★ お気に入りのみ</button>
+    </div>
+  </div>
+
+  <!-- ━━━━ 子どもへの声かけ ━━━━ -->
+  <div class="tab-pane" id="pane-children">
+    <div class="tmpl-intro">
+      <div class="tmpl-intro-title">子どもの自立を促す「魔法の声かけ」フレーズ集</div>
+      <div class="tmpl-intro-sub">命令ではなく、選択肢を与えることで、子どもの自主性が育ちます。</div>
+    </div>
+
+    <div class="tmpl-cat">
+      <div class="tmpl-cat-title">🌅 朝の声かけ</div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">自分で起きる</span>
+          <button class="fav-btn" data-tid="c1" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c1">明日から、自分で起きる練習してみる？
+ママは〇時に声かけるね。それで起きられたら、すごいと思う！</div>
+        <button class="copy-btn" onclick="copyText('tt-c1', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">準備を促す</span>
+          <button class="fav-btn" data-tid="c2" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c2">学校の準備、何時から始める？
+7時と7時半、どっちがいいかな？自分で決めていいよ。</div>
+        <button class="copy-btn" onclick="copyText('tt-c2', this)">📋 コピーする</button>
+      </div>
+    </div>
+
+    <div class="tmpl-cat">
+      <div class="tmpl-cat-title">📚 勉強の声かけ</div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">宿題を促す</span>
+          <button class="fav-btn" data-tid="c3" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c3">宿題、何時からやる予定？
+決めたら教えてね。ママはその時間、邪魔しないから。</div>
+        <button class="copy-btn" onclick="copyText('tt-c3', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">計画を立てさせる</span>
+          <button class="fav-btn" data-tid="c4" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c4">今週のテスト勉強、いつやる計画？
+ホワイトボードに書いてみる？ママも見せてもらえると嬉しいな。</div>
+        <button class="copy-btn" onclick="copyText('tt-c4', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">できたことを褒める</span>
+          <button class="fav-btn" data-tid="c5" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c5">自分で計画立てて、ちゃんとやれたね！
+ママ、すごく嬉しい。あなた、成長してるよ。</div>
+        <button class="copy-btn" onclick="copyText('tt-c5', this)">📋 コピーする</button>
+      </div>
+    </div>
+
+    <div class="tmpl-cat">
+      <div class="tmpl-cat-title">🧹 片付けの声かけ</div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">遊び感覚で</span>
+          <button class="fav-btn" data-tid="c6" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c6">このおもちゃたち、どこに住んでるんだっけ？
+お家に帰してあげようか。一緒にやる？</div>
+        <button class="copy-btn" onclick="copyText('tt-c6', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">選択肢を与える</span>
+          <button class="fav-btn" data-tid="c7" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c7">片付け、今やる？それとも5分遊んでからやる？
+どっちがいいか、自分で決めていいよ。</div>
+        <button class="copy-btn" onclick="copyText('tt-c7', this)">📋 コピーする</button>
+      </div>
+    </div>
+
+    <div class="tmpl-cat">
+      <div class="tmpl-cat-title">🌙 夜の声かけ</div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">就寝時間</span>
+          <button class="fav-btn" data-tid="c8" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c8">明日も学校だから、何時に寝る？
+9時と9時半、どっちにする？自分で決めてね。</div>
+        <button class="copy-btn" onclick="copyText('tt-c8', this)">📋 コピーする</button>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-card-header">
+          <span class="tmpl-badge">一日の振り返り</span>
+          <button class="fav-btn" data-tid="c9" onclick="toggleFav(this)">☆</button>
+        </div>
+        <div class="tmpl-text" id="tt-c9">今日、一番楽しかったことは何？
+ママに教えてくれると嬉しいな。</div>
+        <button class="copy-btn" onclick="copyText('tt-c9', this)">📋 コピーする</button>
+      </div>
+    </div>
+
+    <div class="filter-row" id="filter-children">
+      <button class="filter-btn active" onclick="filterCards('children','all',this)">すべて</button>
+      <button class="filter-btn" onclick="filterCards('children','fav',this)">★ お気に入りのみ</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="app-footer">
+    このツールは、あなた専用です。<br>
+    完璧を目指さず、できることから少しずつ。<br>
+    あなたのペースで、大丈夫。
+  </div>
+</div>
+
+<script>
+  /* ══════════ Password ══════════ */
+  (function() {
+    const CORRECT = 'houchi';
+    const overlay = document.getElementById('pw-overlay');
+    const appEl   = document.getElementById('app');
+    const input   = document.getElementById('pwInput');
+    const btn     = document.getElementById('pwBtn');
+    const errEl   = document.getElementById('pwError');
+    let unlocked  = false;
+
+    function tryUnlock() {
+      if (unlocked) return;
+      if (input.value === CORRECT) {
+        unlocked = true;
+        overlay.classList.add('hide');
+        setTimeout(() => overlay.style.display = 'none', 560);
+        appEl.classList.add('visible');
+        init();
+      } else {
+        input.classList.add('error');
+        errEl.textContent = 'パスワードが違います。もう一度お試しください。';
+        setTimeout(() => {
+          input.classList.remove('error');
+          input.value = '';
+          errEl.textContent = '';
+          input.focus();
+        }, 480);
+      }
+    }
+    btn.addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+  })();
+
+  /* ══════════ Keys ══════════ */
+  const PROGRESS_KEY  = 'hac_progress_v1';
+  const FAVORITES_KEY = 'hac_favorites_v1';
+
+  /* ══════════ Tab ══════════ */
+  document.getElementById('tabNav').addEventListener('click', e => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`pane-${tab}`).classList.add('active');
+  });
+
+  /* ══════════ Checklist ══════════ */
+  function toggleItem(el) {
+    el.classList.toggle('checked');
+    saveProgress();
+    updateProgress();
+  }
+
+  function saveProgress() {
+    const done = [...document.querySelectorAll('.cl-item.checked')].map(el => el.dataset.id);
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(done));
+  }
+
+  function loadProgress() {
+    const saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '[]');
+    saved.forEach(id => {
+      const el = document.querySelector(`.cl-item[data-id="${id}"]`);
+      if (el) el.classList.add('checked');
+    });
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const all    = document.querySelectorAll('.cl-item').length;
+    const done   = document.querySelectorAll('.cl-item.checked').length;
+    const pct    = all ? Math.round(done / all * 100) : 0;
+    document.getElementById('progressFill').style.width  = pct + '%';
+    document.getElementById('progressPct').textContent   = pct + '%';
+    document.getElementById('progressCount').textContent = `${done} / ${all} 完了`;
+  }
+
+  function resetProgress() {
+    if (!confirm('進捗をリセットしますか？この操作は取り消せません。')) return;
+    localStorage.removeItem(PROGRESS_KEY);
+    document.querySelectorAll('.cl-item').forEach(el => el.classList.remove('checked'));
+    updateProgress();
+  }
+
+  /* ══════════ Favorites ══════════ */
+  function toggleFav(btn) {
+    btn.classList.toggle('active');
+    btn.textContent = btn.classList.contains('active') ? '★' : '☆';
+    const favs = getFavs();
+    const tid  = btn.dataset.tid;
+    const idx  = favs.indexOf(tid);
+    if (btn.classList.contains('active')) { if (idx < 0) favs.push(tid); }
+    else                                  { if (idx >= 0) favs.splice(idx, 1); }
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+  }
+
+  function getFavs() {
+    return JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  }
+
+  function loadFavs() {
+    const favs = getFavs();
+    favs.forEach(tid => {
+      const btn = document.querySelector(`.fav-btn[data-tid="${tid}"]`);
+      if (btn) { btn.classList.add('active'); btn.textContent = '★'; }
+    });
+  }
+
+  /* ══════════ Filter ══════════ */
+  function filterCards(paneId, mode, clickedBtn) {
+    const pane = document.getElementById(`filter-${paneId}`).closest('.tab-pane');
+    const cards = pane.querySelectorAll('.tmpl-card');
+    const favs  = getFavs();
+    pane.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    clickedBtn.classList.add('active');
+    cards.forEach(card => {
+      if (mode === 'all') { card.classList.remove('hidden'); return; }
+      const tid = card.querySelector('.fav-btn')?.dataset.tid;
+      card.classList.toggle('hidden', !favs.includes(tid));
+    });
+  }
+
+  /* ══════════ Copy ══════════ */
+  function copyText(id, btn) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✓ コピーしました';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => alert('コピーに失敗しました。手動でコピーしてください。'));
+  }
+
+  /* ══════════ Init ══════════ */
+  function init() {
+    loadProgress();
+    loadFavs();
+  }
+</script>
+</body>
+</html>
