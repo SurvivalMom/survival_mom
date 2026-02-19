@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗺️ 冒険者の地図</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.25.6/babel.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Mochiy+Pop+One&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════ Design Tokens ══════════ */
+    :root {
+      --sand:      #f5e8c8;
+      --sand2:     #ede0b0;
+      --sand3:     #d4c08a;
+      --parch:     #faf3e0;
+      --parch2:    #f2e8cc;
+      --ink:       #3b2a14;
+      --ink2:      #5c4425;
+      --ink3:      #8a6f45;
+      --ink4:      #b09060;
+
+      --sky-map:   #7ec8e3;
+      --sky-lt:    #c5e8f5;
+      --ocean:     #4a9bbe;
+      --ocean-dk:  #2d7a9a;
+
+      --grass:     #7dba6f;
+      --grass-lt:  #a8d89c;
+      --grass-dk:  #4e9040;
+
+      --rose-map:  #e07070;
+      --rose-lt:   #f0b0b0;
+
+      --amber:     #e8a030;
+      --amber-lt:  #f5cc70;
+      --amber-dk:  #b87820;
+
+      --purple-map:#9b7ec8;
+      --purple-lt: #c8b0e8;
+
+      --card-bg:   rgba(250,243,224,0.93);
+      --card-bdr:  rgba(180,155,90,0.40);
+      --card-shd:  0 6px 28px rgba(59,42,20,0.18), 0 2px 6px rgba(59,42,20,0.10);
+
+      --r-xl: 28px;
+      --r-lg: 20px;
+      --r-md: 14px;
+      --r-sm: 10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { display: none; }
+
+    body {
+      font-family: 'Kosugi Maru', 'Fredoka', sans-serif;
+      background: var(--parch);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      /* 羊皮紙テクスチャ */
+      background-image:
+        radial-gradient(ellipse 900px 600px at 15% 0%,  rgba(126,200,227,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 700px 500px at 88% 20%, rgba(125,186,111,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 400px at 10% 85%, rgba(232,160,48,0.10)  0%, transparent 60%),
+        radial-gradient(ellipse 500px 400px at 90% 90%, rgba(155,126,200,0.08) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E"),
+        var(--parch);
+    }
+
+    /* ── 地図の点線ボーダー（ページ端の装飾） ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 10px; z-index: 0; pointer-events: none;
+      border: 2.5px dashed rgba(180,155,90,0.22);
+      border-radius: 18px;
+    }
+
+    /* ══════════ パスワード画面 ══════════ */
+    #pw-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      background: var(--parch);
+      background-image:
+        radial-gradient(ellipse 600px 400px at 20% 20%, rgba(126,200,227,0.2), transparent 60%),
+        radial-gradient(ellipse 500px 350px at 80% 75%, rgba(125,186,111,0.15), transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      transition: opacity 0.55s ease, visibility 0.55s;
+    }
+    #pw-overlay.hide { opacity: 0; visibility: hidden; }
+
+    .pw-card {
+      background: var(--card-bg);
+      border-radius: var(--r-xl);
+      padding: 48px 36px 42px;
+      max-width: 380px; width: 100%;
+      text-align: center;
+      position: relative; overflow: hidden;
+      border: 2.5px solid var(--card-bdr);
+      box-shadow: var(--card-shd), 0 0 0 6px rgba(180,155,90,0.10);
+    }
+    /* 地図風コーナー装飾 */
+    .pw-card::before {
+      content: '🧭';
+      position: absolute; top: 14px; right: 18px;
+      font-size: 2rem; opacity: 0.18;
+      transform: rotate(20deg);
+    }
+    .pw-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      background: repeating-linear-gradient(90deg,
+        var(--amber-dk) 0px, var(--amber-dk) 8px,
+        var(--sand2) 8px, var(--sand2) 16px);
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+
+    .pw-mascot {
+      font-size: 5rem; display: block;
+      animation: compass-spin 6s ease-in-out infinite;
+      filter: drop-shadow(0 4px 12px rgba(180,155,90,0.35));
+      margin-bottom: 6px;
+    }
+    @keyframes compass-spin {
+      0%,100% { transform: rotate(-8deg) scale(1);    }
+      30%      { transform: rotate(6deg) scale(1.05);  }
+      60%      { transform: rotate(-4deg) scale(0.98); }
+    }
+
+    .pw-badge {
+      display: inline-block; margin-bottom: 10px;
+      background: var(--amber); color: white;
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 0.65rem; letter-spacing: 0.15em; padding: 3px 14px;
+      border-radius: 99px; text-transform: uppercase;
+    }
+    .pw-title {
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 1.6rem; color: var(--ink);
+      line-height: 1.3; margin-bottom: 6px;
+    }
+    .pw-sub { font-size: 0.8rem; color: var(--ink3); line-height: 1.7; margin-bottom: 32px; }
+
+    .pw-label {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ink3);
+      display: block; text-align: left; margin-bottom: 8px;
+    }
+    .pw-input {
+      width: 100%; padding: 15px 20px;
+      border: 2.5px solid var(--sand3);
+      border-radius: var(--r-md);
+      font-family: 'Kosugi Maru', sans-serif;
+      font-size: 1.1rem; color: var(--ink);
+      background: rgba(255,255,255,0.65);
+      outline: none; letter-spacing: 0.22em; text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 16px;
+    }
+    .pw-input:focus  { border-color: var(--amber); box-shadow: 0 0 0 4px rgba(232,160,48,0.18); }
+    .pw-input.error  { border-color: var(--rose-map); animation: shake 0.38s; }
+    .pw-btn {
+      width: 100%; padding: 15px;
+      background: linear-gradient(155deg, var(--amber), var(--amber-dk));
+      color: white; border: none; border-radius: var(--r-md);
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 1rem; cursor: pointer;
+      box-shadow: 0 6px 0 #7a5010, 0 10px 28px rgba(180,120,32,0.3);
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+    .pw-btn:hover  { transform: translateY(-2px); box-shadow: 0 8px 0 #7a5010, 0 14px 32px rgba(180,120,32,0.35); }
+    .pw-btn:active { transform: translateY(5px); box-shadow: 0 1px 0 #7a5010; }
+    .pw-error { margin-top: 12px; font-size: 0.8rem; color: var(--rose-map); font-weight: 700; min-height: 20px; }
+
+    /* ══════════ アプリ本体 ══════════ */
+    #app {
+      position: relative; z-index: 1;
+      max-width: 480px; margin: 0 auto;
+      padding: 24px 16px 120px;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.55s ease 0.1s, transform 0.55s ease 0.1s;
+    }
+    #app.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── ヘッダー ── */
+    .app-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 20px; padding: 0 4px;
+    }
+    .logo-title {
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 1.35rem; color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+      text-shadow: 1px 1px 0 rgba(255,255,255,0.6);
+    }
+    .logo-sub {
+      font-size: 0.65rem; font-weight: 700; color: var(--ink4);
+      letter-spacing: 0.18em; text-transform: uppercase; margin-top: 3px;
+    }
+    .header-btns { display: flex; gap: 8px; }
+    .hbtn {
+      padding: 9px 14px; border-radius: var(--r-sm);
+      font-family: 'Kosugi Maru', sans-serif; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; border: 2px solid var(--card-bdr);
+      background: var(--card-bg); color: var(--ink2);
+      box-shadow: var(--card-shd);
+      transition: transform 0.15s, background 0.15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .hbtn:hover  { background: var(--sand2); transform: translateY(-1px); }
+    .hbtn:active { transform: scale(0.95); }
+
+    /* ── ステータスカード 2枚並び ── */
+    .status-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-bottom: 22px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-bdr);
+      border-radius: var(--r-lg);
+      padding: 18px 16px;
+      box-shadow: var(--card-shd);
+      position: relative; overflow: hidden;
+    }
+    /* 水彩にじみ */
+    .stat-card-lv::before {
+      content: '';
+      position: absolute; right: -16px; bottom: -16px;
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(126,200,227,0.22);
+    }
+    .stat-card-str::before {
+      content: '';
+      position: absolute; right: -16px; bottom: -16px;
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(232,160,48,0.18);
+    }
+
+    .stat-eyebrow {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--ink4); margin-bottom: 6px;
+    }
+    .stat-main {
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 1.6rem; color: var(--ink); line-height: 1; margin-bottom: 8px;
+    }
+    .stat-main.lv-num  { color: var(--ocean); }
+    .stat-main.str-num { color: var(--amber-dk); font-size: 1.4rem; }
+
+    /* XPバー */
+    .xp-bg { background: var(--sand2); border-radius: 99px; height: 10px; overflow: hidden; border: 1.5px solid var(--sand3); }
+    .xp-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--sky-map), var(--ocean));
+      box-shadow: 0 0 8px rgba(74,155,190,0.5);
+      transition: width 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    .xp-label { font-size: 0.62rem; font-weight: 700; color: var(--ink4); margin-top: 4px; text-align: right; }
+
+    /* ── カテゴリ見出し ── */
+    .cat-heading {
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 0.85rem; color: var(--ink2);
+      margin-bottom: 10px; margin-top: 22px; padding-left: 2px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cat-heading::after {
+      content: ''; flex: 1; height: 1.5px;
+      background: repeating-linear-gradient(90deg, var(--sand3) 0, var(--sand3) 5px, transparent 5px, transparent 10px);
+      border-radius: 99px;
+    }
+
+    /* ── クエストカード ── */
+    .quest-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .quest-card {
+      background: var(--card-bg);
+      border: 2.5px solid var(--card-bdr);
+      border-radius: var(--r-lg);
+      padding: 15px 16px;
+      display: flex; align-items: center; gap: 13px;
+      cursor: pointer;
+      box-shadow: var(--card-shd);
+      transition: transform 0.18s, box-shadow 0.18s, opacity 0.3s;
+      -webkit-tap-highlight-color: transparent;
+      position: relative; overflow: hidden;
+    }
+    .quest-card:hover  { transform: translateY(-3px) scale(1.012); box-shadow: 0 12px 40px rgba(59,42,20,0.22), 0 4px 10px rgba(59,42,20,0.12); }
+    .quest-card:active { transform: scale(0.975); }
+    .quest-card.done   { opacity: 0.5; }
+    .quest-card.done .qc-title { text-decoration: line-through; color: var(--ink4); }
+
+    /* スタンプ風「クリア！」 */
+    .done-stamp {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%) rotate(-12deg);
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 0.7rem; color: var(--grass-dk);
+      border: 2.5px solid var(--grass-dk); border-radius: 6px;
+      padding: 2px 8px; opacity: 0.65; pointer-events: none;
+      background: rgba(125,186,111,0.1);
+    }
+
+    .qc-icon-wrap {
+      width: 50px; height: 50px; border-radius: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; border: 2px solid rgba(180,155,90,0.25);
+    }
+    .qc-body { flex: 1; min-width: 0; }
+    .qc-title { font-family: 'Mochiy Pop One', sans-serif; font-size: 0.92rem; color: var(--ink); margin-bottom: 3px; }
+    .qc-meta  { font-size: 0.68rem; color: var(--amber-dk); font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .qc-xp-badge {
+      background: var(--sky-lt); color: var(--ocean-dk);
+      border: 1.5px solid var(--sky-map); border-radius: 99px;
+      padding: 2px 9px; font-size: 0.62rem; font-weight: 700;
+    }
+    .qc-arrow { font-size: 1.1rem; color: var(--sand3); margin-right: 4px; flex-shrink: 0; }
+
+    /* カテゴリ別カードアイコン背景 */
+    .qi-morning { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .qi-noon    { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+    .qi-night   { background: linear-gradient(135deg, #ede9fe, #c4b5fd); }
+
+    /* 空クエスト */
+    .no-quest {
+      text-align: center; font-size: 0.78rem; color: var(--ink4);
+      background: rgba(245,232,200,0.5);
+      border: 2px dashed var(--sand3); border-radius: var(--r-md);
+      padding: 18px;
+    }
+
+    /* ── インベントリ ── */
+    .inventory-section {
+      margin-top: 28px;
+      background: var(--card-bg);
+      border: 2.5px dashed var(--card-bdr);
+      border-radius: var(--r-xl);
+      padding: 20px;
+      box-shadow: var(--card-shd);
+    }
+    .inv-heading {
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 0.85rem; color: var(--ink2);
+      text-align: center; margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .inv-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .inv-tag {
+      background: linear-gradient(135deg, var(--amber-lt), var(--sand2));
+      border: 1.5px solid var(--amber);
+      border-radius: 99px; padding: 5px 14px;
+      font-size: 0.72rem; font-weight: 700; color: var(--amber-dk);
+      box-shadow: 0 2px 8px rgba(180,120,32,0.18);
+      white-space: nowrap;
+    }
+
+    /* ── FABボタン ── */
+    .fab {
+      position: fixed; bottom: 24px; right: 22px;
+      width: 62px; height: 62px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--ink), var(--ink2));
+      color: var(--sand); font-size: 1.9rem;
+      border: 3px solid var(--sand3);
+      box-shadow: 0 6px 24px rgba(59,42,20,0.4), 0 0 0 4px rgba(180,155,90,0.15);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: monospace; font-weight: 900;
+      z-index: 100;
+    }
+    .fab:hover  { transform: scale(1.08) rotate(90deg); }
+    .fab:active { transform: scale(0.94); }
+
+    /* ── モーダル ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(59,42,20,0.45); backdrop-filter: blur(6px);
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    @media (min-width: 480px) { .modal-overlay { align-items: center; } }
+
+    .modal-box {
+      background: var(--parch);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+      width: 100%; max-width: 460px; max-height: 92vh; overflow-y: auto;
+      padding: 28px 22px 36px;
+      border: 2.5px solid var(--card-bdr); border-bottom: none;
+      box-shadow: 0 -12px 48px rgba(59,42,20,0.25);
+      animation: slide-up 0.32s cubic-bezier(.34,1.3,.64,1);
+    }
+    @media (min-width: 480px) {
+      .modal-box { border-radius: var(--r-xl); border-bottom: 2.5px solid var(--card-bdr); animation: pop-in 0.32s cubic-bezier(.34,1.3,.64,1); }
+    }
+    @keyframes slide-up { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes pop-in   { from { transform: scale(0.88); opacity: 0; }         to { transform: scale(1); opacity: 1; } }
+
+    .modal-box::-webkit-scrollbar { display: none; }
+
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 22px;
+    }
+    .modal-title { font-family: 'Mochiy Pop One', sans-serif; font-size: 1.05rem; color: var(--ink); }
+    .modal-close {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--sand2); border: 1.5px solid var(--sand3); color: var(--ink2);
+      font-weight: 900; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: var(--sand3); }
+
+    /* フォーム */
+    .f-label {
+      font-size: 0.67rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--ink3);
+      display: block; margin-bottom: 7px;
+    }
+    .f-input, .f-select {
+      width: 100%; padding: 12px 15px;
+      border: 2px solid var(--sand3); border-radius: var(--r-md);
+      font-family: 'Kosugi Maru', sans-serif; font-size: 0.88rem;
+      color: var(--ink); background: rgba(255,255,255,0.7);
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .f-input:focus, .f-select:focus {
+      border-color: var(--amber); box-shadow: 0 0 0 3px rgba(232,160,48,0.15);
+    }
+    .f-input::placeholder { color: var(--sand3); }
+    .f-row  { margin-bottom: 16px; }
+    .f-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+    .add-btn {
+      width: 100%; padding: 15px;
+      background: linear-gradient(155deg, var(--amber), var(--amber-dk));
+      color: white; border: none; border-radius: var(--r-md);
+      font-family: 'Mochiy Pop One', sans-serif; font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #7a5010, 0 8px 24px rgba(180,120,32,0.28);
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-top: 6px;
+    }
+    .add-btn:hover  { transform: translateY(-2px); }
+    .add-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #7a5010; }
+
+    /* ── トースト ── */
+    .toast {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 96px; z-index: 600;
+      background: var(--ink); color: var(--sand);
+      font-family: 'Mochiy Pop One', sans-serif;
+      font-size: 0.82rem; padding: 12px 22px;
+      border-radius: var(--r-md);
+      border: 2px solid var(--sand3);
+      box-shadow: 0 8px 28px rgba(59,42,20,0.35);
+      animation: fade-up 0.3s ease;
+      white-space: nowrap;
+    }
+
+    /* ── フッター ── */
+    .app-footer { text-align: center; margin-top: 36px; font-size: 0.62rem; color: var(--ink4); letter-spacing: 0.15em; }
+
+    /* ══════════ アニメ ══════════ */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-7px); }
+      60%      { transform: translateX(7px); }
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translate(-50%, 12px); }
+      to   { opacity: 1; transform: translate(-50%, 0); }
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-in { animation: card-in 0.42s ease both; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ パスワード画面 ══════════ -->
+<div id="pw-overlay">
+  <div class="pw-card">
+    <span class="pw-mascot">🧭</span>
+    <span class="pw-badge">Adventure Map</span>
+    <h1 class="pw-title">冒険者の地図</h1>
+    <p class="pw-sub">きょうのミッションをクリアして<br>レベルアップをめざそう！</p>
+    <label class="pw-label" for="pwInput">あいことば（パスワード）</label>
+    <input class="pw-input" type="password" id="pwInput" placeholder="●●●" autocomplete="off">
+    <button class="pw-btn" id="pwBtn">🗺️ 地図をひらく</button>
+    <p class="pw-error" id="pwError"></p>
+  </div>
+</div>
+
+<!-- ══════════ メインアプリ ══════════ -->
+<div id="app"></div>
+
+<script>
+  /* ── パスワードゲート ── */
+  (function() {
+    const CORRECT = 'map';
+    const overlay = document.getElementById('pw-overlay');
+    const appEl   = document.getElementById('app');
+    const input   = document.getElementById('pwInput');
+    const btn     = document.getElementById('pwBtn');
+    const errEl   = document.getElementById('pwError');
+    let unlocked  = false;
+
+    function tryUnlock() {
+      if (unlocked) return;
+      if (input.value === CORRECT) {
+        unlocked = true;
+        overlay.classList.add('hide');
+        setTimeout(() => overlay.style.display = 'none', 600);
+        appEl.classList.add('visible');
+      } else {
+        input.classList.add('error');
+        errEl.textContent = 'ちがうよ！もういちどためしてね 🙈';
+        setTimeout(() => {
+          input.classList.remove('error');
+          input.value = '';
+          errEl.textContent = '';
+          input.focus();
+        }, 500);
+      }
+    }
+    btn.addEventListener('click', tryUnlock);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+  })();
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+const CATS    = ['朝', '昼', '夜'];
+const CAT_ICO = { '朝': '🌅', '昼': '🛡️', '夜': '🌙' };
+const CAT_CLS = { '朝': 'qi-morning', '昼': 'qi-noon', '夜': 'qi-night' };
+const CAT_LBL = { '朝': '朝のぼうけん', '昼': '昼のぼうけん', '夜': '夜のぼうけん' };
+
+const LS_KEY = k => `sm-map-${k}`;
+
+function getSaved(key, def) {
+  try { const s = localStorage.getItem(LS_KEY(key)); return s ? JSON.parse(s) : def; }
+  catch { return def; }
+}
+
+const INIT_QUESTS = [
+  { id:1, title:'あさのしたく',      category:'朝', xp:20, done:false, reward:'きらきら石', icon:'☀️' },
+  { id:2, title:'おべんきょう',       category:'昼', xp:50, done:false, reward:'ちえの羽',   icon:'🛡️' },
+  { id:3, title:'あしたのじゅんび', category:'夜', xp:30, done:false, reward:'ねむりの雫',  icon:'🌙' },
+];
+
+function App() {
+  const [level,     setLevel]     = useState(() => getSaved('level',     1));
+  const [xp,        setXp]        = useState(() => getSaved('xp',        0));
+  const [streak,    setStreak]    = useState(() => getSaved('streak',    3));
+  const [inventory, setInventory] = useState(() => getSaved('inventory', ['はじまりの地図']));
+  const [quests,    setQuests]    = useState(() => getSaved('quests',    INIT_QUESTS));
+  const [addOpen,   setAddOpen]   = useState(false);
+  const [toast,     setToast]     = useState('');
+
+  // フォーム
+  const [nTitle,  setNTitle]  = useState('');
+  const [nCat,    setNCat]    = useState('朝');
+  const [nXp,     setNXp]     = useState(20);
+  const [nReward, setNReward] = useState('ごほうび');
+  const [nIcon,   setNIcon]   = useState('✨');
+
+  // 永続化
+  useEffect(() => {
+    localStorage.setItem(LS_KEY('level'),     JSON.stringify(level));
+    localStorage.setItem(LS_KEY('xp'),        JSON.stringify(xp));
+    localStorage.setItem(LS_KEY('streak'),    JSON.stringify(streak));
+    localStorage.setItem(LS_KEY('inventory'), JSON.stringify(inventory));
+    localStorage.setItem(LS_KEY('quests'),    JSON.stringify(quests));
+  }, [level, xp, streak, inventory, quests]);
+
+  // XP→レベルアップ
+  useEffect(() => {
+    if (xp >= 100) {
+      setXp(x => x - 100);
+      setLevel(l => l + 1);
+      showToast('レベルアップ！🎉 地図が広がった！');
+    }
+  }, [xp]);
+
+  // トースト
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(''), 2000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const showToast = msg => setToast(msg);
+
+  const xpPct = useMemo(() => Math.max(0, Math.min(100, Number(xp) || 0)), [xp]);
+
+  const completeQuest = id => {
+    setQuests(prev => prev.map(q => {
+      if (q.id === id && !q.done) {
+        setXp(cur => cur + q.xp);
+        setInventory(inv => [...inv, q.reward]);
+        showToast(`「${q.reward}」をゲット！ +${q.xp} XP ✨`);
+        return { ...q, done: true };
+      }
+      return q;
+    }));
+  };
+
+  const resetDone = () => {
+    setQuests(prev => prev.map(q => ({ ...q, done: false })));
+    showToast('クエストをリセットしたよ！');
+  };
+
+  const addQuest = () => {
+    const title = (nTitle || '').trim();
+    if (!title) { showToast('タイトルを入れてね'); return; }
+    const xpVal = Math.max(1, Math.min(500, Number(nXp) || 1));
+    setQuests(prev => [...prev, {
+      id: Date.now(), title, category: nCat, xp: xpVal, done: false,
+      reward: (nReward || 'ごほうび').trim(),
+      icon:   (nIcon   || '✨').trim(),
+    }]);
+    setNTitle(''); setNXp(20); setNReward('ごほうび'); setNIcon('✨');
+    setAddOpen(false);
+    showToast('クエストを追加したよ！🗺️');
+  };
+
+  /* ── セクション ── */
+  const Section = ({ cat }) => {
+    const qs = quests.filter(q => q.category === cat);
+    return (
+      <div>
+        <div className="cat-heading">
+          <span>{CAT_ICO[cat]}</span>
+          <span>{CAT_LBL[cat]}</span>
+        </div>
+        <div className="quest-list">
+          {qs.length === 0 ? (
+            <div className="no-quest">まだクエストがないよ。右下の「＋」で追加しよう！</div>
+          ) : qs.map((q, i) => (
+            <div
+              key={q.id}
+              className={`quest-card ${q.done ? 'done' : ''} card-in`}
+              style={{ animationDelay: `${i * 0.06}s` }}
+              onClick={() => completeQuest(q.id)}
+            >
+              <div className={`qc-icon-wrap ${CAT_CLS[q.category]}`}>{q.icon}</div>
+              <div className="qc-body">
+                <div className="qc-title">{q.title}</div>
+                <div className="qc-meta">
+                  <span className="qc-xp-badge">+{q.xp} XP</span>
+                  <span>🎁 {q.reward}</span>
+                </div>
+              </div>
+              {q.done
+                ? <div className="done-stamp">クリア！</div>
+                : <div className="qc-arrow">❯</div>
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {/* ヘッダー */}
+      <header className="app-header">
+        <div>
+          <div className="logo-title">🗺️ 冒険者の地図</div>
+          <div className="logo-sub">Adventure Map · survival mam</div>
+        </div>
+        <div className="header-btns">
+          <button className="hbtn" onClick={resetDone}>🔄 リセット</button>
+        </div>
+      </header>
+
+      {/* ステータス */}
+      <div className="status-grid card-in">
+        <div className="stat-card stat-card-lv">
+          <div className="stat-eyebrow">冒険者ランク</div>
+          <div className="stat-main lv-num">LV. {level}</div>
+          <div className="xp-bg">
+            <div className="xp-fill" style={{ width: `${xpPct}%` }} />
+          </div>
+          <div className="xp-label">{xpPct} / 100 XP</div>
+        </div>
+        <div className="stat-card stat-card-str">
+          <div className="stat-eyebrow">連続きろく</div>
+          <div className="stat-main str-num">🔥 {streak}</div>
+          <div style={{ fontSize:'0.7rem', color:'var(--ink4)', fontWeight:700 }}>DAYS STREAK</div>
+        </div>
+      </div>
+
+      {/* クエスト */}
+      {CATS.map(cat => <Section key={cat} cat={cat} />)}
+
+      {/* インベントリ */}
+      <div className="inventory-section card-in" style={{ animationDelay:'0.2s' }}>
+        <div className="inv-heading">🎒 あつめた宝物</div>
+        <div className="inv-tags">
+          {inventory.map((item, i) => (
+            <div key={i} className="inv-tag">✨ {item}</div>
+          ))}
+        </div>
+      </div>
+
+      <div className="app-footer">© 2026 survival mam | Adventure Map Edition</div>
+
+      {/* FABボタン */}
+      <button className="fab" onClick={() => setAddOpen(true)}>＋</button>
+
+      {/* クエスト追加モーダル */}
+      {addOpen && (
+        <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) setAddOpen(false); }}>
+          <div className="modal-box">
+            <div className="modal-header">
+              <span className="modal-title">🗺️ クエストを追加</span>
+              <button className="modal-close" onClick={() => setAddOpen(false)}>✕</button>
+            </div>
+
+            <div className="f-row">
+              <label className="f-label">クエスト名</label>
+              <input className="f-input" value={nTitle} onChange={e => setNTitle(e.target.value)}
+                placeholder="例：さんすう10ぷん" />
+            </div>
+
+            <div className="f-grid">
+              <div>
+                <label className="f-label">カテゴリ</label>
+                <select className="f-select" value={nCat} onChange={e => setNCat(e.target.value)}>
+                  {CATS.map(c => <option key={c} value={c}>{CAT_ICO[c]} {c}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="f-label">XP（1〜500）</label>
+                <input className="f-input" type="number" min="1" max="500"
+                  value={nXp} onChange={e => setNXp(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="f-grid">
+              <div>
+                <label className="f-label">アイコン（絵文字）</label>
+                <input className="f-input" value={nIcon} onChange={e => setNIcon(e.target.value)}
+                  placeholder="✨" />
+              </div>
+              <div>
+                <label className="f-label">報酬アイテム</label>
+                <input className="f-input" value={nReward} onChange={e => setNReward(e.target.value)}
+                  placeholder="ごほうび" />
+              </div>
+            </div>
+
+            <button className="add-btn" onClick={addQuest}>🗺️ クエストを追加する</button>
+          </div>
+        </div>
+      )}
+
+      {/* トースト */}
+      {toast && <div className="toast">{toast}</div>}
+    </>
+  );
+}
+
+// アプリをDOMにマウント（パスワード解除後にapp要素へ）
+const container = document.getElementById('app');
+ReactDOM.createRoot(container).render(<App />);
+</script>
+</body>
+</html>
