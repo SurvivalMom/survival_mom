@@ -1,753 +1,461 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌟 Life Quest Board</title>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.25.6/babel.min.js"></script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Kaisei+Decol:wght@400;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ライフ・クエスト・ボード</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    /* ══════════ Design Tokens ══════════ */
-    :root {
-      --sky:      #e8f4fd;
-      --sky2:     #d0eaf9;
-      --peach:    #fdecd4;
-      --peach2:   #fbd9b0;
-      --mint:     #d4f4e8;
-      --lemon:    #fef9c3;
-      --lavender: #ede9fe;
-      --rose:     #fce7f0;
-
-      --primary:  #5b8dee;   /* コーンフラワーブルー */
-      --primary2: #3b73d8;
-      --accent:   #f97316;   /* オレンジ */
-      --accent2:  #ea580c;
-      --pink:     #f472b6;
-      --green:    #34d399;
-      --yellow:   #fbbf24;
-      --purple:   #a78bfa;
-
-      --ink:      #2d2a42;
-      --ink2:     #5a5677;
-      --ink3:     #9590b0;
-
-      --white:    #ffffff;
-      --card:     rgba(255,255,255,0.82);
-      --border:   rgba(91,141,238,0.18);
-
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-
-      --shadow-soft: 0 4px 24px rgba(91,141,238,0.13), 0 1px 4px rgba(0,0,0,0.06);
-      --shadow-card: 0 8px 32px rgba(91,141,238,0.16), 0 2px 8px rgba(0,0,0,0.07);
-      --shadow-pop:  0 16px 48px rgba(91,141,238,0.22), 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Nunito', 'Kaisei Decol', sans-serif;
-      background: linear-gradient(160deg, #e8f4fd 0%, #fdecd4 40%, #fce7f0 75%, #ede9fe 100%);
-      min-height: 100vh;
-      color: var(--ink);
-      overflow-x: hidden;
-    }
-
-    /* 背景の浮かぶ円 */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background:
-        radial-gradient(circle 280px at 8% 15%,  rgba(91,141,238,0.10) 0%, transparent 70%),
-        radial-gradient(circle 220px at 92% 10%,  rgba(244,114,182,0.12) 0%, transparent 70%),
-        radial-gradient(circle 300px at 85% 80%,  rgba(167,139,250,0.10) 0%, transparent 70%),
-        radial-gradient(circle 200px at 5%  85%,  rgba(52,211,153,0.10) 0%, transparent 70%),
-        radial-gradient(circle 180px at 50% 50%,  rgba(251,191,36,0.06) 0%, transparent 70%);
-    }
-
-    /* ══════════ パスワード画面 ══════════ */
-    #pw-overlay {
-      position: fixed; inset: 0; z-index: 9999;
-      display: flex; align-items: center; justify-content: center; padding: 20px;
-      background: linear-gradient(135deg, #c7dcf8 0%, #f7d9e8 50%, #dfd6f9 100%);
-      transition: opacity 0.5s ease, visibility 0.5s;
-    }
-    #pw-overlay.hide { opacity: 0; visibility: hidden; }
-
-    .pw-card {
-      background: var(--white);
-      border-radius: var(--radius-xl);
-      padding: 48px 36px 40px;
-      max-width: 380px; width: 100%;
-      text-align: center;
-      box-shadow: var(--shadow-pop);
-      position: relative; overflow: hidden;
-    }
-    .pw-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 6px;
-      background: linear-gradient(90deg, var(--primary), var(--pink), var(--yellow), var(--green));
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    }
-
-    .pw-mascot { font-size: 4.5rem; margin-bottom: 8px; display: block; animation: bounce-gentle 2.4s ease-in-out infinite; }
-    .pw-title  { font-size: 1.5rem; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
-    .pw-sub    { font-size: 0.82rem; color: var(--ink3); margin-bottom: 32px; }
-    .pw-label  { font-size: 0.75rem; font-weight: 800; color: var(--ink2); letter-spacing: 0.1em; text-transform: uppercase; display: block; text-align: left; margin-bottom: 8px; }
-
-    .pw-input {
-      width: 100%; padding: 14px 18px;
-      border: 2.5px solid #e0d8f5;
-      border-radius: var(--radius-md);
-      font-family: 'Nunito', sans-serif;
-      font-size: 1.1rem; font-weight: 700;
-      color: var(--ink); background: var(--lavender);
-      outline: none; text-align: center; letter-spacing: 0.18em;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      margin-bottom: 16px;
-    }
-    .pw-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(91,141,238,0.15); }
-    .pw-input.error { border-color: var(--pink); animation: shake 0.38s; }
-
-    .pw-btn {
-      width: 100%; padding: 15px;
-      background: linear-gradient(135deg, var(--primary), var(--purple));
-      color: white; border: none; border-radius: var(--radius-md);
-      font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 900;
-      cursor: pointer; letter-spacing: 0.05em;
-      box-shadow: 0 6px 0 var(--primary2), 0 10px 24px rgba(91,141,238,0.3);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .pw-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--primary2), 0 14px 28px rgba(91,141,238,0.35); }
-    .pw-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary2); }
-
-    .pw-error { margin-top: 12px; font-size: 0.8rem; font-weight: 700; color: #e05a80; min-height: 20px; }
-
-    /* ══════════ アプリ本体 ══════════ */
-    #app {
-      position: relative; z-index: 1;
-      max-width: 480px; margin: 0 auto;
-      padding: 28px 18px 100px;
-      opacity: 0; transform: translateY(20px);
-      transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
-    }
-    #app.visible { opacity: 1; transform: translateY(0); }
-
-    /* ── ヘッダー ── */
-    .app-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 24px; padding: 0 4px;
-    }
-    .logo-area {}
-    .logo-title {
-      font-size: 1.5rem; font-weight: 900; color: var(--primary);
-      display: flex; align-items: center; gap: 6px; line-height: 1;
-    }
-    .logo-sub { font-size: 0.72rem; font-weight: 700; color: var(--ink3); letter-spacing: 0.12em; margin-top: 3px; }
-
-    .header-btns { display: flex; gap: 8px; }
-    .hbtn {
-      padding: 9px 16px; border: none; border-radius: var(--radius-md);
-      font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800;
-      cursor: pointer; display: flex; align-items: center; gap: 5px;
-      transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: var(--shadow-soft);
-    }
-    .hbtn:active { transform: scale(0.96); }
-    .hbtn-consult { background: linear-gradient(135deg, #f9a8d4, #f472b6); color: white; box-shadow: 0 4px 0 #db2777; }
-    .hbtn-consult:active { box-shadow: 0 1px 0 #db2777 !important; transform: translateY(3px); }
-    .hbtn-print   { background: linear-gradient(135deg, #c7d2fe, var(--purple)); color: white; box-shadow: 0 4px 0 #7c3aed; }
-    .hbtn-print:active { box-shadow: 0 1px 0 #7c3aed !important; transform: translateY(3px); }
-    .hbtn-locked  { background: #fce7f0; color: #f9a8d4; cursor: not-allowed; box-shadow: none; }
-
-    /* ── レベルカード ── */
-    .level-card {
-      background: var(--card);
-      border-radius: var(--radius-xl);
-      padding: 24px 26px 20px;
-      border: 2px solid var(--border);
-      box-shadow: var(--shadow-card);
-      margin-bottom: 20px;
-      position: relative; overflow: hidden;
-    }
-    .level-card::after {
-      content: '⭐';
-      position: absolute; right: -10px; top: -14px;
-      font-size: 5rem; opacity: 0.07; transform: rotate(15deg);
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; background: linear-gradient(160deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%); min-height: 100vh; color: #fff; }
+    .quest-card { transition: all 0.18s cubic-bezier(.4,2,.6,1); cursor: pointer; }
+    .quest-card:hover { transform: scale(1.04) translateY(-2px); }
+    .quest-card.done { opacity: 0.55; }
+    .tab-btn { border: none; cursor: pointer; transition: all 0.15s; font-family: 'Nunito', sans-serif; }
+    .tab-btn:hover { opacity: 0.85; }
+    .shop-item { transition: all 0.15s; cursor: pointer; }
+    .shop-item:hover { transform: scale(1.04); }
+    .progress-bar { transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+    .xp-toast {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: #fbbf24; color: #1e1b4b; font-size: 2rem; font-weight: 900;
+      padding: 16px 40px; border-radius: 999px; z-index: 9998;
+      animation: toast 1.6s ease forwards;
+      box-shadow: 0 8px 32px rgba(251,191,36,0.6);
       pointer-events: none;
     }
-    .level-row   { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
-    .level-num   { font-size: 2.2rem; font-weight: 900; color: var(--primary); line-height: 1; }
-    .level-label { font-size: 0.7rem; font-weight: 800; color: var(--ink3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
-    .streak-badge {
-      background: linear-gradient(135deg, var(--lemon), #fde68a);
-      color: #92400e; font-size: 0.78rem; font-weight: 900;
-      padding: 5px 12px; border-radius: 99px;
-      border: 2px solid #fbbf24;
-      box-shadow: 0 2px 8px rgba(251,191,36,0.3);
+    @keyframes toast { 0%{opacity:0;transform:translate(-50%,-60%)} 20%{opacity:1;transform:translate(-50%,-50%)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-40%)} }
+    @keyframes fall0 { to { top: 110%; transform: rotate(360deg) translateX(30px); } }
+    @keyframes fall1 { to { top: 110%; transform: rotate(-360deg) translateX(-20px); } }
+    @keyframes fall2 { to { top: 110%; transform: rotate(180deg) translateX(40px); } }
+    @keyframes fall3 { to { top: 110%; transform: rotate(-180deg) translateX(-35px); } }
+  
+    .home-btn {
+      position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+      background: rgba(15,14,23,0.92); backdrop-filter: blur(10px);
+      color: #fff; border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 99px; padding: 11px 22px;
+      font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; font-size: 13px; font-weight: 800;
+      text-decoration: none; display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+      transition: all 0.2s cubic-bezier(.34,1.4,.64,1);
     }
-    .xp-bar-bg { background: #ede9fe; border-radius: 99px; height: 12px; overflow: hidden; }
-    .xp-bar    { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--primary), var(--pink)); transition: width 0.8s cubic-bezier(.4,0,.2,1); }
-    .xp-labels { display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 700; color: var(--ink3); margin-top: 5px; }
+    .home-btn:hover { transform: scale(1.09) translateY(-2px); background: rgba(167,139,250,0.95); border-color: transparent; box-shadow: 0 8px 28px rgba(124,58,237,0.4); }
 
-    /* ── クエストカード ── */
-    .quest-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-
-    .quest-card {
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      border: 2.5px solid var(--border);
-      box-shadow: var(--shadow-soft);
-      display: flex; align-items: center; gap: 14px;
-      cursor: pointer;
-      transition: transform 0.18s, box-shadow 0.18s, opacity 0.3s, border-color 0.2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .quest-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: var(--shadow-card); }
-    .quest-card:active { transform: scale(0.98); }
-    .quest-card.done { opacity: 0.52; }
-    .quest-card.done .quest-title { text-decoration: line-through; color: var(--ink3); }
-
-    .quest-icon-wrap {
-      width: 52px; height: 52px; border-radius: 16px;
+    .pw-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      background: linear-gradient(160deg,#0f0e17 0%,#1a1828 100%);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.7rem; flex-shrink: 0;
+      font-family: 'Zen Kaku Gothic New','Nunito', sans-serif;
+      transition: opacity 0.4s ease, visibility 0.4s;
     }
-    .quest-body  { flex: 1; min-width: 0; }
-    .quest-title { font-size: 0.97rem; font-weight: 800; color: var(--ink); margin-bottom: 3px; }
-    .quest-reward { font-size: 0.72rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 3px; }
-
-    .quest-check {
-      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem;
-      transition: transform 0.2s;
+    .pw-overlay.hide { opacity: 0; visibility: hidden; }
+    .pw-box {
+      background: #1a1828; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px; padding: 40px 36px; width: 90%; max-width: 380px;
+      text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      position: relative; overflow: hidden;
     }
-    .quest-check.checked { transform: scale(1.15); }
-
-    /* ── ひとことメッセージ ── */
-    .bottom-msg {
-      text-align: center; padding: 12px 20px;
-      font-size: 0.82rem; font-weight: 700; color: var(--ink2);
-      font-style: italic; line-height: 1.6;
+    .pw-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg,#a78bfa,#7c3aed,#4c1d95);
     }
-
-    /* ── モーダル ── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 500;
-      background: rgba(45,42,66,0.55);
-      backdrop-filter: blur(6px);
-      display: flex; align-items: center; justify-content: center; padding: 16px;
+    .pw-icon { font-size: 52px; margin-bottom: 16px; }
+    .pw-title { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+    .pw-sub { font-size: 13px; color: #a7a9be; margin-bottom: 28px; line-height: 1.7; }
+    .pw-input {
+      width: 100%; padding: 14px 18px; border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06);
+      color: #fff; font-size: 18px; font-family: 'Nunito', sans-serif;
+      font-weight: 800; text-align: center; letter-spacing: 6px;
+      outline: none; margin-bottom: 14px; transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .modal-box {
-      background: white; border-radius: var(--radius-xl);
-      width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto;
-      padding: 32px 26px; position: relative;
-      box-shadow: var(--shadow-pop);
-      animation: pop-in 0.32s cubic-bezier(.34,1.56,.64,1);
+    .pw-input:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167,139,250,0.2); }
+    .pw-input.shake { animation: pw-shake 0.35s ease; border-color: #f25f4c; }
+    .pw-btn {
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff; font-size: 15px; font-weight: 900;
+      font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 20px rgba(124,58,237,0.35);
     }
-    .modal-box::-webkit-scrollbar { width: 4px; }
-    .modal-box::-webkit-scrollbar-thumb { background: #e0d8f5; border-radius: 99px; }
-
-    .modal-close {
-      position: absolute; top: 18px; right: 20px;
-      background: #f1f0f8; border: none; border-radius: 50%;
-      width: 34px; height: 34px; cursor: pointer;
-      font-size: 1rem; color: var(--ink2); font-weight: 900;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .modal-close:hover { background: #e0d8f5; }
-
-    .modal-title { font-size: 1.2rem; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
-    .modal-sub   { font-size: 0.78rem; color: var(--ink3); font-weight: 600; margin-bottom: 20px; }
-
-    /* ── プログレスバー（ウィザード） ── */
-    .wizard-progress { margin-bottom: 20px; }
-    .wp-header { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; color: var(--ink3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-    .wp-bar-bg { background: #ede9fe; border-radius: 99px; height: 8px; overflow: hidden; margin-bottom: 10px; }
-    .wp-bar    { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--primary), var(--pink)); transition: width 0.4s; }
-    .wp-steps  { display: flex; gap: 6px; }
-    .wp-step   { flex: 1; padding: 6px 4px; border-radius: 10px; text-align: center; font-size: 0.68rem; font-weight: 800; border: 1.5px solid #e0d8f5; color: var(--ink3); transition: all 0.2s; }
-    .wp-step.active { background: var(--lavender); border-color: var(--purple); color: var(--ink); }
-
-    /* ── フォームフィールド ── */
-    .field-group { background: #faf9ff; border-radius: var(--radius-md); padding: 18px 16px; margin-bottom: 14px; border: 1.5px solid #e8e4f8; }
-    .field-group-title { font-size: 0.82rem; font-weight: 900; color: var(--primary); margin-bottom: 12px; }
-    .field-label { font-size: 0.68rem; font-weight: 800; color: var(--ink2); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
-    .field-wrap { margin-bottom: 12px; }
-
-    .form-input, .form-textarea {
-      width: 100%; padding: 11px 14px;
-      border: 2px solid #e0d8f5; border-radius: var(--radius-md);
-      font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 600;
-      color: var(--ink); background: white; outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s; resize: none;
-    }
-    .form-input:focus, .form-textarea:focus {
-      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,141,238,0.12);
-    }
-    .form-input::placeholder, .form-textarea::placeholder { color: #c4bede; font-weight: 500; }
-
-    /* ── ウィザードボタン ── */
-    .wizard-footer { display: flex; gap: 10px; margin-top: 20px; }
-    .wbtn { flex: 1; padding: 13px; border: none; border-radius: var(--radius-md); font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 900; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
-    .wbtn-back { background: #f1f0f8; color: var(--ink2); }
-    .wbtn-back:disabled { opacity: 0.35; cursor: not-allowed; }
-    .wbtn-next { background: linear-gradient(135deg, var(--primary), var(--purple)); color: white; box-shadow: 0 5px 0 var(--primary2); }
-    .wbtn-next:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary2); }
-    .wbtn-send { background: linear-gradient(135deg, var(--pink), #e11d48); color: white; box-shadow: 0 5px 0 #be123c; }
-    .wbtn-send:active { transform: translateY(3px); box-shadow: 0 2px 0 #be123c; }
-
-    .status-msg { text-align: center; font-size: 0.78rem; font-weight: 700; color: var(--pink); margin-top: 10px; min-height: 18px; }
-    .form-note  { text-align: center; font-size: 0.7rem; color: var(--ink3); font-weight: 600; margin-top: 8px; line-height: 1.5; }
-
-    /* ── 印刷 ── */
-    @media print {
-      #pw-overlay, .no-print { display: none !important; }
-      body { background: white !important; }
-      body::before { display: none; }
-      .print-only { display: block !important; }
-      #app { padding: 0; max-width: 100%; opacity: 1 !important; transform: none !important; }
-    }
-    .print-only { display: none; }
-
-    /* ══════════ Animations ══════════ */
-    @keyframes bounce-gentle {
-      0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-10px); }
-    }
-    @keyframes shake {
+    .pw-btn:hover  { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(124,58,237,0.45); }
+    .pw-btn:active { transform: scale(0.98); }
+    .pw-error { color: #f25f4c; font-size: 13px; font-weight: 800; margin-top: 10px; min-height: 20px; }
+    .pw-note { font-size: 11px; color: rgba(167,169,190,0.45); margin-top: 18px; line-height: 1.7; }
+    @keyframes pw-shake {
       0%,100% { transform: translateX(0); }
       20%      { transform: translateX(-7px); }
-      60%      { transform: translateX(7px); }
+      40%      { transform: translateX(7px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
     }
-    @keyframes pop-in {
-      from { opacity: 0; transform: scale(0.88) translateY(20px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .fade-up { animation: fade-up 0.45s ease both; }
-
-    /* ── クエストの色テーマ ── */
-    .qc-blue   { background: #dbeafe; }
-    .qc-peach  { background: #fef3c7; }
-    .qc-mint   { background: #d1fae5; }
-    .qc-rose   { background: #fce7f0; }
-    .qc-lav    { background: #ede9fe; }
-
-    /* cooldown */
-    .cooldown-banner {
-      background: #fef9c3; border: 2px solid #fbbf24; border-radius: var(--radius-md);
-      padding: 10px 16px; font-size: 0.78rem; font-weight: 700; color: #92400e;
-      margin-bottom: 16px; text-align: center;
-    }
-  </style>
+</style>
 </head>
 <body>
-
-<!-- ══════════ パスワード画面 ══════════ -->
-<div id="pw-overlay">
-  <div class="pw-card">
-    <span class="pw-mascot">🌟</span>
-    <h1 class="pw-title">Life Quest Board</h1>
-    <p class="pw-sub">毎日ちょっとずつ、いっしょに成長しよう！</p>
-    <label class="pw-label" for="pwInput">パスワード</label>
-    <input class="pw-input" type="password" id="pwInput" placeholder="●●●●" autocomplete="off" />
-    <button class="pw-btn" id="pwBtn">はじめる ✨</button>
-    <p class="pw-error" id="pwError"></p>
+  
+<div class="pw-overlay" id="pwOverlay">
+  <div class="pw-box">
+    <div class="pw-icon">🔐</div>
+    <div class="pw-title">パスワードを入力</div>
+    <div class="pw-sub">このアプリはnote記事をご購入いただいた方専用です。<br/>記事に記載のパスワードを入力してください。</div>
+    <input class="pw-input" id="pwInput" type="password" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkPw()" />
+    <button class="pw-btn" onclick="checkPw()">▶ アプリを開く</button>
+    <div class="pw-error" id="pwError"></div>
+    <div class="pw-note">※ パスワードはnote購入後の記事内に記載されています</div>
   </div>
 </div>
-
-<!-- ══════════ メインアプリ ══════════ -->
-<div id="app"></div>
-
-<script type="text/babel">
-const { useState, useMemo, useEffect } = React;
-
-/* ─── パスワードゲート ─── */
-(function() {
-  const CORRECT = 'life';
-  const overlay = document.getElementById('pw-overlay');
-  const appEl   = document.getElementById('app');
-  const input   = document.getElementById('pwInput');
-  const btn     = document.getElementById('pwBtn');
-  const errEl   = document.getElementById('pwError');
-
-  let unlocked = false;
-
-  function unlock() {
-    if (unlocked) return;
-    if (input.value === CORRECT) {
-      unlocked = true;
-      overlay.classList.add('hide');
-      setTimeout(() => overlay.style.display = 'none', 550);
-      appEl.classList.add('visible');
-      renderApp();
-    } else {
-      input.classList.add('error');
-      errEl.textContent = 'ちがうよ！もういちど試してみて 🙈';
-      setTimeout(() => {
-        input.classList.remove('error');
-        input.value = '';
-        errEl.textContent = '';
-        input.focus();
-      }, 500);
-    }
-  }
-
-  btn.addEventListener('click', unlock);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+<script>
+(function(){
+  var PWS = ["quest25","juku25","home25"];
+  var overlay = document.getElementById("pwOverlay");
+  if(sessionStorage.getItem("tdl_pw_ok")==="1"){ overlay.style.display="none"; return; }
+  overlay.style.display="flex";
 })();
-
-/* ─── データ ─── */
-const CONSULT_KEY = 'lqb-last-consult-ym';
-
-const getYM = (d = new Date()) =>
-  `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-
-const nextMonthLabel = (d = new Date()) => {
-  const n = new Date(d.getFullYear(), d.getMonth()+1, 1);
-  return `${n.getFullYear()}年${n.getMonth()+1}月`;
-};
-
-const INITIAL_QUESTS = [
-  { id:1, title:'朝の深呼吸',     icon:'🧘', reward:'心の結晶',   done:false, color:'qc-blue'  },
-  { id:2, title:'できたことをメモ', icon:'📝', reward:'知恵の栞',   done:false, color:'qc-peach' },
-  { id:3, title:'夜の自分褒め',    icon:'🕯️', reward:'安らぎの雫', done:false, color:'qc-mint'  },
-];
-
-const WIZARD_STEPS = [
-  { key:'traits', label:'特性' },
-  { key:'issues', label:'課題' },
-  { key:'likes',  label:'好き' },
-];
-
-const BLANK_FORM = {
-  reply_to:'', child_name:'',
-  strengths:'', difficulties:'', communication:'',
-  issues_life_learning:'', issues_social:'', top_priority:'',
-  interests:'', motivators:'', relax_methods:'',
-};
-
-/* ─── メインコンポーネント ─── */
-function App() {
-  const [quests, setQuests]         = useState(INITIAL_QUESTS);
-  const [modalOpen, setModalOpen]   = useState(false);
-  const [stepIndex, setStepIndex]   = useState(0);
-  const [form, setForm]             = useState(BLANK_FORM);
-  const [status, setStatus]         = useState('');
-  const [cooldownMsg, setCooldownMsg] = useState('');
-
-  const xp = quests.filter(q => q.done).length;
-
-  const lockedThisMonth = useMemo(() => {
-    try { return localStorage.getItem(CONSULT_KEY) === getYM(); } catch { return false; }
-  }, [modalOpen, status]);
-
-  const setField = (k, v) => setForm(p => ({ ...p, [k]: v }));
-
-  /* ── クエストトグル ── */
-  const toggle = id => setQuests(p => p.map(q => q.id === id ? { ...q, done: !q.done } : q));
-
-  /* ── モーダル開閉 ── */
-  const openModal = () => {
-    if (lockedThisMonth) {
-      setCooldownMsg(`今月の相談は送信済みです。次は ${nextMonthLabel()} から！`);
-      return;
-    }
-    setCooldownMsg(''); setStatus(''); setStepIndex(0);
-    setModalOpen(true);
-  };
-  const closeModal = () => { setModalOpen(false); setStatus(''); };
-
-  /* ── バリデーション ── */
-  const validateStep = () => {
-    if (!form.child_name.trim()) { setStatus('ニックネーム（必須）を入力してください'); return false; }
-    if (WIZARD_STEPS[stepIndex].key === 'issues' && !form.top_priority.trim()) {
-      setStatus('一番解決したいこと（必須）を入力してください'); return false;
-    }
-    setStatus(''); return true;
-  };
-
-  const nextStep = () => { if (validateStep()) setStepIndex(i => Math.min(i+1, WIZARD_STEPS.length-1)); };
-  const prevStep = () => { setStatus(''); setStepIndex(i => Math.max(i-1, 0)); };
-
-  /* ── 送信 ── */
-  const submit = async e => {
-    e.preventDefault();
-    if (!form.child_name.trim()) { setStatus('ニックネーム（必須）を入力してください'); return; }
-    if (!form.top_priority.trim()) { setStatus('一番解決したいこと（必須）を入力してください'); return; }
-    if (localStorage.getItem(CONSULT_KEY) === getYM()) {
-      setStatus(`今月分は送信済みです。次は ${nextMonthLabel()} から！`); return;
-    }
-    setStatus('送信中...');
-    const fd = new FormData();
-    fd.append('access_key', '7bc32ddd-3f06-4464-b9af-1582137cfd91');
-    fd.append('subject', '【Premium相談】ヒアリングフォーム');
-    Object.entries(form).forEach(([k,v]) => fd.append(k, v ?? ''));
-    try {
-      const res = await fetch('https://api.web3forms.com/submit', { method:'POST', body:fd });
-      if (res.ok) {
-        localStorage.setItem(CONSULT_KEY, getYM());
-        setStatus('送信完了！返信をお待ちください 💌');
-        setTimeout(() => {
-          closeModal();
-          setCooldownMsg(`今月の相談は送信済みです。次は ${nextMonthLabel()} から！`);
-          setForm(BLANK_FORM);
-        }, 2600);
-      } else { setStatus('送信に失敗しました（サーバーエラー）'); }
-    } catch { setStatus('送信に失敗しました（通信エラー）'); }
-  };
-
-  /* ─── ウィザード進捗UI ─── */
-  const Progress = () => {
-    const pct = Math.round((stepIndex+1) / WIZARD_STEPS.length * 100);
-    return (
-      <div className="wizard-progress">
-        <div className="wp-header"><span>Step {stepIndex+1} / {WIZARD_STEPS.length}</span><span>{pct}%</span></div>
-        <div className="wp-bar-bg"><div className="wp-bar" style={{width:`${pct}%`}}/></div>
-        <div className="wp-steps">
-          {WIZARD_STEPS.map((s,i) => (
-            <div key={s.key} className={`wp-step ${i===stepIndex?'active':''}`}>{s.label}</div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  /* ─── ステップ1：特性 ─── */
-  const StepTraits = () => (
-    <div className="field-group">
-      <div className="field-group-title">🌱 お子さんの特性・個性</div>
-      {[
-        {key:'strengths',    label:'得意なこと・よく褒められること',          ph:'例：手先が器用、記憶力が良い、挨拶ができる'},
-        {key:'difficulties', label:'苦手なこと・サポートが必要な場面',        ph:'例：大きな音が苦手、急な変更でパニック'},
-        {key:'communication',label:'コミュニケーションの様子',              ph:'例：自分の気持ちを言葉にできる、視線が合いにくい'},
-      ].map(f => (
-        <div key={f.key} className="field-wrap">
-          <label className="field-label">{f.label}</label>
-          <textarea className="form-textarea" rows={2} placeholder={f.ph}
-            value={form[f.key]} onChange={e => setField(f.key, e.target.value)}/>
-        </div>
-      ))}
-    </div>
-  );
-
-  /* ─── ステップ2：課題 ─── */
-  const StepIssues = () => (
-    <div className="field-group">
-      <div className="field-group-title">🔍 今の困りごと</div>
-      {[
-        {key:'issues_life_learning', label:'生活・学習面での困りごと', ph:'例：着替えに時間がかかる、集中力が続かない'},
-        {key:'issues_social',        label:'対人関係・社会性での困りごと', ph:'例：友達との距離感が近い、順番待ちが難しい'},
-        {key:'top_priority',         label:'一番解決したいこと（必須）★', ph:'優先順位を明確に、自由に書いてください', rows:3},
-      ].map(f => (
-        <div key={f.key} className="field-wrap">
-          <label className="field-label">{f.label}</label>
-          <textarea className="form-textarea" rows={f.rows||2} placeholder={f.ph}
-            value={form[f.key]} onChange={e => setField(f.key, e.target.value)}/>
-        </div>
-      ))}
-    </div>
-  );
-
-  /* ─── ステップ3：好き ─── */
-  const StepLikes = () => (
-    <div className="field-group">
-      <div className="field-group-title">💛 好きなもの・やる気のヒント</div>
-      {[
-        {key:'interests',     label:'興味・関心があるもの',           ph:'例：電車、恐竜、お絵描き、特定キャラ'},
-        {key:'motivators',    label:'モチベーションが上がる報酬・行動', ph:'例：シールがもらえる、高い高い、好きな音楽'},
-        {key:'relax_methods', label:'リラックスできる方法',           ph:'例：毛布にくるまる、狭いところに入る'},
-      ].map(f => (
-        <div key={f.key} className="field-wrap">
-          <label className="field-label">{f.label}</label>
-          <textarea className="form-textarea" rows={2} placeholder={f.ph}
-            value={form[f.key]} onChange={e => setField(f.key, e.target.value)}/>
-        </div>
-      ))}
-    </div>
-  );
-
-  /* ─── クエストの色 ─── */
-  const questColors = ['qc-blue','qc-peach','qc-mint','qc-rose','qc-lav'];
-
-  /* ─── RENDER ─── */
-  return (
-    <>
-      {/* ヘッダー */}
-      <header className="app-header no-print">
-        <div className="logo-area">
-          <div className="logo-title">🌟 Life Quest</div>
-          <div className="logo-sub">survival mam · Premium</div>
-        </div>
-        <div className="header-btns">
-          <button
-            className={`hbtn ${lockedThisMonth ? 'hbtn-locked' : 'hbtn-consult'}`}
-            onClick={openModal}
-            title={lockedThisMonth ? '今月分は送信済み' : '相談フォームを開く'}>
-            📧 相談
-          </button>
-          <button className="hbtn hbtn-print" onClick={() => window.print()}>🖨️ 印刷</button>
-        </div>
-      </header>
-
-      {/* クールダウンバナー */}
-      {(cooldownMsg || lockedThisMonth) && (
-        <div className="cooldown-banner no-print">
-          ⏳ {cooldownMsg || `今月の相談は送信済みです。次は ${nextMonthLabel()} から！`}
-        </div>
-      )}
-
-      {/* レベルカード */}
-      <div className="level-card no-print fade-up" style={{animationDelay:'0.05s'}}>
-        <div className="level-row">
-          <div>
-            <div className="level-label">Current Level</div>
-            <div className="level-num">LV. 1</div>
-          </div>
-          <div className="streak-badge">🔥 7 DAYS STREAK</div>
-        </div>
-        <div className="xp-bar-bg">
-          <div className="xp-bar" style={{width:`${(xp / quests.length)*100}%`}}/>
-        </div>
-        <div className="xp-labels">
-          <span>XP {xp * 33} / 100</span>
-          <span>{xp}/{quests.length} クエスト達成</span>
-        </div>
-      </div>
-
-      {/* クエストリスト */}
-      <div className="quest-list no-print">
-        {quests.map((q, i) => (
-          <div key={q.id}
-            className={`quest-card ${q.done ? 'done' : ''} fade-up`}
-            style={{animationDelay:`${0.1 + i*0.07}s`}}
-            onClick={() => toggle(q.id)}>
-            <div className={`quest-icon-wrap ${questColors[i % questColors.length]}`}>
-              {q.icon}
-            </div>
-            <div className="quest-body">
-              <div className="quest-title">{q.title}</div>
-              <div className="quest-reward">✨ 報酬：{q.reward}</div>
-            </div>
-            <div className={`quest-check ${q.done ? 'checked' : ''}`}>
-              {q.done ? '✅' : '⭕'}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ひとこと */}
-      <p className="bottom-msg no-print">
-        「大丈夫。あなたは、決して一人ではありません。」 🌸
-      </p>
-
-      {/* ── 相談モーダル ── */}
-      {modalOpen && (
-        <div className="modal-overlay no-print" onClick={e => { if(e.target===e.currentTarget) closeModal(); }}>
-          <div className="modal-box">
-            <button className="modal-close" onClick={closeModal}>✕</button>
-            <div className="modal-title">📬 月イチ相談窓口</div>
-            <div className="modal-sub">3ステップで今の状況を教えてください（書ける範囲でOK）</div>
-
-            <Progress/>
-
-            <form onSubmit={submit}>
-              {/* 共通フィールド */}
-              <div style={{marginBottom:14}}>
-                <div className="field-wrap">
-                  <label className="field-label">返信先メール（任意）</label>
-                  <input type="email" className="form-input" placeholder="example@gmail.com"
-                    value={form.reply_to} onChange={e => setField('reply_to', e.target.value)}/>
-                </div>
-                <div className="field-wrap" style={{marginBottom:0}}>
-                  <label className="field-label">お子さんのニックネーム（必須）★</label>
-                  <input type="text" className="form-input" placeholder="例：たろう"
-                    value={form.child_name} onChange={e => setField('child_name', e.target.value)}/>
-                </div>
-              </div>
-
-              {/* ステップ内容 */}
-              {WIZARD_STEPS[stepIndex].key === 'traits' && <StepTraits/>}
-              {WIZARD_STEPS[stepIndex].key === 'issues' && <StepIssues/>}
-              {WIZARD_STEPS[stepIndex].key === 'likes'  && <StepLikes/>}
-
-              {/* ボタン */}
-              <div className="wizard-footer">
-                <button type="button" className="wbtn wbtn-back" onClick={prevStep} disabled={stepIndex===0}>
-                  ← もどる
-                </button>
-                {stepIndex < WIZARD_STEPS.length-1 ? (
-                  <button type="button" className="wbtn wbtn-next" onClick={nextStep}>
-                    つぎへ →
-                  </button>
-                ) : (
-                  <button type="submit" className="wbtn wbtn-send">
-                    送信する 💌
-                  </button>
-                )}
-              </div>
-
-              <p className="status-msg">{status}</p>
-              <p className="form-note">※ 書けるところだけで大丈夫です。まとまっていなくてもOK！</p>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ── 印刷用 ── */}
-      <div className="print-only" style={{padding:40, color:'black', background:'white', minHeight:'100vh'}}>
-        <div style={{borderBottom:'4px solid black', paddingBottom:24, marginBottom:32, display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
-          <div>
-            <h2 style={{fontSize:'2rem', fontWeight:900, marginBottom:8}}>1ヶ月伴走ワークシート</h2>
-            <span style={{background:'black', color:'white', fontSize:'0.75rem', fontWeight:700, padding:'4px 10px'}}>survival mam Premium</span>
-          </div>
-        </div>
-        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:32}}>
-          <div style={{border:'3px solid black', padding:20}}>
-            <h3 style={{fontWeight:900, fontSize:'1.1rem', marginBottom:16, borderBottom:'2px solid black', paddingBottom:8}}>📄 今週の生存戦略</h3>
-            <ul style={{fontSize:'0.9rem', fontWeight:600, lineHeight:2}}>
-              <li>・今日も生きてる。それだけで100点です。</li>
-              <li>・パニックには、まず深呼吸で応じましょう。</li>
-              <li>・親の休み時間を、最優先の課題にする。</li>
-            </ul>
-          </div>
-          <div style={{border:'3px solid black', padding:20}}>
-            <h3 style={{fontWeight:900, fontSize:'1.1rem', marginBottom:16, borderBottom:'2px solid black', paddingBottom:8}}>⭐ 変化の記録（手書き用）</h3>
-            {[1,2,3,4].map(n=>(
-              <div key={n} style={{borderBottom:'1.5px solid black', height:40, marginBottom:8, fontSize:'0.65rem', color:'#999', display:'flex', alignItems:'flex-end', paddingBottom:4}}>
-                DATE: ___/___
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{marginTop:80, textAlign:'center'}}>
-          <p style={{fontSize:'1.1rem', fontWeight:900, fontStyle:'italic'}}>「大丈夫。あなたは、決して一人ではありません。」</p>
-          <p style={{fontSize:'0.7rem', color:'#999', marginTop:12, letterSpacing:'0.1em'}}>© 2026 survival mam | All Rights Reserved.</p>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function renderApp() {
-  const root = ReactDOM.createRoot(document.getElementById('app'));
-  root.render(<App/>);
+function checkPw(){
+  var PWS = ["quest25","juku25","home25"];
+  var v   = document.getElementById("pwInput").value.trim();
+  var inp = document.getElementById("pwInput");
+  var err = document.getElementById("pwError");
+  if(PWS.indexOf(v)!==-1){
+    sessionStorage.setItem("tdl_pw_ok","1");
+    var ov = document.getElementById("pwOverlay");
+    ov.classList.add("hide");
+    setTimeout(function(){ ov.style.display="none"; },420);
+  } else {
+    err.textContent="パスワードが違います。記事をご確認ください。";
+    inp.classList.add("shake");
+    inp.value="";
+    setTimeout(function(){ inp.classList.remove("shake"); err.textContent=""; inp.focus(); },500);
+  }
 }
 </script>
+<a href="index.html" class="home-btn">🏠 ホームへ</a>
+<div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const QUESTS = [
+      { id: "teeth",     icon: "🦷", label: "歯みがき",     xp: 20, category: "morning" },
+      { id: "wash",      icon: "🧼", label: "てあらい",     xp: 15, category: "morning" },
+      { id: "dress",     icon: "👕", label: "きがえ",       xp: 25, category: "morning" },
+      { id: "breakfast", icon: "🍚", label: "ごはん",       xp: 30, category: "morning" },
+      { id: "bag",       icon: "🎒", label: "かばんの準備", xp: 20, category: "morning" },
+      { id: "homework",  icon: "📝", label: "しゅくだい",   xp: 50, category: "afternoon" },
+      { id: "reading",   icon: "📚", label: "よみきかせ",   xp: 30, category: "afternoon" },
+      { id: "tidy",      icon: "🧹", label: "おかたづけ",   xp: 25, category: "afternoon" },
+      { id: "bath",      icon: "🛁", label: "おふろ",       xp: 30, category: "night" },
+      { id: "pyjamas",   icon: "🌙", label: "パジャマ",     xp: 20, category: "night" },
+      { id: "lights",    icon: "💡", label: "でんきを消す", xp: 15, category: "night" },
+      { id: "sleep",     icon: "😴", label: "おやすみ",     xp: 40, category: "night" },
+    ];
+
+    const ITEMS = [
+      { id: "sword", icon: "⚔️", label: "けんし",       cost: 100 },
+      { id: "shield", icon: "🛡️", label: "たて",         cost: 80  },
+      { id: "hat",   icon: "🎩", label: "まほうのぼうし", cost: 120 },
+      { id: "gem",   icon: "💎", label: "まほうのたま",  cost: 200 },
+      { id: "cape",  icon: "🦸", label: "ヒーローマント", cost: 150 },
+      { id: "crown", icon: "👑", label: "おうかん",      cost: 300 },
+      { id: "wand",  icon: "🪄", label: "まほうのつえ",  cost: 180 },
+      { id: "star",  icon: "⭐", label: "スーパースター", cost: 250 },
+    ];
+
+    const RANKS = [
+      { name: "みならいぼうけんしゃ", min: 0,    color: "#94a3b8" },
+      { name: "みならいきし",         min: 100,  color: "#a78bfa" },
+      { name: "ゆうかんなきし",       min: 300,  color: "#60a5fa" },
+      { name: "まものたいじのきし",   min: 600,  color: "#34d399" },
+      { name: "でんせつのゆうしゃ",   min: 1000, color: "#fbbf24" },
+      { name: "ちょうぜつのまおう",   min: 2000, color: "#f87171" },
+    ];
+
+    const CATEGORY_META = {
+      morning:   { label: "🌅 あさのミッション" },
+      afternoon: { label: "☀️ ひるのミッション" },
+      night:     { label: "🌙 よるのミッション" },
+    };
+
+    function getRank(xp) {
+      let rank = RANKS[0];
+      for (const r of RANKS) { if (xp >= r.min) rank = r; }
+      return rank;
+    }
+
+    function getLevelProgress(xp) {
+      const idx = RANKS.findIndex(r => r === getRank(xp));
+      const next = RANKS[idx + 1];
+      if (!next) return 100;
+      const prev = RANKS[idx];
+      return Math.round(((xp - prev.min) / (next.min - prev.min)) * 100);
+    }
+
+    function Confetti({ active }) {
+      if (!active) return null;
+      const colors = ["#fbbf24","#f87171","#34d399","#60a5fa","#a78bfa","#fb923c"];
+      return (
+        <div style={{ position:"fixed", top:0, left:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:9999 }}>
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div key={i} style={{
+              position: "absolute", top: "-20px",
+              left: `${(i * 4.2) % 100}%`,
+              width: "10px", height: "10px", borderRadius: "2px",
+              background: colors[i % 6],
+              animation: `fall${i % 4} ${0.9 + (i % 4) * 0.2}s ease-in forwards`,
+              animationDelay: `${(i % 5) * 0.1}s`,
+              transform: `rotate(${i * 15}deg)`,
+            }} />
+          ))}
+        </div>
+      );
+    }
+
+    function QuestBoard() {
+      const [tab, setTab] = useState("board");
+      const [completed, setCompleted] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("tdl_completed") || "[]"); } catch { return []; }
+      });
+      const [totalXP, setTotalXP] = useState(() => {
+        try { return parseInt(localStorage.getItem("tdl_xp") || "0"); } catch { return 0; }
+      });
+      const [coins, setCoins] = useState(() => {
+        try { return parseInt(localStorage.getItem("tdl_coins") || "0"); } catch { return 0; }
+      });
+      const [inventory, setInventory] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("tdl_inv") || "[]"); } catch { return []; }
+      });
+      const [heroEquip, setHeroEquip] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("tdl_equip") || "[]"); } catch { return []; }
+      });
+      const [showConfetti, setShowConfetti] = useState(false);
+      const [justGot, setJustGot] = useState(null);
+
+      useEffect(() => {
+        localStorage.setItem("tdl_completed", JSON.stringify(completed));
+        localStorage.setItem("tdl_xp", totalXP);
+        localStorage.setItem("tdl_coins", coins);
+        localStorage.setItem("tdl_inv", JSON.stringify(inventory));
+        localStorage.setItem("tdl_equip", JSON.stringify(heroEquip));
+      }, [completed, totalXP, coins, inventory, heroEquip]);
+
+      const rank = getRank(totalXP);
+      const progress = getLevelProgress(totalXP);
+      const todayDone = completed.length;
+      const allDone = todayDone === QUESTS.length;
+
+      function completeQuest(quest) {
+        if (completed.includes(quest.id)) return;
+        setCompleted(prev => [...prev, quest.id]);
+        setTotalXP(prev => prev + quest.xp);
+        setCoins(prev => prev + Math.floor(quest.xp / 5));
+        setJustGot(`+${quest.xp} XP！`);
+        setShowConfetti(true);
+        setTimeout(() => { setShowConfetti(false); setJustGot(null); }, 1800);
+      }
+
+      function resetDay() {
+        if (window.confirm("今日のクエストをリセットしますか？")) setCompleted([]);
+      }
+
+      function buyItem(item) {
+        if (coins < item.cost || inventory.includes(item.id)) return;
+        setCoins(prev => prev - item.cost);
+        setInventory(prev => [...prev, item.id]);
+      }
+
+      function toggleEquip(itemId) {
+        setHeroEquip(prev => prev.includes(itemId) ? prev.filter(x => x !== itemId) : [...prev, itemId]);
+      }
+
+      return (
+        <div>
+          <Confetti active={showConfetti} />
+          {justGot && <div className="xp-toast">{justGot}</div>}
+
+          {/* Header */}
+          <div style={{ background:"rgba(0,0,0,0.3)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"16px 20px" }}>
+            <div style={{ maxWidth:600, margin:"0 auto", display:"flex", alignItems:"center", gap:14 }}>
+              <div style={{ fontSize:36 }}>🗡️</div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:13, color:"#a5b4fc", fontWeight:700, letterSpacing:1 }}>ライフ・クエスト・ボード</div>
+                <div style={{ fontSize:18, fontWeight:900, color:rank.color }}>{rank.name}</div>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginTop:4 }}>
+                  <div style={{ flex:1, height:10, background:"rgba(255,255,255,0.15)", borderRadius:99, overflow:"hidden" }}>
+                    <div className="progress-bar" style={{ height:"100%", width:`${progress}%`, background:`linear-gradient(90deg,${rank.color},#fff)`, borderRadius:99 }} />
+                  </div>
+                  <span style={{ fontSize:12, color:"#c4b5fd", fontWeight:700 }}>{progress}%</span>
+                </div>
+              </div>
+              <div style={{ textAlign:"center" }}>
+                <div style={{ fontSize:22, fontWeight:900, color:"#fbbf24" }}>{totalXP}<span style={{ fontSize:11, marginLeft:2, color:"#fde68a" }}>XP</span></div>
+                <div style={{ fontSize:16, fontWeight:900, color:"#34d399" }}>🪙{coins}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div style={{ background:"rgba(0,0,0,0.2)", borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ maxWidth:600, margin:"0 auto", display:"flex" }}>
+              {[
+                { id:"board", label:"🗺️ クエスト" },
+                { id:"hero",  label:"🧝 ヒーロー" },
+                { id:"shop",  label:"🏪 ショップ" },
+              ].map(t => (
+                <button key={t.id} className="tab-btn" onClick={() => setTab(t.id)} style={{
+                  flex:1, padding:"14px 0", fontSize:14, fontWeight:800,
+                  background:"none",
+                  color: tab === t.id ? "#fff" : "#a78bfa",
+                  borderBottom: tab === t.id ? "3px solid #a5b4fc" : "3px solid transparent",
+                  fontWeight: 900,
+                }}>{t.label}</button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ maxWidth:600, margin:"0 auto", padding:"20px 16px 100px" }}>
+
+            {/* BOARD */}
+            {tab === "board" && (
+              <div>
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:16, padding:"16px 20px", marginBottom:20, display:"flex", alignItems:"center", gap:16 }}>
+                  <div style={{ fontSize:40 }}>{allDone ? "🏆" : "⚔️"}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontWeight:900, fontSize:16 }}>{allDone ? "全クエストクリア！ すごい！" : `今日の進行 ${todayDone}/${QUESTS.length}`}</div>
+                    <div style={{ height:8, background:"rgba(255,255,255,0.15)", borderRadius:99, marginTop:6, overflow:"hidden" }}>
+                      <div className="progress-bar" style={{ height:"100%", width:`${(todayDone/QUESTS.length)*100}%`, background:"linear-gradient(90deg,#34d399,#6ee7b7)", borderRadius:99 }} />
+                    </div>
+                  </div>
+                  <button onClick={resetDay} style={{ fontSize:11, background:"rgba(255,255,255,0.1)", border:"none", color:"#c4b5fd", borderRadius:8, padding:"6px 10px", cursor:"pointer", fontFamily:"inherit", fontWeight:700 }}>リセット</button>
+                </div>
+
+                {["morning","afternoon","night"].map(cat => (
+                  <div key={cat} style={{ marginBottom:24 }}>
+                    <div style={{ fontWeight:900, fontSize:15, marginBottom:10, color:"#c4b5fd" }}>{CATEGORY_META[cat].label}</div>
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                      {QUESTS.filter(q => q.category === cat).map(quest => {
+                        const done = completed.includes(quest.id);
+                        return (
+                          <div key={quest.id} className={`quest-card${done ? " done" : ""}`} onClick={() => completeQuest(quest)} style={{
+                            background: done ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.07)",
+                            border: done ? "2px solid #34d399" : "2px solid rgba(255,255,255,0.1)",
+                            borderRadius:16, padding:"16px 14px", display:"flex", flexDirection:"column", alignItems:"center", gap:8,
+                          }}>
+                            <div style={{ fontSize:36 }}>{quest.icon}</div>
+                            <div style={{ fontWeight:800, fontSize:13, textAlign:"center" }}>{quest.label}</div>
+                            <div style={{ fontSize:11, fontWeight:700, color: done ? "#34d399" : "#a5b4fc", background: done ? "rgba(52,211,153,0.15)" : "rgba(165,180,252,0.15)", padding:"3px 10px", borderRadius:99 }}>
+                              {done ? "✅ クリア！" : `+${quest.xp} XP`}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* HERO */}
+            {tab === "hero" && (
+              <div>
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:24, padding:28, marginBottom:20, textAlign:"center" }}>
+                  <div style={{ fontSize:80, lineHeight:1, marginBottom:8 }}>
+                    🧝{heroEquip.map(id => ITEMS.find(i => i.id === id)?.icon || "").join("")}
+                  </div>
+                  <div style={{ fontWeight:900, fontSize:18, color:rank.color }}>{rank.name}</div>
+                  <div style={{ color:"#a5b4fc", fontSize:13, marginTop:4 }}>そうびちゅう：{heroEquip.length === 0 ? "なし" : heroEquip.map(id => ITEMS.find(i => i.id === id)?.label).join("・")}</div>
+                </div>
+
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:16, padding:20, marginBottom:20 }}>
+                  <div style={{ fontWeight:900, fontSize:15, marginBottom:14, color:"#c4b5fd" }}>📊 ステータス</div>
+                  {[
+                    { label:"けいけんちXP",   value:totalXP,          max:2000,        color:"#a78bfa" },
+                    { label:"コイン",          value:coins,            max:500,         color:"#fbbf24" },
+                    { label:"クリアクエスト", value:completed.length, max:QUESTS.length, color:"#34d399" },
+                    { label:"アイテム数",      value:inventory.length, max:ITEMS.length,  color:"#60a5fa" },
+                  ].map(s => (
+                    <div key={s.label} style={{ marginBottom:12 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4, fontSize:13, fontWeight:700 }}>
+                        <span>{s.label}</span><span style={{ color:s.color }}>{s.value}</span>
+                      </div>
+                      <div style={{ height:8, background:"rgba(255,255,255,0.12)", borderRadius:99, overflow:"hidden" }}>
+                        <div className="progress-bar" style={{ height:"100%", width:`${Math.min(100,(s.value/s.max)*100)}%`, background:s.color, borderRadius:99 }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ background:"rgba(255,255,255,0.07)", borderRadius:16, padding:20 }}>
+                  <div style={{ fontWeight:900, fontSize:15, marginBottom:14, color:"#c4b5fd" }}>🎒 もちもの</div>
+                  {inventory.length === 0 ? (
+                    <div style={{ color:"#7c3aed", textAlign:"center", padding:20, fontSize:14 }}>ショップでアイテムをゲットしよう！</div>
+                  ) : (
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10 }}>
+                      {inventory.map(id => {
+                        const item = ITEMS.find(i => i.id === id);
+                        if (!item) return null;
+                        const equipped = heroEquip.includes(id);
+                        return (
+                          <div key={id} className="shop-item" onClick={() => toggleEquip(id)} style={{
+                            background: equipped ? "rgba(167,139,250,0.25)" : "rgba(255,255,255,0.07)",
+                            border: equipped ? "2px solid #a78bfa" : "2px solid rgba(255,255,255,0.1)",
+                            borderRadius:14, padding:"14px 10px", textAlign:"center",
+                          }}>
+                            <div style={{ fontSize:30 }}>{item.icon}</div>
+                            <div style={{ fontSize:11, fontWeight:800, marginTop:4 }}>{item.label}</div>
+                            <div style={{ fontSize:10, color: equipped ? "#a78bfa" : "#6b7280", marginTop:2 }}>{equipped ? "そうびちゅう" : "タップでそうび"}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* SHOP */}
+            {tab === "shop" && (
+              <div>
+                <div style={{ background:"rgba(251,191,36,0.1)", border:"1px solid rgba(251,191,36,0.3)", borderRadius:14, padding:"12px 16px", marginBottom:20, display:"flex", alignItems:"center", gap:10 }}>
+                  <span style={{ fontSize:24 }}>🪙</span>
+                  <span style={{ fontWeight:900, fontSize:18, color:"#fbbf24" }}>{coins} コイン</span>
+                  <span style={{ color:"#a5b4fc", fontSize:12, marginLeft:"auto" }}>クエストをクリアするとGET！</span>
+                </div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                  {ITEMS.map(item => {
+                    const owned = inventory.includes(item.id);
+                    const canBuy = coins >= item.cost && !owned;
+                    return (
+                      <div key={item.id} className="shop-item" onClick={() => buyItem(item)} style={{
+                        background: owned ? "rgba(52,211,153,0.1)" : "rgba(255,255,255,0.07)",
+                        border: owned ? "2px solid #34d399" : canBuy ? "2px solid rgba(251,191,36,0.4)" : "2px solid rgba(255,255,255,0.1)",
+                        borderRadius:18, padding:"20px 14px", textAlign:"center",
+                        opacity: (!canBuy && !owned) ? 0.5 : 1,
+                        cursor: canBuy ? "pointer" : "default",
+                      }}>
+                        <div style={{ fontSize:44 }}>{item.icon}</div>
+                        <div style={{ fontWeight:800, fontSize:14, marginTop:8 }}>{item.label}</div>
+                        <div style={{ marginTop:8, fontSize:13, fontWeight:900, color: owned ? "#34d399" : "#fbbf24" }}>
+                          {owned ? "✅ もっている" : `🪙 ${item.cost}`}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<QuestBoard />);
+  </script>
 </body>
 </html>

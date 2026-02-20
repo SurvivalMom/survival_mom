@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>スモールステップカード</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Nunito', sans-serif; min-height: 100vh; background: #f0fdf4; }
+    body { font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; min-height: 100vh; background: #f0fdf4; }
     .card  { transition: all 0.18s cubic-bezier(.4,2,.6,1); cursor: pointer; }
     .card:hover  { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
     .btn   { border: none; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.15s; }
@@ -26,48 +26,65 @@
   
     .home-btn {
       position: fixed; bottom: 20px; right: 20px; z-index: 9999;
-      background: rgba(15,14,23,0.88); backdrop-filter: blur(8px);
-      color: #fff; border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 99px; padding: 10px 20px;
-      font-family: "Nunito", sans-serif; font-size: 13px; font-weight: 800;
+      background: rgba(15,14,23,0.92); backdrop-filter: blur(10px);
+      color: #fff; border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 99px; padding: 11px 22px;
+      font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; font-size: 13px; font-weight: 800;
       text-decoration: none; display: flex; align-items: center; gap: 6px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      transition: all 0.2s cubic-bezier(.4,2,.3,1);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+      transition: all 0.2s cubic-bezier(.34,1.4,.64,1);
     }
-    .home-btn:hover { transform: scale(1.08); background: rgba(255,137,6,0.92); border-color: transparent; }
+    .home-btn:hover { transform: scale(1.09) translateY(-2px); background: linear-gradient135deg; border-color: transparent; box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
 
     .pw-overlay {
       position: fixed; inset: 0; z-index: 99999;
-      background: #0f0e17;
+      background: linear-gradient(160deg,#0f0e17 0%,#1a1828 100%);
       display: flex; align-items: center; justify-content: center;
-      font-family: "Nunito", sans-serif;
+      font-family: 'Zen Kaku Gothic New','Nunito', sans-serif;
+      transition: opacity 0.4s ease, visibility 0.4s;
     }
+    .pw-overlay.hide { opacity: 0; visibility: hidden; }
     .pw-box {
-      background: #1a1828; border: 1px solid rgba(255,255,255,0.1);
+      background: #1a1828; border: 1px solid rgba(255,255,255,0.12);
       border-radius: 28px; padding: 40px 36px; width: 90%; max-width: 380px;
-      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      position: relative; overflow: hidden;
+    }
+    .pw-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(135deg,#059669,#10b981);
     }
     .pw-icon { font-size: 52px; margin-bottom: 16px; }
     .pw-title { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 6px; }
-    .pw-sub { font-size: 13px; color: #a7a9be; margin-bottom: 28px; line-height: 1.6; }
+    .pw-sub { font-size: 13px; color: #a7a9be; margin-bottom: 28px; line-height: 1.7; }
     .pw-input {
       width: 100%; padding: 14px 18px; border-radius: 14px;
-      border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
-      color: #fff; font-size: 18px; font-family: "Nunito", sans-serif;
-      font-weight: 800; text-align: center; letter-spacing: 4px;
-      outline: none; margin-bottom: 14px; transition: border-color 0.2s;
+      border: 2px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06);
+      color: #fff; font-size: 18px; font-family: 'Nunito', sans-serif;
+      font-weight: 800; text-align: center; letter-spacing: 6px;
+      outline: none; margin-bottom: 14px; transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .pw-input:focus { border-color: #ff8906; }
+    .pw-input:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+    .pw-input.shake { animation: pw-shake 0.35s ease; border-color: #f25f4c; }
     .pw-btn {
       width: 100%; padding: 14px; border-radius: 14px; border: none;
-      background: linear-gradient(135deg, #ff8906, #f25f4c);
-      color: #fff; font-size: 16px; font-weight: 900;
-      font-family: "Nunito", sans-serif; cursor: pointer;
-      transition: all 0.2s; box-shadow: 0 4px 20px rgba(255,137,6,0.3);
+      background: linear-gradient(135deg,#059669,#10b981);
+      color: #fff; font-size: 15px; font-weight: 900;
+      font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
-    .pw-btn:hover { transform: scale(1.03); filter: brightness(1.08); }
+    .pw-btn:hover  { transform: translateY(-2px); filter: brightness(1.1); }
+    .pw-btn:active { transform: scale(0.98); }
     .pw-error { color: #f25f4c; font-size: 13px; font-weight: 800; margin-top: 10px; min-height: 20px; }
-    .pw-note { font-size: 11px; color: rgba(167,169,190,0.5); margin-top: 20px; line-height: 1.7; }
+    .pw-note { font-size: 11px; color: rgba(167,169,190,0.45); margin-top: 18px; line-height: 1.7; }
+    @keyframes pw-shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-7px); }
+      40%      { transform: translateX(7px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
 </style>
 </head>
 <body>
@@ -85,24 +102,31 @@
   </div>
 </div>
 <script>
-  (function(){
-    var PWS = ["step25", "gray25", "home25"];
-    var KEY = "tdl_pw_ok";
-    if(sessionStorage.getItem(KEY)==="1"){ document.getElementById("pwOverlay").style.display="none"; return; }
-    document.getElementById("pwOverlay").style.display="flex";
-  })();
-  function checkPw(){
-    var PWS = ["step25", "gray25", "home25"];
-    var v = document.getElementById("pwInput").value.trim();
-    if(PWS.indexOf(v) !== -1){
-      sessionStorage.setItem("tdl_pw_ok","1");
-      document.getElementById("pwOverlay").style.display="none";
-    } else {
-      document.getElementById("pwError").textContent="パスワードが違います。記事を確認してください。";
-      document.getElementById("pwInput").value="";
-    }
+(function(){
+  var PWS = ["step25","gray25","home25"];
+  var overlay = document.getElementById("pwOverlay");
+  if(sessionStorage.getItem("tdl_pw_ok")==="1"){ overlay.style.display="none"; return; }
+  overlay.style.display="flex";
+})();
+function checkPw(){
+  var PWS = ["step25","gray25","home25"];
+  var v   = document.getElementById("pwInput").value.trim();
+  var inp = document.getElementById("pwInput");
+  var err = document.getElementById("pwError");
+  if(PWS.indexOf(v)!==-1){
+    sessionStorage.setItem("tdl_pw_ok","1");
+    var ov = document.getElementById("pwOverlay");
+    ov.classList.add("hide");
+    setTimeout(function(){ ov.style.display="none"; },420);
+  } else {
+    err.textContent="パスワードが違います。記事をご確認ください。";
+    inp.classList.add("shake");
+    inp.value="";
+    setTimeout(function(){ inp.classList.remove("shake"); err.textContent=""; inp.focus(); },500);
   }
+}
 </script>
+<a href="index.html" class="home-btn">🏠 ホームへ</a>
 <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -327,8 +351,8 @@
           <div style={{ maxWidth:600, margin:"0 auto", padding:"20px 16px 80px" }}>
             <div style={{ background:"#fff", borderRadius:14, padding:"12px 16px", marginBottom:20, display:"flex", alignItems:"center", gap:12, boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>
               <div style={{ flex:1 }}>
-                <div style={{ fontSize:13, fontWeight:900, color:"#374151" }}>じぶんでえらぶモード</div>
-                <div style={{ fontSize:11, color:"#64748b" }}>すきなじゅんばんでやってみよう</div>
+                <div style={{ fontSize:14, fontWeight:900, color:"#374151" }}>🔀 じぶんでえらぶモード</div>
+                <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>すきなじゅんばんでやってみよう</div>
               </div>
               <div onClick={() => setSelfChoice(v => !v)} style={{ width:48, height:28, borderRadius:99, background:selfChoice?selectedTask.color:"#e5e7eb", cursor:"pointer", transition:"background 0.2s", position:"relative" }}>
                 <div style={{ position:"absolute", top:4, left:selfChoice?24:4, width:20, height:20, borderRadius:99, background:"#fff", boxShadow:"0 1px 4px rgba(0,0,0,0.2)", transition:"left 0.2s" }} />
@@ -371,7 +395,7 @@
                 <div style={{ fontSize:20, fontWeight:900, color:"#065f46" }}>ぜんぶクリア！！</div>
                 <div style={{ fontSize:14, color:"#64748b", marginTop:4 }}>よくできました！</div>
                 <button className="btn" onClick={() => { setCompletedSteps([]); setShowCelebration(false); }}
-                  style={{ marginTop:16, background:selectedTask.color, color:"#fff", borderRadius:12, padding:"12px 28px", fontSize:14, fontWeight:900, boxShadow:`0 4px 12px ${selectedTask.color}44` }}>
+                  style={{ marginTop:16, background:selectedTask.color, color:"#fff", borderRadius:14, padding:"14px 36px", fontSize:15, fontWeight:900, boxShadow:`0 6px 20px ${selectedTask.color}55`, display:'block', width:'100%' }}>
                   もういちど ↩
                 </button>
               </div>
