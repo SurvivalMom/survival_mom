@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>巧緻性×言語トレーニングカード【体験版】</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; min-height: 100vh; background: #f8fafc; }
+
+    /* ── 体験版バナー ── */
+    .taiken-banner {
+      background: linear-gradient(90deg,#fef3c7,#fde68a);
+      border-bottom: 2px solid #f59e0b;
+      padding: 9px 16px; text-align: center;
+      font-size: 12px; font-weight: 800; color: #78350f; letter-spacing: 0.04em;
+    }
+    .taiken-banner strong { color: #b45309; }
+
+    /* ── ヘッダー ── */
+    .hd { background: linear-gradient(135deg,#1e40af,#6d28d9); padding: 18px 16px 22px; color: #fff; }
+    .hd-inner { max-width: 640px; margin: 0 auto; }
+    .hd-label { font-size: 12px; color: #bfdbfe; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+    .hd-title { font-size: 20px; font-weight: 900; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: none; border-radius: 10px; padding: 6px 14px;
+      font-size: 13px; font-weight: 800; cursor: pointer;
+      font-family: inherit; margin-bottom: 10px; transition: background 0.15s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── コンテンツ共通 ── */
+    .content { max-width: 640px; margin: 0 auto; padding: 18px 14px 120px; }
+
+    /* ── フィルター ── */
+    .filter-row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 800;
+      border: 2px solid #c7d2fe; background: #e8eeff; color: #3730a3;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .filter-btn.active { background: #1e40af; color: #fff; border-color: #1e40af; }
+
+    /* ── 統計バー ── */
+    .stats-bar {
+      background: #eef2ff; border-radius: 14px;
+      padding: 12px 16px; margin-bottom: 18px;
+      display: flex; gap: 20px; align-items: center;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 22px; font-weight: 900; color: #4f46e5; }
+    .stat-label { font-size: 11px; color: #6366f1; font-weight: 700; }
+    .stat-div { width: 1px; height: 32px; background: #c7d2fe; }
+
+    /* ── ロック告知 ── */
+    .locked-notice {
+      background: linear-gradient(135deg,#f8faff,#eef2ff);
+      border: 1.5px dashed #93c5fd; border-radius: 14px;
+      padding: 14px 16px; text-align: center; margin-bottom: 20px;
+      font-size: 13px; color: #475569; font-weight: 700; line-height: 1.85;
+    }
+    .locked-notice strong { color: #1e40af; font-size: 14px; }
+
+    /* ── カードグリッド ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+
+    .card-item {
+      background: #fff; border: 2px solid #e5e7eb; border-radius: 20px;
+      padding: 18px 12px; text-align: center; cursor: pointer;
+      transition: all 0.18s cubic-bezier(.4,2,.6,1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .card-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 28px rgba(0,0,0,0.1); }
+    .card-item.locked {
+      background: #f8fafc; border-color: #e2e8f0; cursor: default;
+      opacity: 0.6; filter: grayscale(0.25);
+    }
+    .card-item.locked:hover { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+    .card-icon   { font-size: 40px; margin-bottom: 8px; }
+    .card-title  { font-weight: 900; font-size: 14px; color: #1e293b; margin-bottom: 4px; }
+    .card-type   { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+    .card-stars  { font-size: 15px; margin-top: 4px; }
+    .card-hint   { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+    .lock-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 800; color: #94a3b8;
+      background: #f1f5f9; border: 1px solid #e2e8f0;
+      padding: 3px 10px; border-radius: 99px; margin-top: 6px;
+    }
+
+    /* ── カード詳細 ── */
+    .detail-card {
+      background: #fff; border-radius: 24px; padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 14px;
+    }
+    .d-big-icon { font-size: 60px; text-align: center; margin-bottom: 14px; }
+    .d-instr { border-radius: 16px; padding: 14px 18px; margin-bottom: 14px; }
+    .d-instr-lbl { font-weight: 900; font-size: 14px; margin-bottom: 6px; }
+    .d-instr-txt { font-size: 17px; font-weight: 800; color: #1e293b; line-height: 1.55; }
+    .d-tip { background: #fffbeb; border-radius: 12px; padding: 11px 15px; font-size: 13px; color: #78350f; font-weight: 700; margin-bottom: 14px; }
+    .d-time { text-align: center; font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 14px; }
+
+    /* タイマー */
+    .timer-box { background: #fff; border-radius: 20px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 14px; text-align: center; }
+    .timer-num { font-size: 36px; font-weight: 900; }
+    .timer-bar { height: 8px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-top: 6px; }
+    .timer-fill { height: 100%; border-radius: 99px; transition: width 1s linear, background 0.3s; }
+
+    /* ステップ */
+    .steps-box { background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 14px; }
+    .step-dots { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+    .step-dot { width: 28px; height: 28px; border-radius: 99px; font-size: 13px; font-weight: 900; display: flex; align-items: center; justify-content: center; background: #e5e7eb; color: #94a3b8; transition: all 0.3s; }
+    .step-dot.on { color: #fff; }
+    .step-ctr { font-size: 13px; color: #94a3b8; font-weight: 700; margin-bottom: 8px; }
+    .step-txt { font-size: 22px; font-weight: 900; color: #1e293b; line-height: 1.5; margin-bottom: 22px; }
+
+    /* クイズ */
+    .quiz-box { background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 14px; }
+    .quiz-ico  { font-size: 48px; text-align: center; margin-bottom: 12px; }
+    .quiz-lbl  { font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 10px; }
+    .quiz-q    { font-size: 18px; font-weight: 900; color: #1e293b; line-height: 1.6; margin-bottom: 20px; }
+    .quiz-ans  { background: #f0fdf4; border: 2px solid #86efac; border-radius: 16px; padding: 14px 18px; margin-bottom: 16px; }
+    .quiz-ans-lbl { font-size: 12px; color: #16a34a; font-weight: 700; margin-bottom: 5px; }
+    .quiz-ans-txt { font-size: 16px; font-weight: 900; color: #14532d; }
+
+    /* 結果 */
+    .result-box { background: #fff; border-radius: 24px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; margin-bottom: 14px; }
+    .result-ico   { font-size: 60px; margin-bottom: 10px; }
+    .result-ttl   { font-size: 22px; font-weight: 900; color: #1e293b; margin-bottom: 6px; }
+    .result-sub   { font-size: 13px; color: #64748b; margin-bottom: 22px; }
+    .star-row     { display: flex; gap: 8px; justify-content: center; margin-bottom: 6px; }
+    .star         { font-size: 32px; cursor: pointer; filter: grayscale(1) opacity(0.35); transition: all 0.15s; }
+    .star.on      { filter: none; }
+    .star-msg     { font-size: 13px; color: #94a3b8; min-height: 20px; margin-bottom: 22px; }
+
+    /* ボタン */
+    .btn-primary { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 16px; font-weight: 900; cursor: pointer; font-family: inherit; color: #fff; transition: all 0.15s; }
+    .btn-primary:hover { filter: brightness(1.08); transform: scale(1.02); }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { background: #e5e7eb !important; color: #94a3b8 !important; cursor: not-allowed; transform: none !important; }
+    .btn-show { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 14px; font-weight: 900; cursor: pointer; font-family: inherit; background: #eef2ff; color: #4f46e5; transition: all 0.15s; }
+    .btn-show:hover { background: #dde4ff; }
+    .btn-next { width: 100%; padding: 15px; border-radius: 16px; border: none; font-size: 15px; font-weight: 900; cursor: pointer; font-family: inherit; background: #4f46e5; color: #fff; box-shadow: 0 4px 16px rgba(79,70,229,0.3); transition: all 0.15s; }
+    .btn-next:hover { filter: brightness(1.08); }
+
+    /* ── CTA ── */
+    .cta-block { background: linear-gradient(135deg,#eff6ff,#eef2ff); border: 1.5px solid #bfdbfe; border-radius: 20px; padding: 22px 18px; text-align: center; margin-top: 4px; }
+    .cta-eyebrow { font-size: 11px; font-weight: 900; letter-spacing: 0.15em; color: #1e40af; text-transform: uppercase; margin-bottom: 8px; }
+    .cta-text { font-size: 14px; font-weight: 800; color: #1e293b; line-height: 1.7; margin-bottom: 16px; }
+    .cta-btn { display: inline-block; background: linear-gradient(135deg,#c8a97e,#d4b896); color: #fff; font-size: 14px; font-weight: 900; padding: 13px 26px; border-radius: 99px; text-decoration: none; box-shadow: 0 6px 20px rgba(200,169,126,0.4); font-family: inherit; transition: all 0.18s cubic-bezier(.34,1.4,.64,1); }
+    .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(200,169,126,0.5); }
+
+    .hidden { display: none !important; }
+    .bounce-in { animation: bounceIn 0.35s cubic-bezier(.4,2,.6,1); }
+    @keyframes bounceIn { 0%{transform:scale(0.78);opacity:0} 100%{transform:scale(1);opacity:1} }
+  </style>
+</head>
+<body>
+
+<div class="taiken-banner">
+  ⚠️ これは<strong>体験版</strong>です　／　3枚のカードを無料体験できます
+</div>
+
+<div class="hd">
+  <div class="hd-inner">
+    <div id="back-row" class="hidden">
+      <button class="back-btn" onclick="backToList()">← もどる</button>
+    </div>
+    <div class="hd-label">【体験版】巧緻性 × 言語トレーニングカード</div>
+    <div class="hd-title" id="hd-title">✋💬 トレーニングカード</div>
+  </div>
+</div>
+
+<!-- リスト -->
+<div class="content" id="list-view">
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="setFilter('all',this)">すべて</button>
+    <button class="filter-btn" onclick="setFilter('kichousei',this)">✋ 巧緻性</button>
+    <button class="filter-btn" onclick="setFilter('gengo',this)">💬 言語</button>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num" id="s-cleared">0</div><div class="stat-label">クリア済み</div></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><div class="stat-num" id="s-stars" style="color:#f59e0b">0</div><div class="stat-label">あわせて⭐</div></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><div class="stat-num" id="s-remain" style="color:#10b981">3</div><div class="stat-label">のこりカード</div></div>
+  </div>
+  <div class="locked-notice">
+    🔒 <strong>あと5枚のカード</strong>が製品版で解放されます<br>
+    巧緻性2枚・言語4枚（全8枚中）
+  </div>
+  <div class="card-grid" id="card-grid"></div>
+  <div class="cta-block">
+    <div class="cta-eyebrow">＼ フル機能はこちら ／</div>
+    <div class="cta-text">全8枚のカード・ステップ練習・星評価<br>すべて使い放題</div>
+    <a class="cta-btn" href="https://buy.stripe.com/14AO0L2sK8CC2C0hF73G07" target="_blank">巧緻性×言語カードを購入する →</a>
+  </div>
+</div>
+
+<!-- 詳細 -->
+<div class="content hidden" id="detail-view"></div>
+
+<script>
+var CARDS = [
+  { id:"c1", free:true,  type:"kichousei", icon:"🧵", title:"ひもとおし",
+    instruction:"あなのなかにひもをとおしてみよう！",
+    steps:["ひものさきをつまむ","あなのまんなかにめがけて","ゆっくりとおす","むこうからひっぱる"],
+    tip:"💡 ひものさきをすこしかたくするとやりやすいよ",
+    time:180, color:"#f43f5e", light:"#ffeef1",
+    question:"ひもをとおしたら、なんていう？", answer:"「とおりました！」" },
+  { id:"c2", free:true,  type:"kichousei", icon:"✂️", title:"はさみきり",
+    instruction:"せんのうえをじょうずにきってみよう！",
+    steps:["はさみをただしくもつ","せんのはじからきりはじめる","ゆっくりすすむ","さいごまできる"],
+    tip:"💡 かみをもつてをうごかすのがコツ",
+    time:120, color:"#f97316", light:"#fff3ec",
+    question:"はさみをつかうとききをつけることは？", answer:"「まえにむけない・はしらない」" },
+  { id:"l1", free:true,  type:"gengo",     icon:"👂", title:"しじきき",
+    instruction:"せんせいのいうことをよくきいてやってみよう！",
+    steps:["しずかにきく","あたまのなかでくりかえす","じゅんばんをおぼえる","やってみる"],
+    tip:"💡 おてほんをみながらやってみよう",
+    time:120, color:"#6366f1", light:"#eef2ff",
+    question:"「まず〇〇して、つぎに△△してください」のじゅんばんは？", answer:"さいしょにいったことからやる" },
+  { id:"c3", free:false, type:"kichousei", icon:"📄", title:"おりがみ",       color:"#eab308", light:"#fefce8" },
+  { id:"c4", free:false, type:"kichousei", icon:"🧩", title:"ぞうけい",       color:"#10b981", light:"#ecfdf5" },
+  { id:"l2", free:false, type:"gengo",     icon:"🗣️", title:"はなしかた",     color:"#8b5cf6", light:"#f5f3ff" },
+  { id:"l3", free:false, type:"gengo",     icon:"📖", title:"おはなし",       color:"#0ea5e9", light:"#f0f9ff" },
+  { id:"l4", free:false, type:"gengo",     icon:"🎭", title:"どうさぼうけん", color:"#14b8a6", light:"#f0fdfa" },
+];
+var TYPE_META = { kichousei:{label:"✋ 巧緻性",color:"#f43f5e"}, gengo:{label:"💬 言語",color:"#6366f1"} };
+var STAR_MSGS = ["","もういちかいやろう！","いいかんじ！","かんぺき！！🏆"];
+var records = {};
+var cur = null, phase="intro", step=0, stars=0, showAns=false;
+var timerSec=0, timerLeft=0, timerIv=null, curFilter="all";
+
+renderList();
+
+function renderList(){
+  var filtered = curFilter==="all" ? CARDS : CARDS.filter(function(c){return c.type===curFilter;});
+  var grid = document.getElementById("card-grid");
+  grid.innerHTML="";
+  filtered.forEach(function(card){
+    var div=document.createElement("div");
+    var rec=records[card.id];
+    if(!card.free){
+      div.className="card-item locked";
+      div.innerHTML='<div class="card-icon">'+card.icon+'</div>'+
+        '<div class="card-title">'+card.title+'</div>'+
+        '<div class="card-type" style="color:'+TYPE_META[card.type].color+'">'+TYPE_META[card.type].label+'</div>'+
+        '<div class="lock-badge">🔒 製品版</div>';
+    } else {
+      div.className="card-item"+(rec?" cleared":"");
+      if(rec){div.style.borderColor=card.color;div.style.background=card.light;}
+      div.innerHTML='<div class="card-icon">'+card.icon+'</div>'+
+        '<div class="card-title">'+card.title+'</div>'+
+        '<div class="card-type" style="color:'+TYPE_META[card.type].color+'">'+TYPE_META[card.type].label+'</div>'+
+        (rec?'<div class="card-stars">'+"⭐".repeat(rec.stars)+'</div>':'<div class="card-hint">タップしてはじめる</div>');
+      div.addEventListener("click",function(){openCard(card);});
+    }
+    grid.appendChild(div);
+  });
+  var cl=Object.keys(records).length;
+  var st=Object.values(records).reduce(function(s,r){return s+(r.stars||0);},0);
+  var rm=CARDS.filter(function(c){return c.free&&!records[c.id];}).length;
+  document.getElementById("s-cleared").textContent=cl;
+  document.getElementById("s-stars").textContent=st;
+  document.getElementById("s-remain").textContent=rm;
+}
+
+function setFilter(v,btn){
+  curFilter=v;
+  document.querySelectorAll(".filter-btn").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+  renderList();
+}
+
+function openCard(card){
+  cur=card; phase="intro"; step=0; stars=0; showAns=false; stopTimer();
+  document.getElementById("list-view").classList.add("hidden");
+  document.getElementById("detail-view").classList.remove("hidden");
+  document.getElementById("back-row").classList.remove("hidden");
+  document.getElementById("hd-title").textContent=card.icon+" "+card.title;
+  renderPhase();
+}
+
+function backToList(){
+  stopTimer();
+  document.getElementById("detail-view").classList.add("hidden");
+  document.getElementById("list-view").classList.remove("hidden");
+  document.getElementById("back-row").classList.add("hidden");
+  document.getElementById("hd-title").textContent="✋💬 トレーニングカード";
+  renderList();
+}
+
+function renderPhase(){
+  var dv=document.getElementById("detail-view");
+  var card=cur;
+
+  if(phase==="intro"){
+    dv.innerHTML=
+      '<div class="detail-card bounce-in">'+
+        '<div class="d-big-icon">'+card.icon+'</div>'+
+        '<div class="d-instr" style="background:'+card.light+'">'+
+          '<div class="d-instr-lbl" style="color:'+card.color+'">📋 おだい</div>'+
+          '<div class="d-instr-txt">'+card.instruction+'</div>'+
+        '</div>'+
+        '<div class="d-tip">'+card.tip+'</div>'+
+      '</div>'+
+      '<div class="d-time">⏱ じかん：'+fmtTime(card.time)+'</div>'+
+      '<button class="btn-primary" style="background:linear-gradient(135deg,'+card.color+','+card.color+'cc);box-shadow:0 6px 24px '+card.color+'55;margin-bottom:16px" onclick="startSteps()">▶ れんしゅうをはじめる！</button>'+
+      ctaHTML();
+
+  } else if(phase==="steps"){
+    var dots="";
+    for(var i=0;i<card.steps.length;i++){
+      var on=i<=step;
+      dots+='<div class="step-dot'+(on?" on":"")+'"'+(on?' style="background:'+card.color+'"':"")+'>'+( i+1)+'</div>';
+    }
+    var last=step>=card.steps.length-1;
+    dv.innerHTML=
+      '<div class="timer-box">'+timerHTML()+'</div>'+
+      '<div class="steps-box bounce-in">'+
+        '<div class="step-dots">'+dots+'</div>'+
+        '<div class="step-ctr">てじゅん '+(step+1)+' / '+card.steps.length+'</div>'+
+        '<div class="step-txt">'+card.steps[step]+'</div>'+
+        '<button class="btn-primary" style="background:'+card.color+';box-shadow:0 4px 16px '+card.color+'44" onclick="nextStep()">'+
+          (last?"できた！ ✅":"つぎへ ▶")+
+        '</button>'+
+      '</div>'+
+      '<div class="d-tip">'+card.tip+'</div>';
+    runTimer(card.time);
+
+  } else if(phase==="quiz"){
+    stopTimer();
+    dv.innerHTML=
+      '<div class="quiz-box bounce-in">'+
+        '<div class="quiz-ico">🎤</div>'+
+        '<div class="quiz-lbl">こたえてみよう！</div>'+
+        '<div class="quiz-q">'+card.question+'</div>'+
+        (!showAns
+          ?'<button class="btn-show" onclick="doShowAns()">こたえをみる 👀</button>'
+          :'<div class="quiz-ans"><div class="quiz-ans-lbl">✅ こたえのれい</div><div class="quiz-ans-txt">'+card.answer+'</div></div>'+
+           '<button class="btn-next" onclick="goResult()">つぎへ ▶</button>'
+        )+
+      '</div>';
+
+  } else if(phase==="result"){
+    var starHTML="";
+    for(var s=1;s<=3;s++) starHTML+='<span class="star'+(s<=stars?" on":"")+'" onclick="setStar('+s+')">⭐</span>';
+    dv.innerHTML=
+      '<div class="result-box bounce-in">'+
+        '<div class="result-ico">🎉</div>'+
+        '<div class="result-ttl">れんしゅうかんりょう！</div>'+
+        '<div class="result-sub">どうだった？ほしをつけよう！</div>'+
+        '<div class="star-row">'+starHTML+'</div>'+
+        '<div class="star-msg">'+( stars>0?STAR_MSGS[stars]:"")+'</div>'+
+        '<button class="btn-primary" id="save-btn"'+
+          (stars===0?' disabled':'')+
+          ' onclick="saveRecord()" style="background:'+
+          (stars>0?card.color:"#e5e7eb")+';color:'+(stars>0?"#fff":"#94a3b8")+'">きろくする ✅</button>'+
+      '</div>'+ctaHTML();
+  }
+}
+
+function ctaHTML(){
+  return '<div class="cta-block" style="margin-top:8px">'+
+    '<div class="cta-eyebrow">＼ フル機能はこちら ／</div>'+
+    '<div class="cta-text">全8枚のカード・ステップ練習・星評価<br>すべて使い放題</div>'+
+    '<a class="cta-btn" href="https://buy.stripe.com/14AO0L2sK8CC2C0hF73G07" target="_blank">巧緻性×言語カードを購入する →</a>'+
+  '</div>';
+}
+
+function startSteps(){phase="steps";step=0;renderPhase();}
+function nextStep(){
+  if(step<cur.steps.length-1){step++;renderPhase();}
+  else{stopTimer();phase="quiz";renderPhase();}
+}
+function doShowAns(){showAns=true;renderPhase();}
+function goResult(){phase="result";renderPhase();}
+function setStar(n){stars=n;renderPhase();}
+function saveRecord(){
+  if(stars===0)return;
+  records[cur.id]={stars:stars,date:new Date().toLocaleDateString("ja-JP")};
+  backToList();
+}
+
+function timerHTML(){
+  var pct=timerSec>0?(timerLeft/timerSec)*100:0;
+  var c=pct>50?"#10b981":pct>25?"#f59e0b":"#ef4444";
+  var mm=String(Math.floor(timerLeft/60)).padStart(2,"0");
+  var ss=String(timerLeft%60).padStart(2,"0");
+  return '<div class="timer-num" style="color:'+c+'">'+mm+':'+ss+'</div>'+
+    '<div class="timer-bar"><div class="timer-fill" style="width:'+pct+'%;background:'+c+'"></div></div>';
+}
+function runTimer(sec){
+  if(timerIv)return;
+  timerSec=sec; timerLeft=sec;
+  timerIv=setInterval(function(){
+    timerLeft--;
+    if(timerLeft<0){stopTimer();return;}
+    var tb=document.querySelector(".timer-box");
+    if(tb)tb.innerHTML=timerHTML();
+  },1000);
+}
+function stopTimer(){if(timerIv){clearInterval(timerIv);timerIv=null;}}
+function fmtTime(s){var m=Math.floor(s/60),r=s%60;return m>0?m+"ふん"+(r?r+"びょう":""):r+"びょう";}
+</script>
+</body>
+</html>

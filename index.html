@@ -3,295 +3,1257 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>survival_mam | こどもと生きるツール集</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
+  <title>survival_mam | 子どもの「困った」を毎日の中で解決する実用支援ツール集</title>
+  <meta name="description" content="発達グレーゾーン・不登校・お受験。プロの支援ノウハウを家庭サイズにした実用Webツール集。安全な決済ページからご購入いただけます。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+
   <style>
+    /* ══════════ Design Tokens ══════════ */
     :root {
-      --bg: #0f0e17;
-      --surface: #1a1828;
-      --border: rgba(255,255,255,0.07);
-      --text: #fffffe;
-      --muted: #a7a9be;
-      --accent: #ff8906;
-      --accent2: #f25f4c;
-      --accent3: #e53170;
+      --cream:     #faf6f0;
+      --cream2:    #f2ead8;
+      --parch:     #fffdf8;
+
+      --terra:     #c4714a;
+      --terra2:    #d98b60;
+      --terra-lt:  #f5e4d8;
+      --terra-dk:  #a35a38;
+
+      --moss:      #4a6741;
+      --moss2:     #6a8f60;
+      --moss-lt:   #ddebd8;
+      --moss-dk:   #3a5332;
+
+      --ink:       #2a2118;
+      --ink2:      #4a3d30;
+      --ink3:      #7a6d60;
+      --ink4:      #b0a898;
+      --ink5:      #d5cec6;
+
+      --gold:      #c8941a;
+      --gold2:     #e0a820;
+      --gold-lt:   #fdf5e0;
+      --gold-dk:   #a87815;
+
+      --violet:    #6b5b8a;
+      --violet2:   #8470a8;
+      --violet-lt: #ede8f5;
+      --violet-dk: #503f6e;
+
+      --sky:       #4a7a9b;
+      --sky-lt:    #e0eef6;
+
+      --rose:      #b85070;
+      --rose-lt:   #fce8ef;
+
+      --border:    rgba(42,33,24,0.09);
+      --shadow-sm: 0 2px 8px rgba(42,33,24,0.07);
+      --shadow:    0 4px 24px rgba(42,33,24,0.09), 0 1px 4px rgba(42,33,24,0.05);
+      --shadow-lg: 0 12px 48px rgba(42,33,24,0.13), 0 4px 12px rgba(42,33,24,0.06);
+      --shadow-xl: 0 24px 72px rgba(42,33,24,0.18);
+
+      --r-xl: 28px;
+      --r-lg: 18px;
+      --r-md: 12px;
+      --r-sm: 8px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Zen Kaku Gothic New', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--cream);
+      color: var(--ink);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.7;
     }
 
-    /* ── 背景装飾 ── */
-    .bg-blobs {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 60% at 0%   0%,   rgba(196,113,74,0.11),  transparent 52%),
+        radial-gradient(ellipse 55% 50% at 100% 20%,  rgba(74,103,65,0.09),   transparent 52%),
+        radial-gradient(ellipse 45% 40% at 5%  95%,   rgba(200,148,26,0.07),  transparent 50%),
+        radial-gradient(ellipse 55% 50% at 95% 90%,   rgba(107,91,138,0.07),  transparent 52%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
     }
-    .blob {
-      position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.18;
+    body::after {
+      content: '';
+      position: fixed; inset: 8px; z-index: 0; pointer-events: none;
+      border: 1.5px solid rgba(196,113,74,0.11);
+      border-radius: 20px;
     }
-    .blob-1 { width: 500px; height: 500px; background: #ff8906; top: -100px; left: -100px; }
-    .blob-2 { width: 400px; height: 400px; background: #e53170; bottom: 10%; right: -80px; }
-    .blob-3 { width: 300px; height: 300px; background: #3da9fc; top: 40%; left: 30%; }
 
-    /* ── レイアウト ── */
-    .container { max-width: 700px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 720px; margin: 0 auto;
+      padding: 0 20px 100px;
+    }
 
-    /* ── ヒーロー ── */
-    .hero {
-      padding: 72px 0 48px;
+    /* ── Section Rule ── */
+    .sec-rule {
+      display: flex; align-items: center; gap: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.26em;
+      text-transform: uppercase; color: var(--ink4);
+      margin-bottom: 22px;
+    }
+    .sec-rule::before, .sec-rule::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ══════════ ① FIRST VIEW ══════════ */
+    .fv {
+      padding: 68px 0 56px;
       text-align: center;
     }
-
-    .hero-title {
-      font-family: 'Nunito', sans-serif;
-      font-size: clamp(42px, 10vw, 72px);
-      font-weight: 900; line-height: 1.1;
-      white-space: nowrap;
-      animation: fadeUp 0.6s 0.1s ease both;
+    .brand-lockup {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 32px;
+      animation: rise 0.7s 0.05s both;
     }
-    .hero-title span {
-      background: linear-gradient(90deg, var(--accent), var(--accent3));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .hero-sub {
-      font-size: 15px; color: var(--muted); margin-top: 16px; line-height: 1.8;
-      animation: fadeUp 0.6s 0.2s ease both;
-    }
-    .hero-note {
-      display: inline-block; margin-top: 24px;
-      font-size: 12px; color: var(--muted);
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 8px 18px; border-radius: 8px;
-      animation: fadeUp 0.6s 0.3s ease both;
-    }
-
-    /* ── セグメントバッジ ── */
-    .segments {
-      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
-      margin: 40px 0 32px;
-      animation: fadeUp 0.6s 0.35s ease both;
-    }
-    .seg-badge {
-      font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 99px;
-      border: 1px solid;
-    }
-    .seg-exam    { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.08); }
-    .seg-gray    { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.08); }
-    .seg-home    { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.08); }
-
-    /* ── アプリカード ── */
-    .section-label {
-      font-size: 11px; font-weight: 800; letter-spacing: 2px;
-      color: var(--muted); text-transform: uppercase;
-      margin-bottom: 20px;
-      animation: fadeUp 0.6s 0.4s ease both;
-    }
-
-    .cards { display: flex; flex-direction: column; gap: 14px; }
-
-    .app-card {
-      display: flex; align-items: center; gap: 20px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 22px 24px;
-      text-decoration: none; color: inherit;
-      transition: all 0.25s cubic-bezier(.4,2,.3,1);
-      position: relative; overflow: hidden;
-      animation: fadeUp 0.6s ease both;
-    }
-    .app-card::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
-      opacity: 0; transition: opacity 0.2s;
-    }
-    .app-card:hover { transform: translateY(-4px) scale(1.01); border-color: rgba(255,255,255,0.18); box-shadow: 0 20px 48px rgba(0,0,0,0.4); }
-    .app-card:hover::before { opacity: 1; }
-    .app-card:nth-child(1) { animation-delay: 0.45s; }
-    .app-card:nth-child(2) { animation-delay: 0.52s; }
-    .app-card:nth-child(3) { animation-delay: 0.59s; }
-    .app-card:nth-child(4) { animation-delay: 0.66s; }
-    .app-card:nth-child(5) { animation-delay: 0.73s; }
-
-    .card-icon {
-      width: 56px; height: 56px; border-radius: 16px;
+    .brand-icon {
+      width: 42px; height: 42px; border-radius: 13px;
+      background: linear-gradient(135deg, var(--terra), var(--terra2));
       display: flex; align-items: center; justify-content: center;
-      font-size: 28px; flex-shrink: 0;
+      font-size: 1.25rem;
+      box-shadow: 0 6px 20px rgba(196,113,74,0.3);
     }
-    .card-body { flex: 1; }
-    .card-title {
-      font-family: 'Nunito', sans-serif;
-      font-size: 17px; font-weight: 900; margin-bottom: 4px;
+    .brand-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--ink3);
     }
-    .card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .card-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
-    .card-tag {
-      font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px;
-      border: 1px solid rgba(255,255,255,0.12); color: var(--muted);
-    }
-    .card-arrow {
-      font-size: 20px; color: var(--muted); flex-shrink: 0;
-      transition: transform 0.2s, color 0.2s;
-    }
-    .app-card:hover .card-arrow { transform: translateX(4px); color: var(--accent); }
+    .brand-name strong { color: var(--terra); }
 
-    /* カードごとのアクセントカラー */
-    .c-quest    .card-icon { background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.2); }
-    .c-training .card-icon { background: rgba(59,130,246,0.15);  border: 1px solid rgba(59,130,246,0.2); }
-    .c-step     .card-icon { background: rgba(16,185,129,0.15);  border: 1px solid rgba(16,185,129,0.2); }
-    .c-sensory  .card-icon { background: rgba(249,115,22,0.15);  border: 1px solid rgba(249,115,22,0.2); }
-    .c-dialog   .card-icon { background: rgba(229,49,112,0.15);  border: 1px solid rgba(229,49,112,0.2); }
-
-    .c-quest    .card-title { color: #a78bfa; }
-    .c-training .card-title { color: #60a5fa; }
-    .c-step     .card-title { color: #34d399; }
-    .c-sensory  .card-title { color: #fb923c; }
-    .c-dialog   .card-title { color: #f472b6; }
-
-    /* ── フッター ── */
-    .footer {
-      text-align: center; padding: 60px 0 40px;
-      font-size: 12px; color: var(--muted);
-      animation: fadeUp 0.6s 0.8s ease both;
-    }
-    .footer a { color: var(--accent); text-decoration: none; }
-    .footer-note {
-      margin-top: 12px;
-      font-size: 11px; color: rgba(167,169,190,0.5);
-      line-height: 1.8;
+    .fv-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--terra);
+      margin-bottom: 16px;
+      animation: rise 0.7s 0.1s both;
     }
 
-    /* ── アニメーション ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
+    .fv-h1 {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.7rem, 6vw, 2.5rem);
+      font-weight: 700; line-height: 1.38; letter-spacing: 0.01em;
+      color: var(--ink); margin-bottom: 20px;
+      animation: rise 0.7s 0.16s both;
+    }
+    .fv-h1 .hl {
+      color: var(--terra);
+      position: relative; display: inline-block;
+    }
+    .fv-h1 .hl::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--terra), var(--terra2));
+      border-radius: 99px; opacity: 0.55;
+    }
+
+    .fv-sub {
+      font-size: 0.9rem; color: var(--ink3); line-height: 1.9;
+      max-width: 460px; margin: 0 auto 36px;
+      animation: rise 0.7s 0.22s both;
+    }
+
+    .seg-btns {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      animation: rise 0.7s 0.30s both;
+    }
+    .seg-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.82rem; font-weight: 700;
+      padding: 10px 20px; border-radius: 99px;
+      border: 2px solid; cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+    }
+    .seg-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .seg-btn:active { transform: scale(0.97); }
+    .seg-btn.s-gray { color: var(--violet-dk); border-color: rgba(107,91,138,0.4); background: var(--violet-lt); }
+    .seg-btn.s-home { color: var(--moss-dk);   border-color: rgba(74,103,65,0.4);  background: var(--moss-lt); }
+    .seg-btn.s-exam { color: var(--gold-dk);   border-color: rgba(200,148,26,0.4); background: var(--gold-lt); }
+    .seg-btn.s-gray:hover { background: var(--violet); color: #fff; border-color: var(--violet); }
+    .seg-btn.s-home:hover { background: var(--moss);   color: #fff; border-color: var(--moss); }
+    .seg-btn.s-exam:hover { background: var(--gold);   color: #fff; border-color: var(--gold); }
+
+    .scroll-hint {
+      margin-top: 44px;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      font-size: 0.64rem; color: var(--ink5); letter-spacing: 0.14em;
+      animation: rise 0.7s 0.38s both;
+    }
+    .scroll-hint span { display: block; animation: bounce-y 2s ease infinite; }
+    @keyframes bounce-y {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(6px); }
+    }
+
+    /* ══════════ ② PACKAGES ══════════ */
+    .packages-section { margin-bottom: 72px; }
+
+    .sec-intro {
+      text-align: center; margin-bottom: 32px;
+    }
+    .sec-intro h2 {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.22rem, 4vw, 1.6rem);
+      font-weight: 700; color: var(--ink); margin-bottom: 8px;
+    }
+    .sec-intro p { font-size: 0.84rem; color: var(--ink3); line-height: 1.85; }
+
+    .pkg-grid { display: flex; flex-direction: column; gap: 18px; }
+
+    .pkg-card {
+      background: var(--parch);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px 26px 24px;
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .pkg-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    }
+    .pkg-card::after {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 180px; height: 180px; border-radius: 50%;
+      opacity: 0.05; pointer-events: none;
+    }
+
+    .pkg-gray::before { background: linear-gradient(90deg, var(--violet), var(--violet2)); }
+    .pkg-gray::after  { background: var(--violet); }
+    .pkg-home::before { background: linear-gradient(90deg, var(--moss), var(--moss2)); }
+    .pkg-home::after  { background: var(--moss); }
+    .pkg-exam::before { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+    .pkg-exam::after  { background: var(--gold); }
+
+    .pkg-header {
+      display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px;
+    }
+    .pkg-badge {
+      flex-shrink: 0; width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; position: relative; z-index: 1;
+    }
+    .pkg-gray .pkg-badge { background: var(--violet-lt); box-shadow: 0 4px 14px rgba(107,91,138,0.2); }
+    .pkg-home .pkg-badge { background: var(--moss-lt);   box-shadow: 0 4px 14px rgba(74,103,65,0.2); }
+    .pkg-exam .pkg-badge { background: var(--gold-lt);   box-shadow: 0 4px 14px rgba(200,148,26,0.2); }
+
+    .pkg-title-wrap { flex: 1; position: relative; z-index: 1; }
+    .pkg-seg-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .pkg-gray .pkg-seg-label { color: var(--violet); }
+    .pkg-home .pkg-seg-label { color: var(--moss2); }
+    .pkg-exam .pkg-seg-label { color: var(--gold); }
+
+    .pkg-title {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 1.12rem; font-weight: 700; color: var(--ink); line-height: 1.3;
+    }
+
+    .pkg-tools {
+      list-style: none; display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 22px; position: relative; z-index: 1;
+    }
+    .pkg-tool {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.85rem; color: var(--ink2); font-weight: 500;
+    }
+    .pkg-tool-icon {
+      width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+    }
+    .pkg-gray .pkg-tool-icon { background: var(--violet-lt); }
+    .pkg-home .pkg-tool-icon { background: var(--moss-lt); }
+    .pkg-exam .pkg-tool-icon { background: var(--gold-lt); }
+
+    .pkg-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px; border: none; border-radius: var(--r-md);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.92rem; font-weight: 900; cursor: pointer; text-decoration: none;
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+      position: relative; z-index: 1;
+    }
+    .pkg-btn:hover { transform: translateY(-3px); }
+    .pkg-btn:active { transform: scale(0.98); }
+    .pkg-gray .pkg-btn {
+      background: linear-gradient(135deg, var(--violet), var(--violet2));
+      color: #fff; box-shadow: 0 6px 22px rgba(107,91,138,0.32);
+    }
+    .pkg-gray .pkg-btn:hover { box-shadow: 0 10px 30px rgba(107,91,138,0.42); }
+    .pkg-home .pkg-btn {
+      background: linear-gradient(135deg, var(--moss-dk), var(--moss));
+      color: #fff; box-shadow: 0 6px 22px rgba(74,103,65,0.32);
+    }
+    .pkg-home .pkg-btn:hover { box-shadow: 0 10px 30px rgba(74,103,65,0.42); }
+    .pkg-exam .pkg-btn {
+      background: linear-gradient(135deg, var(--gold-dk), var(--gold2));
+      color: #fff; box-shadow: 0 6px 22px rgba(200,148,26,0.32);
+    }
+    .pkg-exam .pkg-btn:hover { box-shadow: 0 10px 30px rgba(200,148,26,0.42); }
+
+    .pkg-btn-arrow { transition: transform 0.2s; }
+    .pkg-btn:hover .pkg-btn-arrow { transform: translateX(4px); }
+
+    .pkg-price-note {
+      text-align: center; margin-top: 10px;
+      font-size: 0.68rem; color: var(--ink4);
+      position: relative; z-index: 1;
+    }
+
+    /* ══════════ ③ APPS ══════════ */
+    .apps-section { margin-bottom: 60px; }
+
+    .app-row {
+      display: flex; align-items: flex-start; gap: 18px;
+      background: var(--parch);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 20px 20px 18px;
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .app-row + .app-row { margin-top: 12px; }
+
+    .app-row::before {
+      content: ''; position: absolute; left: 0; top: 22%; bottom: 22%; width: 3px;
+      border-radius: 0 99px 99px 0; opacity: 0.7;
+    }
+    .ar-quest::before   { background: var(--violet); }
+    .ar-train::before   { background: var(--sky); }
+    .ar-step::before    { background: var(--moss); }
+    .ar-sensory::before { background: var(--terra); }
+    .ar-dialog::before  { background: var(--rose); }
+
+    .app-row::after {
+      content: ''; position: absolute; top: -28px; right: -28px;
+      width: 120px; height: 120px; border-radius: 50%; opacity: 0.05;
+    }
+    .ar-quest::after   { background: var(--violet); }
+    .ar-train::after   { background: var(--sky); }
+    .ar-step::after    { background: var(--moss); }
+    .ar-sensory::after { background: var(--terra); }
+    .ar-dialog::after  { background: var(--rose); }
+
+    .app-icon {
+      width: 50px; height: 50px; border-radius: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; position: relative; z-index: 1;
+    }
+    .ar-quest   .app-icon { background: var(--violet-lt); box-shadow: 0 3px 12px rgba(107,91,138,0.18); }
+    .ar-train   .app-icon { background: var(--sky-lt);    box-shadow: 0 3px 12px rgba(74,122,155,0.18); }
+    .ar-step    .app-icon { background: var(--moss-lt);   box-shadow: 0 3px 12px rgba(74,103,65,0.18); }
+    .ar-sensory .app-icon { background: var(--terra-lt);  box-shadow: 0 3px 12px rgba(196,113,74,0.18); }
+    .ar-dialog  .app-icon { background: var(--rose-lt);   box-shadow: 0 3px 12px rgba(184,80,112,0.18); }
+
+    .app-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
+    .app-name {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 0.98rem; font-weight: 700; line-height: 1.35; margin-bottom: 4px;
+    }
+    .ar-quest   .app-name { color: var(--violet); }
+    .ar-train   .app-name { color: var(--sky); }
+    .ar-step    .app-name { color: var(--moss); }
+    .ar-sensory .app-name { color: var(--terra); }
+    .ar-dialog  .app-name { color: var(--rose); }
+
+    .app-desc { font-size: 0.79rem; color: var(--ink3); line-height: 1.65; margin-bottom: 10px; }
+
+    .app-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .app-tag {
+      font-size: 0.62rem; font-weight: 700; padding: 2px 9px;
+      border-radius: 99px; border: 1.5px solid;
+    }
+    .ar-quest   .app-tag { color: var(--violet); border-color: rgba(107,91,138,0.28); background: var(--violet-lt); }
+    .ar-train   .app-tag { color: var(--sky);    border-color: rgba(74,122,155,0.28); background: var(--sky-lt); }
+    .ar-step    .app-tag { color: var(--moss);   border-color: rgba(74,103,65,0.28);  background: var(--moss-lt); }
+    .ar-sensory .app-tag { color: var(--terra);  border-color: rgba(196,113,74,0.28); background: var(--terra-lt); }
+    .ar-dialog  .app-tag { color: var(--rose);   border-color: rgba(184,80,112,0.28); background: var(--rose-lt); }
+
+    .app-buy-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 7px 14px; border-radius: var(--r-sm);
+      text-decoration: none; border: 1.5px solid;
+      transition: all 0.16s cubic-bezier(.34,1.4,.64,1);
+      margin-top: 12px; position: relative; z-index: 1;
+      cursor: pointer; background: none;
+    }
+    .app-buy-btn:hover { transform: translateY(-2px); }
+    .ar-quest   .app-buy-btn { color: var(--violet); border-color: rgba(107,91,138,0.4); background: var(--violet-lt); }
+    .ar-train   .app-buy-btn { color: var(--sky);    border-color: rgba(74,122,155,0.4); background: var(--sky-lt); }
+    .ar-step    .app-buy-btn { color: var(--moss);   border-color: rgba(74,103,65,0.4);  background: var(--moss-lt); }
+    .ar-sensory .app-buy-btn { color: var(--terra);  border-color: rgba(196,113,74,0.4); background: var(--terra-lt); }
+    .ar-dialog  .app-buy-btn { color: var(--rose);   border-color: rgba(184,80,112,0.4); background: var(--rose-lt); }
+    .ar-quest   .app-buy-btn:hover { background: var(--violet); color: #fff; }
+    .ar-train   .app-buy-btn:hover { background: var(--sky);    color: #fff; }
+    .ar-step    .app-buy-btn:hover { background: var(--moss);   color: #fff; }
+    .ar-sensory .app-buy-btn:hover { background: var(--terra);  color: #fff; }
+    .ar-dialog  .app-buy-btn:hover { background: var(--rose);   color: #fff; }
+
+    /* ══════════ ④ PRO PACK ══════════ */
+    .pro-pack {
+      background: var(--ink);
+      border-radius: var(--r-xl);
+      padding: 40px 28px 36px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .pro-pack::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 60% at 10% 10%, rgba(196,113,74,0.18), transparent 55%),
+        radial-gradient(ellipse 60% 55% at 90% 90%, rgba(107,91,138,0.15), transparent 55%);
+    }
+    .pro-pack-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4);
+      margin-bottom: 10px; position: relative; z-index: 1;
+    }
+    .pro-pack-title {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.2rem, 4.5vw, 1.7rem);
+      font-weight: 700; color: #fff; line-height: 1.4;
+      margin-bottom: 8px; position: relative; z-index: 1;
+    }
+    .pro-pack-title span { color: var(--terra2); }
+    .pro-pack-sub {
+      font-size: 0.82rem; color: rgba(255,255,255,0.52);
+      line-height: 1.85; margin-bottom: 28px;
+      position: relative; z-index: 1;
+    }
+    .pro-pack-apps {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 8px; margin-bottom: 28px; position: relative; z-index: 1;
+    }
+    .pro-app-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.75rem; font-weight: 700;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.78); padding: 5px 13px; border-radius: 99px;
+    }
+    .pro-pack-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 15px 36px; border-radius: var(--r-md);
+      background: linear-gradient(135deg, var(--terra), var(--terra2));
+      color: #fff; font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.95rem; font-weight: 900;
+      text-decoration: none; border: none; cursor: pointer;
+      box-shadow: 0 8px 28px rgba(196,113,74,0.4);
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+      position: relative; z-index: 1;
+    }
+    .pro-pack-btn:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(196,113,74,0.5); }
+    .pro-pack-btn:active { transform: scale(0.98); }
+
+    /* ══════════ FOOTER ══════════ */
+    .footer { text-align: center; margin-top: 60px; }
+    .footer-brand {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 1.05rem; font-weight: 700; color: var(--terra); margin-bottom: 8px;
+    }
+    .footer-links { font-size: 0.72rem; color: var(--ink4); margin-bottom: 16px; }
+    .footer-links a { color: var(--terra); text-decoration: none; }
+    .footer-disc {
+      font-size: 0.66rem; color: var(--ink5);
+      background: var(--cream2); border-radius: var(--r-md);
+      padding: 12px 18px; line-height: 1.9;
+    }
+
+    /* ══════════ Price Box ══════════ */
+    .price-box {
+      background: var(--cream2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .price-main {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 1.35rem; font-weight: 700; color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .price-main small {
+      font-size: 0.72rem; font-weight: 500;
+      color: var(--ink3); font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+    .price-compare { font-size: 0.8rem; color: var(--ink3); line-height: 2; }
+    .price-compare s { color: var(--ink5); }
+    .price-saving {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 8px;
+      font-size: 0.8rem; font-weight: 900;
+      background: var(--terra-lt); color: var(--terra-dk);
+      border: 1.5px solid rgba(196,113,74,0.3);
+      padding: 4px 12px; border-radius: 99px;
+    }
+    .pkg-exam .price-saving {
+      background: var(--gold-lt); color: var(--gold-dk);
+      border-color: rgba(200,148,26,0.3);
+    }
+    .price-guarantee {
+      font-size: 0.68rem; color: var(--ink4);
+      margin-top: 8px; line-height: 1.75;
+      position: relative; z-index: 1; text-align: center;
+    }
+
+    /* ── Pro Pack price (dark bg) ── */
+    .pro-price-box {
+      display: inline-block;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--r-md);
+      padding: 14px 32px;
+      margin-bottom: 20px;
+      position: relative; z-index: 1;
+    }
+    .pro-price-main {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 1.5rem; font-weight: 700; color: #fff;
+    }
+    .pro-price-main small {
+      font-size: 0.75rem; font-weight: 400;
+      color: rgba(255,255,255,0.55); font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+    .pro-price-compare { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 6px; line-height: 1.9; }
+    .pro-price-compare s { color: rgba(255,255,255,0.3); }
+    .pro-price-saving {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 8px;
+      font-size: 0.8rem; font-weight: 900;
+      background: rgba(196,113,74,0.25); color: var(--terra2);
+      border: 1px solid rgba(196,113,74,0.35);
+      padding: 4px 12px; border-radius: 99px;
+    }
+    .pro-price-guarantee {
+      font-size: 0.68rem; color: rgba(255,255,255,0.38);
+      margin-top: 10px; line-height: 1.75;
+      position: relative; z-index: 1;
+    }
+    .pro-catch {
+      font-size: 0.95rem; font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 20px; position: relative; z-index: 1;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════ ANIMATION ══════════ */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* ── レスポンシブ ── */
+    /* ══════════ ★ TRIAL SECTION ══════════ */
+    .trial-section {
+      background: linear-gradient(160deg, var(--gold-lt) 0%, var(--cream) 60%);
+      border: 1.5px solid rgba(200,148,26,0.18);
+      border-radius: var(--r-xl);
+      padding: 44px 28px 36px;
+      margin-bottom: 72px;
+      position: relative; overflow: hidden;
+    }
+    .trial-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--terra2));
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+    .trial-section::after {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: var(--gold); opacity: 0.04; pointer-events: none;
+    }
+
+    .trial-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--gold-dk);
+      margin-bottom: 14px;
+    }
+
+    .trial-lead {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+      font-weight: 700; color: var(--ink); line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .trial-sub {
+      font-size: 0.87rem; color: var(--ink2); line-height: 1.85;
+      margin-bottom: 28px;
+    }
+    .trial-sub strong { color: var(--terra); }
+
+    /* カードグリッド */
+    .trial-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .trial-card {
+      background: var(--parch);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 16px 14px;
+      display: flex; flex-direction: column; gap: 10px;
+      text-decoration: none; color: var(--ink);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+      position: relative;
+    }
+    .trial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(200,148,26,0.35);
+    }
+    .trial-card-wide {
+      grid-column: span 2;
+      flex-direction: row; align-items: center; gap: 14px;
+    }
+
+    .trial-card-icon {
+      font-size: 1.6rem;
+      width: 44px; height: 44px; border-radius: 13px;
+      background: var(--gold-lt);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 3px 10px rgba(200,148,26,0.15);
+    }
+
+    .trial-card-body { flex: 1; }
+
+    .trial-card-name {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 0.88rem; font-weight: 700; color: var(--ink);
+      margin-bottom: 7px; line-height: 1.3;
+    }
+
+    .trial-card-list {
+      list-style: none; display: flex; flex-direction: column; gap: 4px;
+    }
+    .trial-card-list li {
+      font-size: 0.72rem; color: var(--ink2); line-height: 1.5;
+    }
+    .trial-card-list li.locked-item {
+      color: var(--ink4); font-size: 0.68rem;
+    }
+
+    .trial-card-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+      color: var(--gold-dk);
+      background: var(--gold-lt);
+      border: 1.5px solid rgba(200,148,26,0.28);
+      border-radius: var(--r-sm);
+      padding: 6px 12px;
+      white-space: nowrap; align-self: flex-start;
+      transition: all 0.15s;
+    }
+    .trial-card:hover .trial-card-btn {
+      background: var(--gold);
+      color: #fff;
+      border-color: var(--gold);
+    }
+
+    /* ソーシャルプルーフ */
+    .trial-proof {
+      background: rgba(200,148,26,0.07);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+    }
+    .trial-proof-quote {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--gold-dk); margin-bottom: 8px;
+    }
+    .trial-proof-quote::before { content: '❝ '; opacity: 0.6; }
+    .trial-proof-quote::after  { content: ' ❞'; opacity: 0.6; }
+    .trial-proof-body {
+      font-size: 0.82rem; color: var(--ink2); line-height: 1.85;
+    }
+    .trial-proof-body em { font-style: normal; color: var(--terra); font-weight: 700; }
+
+    .trial-footer-note {
+      text-align: center;
+      font-size: 0.72rem; color: var(--ink4);
+      font-style: italic; letter-spacing: 0.04em;
+    }
+
+    /* ── 購入後の安心注記 ── */
+    .after-purchase-note {
+      margin-top: 12px;
+      font-size: 0.72rem; color: var(--ink4);
+      line-height: 1.8; text-align: center;
+    }
+
+    /* ══════════ ★ FLOW SECTION ══════════ */
+    .flow-section {
+      background: var(--parch);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 40px 28px 36px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    .flow-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--ink4);
+      margin-bottom: 12px;
+    }
+    .flow-title {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 1.15rem; font-weight: 700; color: var(--ink);
+      margin-bottom: 28px;
+    }
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .flow-step {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 18px 12px;
+      position: relative;
+    }
+    .flow-step-num {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.16em;
+      color: var(--terra); text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .flow-step-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .flow-step-label {
+      font-size: 0.8rem; font-weight: 700; color: var(--ink); line-height: 1.45;
+    }
+    .flow-step-sub {
+      font-size: 0.68rem; color: var(--ink4); margin-top: 4px; line-height: 1.5;
+    }
+    .flow-arrow {
+      position: absolute; right: -10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.75rem; color: var(--ink5);
+      pointer-events: none;
+    }
+    .flow-step:last-child .flow-arrow { display: none; }
+    .flow-badges {
+      display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+    }
+    .flow-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 700;
+      background: var(--moss-lt); color: var(--moss-dk);
+      border: 1px solid rgba(74,103,65,0.22);
+      padding: 5px 13px; border-radius: 99px;
+    }
+
+    /* ══════════ RESPONSIVE ══════════ */
     @media (max-width: 480px) {
-      .app-card { padding: 18px; gap: 14px; }
-      .card-icon { width: 48px; height: 48px; font-size: 24px; border-radius: 14px; }
+      .fv { padding: 52px 0 40px; }
+      .pkg-card { padding: 22px 18px 20px; }
+      .app-row { padding: 16px 14px 14px; gap: 13px; }
+      .app-icon { width: 42px; height: 42px; font-size: 1.25rem; border-radius: 12px; }
+      .pro-pack { padding: 30px 18px 26px; }
+      .pro-pack-btn { padding: 13px 24px; font-size: 0.88rem; }
+      .seg-btns { gap: 8px; }
+      .seg-btn { font-size: 0.75rem; padding: 9px 16px; }
+      /* trial */
+      .trial-section { padding: 32px 18px 26px; }
+      .trial-grid { grid-template-columns: 1fr; }
+      .trial-card-wide { grid-column: span 1; flex-direction: column; }
+      /* flow */
+      .flow-steps { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
+<div class="wrap">
 
-  <div class="bg-blobs">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
+  <!-- ══════════ ① FIRST VIEW ══════════ -->
+  <section class="fv">
 
-  <div class="container">
-
-    <!-- ヒーロー -->
-    <div class="hero">
-      <h1 class="hero-title">survival<span>_mam</span></h1>
-      <p class="hero-sub">
-        子育ての「こまった」を「できた」に変える<br/>
-        5つの無料ツール
-      </p>
-      <div class="hero-note">⚠️ 医療的診断を行うものではありません</div>
+    <div class="brand-lockup">
+      <div class="brand-icon">🌱</div>
+      <div class="brand-name"><strong>survival</strong>_mam</div>
     </div>
 
-    <!-- セグメント -->
-    <div class="segments">
-      <span class="seg-badge seg-exam">✏️ お受験対策</span>
-      <span class="seg-badge seg-gray">🌀 発達グレーゾーン</span>
-      <span class="seg-badge seg-home">🏠 ホームスクール</span>
+    <p class="fv-eyebrow">実用支援ツール集</p>
+
+    <h1 class="fv-h1">
+      子どもの「困った」を<br>
+      <span class="hl">毎日の中で解決する</span>
+    </h1>
+
+    <p class="fv-sub">
+      発達グレーゾーン・不登校・お受験。<br>
+      プロの療育・教育ノウハウを家庭サイズにダウンサイジングした<br>
+      5つのWebツールを安全な決済ページからご購入いただけます。
+    </p>
+
+    <div class="seg-btns">
+      <a class="seg-btn s-gray" href="#sec-packages">🌀 発達グレーゾーン向け</a>
+      <a class="seg-btn s-home" href="#sec-packages">🏠 不登校・在宅向け</a>
+      <a class="seg-btn s-exam" href="#sec-packages">✏️ お受験準備向け</a>
     </div>
 
-    <!-- アプリ一覧 -->
-    <div class="section-label">── ツール一覧</div>
+    <div class="scroll-hint">
+      <span>↓</span>
+      <small>セット商品を見る</small>
+    </div>
 
-    <div class="cards">
+  </section>
 
-      <a class="app-card c-quest" href="quest.html">
-        <div class="card-icon">🗡️</div>
-        <div class="card-body">
-          <div class="card-title">ライフ・クエスト・ボード</div>
-          <div class="card-desc">毎日のルーティンをRPG感覚でクリアしよう。XPを貯めてヒーローを育てる習慣トラッカー。</div>
-          <div class="card-tags">
-            <span class="card-tag">習慣化</span>
-            <span class="card-tag">ゲーミフィケーション</span>
-            <span class="card-tag">全年齢</span>
-          </div>
+  <!-- ══════════ ★ TRIAL ══════════ -->
+  <section class="trial-section reveal" id="sec-trial">
+
+    <div class="trial-eyebrow">迷っている方へ</div>
+
+    <div class="trial-lead">
+      このツールが自分に合うか<br>
+      不安な方のために——
+    </div>
+
+    <p class="trial-sub">
+      一部機能を開放した<strong>体験版</strong>を用意しました。<br>
+      まず触れてから、決めてください。
+    </p>
+
+    <!-- 体験版カード一覧 -->
+    <div class="trial-grid">
+
+      <a class="trial-card" href="quest_taiken.html" target="_blank">
+        <div class="trial-card-icon">🗡️</div>
+        <div class="trial-card-body">
+          <div class="trial-card-name">ライフ・クエスト・ボード</div>
+          <ul class="trial-card-list">
+            <li>✔ 朝のミッション4つが動く</li>
+            <li>✔ XPが貯まる体験ができる</li>
+            <li class="locked-item">🔒 ヒーロー・ショップはロック</li>
+          </ul>
         </div>
-        <div class="card-arrow">→</div>
+        <div class="trial-card-btn">試す →</div>
       </a>
 
-      <a class="app-card c-training" href="training.html">
-        <div class="card-icon">✋</div>
-        <div class="card-body">
-          <div class="card-title">巧緻性×言語トレーニングカード</div>
-          <div class="card-desc">お受験で問われる「手先の力」と「ことば力」をカード形式で楽しくトレーニング。</div>
-          <div class="card-tags">
-            <span class="card-tag">お受験対策</span>
-            <span class="card-tag">巧緻性</span>
-            <span class="card-tag">言語</span>
-          </div>
+      <a class="trial-card" href="training_taiken.html" target="_blank">
+        <div class="trial-card-icon">✋</div>
+        <div class="trial-card-body">
+          <div class="trial-card-name">巧緻性×言語カード</div>
+          <ul class="trial-card-list">
+            <li>✔ 3枚のカードを体験できる</li>
+            <li>✔ ステップ練習・星評価が動く</li>
+            <li class="locked-item">🔒 残り5枚はロック</li>
+          </ul>
         </div>
-        <div class="card-arrow">→</div>
+        <div class="trial-card-btn">試す →</div>
       </a>
 
-      <a class="app-card c-step" href="smallstep.html">
-        <div class="card-icon">✅</div>
-        <div class="card-body">
-          <div class="card-title">スモールステップカード</div>
-          <div class="card-desc">「できない」をとことん細かく分解。一歩ずつ積み上げる達成体験サポートツール。</div>
-          <div class="card-tags">
-            <span class="card-tag">発達グレー</span>
-            <span class="card-tag">実行機能</span>
-            <span class="card-tag">自己肯定感</span>
-          </div>
+      <a class="trial-card" href="smallstep_taiken.html" target="_blank">
+        <div class="trial-card-icon">✅</div>
+        <div class="trial-card-body">
+          <div class="trial-card-name">スモールステップカード</div>
+          <ul class="trial-card-list">
+            <li>✔ 5つのプリセットタスクが動く</li>
+            <li>✔ 全ステップ・トグル完動</li>
+            <li class="locked-item">🔒 オリジナル作成はロック</li>
+          </ul>
         </div>
-        <div class="card-arrow">→</div>
+        <div class="trial-card-btn">試す →</div>
       </a>
 
-      <a class="app-card c-sensory" href="sensory.html">
-        <div class="card-icon">🔍</div>
-        <div class="card-body">
-          <div class="card-title">感覚プロファイル観察ノート</div>
-          <div class="card-desc">視覚・聴覚・触覚など6つの感覚特性を記録・可視化。専門家への相談にも役立つ観察ノート。</div>
-          <div class="card-tags">
-            <span class="card-tag">発達グレー</span>
-            <span class="card-tag">感覚統合</span>
-            <span class="card-tag">観察記録</span>
-          </div>
+      <a class="trial-card" href="sensory_taiken.html" target="_blank">
+        <div class="trial-card-icon">📝</div>
+        <div class="trial-card-body">
+          <div class="trial-card-name">感覚プロファイル観察ノート</div>
+          <ul class="trial-card-list">
+            <li>✔ 視覚・触覚の2カテゴリを体験</li>
+            <li>✔ チェック・スコア表示が動く</li>
+            <li class="locked-item">🔒 4カテゴリ・日記・レポートはロック</li>
+          </ul>
         </div>
-        <div class="card-arrow">→</div>
+        <div class="trial-card-btn">試す →</div>
       </a>
 
-      <a class="app-card c-dialog" href="dialog.html">
-        <div class="card-icon">💬</div>
-        <div class="card-body">
-          <div class="card-title">対話プロンプト100</div>
-          <div class="card-desc">「叱る」を「問う」に変える魔法のことば集。朝・宿題・きもち・食事など場面別30選。</div>
-          <div class="card-tags">
-            <span class="card-tag">コミュニケーション</span>
-            <span class="card-tag">不登校</span>
-            <span class="card-tag">発達グレー</span>
-          </div>
+      <a class="trial-card trial-card-wide" href="dialog_taiken.html" target="_blank">
+        <div class="trial-card-icon">💬</div>
+        <div class="trial-card-body">
+          <div class="trial-card-name">対話プロンプト100</div>
+          <ul class="trial-card-list">
+            <li>✔ 各シーン1枚ずつ 計6枚を体験</li>
+            <li>✔ モーダル・お気に入り・ランダムが動く</li>
+            <li class="locked-item">🔒 残り24枚はロック（「あと24」表示）</li>
+          </ul>
         </div>
-        <div class="card-arrow">→</div>
+        <div class="trial-card-btn">試す →</div>
       </a>
 
     </div>
 
-    <!-- フッター -->
-    <div class="footer">
-      <div>© 2025 <a href="https://SurvivalMam.github.io/survival_mam/">time design labo</a> — survival_mam</div>
-      <div class="footer-note">
-        このサイトのツールは医療的診断を行うものではありません。<br/>
-        日常の観察・工夫・習慣づくりをサポートする目的で提供しています。
+    <!-- ソーシャルプルーフ -->
+    <div class="trial-proof">
+      <div class="trial-proof-quote">「これ、全部ほしくなる」</div>
+      <div class="trial-proof-body">
+        体験版を触った方の多くがそう言います。<br>
+        このツールは<em>体験型</em>だから。<br>
+        読むだけでは意味がありません——触れて初めて、変化が始まります。
       </div>
     </div>
 
-  </div>
+    <p class="trial-footer-note">
+      ※ 体験版で「これならいける」と感じた方だけ、下へ進んでください。
+    </p>
+
+  </section>
+
+  <!-- ══════════ ② PACKAGES ══════════ -->
+  <section id="sec-packages" class="packages-section">
+
+    <div class="sec-intro reveal">
+      <h2>セット商品</h2>
+      <p>お子さんの状況に合わせた3つのパッケージ。<br>複数ツールをまとめてご購入いただけます。</p>
+    </div>
+
+    <div class="sec-rule reveal">Package Plans — 3 Sets</div>
+
+    <div class="pkg-grid">
+
+      <div class="pkg-card pkg-gray reveal">
+        <div class="pkg-header">
+          <div class="pkg-badge">🌀</div>
+          <div class="pkg-title-wrap">
+            <div class="pkg-seg-label">発達グレーゾーン向け</div>
+            <div class="pkg-title">"できる"を育てるサポートツールセット</div>
+          </div>
+        </div>
+        <ul class="pkg-tools">
+          <li class="pkg-tool"><div class="pkg-tool-icon">✅</div>スモールステップカード</li>
+          <li class="pkg-tool"><div class="pkg-tool-icon">📝</div>感覚プロファイル観察ノート</li>
+          <li class="pkg-tool"><div class="pkg-tool-icon">💬</div>対話プロンプト100</li>
+        </ul>
+        <div class="price-box">
+          <div class="price-main">4,980円<small>（税込）</small></div>
+          <div class="price-compare">
+            単体で購入すると <s>5,940円</s> の内容が<br>
+            セットなら <strong>4,980円</strong>
+          </div>
+          <div class="price-saving">▶ 960円お得</div>
+        </div>
+        <p class="price-guarantee">※一度のご購入で永久利用可能　※追加課金なし</p>
+        <div style="text-align:center; margin:24px 0 0;">
+          <a href="https://buy.stripe.com/60uAEZ0kC7yygz8d4r73G00"
+             target="_blank"
+             style="
+               display:inline-block;
+               background-color:#c8a97e;
+               color:white;
+               padding:16px 40px;
+               font-size:18px;
+               border-radius:30px;
+               text-decoration:none;
+               font-weight:bold;
+               box-shadow:0 4px 10px rgba(0,0,0,0.1);
+             ">
+            "できる"を育てるサポートツールセットを購入する
+          </a>
+        </div>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
+      </div>
+
+      <div class="pkg-card pkg-home reveal">
+        <div class="pkg-header">
+          <div class="pkg-badge">🏠</div>
+          <div class="pkg-title-wrap">
+            <div class="pkg-seg-label">不登校・在宅向け</div>
+            <div class="pkg-title">不登校・在宅セット</div>
+          </div>
+        </div>
+        <ul class="pkg-tools">
+          <li class="pkg-tool"><div class="pkg-tool-icon">🗡️</div>ライフ・クエスト・ボード</li>
+          <li class="pkg-tool"><div class="pkg-tool-icon">✅</div>スモールステップカード</li>
+          <li class="pkg-tool"><div class="pkg-tool-icon">💬</div>対話プロンプト100</li>
+        </ul>
+        <div class="price-box">
+          <div class="price-main">4,980円<small>（税込）</small></div>
+          <div class="price-compare">
+            単体で購入すると <s>5,940円</s> の内容が<br>
+            セットなら <strong>4,980円</strong>
+          </div>
+          <div class="price-saving">▶ 960円お得</div>
+        </div>
+        <p class="price-guarantee">※一度のご購入で永久利用可能　※追加課金なし</p>
+        <div style="text-align:center; margin:24px 0 0;">
+          <a href="https://buy.stripe.com/00weVf9VcakK4Qg6G373G02"
+             target="_blank"
+             style="
+               display:inline-block;
+               background-color:#c8a97e;
+               color:white;
+               padding:16px 40px;
+               font-size:18px;
+               border-radius:30px;
+               text-decoration:none;
+               font-weight:bold;
+               box-shadow:0 4px 10px rgba(0,0,0,0.1);
+             ">
+            不登校・在宅セットを購入する
+          </a>
+        </div>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
+      </div>
+
+      <div class="pkg-card pkg-exam reveal">
+        <div class="pkg-header">
+          <div class="pkg-badge">✏️</div>
+          <div class="pkg-title-wrap">
+            <div class="pkg-seg-label">お受験準備向け</div>
+            <div class="pkg-title">お受験セット</div>
+          </div>
+        </div>
+        <ul class="pkg-tools">
+          <li class="pkg-tool"><div class="pkg-tool-icon">🗡️</div>ライフ・クエスト・ボード</li>
+          <li class="pkg-tool"><div class="pkg-tool-icon">✋</div>巧緻性×言語トレーニングカード</li>
+        </ul>
+        <div class="price-box">
+          <div class="price-main">3,480円<small>（税込）</small></div>
+          <div class="price-compare">
+            単体合計 <s>3,960円</s><br>
+            セット価格 <strong>3,480円</strong>
+          </div>
+          <div class="price-saving">▶ 480円お得</div>
+        </div>
+        <p class="price-guarantee">※一度のご購入で永久利用可能　※追加課金なし</p>
+        <a class="pkg-btn" href="https://buy.stripe.com/9B63cxebs8CCgz81LJ73G03" target="_blank">
+          購入する <span class="pkg-btn-arrow">→</span>
+        </a>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ ③ ALL APPS ══════════ -->
+  <section id="sec-apps" class="apps-section">
+
+    <div class="sec-intro reveal">
+      <h2>全アプリ一覧</h2>
+      <p>各ツールを単体でご購入いただくこともできます。</p>
+    </div>
+
+    <div class="sec-rule reveal">Individual Apps — 5 Tools</div>
+
+    <div class="app-row ar-quest reveal">
+      <div class="app-icon">🗡️</div>
+      <div class="app-body">
+        <div class="app-name">ライフ・クエスト・ボード</div>
+        <div class="app-desc">日常の行動をゲーム化して習慣づけ。「歯磨き」「着替え」をクエストにして、XPとアイテムで子どものやる気を引き出す習慣トラッカー。</div>
+        <div class="app-tags">
+          <span class="app-tag">習慣化</span>
+          <span class="app-tag">ゲーミフィケーション</span>
+          <span class="app-tag">意欲サポート</span>
+        </div>
+        <a class="app-buy-btn" href="https://buy.stripe.com/fZu7sN5EWlaa9G6G373G08" target="_blank">単体購入 →</a>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移。パスワードをその場で確認できます。</p>
+      </div>
+    </div>
+
+    <div class="app-row ar-train reveal">
+      <div class="app-icon">✋</div>
+      <div class="app-body">
+        <div class="app-name">巧緻性 × 言語トレーニングカード</div>
+        <div class="app-desc">手先と言語を同時に育てる課題カード。紐通し・折り紙課題を段階的に指示し、お受験の口頭試問対策も兼ねたトレーニング集。</div>
+        <div class="app-tags">
+          <span class="app-tag">お受験対策</span>
+          <span class="app-tag">巧緻性</span>
+          <span class="app-tag">言語発達</span>
+        </div>
+        <a class="app-buy-btn" href="https://buy.stripe.com/14AO0L2sK8CC2C0hF73G07" target="_blank">単体購入 →</a>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移。パスワードをその場で確認できます。</p>
+      </div>
+    </div>
+
+    <div class="app-row ar-step reveal">
+      <div class="app-icon">✅</div>
+      <div class="app-body">
+        <div class="app-name">スモールステップカード</div>
+        <div class="app-desc">「できる」を積み重ねる行動分解カード。「宿題しなさい」を「筆箱を出す」から始める細分化で、自己肯定感と実行機能を育てる。</div>
+        <div class="app-tags">
+          <span class="app-tag">発達グレー</span>
+          <span class="app-tag">実行機能</span>
+          <span class="app-tag">自己肯定感</span>
+        </div>
+        <a class="app-buy-btn" href="https://buy.stripe.com/4gMcN7aZgdWldmW3tR73G06" target="_blank">単体購入 →</a>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移。パスワードをその場で確認できます。</p>
+      </div>
+    </div>
+
+    <div class="app-row ar-sensory reveal">
+      <div class="app-icon">📝</div>
+      <div class="app-body">
+        <div class="app-name">感覚プロファイル観察ノート</div>
+        <div class="app-desc">感覚特性を見える化する記録ツール。視覚・聴覚・触覚など6感覚を観察・記録し、「困った行動」の背景を探る。専門家への相談資料にも活用できる。</div>
+        <div class="app-tags">
+          <span class="app-tag">感覚統合</span>
+          <span class="app-tag">観察記録</span>
+          <span class="app-tag">専門家連携</span>
+        </div>
+        <a class="app-buy-btn" href="https://buy.stripe.com/cNi28t9Vcg54ciSe8y73G05" target="_blank">単体購入 →</a>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移。パスワードをその場で確認できます。</p>
+      </div>
+    </div>
+
+    <div class="app-row ar-dialog reveal">
+      <div class="app-icon">💬</div>
+      <div class="app-body">
+        <div class="app-name">対話プロンプト100</div>
+        <div class="app-desc">親子・支援者の会話を助ける質問集。「叱る」を「問う」に変える100の声かけフレーズ。朝・宿題・けんか・食事など場面別に整理済み。</div>
+        <div class="app-tags">
+          <span class="app-tag">コミュニケーション</span>
+          <span class="app-tag">不登校サポート</span>
+          <span class="app-tag">声かけ改善</span>
+        </div>
+        <a class="app-buy-btn" href="https://buy.stripe.com/4gMwRc3k9GGFv46G373G04" target="_blank">単体購入 →</a>
+        <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移。パスワードをその場で確認できます。</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════════ ④ PRO PACK ══════════ -->
+  <section class="pro-pack reveal">
+    <p class="pro-pack-eyebrow">For Professionals</p>
+    <h2 class="pro-pack-title">
+      教育・福祉関係者向け<br>
+      <span>5アプリまとめパック</span>
+    </h2>
+    <p class="pro-catch">＼ すべて揃えたい方へ ／</p>
+    <div class="pro-price-box">
+      <div class="pro-price-main">7,980円<small>（税込）</small></div>
+      <div class="pro-price-compare">
+        単体合計 <s>9,900円</s><br>
+        まとめ価格 <strong style="color:#fff">7,980円</strong>
+      </div>
+      <div class="pro-price-saving">▶ 1,920円お得</div>
+    </div>
+    <p class="pro-price-guarantee">※一度のご購入で永久利用可能　※追加課金なし</p>
+    <p class="pro-pack-sub" style="margin-top:16px">
+      塾講師・放デイ支援員・スクールカウンセラーなど<br>
+      複数の場面・複数のお子さんに対応したい方向けの<br>
+      全ツールセットです。
+    </p>
+    <div class="pro-pack-apps">
+      <span class="pro-app-chip">🗡️ ライフクエスト</span>
+      <span class="pro-app-chip">✋ 巧緻性カード</span>
+      <span class="pro-app-chip">✅ スモールステップ</span>
+      <span class="pro-app-chip">📝 感覚ノート</span>
+      <span class="pro-app-chip">💬 対話プロンプト</span>
+    </div>
+    <a class="pro-pack-btn" href="https://buy.stripe.com/8x28mR9Vc4mmaKe8v73G01" target="_blank">
+      5アプリまとめパックを購入する →
+    </a>
+    <p class="after-purchase-note" style="color:rgba(255,255,255,0.45); margin-top:16px;">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
+  </section>
+
+  <!-- ══════════ ★ FLOW ══════════ -->
+  <section class="flow-section reveal">
+    <div class="flow-eyebrow">How it works</div>
+    <h2 class="flow-title">ご購入の流れ</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-step-num">Step 01</div>
+        <div class="flow-step-icon">💳</div>
+        <div class="flow-step-label">Stripeで<br>安全に決済</div>
+        <div class="flow-step-sub">クレジットカード対応<br>SSL暗号化通信</div>
+        <div class="flow-arrow">›</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">Step 02</div>
+        <div class="flow-step-icon">✅</div>
+        <div class="flow-step-label">専用ページに<br>自動遷移</div>
+        <div class="flow-step-sub">決済完了後<br>すぐに表示</div>
+        <div class="flow-arrow">›</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">Step 03</div>
+        <div class="flow-step-icon">🔑</div>
+        <div class="flow-step-label">URLと<br>パスワードを確認</div>
+        <div class="flow-step-sub">メールにも<br>同内容を送付</div>
+        <div class="flow-arrow">›</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">Step 04</div>
+        <div class="flow-step-icon">📱</div>
+        <div class="flow-step-label">ブックマークして<br>すぐ使用開始</div>
+        <div class="flow-step-sub">永久利用可能<br>追加課金なし</div>
+      </div>
+    </div>
+    <div class="flow-badges">
+      <span class="flow-badge">✔ ダウンロード不要</span>
+      <span class="flow-badge">✔ スマホ・PC対応</span>
+      <span class="flow-badge">✔ 永久利用可</span>
+      <span class="flow-badge">✔ 追加課金なし</span>
+    </div>
+  </section>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer reveal">
+    <div class="footer-brand">survival_mam</div>
+    <div class="footer-links">
+      <a href="https://note.com/survival_mom_lab" target="_blank">@survival_mam</a>
+    </div>
+    <div class="footer-disc">
+      本ツールはnoteにて販売中のコンテンツに付属する購入者専用Webアプリです。<br>
+      医療的診断を行うものではありません。日常の観察・工夫・習慣づくりをサポートする目的で提供しています。<br>
+      気になる特性や発達については、専門家にご相談ください。
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// スクロールリビール
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function(el){ el.classList.add('visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.10, rootMargin: '0px 0px -36px 0px' });
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+// アンカースムーズスクロール
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var t = document.querySelector(this.getAttribute('href'));
+    if(t){ e.preventDefault(); t.scrollIntoView({ behavior:'smooth', block:'start' }); }
+  });
+});
+</script>
 </body>
 </html>

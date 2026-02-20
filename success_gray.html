@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>購入完了 | "できる"を育てるサポートツールセット</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700;900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent:    #5a4a8a;
+      --accent2:   #7060a8;
+      --accent-lt: #ede8f5;
+      --cream:     #faf6f0;
+      --parch:     #fffdf8;
+      --ink:       #2a2118;
+      --ink3:      #7a6d60;
+      --ink4:      #b0a898;
+      --gold:      #c8941a;
+      --gold-lt:   #fdf5e0;
+      --border:    rgba(42,33,24,0.09);
+      --shadow:    0 4px 24px rgba(42,33,24,0.09);
+      --r-xl: 28px; --r-lg: 18px; --r-md: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background: var(--cream); color: var(--ink);
+      min-height: 100vh;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 20px 80px;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 60% at 0% 0%, rgba(90,74,138,0.10), transparent 52%),
+        radial-gradient(ellipse 55% 50% at 100% 20%, rgba(200,148,26,0.07), transparent 52%);
+    }
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 520px;
+    }
+
+    /* ── 完了ヘッダー ── */
+    .complete-header {
+      text-align: center; margin-bottom: 32px;
+    }
+    .complete-icon {
+      font-size: 3.8rem; display: block; margin-bottom: 14px;
+      animation: pop 0.5s cubic-bezier(.34,1.8,.64,1) both;
+    }
+    @keyframes pop { from{transform:scale(0.3);opacity:0} to{transform:scale(1);opacity:1} }
+    .complete-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .complete-title {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.3rem, 5vw, 1.7rem);
+      font-weight: 700; color: var(--ink); line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .complete-sub {
+      font-size: 0.84rem; color: var(--ink3); line-height: 1.8;
+    }
+
+    /* ── カード共通 ── */
+    .card {
+      background: var(--parch);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+    .card-accent::before  { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .card-gold::before    { background: linear-gradient(90deg, var(--gold), #e0a820); }
+
+    .card-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ink4);
+      margin-bottom: 14px;
+    }
+
+    /* ── 商品名 ── */
+    .product-name {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--accent); margin-bottom: 4px;
+    }
+    .product-desc {
+      font-size: 0.8rem; color: var(--ink3); line-height: 1.6;
+    }
+
+    /* ── パスワード表示 ── */
+    .pw-display-wrap {
+      background: var(--accent-lt);
+      border: 2px solid rgba(90,74,138,0.25);
+      border-radius: var(--r-lg);
+      padding: 20px 22px;
+      margin: 18px 0 0;
+      text-align: center;
+    }
+    .pw-display-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .pw-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 2rem; font-weight: 700; letter-spacing: 0.22em;
+      color: var(--ink);
+      background: #fff;
+      border: 1.5px solid rgba(90,74,138,0.2);
+      border-radius: var(--r-md);
+      padding: 12px 24px;
+      display: inline-block;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(90,74,138,0.12);
+      user-select: all;
+    }
+    .pw-copy-btn {
+      display: block; width: 100%;
+      padding: 11px;
+      background: var(--accent);
+      color: #fff;
+      border: none; border-radius: var(--r-md);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.04em;
+      transition: all 0.15s cubic-bezier(.34,1.4,.64,1);
+    }
+    .pw-copy-btn:hover { filter: brightness(1.12); transform: scale(1.02); }
+    .pw-copy-btn.copied { background: #059669; }
+    .pw-note {
+      font-size: 0.7rem; color: var(--ink4); margin-top: 10px; line-height: 1.7;
+    }
+
+    /* ── アプリ起動ボタン ── */
+    .launch-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 18px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none; border-radius: var(--r-lg);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 1rem; font-weight: 900;
+      text-decoration: none; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(90,74,138,0.35);
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+      margin-bottom: 10px;
+    }
+    .launch-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(90,74,138,0.42); }
+    .launch-btn-note {
+      text-align: center; font-size: 0.7rem; color: var(--ink4); margin-bottom: 16px;
+    }
+
+    /* ── ステップリスト ── */
+    .steps { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .step {
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 99px;
+      background: var(--gold-lt);
+      border: 1.5px solid rgba(200,148,26,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem; font-weight: 700; color: var(--gold);
+    }
+    .step-body { flex: 1; padding-top: 3px; }
+    .step-title { font-size: 0.88rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .step-desc  { font-size: 0.75rem; color: var(--ink3); line-height: 1.6; }
+
+    /* ── メール注記 ── */
+    .mail-note {
+      background: var(--gold-lt);
+      border: 1px solid rgba(200,148,26,0.2);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      font-size: 0.78rem; color: var(--ink3); line-height: 1.8;
+      text-align: center;
+    }
+    .mail-note strong { color: var(--gold); }
+
+    /* ── フッター ── */
+    .footer {
+      text-align: center; margin-top: 28px;
+      font-size: 0.68rem; color: var(--ink4); line-height: 1.9;
+    }
+    .footer a { color: var(--ink4); text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 完了ヘッダー -->
+  <div class="complete-header">
+    <span class="complete-icon">🎉</span>
+    <div class="complete-eyebrow">Purchase Complete</div>
+    <h1 class="complete-title">ご購入ありがとうございます</h1>
+    <p class="complete-sub">
+      以下のパスワードとURLを保存してください。<br>
+      メールにも同内容をお送りしています。
+    </p>
+  </div>
+
+  <!-- 商品 + パスワードカード -->
+  <div class="card card-accent">
+    <div class="card-label">Your Product</div>
+    <div class="product-name">🌀 "できる"を育てるサポートツールセット</div>
+    <div class="product-desc">スモールステップカード・感覚プロファイル観察ノート・対話プロンプト100の3本セット。発達グレーゾーンのお子さんの「できる」を毎日サポート。</div>
+
+    <div class="pw-display-wrap">
+      <div class="pw-display-label">起動パスワード</div>
+      <div class="pw-value" id="pwVal">gray25</div>
+      <button class="pw-copy-btn" id="copyBtn" onclick="copyPw()">📋 パスワードをコピーする</button>
+      <div class="pw-note">セット内の全アプリで同じパスワードを使用します</div>
+    </div>
+  </div>
+
+  <!-- 起動ボタン -->
+  <a class="launch-btn" href="smallstep.html" target="_blank" style="margin-bottom:10px">
+    ✅ スモールステップカード →
+  </a>
+  <a class="launch-btn" href="sensory.html" target="_blank" style="margin-bottom:10px">
+    📝 感覚プロファイル観察ノート →
+  </a>
+  <a class="launch-btn" href="dialog.html" target="_blank" style="margin-bottom:10px">
+    💬 対話プロンプト100 →
+  </a>
+  <p class="launch-btn-note">各アプリを開いたらパスワード <strong style="color:var(--ink)">gray25</strong> を入力してください</p>
+
+  <!-- 使い方ステップ -->
+  <div class="card card-gold">
+    <div class="card-label">How to Start</div>
+    <ul class="steps">
+      <li class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">上の「アプリを起動する」を開く</div>
+          <div class="step-desc">ブラウザで直接動作します。ダウンロード不要。</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">パスワードを入力する</div>
+          <div class="step-desc">上記の起動パスワードをアプリ画面に入力してください。</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">URLをブックマーク登録する</div>
+          <div class="step-desc">スマホのホーム画面に追加すればアプリのように使えます。</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">毎日使う</div>
+          <div class="step-desc">追加課金なし。永久にご利用いただけます。</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- メール注記 -->
+  <div class="mail-note">
+    📧 <strong>メールを確認してください</strong><br>
+    ご登録のメールアドレスに、アプリURL・パスワードを送付しています。<br>
+    届いていない場合は迷惑メールフォルダをご確認ください。
+  </div>
+
+  <div class="footer">
+    <p>survival_mam — <a href="https://note.com/survival_mom_lab" target="_blank">@survival_mam</a></p>
+    <p style="margin-top:6px">ご不明な点はnoteのコメントまたはメッセージにてお問い合わせください</p>
+  </div>
+
+</div>
+<script>
+function copyPw() {
+  var pw  = document.getElementById('pwVal').textContent.trim();
+  var btn = document.getElementById('copyBtn');
+  navigator.clipboard.writeText(pw).then(function(){
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.textContent = '📋 パスワードをコピーする'; btn.classList.remove('copied'); }, 2200);
+  }).catch(function(){
+    // fallback
+    var ta = document.createElement('textarea');
+    ta.value = pw; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.textContent = '📋 パスワードをコピーする'; btn.classList.remove('copied'); }, 2200);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>感覚プロファイル観察ノート【体験版】</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zen Kaku Gothic New','Nunito', sans-serif; min-height: 100vh; background: #f8fafc; }
+
+    /* ── 体験版バナー ── */
+    .taiken-banner {
+      background: linear-gradient(90deg,#fef3c7,#fde68a);
+      border-bottom: 2px solid #f59e0b;
+      padding: 9px 16px; text-align: center;
+      font-size: 12px; font-weight: 800; color: #78350f; letter-spacing: 0.04em;
+    }
+    .taiken-banner strong { color: #b45309; }
+
+    /* ── ヘッダー共通 ── */
+    .hd { padding: 20px 16px 26px; color: #fff; }
+    .hd-inner { max-width: 640px; margin: 0 auto; }
+    .hd-sub   { font-size: 12px; font-weight: 700; letter-spacing: 1px; opacity: 0.8; margin-bottom: 4px; }
+    .hd-title { font-size: 22px; font-weight: 900; }
+    .hd-desc  { font-size: 13px; opacity: 0.75; margin-top: 5px; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.18); color: #fff;
+      border: none; border-radius: 10px; padding: 6px 14px;
+      font-size: 13px; font-weight: 800; cursor: pointer;
+      font-family: inherit; margin-bottom: 10px; transition: background 0.15s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.28); }
+
+    /* ── コンテンツ ── */
+    .content { max-width: 640px; margin: 0 auto; padding: 18px 14px 120px; }
+
+    /* ── ホーム: メニューカード ── */
+    .menu-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .menu-card {
+      background: #fff; border-radius: 20px; padding: 20px 12px; text-align: center;
+      cursor: pointer; transition: all 0.18s cubic-bezier(.4,2,.6,1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .menu-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.1); }
+    .menu-card.locked-menu { cursor: default; opacity: 0.6; filter: grayscale(0.3); }
+    .menu-card.locked-menu:hover { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .menu-icon { font-size: 36px; margin-bottom: 8px; }
+    .menu-title { font-weight: 900; font-size: 13px; color: #1e293b; margin-bottom: 3px; }
+    .menu-desc  { font-size: 11px; color: #94a3b8; }
+    .lock-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 800; color: #94a3b8;
+      background: #f1f5f9; border: 1px solid #e2e8f0;
+      padding: 2px 8px; border-radius: 99px; margin-top: 5px;
+    }
+
+    /* ── 注意書き ── */
+    .notice {
+      background: #fff7ed; border-radius: 14px; padding: 14px 18px;
+      border: 1px solid #fed7aa; margin-bottom: 20px;
+    }
+    .notice-ttl { font-weight: 900; font-size: 13px; color: #9a3412; margin-bottom: 6px; }
+    .notice-txt { font-size: 12px; color: #7c2d12; line-height: 1.75; }
+
+    /* ── 製品版告知 ── */
+    .pro-notice {
+      background: linear-gradient(135deg,#fff7ed,#ffedd5);
+      border: 1.5px solid #fed7aa; border-radius: 16px;
+      padding: 16px 18px; margin-bottom: 20px;
+    }
+    .pro-notice-ttl  { font-weight: 900; font-size: 13px; color: #9a3412; margin-bottom: 10px; }
+    .pro-notice-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #374151; font-weight: 700; margin-bottom: 7px; }
+    .pro-notice-item:last-child { margin-bottom: 0; }
+
+    /* ── プロファイル画面 ── */
+    .cat-card {
+      background: #fff; border-radius: 20px; margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden;
+    }
+    .cat-header {
+      padding: 15px 18px; display: flex; align-items: center; gap: 12px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .cat-header:hover { background: #f8fafc; }
+    .cat-header.locked-cat { cursor: default; }
+    .cat-header.locked-cat:hover { background: #fff; }
+    .cat-avatar {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .cat-info { flex: 1; }
+    .cat-name  { font-weight: 900; font-size: 15px; color: #1e293b; }
+    .cat-items { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .cat-score { text-align: right; }
+    .cat-pct   { font-size: 18px; font-weight: 900; }
+    .cat-arrow { font-size: 18px; margin-top: 2px; }
+    .cat-lock-row { display: flex; align-items: center; gap: 8px; }
+    .cat-lock-label { font-size: 12px; font-weight: 800; color: #94a3b8; }
+
+    /* チェック項目 */
+    .cat-items-wrap { padding: 0 16px 16px; }
+    .check-item { padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+    .check-item:last-child { border-bottom: none; }
+    .check-label { font-size: 14px; font-weight: 700; color: #374151; margin-bottom: 10px; }
+    .freq-row { display: flex; gap: 6px; }
+    .freq-btn {
+      flex: 1; padding: 10px 4px; border-radius: 10px; border: none;
+      font-size: 12px; font-weight: 800; cursor: pointer; font-family: inherit;
+      background: #f1f5f9; color: #64748b;
+      transition: all 0.15s;
+    }
+    .freq-btn:hover { transform: scale(1.05); }
+    .freq-btn.active { color: #fff; }
+
+    /* スコアバー */
+    .score-bar { height: 6px; background: #f1f5f9; border-radius: 99px; overflow: hidden; margin-top: 8px; }
+    .score-fill { height: 100%; border-radius: 99px; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+
+    /* ── ロックページ ── */
+    .lock-page { text-align: center; padding: 32px 16px; }
+    .lock-big  { font-size: 64px; margin-bottom: 14px; }
+    .lock-ttl  { font-size: 19px; font-weight: 900; color: #1e293b; margin-bottom: 10px; }
+    .lock-sub  { font-size: 13px; color: #64748b; line-height: 1.8; margin-bottom: 22px; }
+    .lock-feat {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px;
+      padding: 16px 20px; text-align: left; margin-bottom: 22px;
+    }
+    .lock-feat-ttl  { font-size: 11px; font-weight: 900; color: #f97316; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+    .lock-feat-item { font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 7px; display: flex; gap: 8px; }
+
+    /* ── CTA ── */
+    .cta-block {
+      background: linear-gradient(135deg,#fff7ed,#ffedd5);
+      border: 1.5px solid #fed7aa; border-radius: 20px;
+      padding: 22px 18px; text-align: center; margin-top: 8px;
+    }
+    .cta-eyebrow { font-size: 11px; font-weight: 900; letter-spacing: 0.15em; color: #f97316; text-transform: uppercase; margin-bottom: 8px; }
+    .cta-text { font-size: 14px; font-weight: 800; color: #1e293b; line-height: 1.75; margin-bottom: 16px; }
+    .cta-btn {
+      display: inline-block; background: linear-gradient(135deg,#c8a97e,#d4b896);
+      color: #fff; font-size: 14px; font-weight: 900; padding: 13px 26px;
+      border-radius: 99px; text-decoration: none;
+      box-shadow: 0 6px 20px rgba(200,169,126,0.4); font-family: inherit;
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+    }
+    .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(200,169,126,0.5); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="taiken-banner">
+  ⚠️ これは<strong>体験版</strong>です　／　視覚・触覚の2カテゴリを無料体験できます
+</div>
+
+<!-- ホーム -->
+<div id="screen-home">
+  <div class="hd" style="background:linear-gradient(135deg,#f97316,#fb923c)">
+    <div class="hd-inner">
+      <div class="hd-sub">【体験版】感覚プロファイル観察ノート</div>
+      <div class="hd-title">🔍 かんさつ＆きろく</div>
+      <div class="hd-desc">お子さんの感覚の特性を観察・記録するツール</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="menu-grid">
+      <div class="menu-card" style="border:2px solid #f9731622" onclick="showScreen('screen-profile')">
+        <div class="menu-icon">📊</div>
+        <div class="menu-title">感覚プロファイル</div>
+        <div class="menu-desc">6つの感覚をチェック</div>
+      </div>
+      <div class="menu-card locked-menu" style="border:2px solid #8b5cf622">
+        <div class="menu-icon">📓</div>
+        <div class="menu-title">かんさつにっき</div>
+        <div class="menu-desc">気になることを記録</div>
+        <div class="lock-badge">🔒 製品版</div>
+      </div>
+      <div class="menu-card locked-menu" style="border:2px solid #3b82f622">
+        <div class="menu-icon">📈</div>
+        <div class="menu-title">まとめレポート</div>
+        <div class="menu-desc">記録を見やすく整理</div>
+        <div class="lock-badge">🔒 製品版</div>
+      </div>
+    </div>
+
+    <!-- 製品版告知 -->
+    <div class="pro-notice">
+      <div class="pro-notice-ttl">🔒 製品版で解放されるカテゴリ</div>
+      <div class="pro-notice-item">👂 <strong>聴覚</strong>（製品版）</div>
+      <div class="pro-notice-item">🌀 <strong>前庭覚</strong>（製品版）</div>
+      <div class="pro-notice-item">💪 <strong>固有受容覚</strong>（製品版）</div>
+      <div class="pro-notice-item">👄 <strong>口腔感覚</strong>（製品版）</div>
+    </div>
+
+    <div class="pro-notice" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:#ddd6fe">
+      <div class="pro-notice-ttl" style="color:#5b21b6">📦 製品版ではさらにできること</div>
+      <div class="pro-notice-item">✔ 全6カテゴリの感覚チェック</div>
+      <div class="pro-notice-item">✔ 観察日記の記録・保存</div>
+      <div class="pro-notice-item">✔ まとめレポートで傾向を把握</div>
+    </div>
+
+    <div class="notice">
+      <div class="notice-ttl">⚠️ ご注意</div>
+      <div class="notice-txt">
+        このアプリは医療的診断を行うものではありません。<br>
+        日常の観察と工夫をサポートするためのツールです。<br>
+        専門家への相談は別途ご検討ください。
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-eyebrow">＼ フル機能はこちら ／</div>
+      <div class="cta-text">全6カテゴリ・観察日記・まとめレポート<br>すべて使い放題</div>
+      <a class="cta-btn" href="https://buy.stripe.com/cNi28t9Vcg54ciSe8y73G05" target="_blank">感覚プロファイル観察ノートを購入する →</a>
+    </div>
+  </div>
+</div>
+
+<!-- プロファイル画面 -->
+<div id="screen-profile" class="hidden">
+  <div class="hd" style="background:linear-gradient(135deg,#f97316,#fb923c)">
+    <div class="hd-inner">
+      <button class="back-btn" onclick="showScreen('screen-home')">← もどる</button>
+      <div class="hd-title">📊 感覚プロファイル</div>
+      <div class="hd-desc">それぞれの様子をえらんでください</div>
+    </div>
+  </div>
+  <div class="content" id="profile-content">
+    <!-- JSで描画 -->
+  </div>
+</div>
+
+<script>
+var CATEGORIES = [
+  { id:"visual", free:true, icon:"👁️", label:"視覚", color:"#3b82f6", light:"#eff6ff",
+    items:[
+      {id:"v1", label:"まぶしいひかりをいやがる"},
+      {id:"v2", label:"うごくものにすぐきをとられる"},
+      {id:"v3", label:"ごちゃごちゃしたばしょがにがて"},
+      {id:"v4", label:"細かいものをじっとみつめる"},
+      {id:"v5", label:"くらいばしょをこわがる"},
+    ]},
+  { id:"touch", free:true, icon:"🤲", label:"触覚", color:"#f59e0b", light:"#fffbeb",
+    items:[
+      {id:"t1", label:"ふくのタグやソックスをいやがる"},
+      {id:"t2", label:"かみのけをとかされるのをいやがる"},
+      {id:"t3", label:"ねんどや絵の具をさわりたがらない"},
+      {id:"t4", label:"いたみにきづきにくい"},
+      {id:"t5", label:"ものをさわり続ける"},
+    ]},
+  { id:"audio", free:false, icon:"👂", label:"聴覚", color:"#8b5cf6", light:"#f5f3ff" },
+  { id:"vestibular", free:false, icon:"🌀", label:"前庭覚", color:"#10b981", light:"#ecfdf5" },
+  { id:"proprioception", free:false, icon:"💪", label:"固有受容覚", color:"#ef4444", light:"#fef2f2" },
+  { id:"oral", free:false, icon:"👄", label:"口腔感覚", color:"#f97316", light:"#fff7ed" },
+];
+
+var FREQ = [
+  {value:0, label:"ほぼない",  color:"#94a3b8"},
+  {value:1, label:"ときどき",  color:"#fbbf24"},
+  {value:2, label:"よくある",  color:"#f97316"},
+  {value:3, label:"ほぼいつも",color:"#ef4444"},
+];
+
+var ratings = {};
+var expanded = null;
+
+function showScreen(id) {
+  ["screen-home","screen-profile"].forEach(function(s){
+    document.getElementById(s).classList.toggle("hidden", s !== id);
+  });
+  if (id === "screen-profile") renderProfile();
+}
+
+function renderProfile() {
+  var cont = document.getElementById("profile-content");
+  cont.innerHTML = "";
+
+  CATEGORIES.forEach(function(cat) {
+    var score = getCategoryScore(cat);
+    var card  = document.createElement("div");
+    card.className = "cat-card";
+
+    if (!cat.free) {
+      // ロックカード
+      card.innerHTML =
+        '<div class="cat-header locked-cat" style="opacity:0.55">'+
+          '<div class="cat-avatar" style="background:'+cat.color+'20">'+cat.icon+'</div>'+
+          '<div class="cat-info">'+
+            '<div class="cat-name">'+cat.label+'</div>'+
+            '<div class="cat-items">5項目</div>'+
+          '</div>'+
+          '<div class="cat-lock-row">'+
+            '<span class="lock-badge" style="font-size:12px;padding:4px 12px">🔒 製品版</span>'+
+          '</div>'+
+        '</div>';
+    } else {
+      // 開放カード
+      var isOpen = expanded === cat.id;
+      card.innerHTML =
+        '<div class="cat-header" id="hdr-'+cat.id+'" style="background:'+( isOpen ? cat.light : "#fff" )+'" onclick="toggleCat(\''+cat.id+'\')">'+
+          '<div class="cat-avatar" style="background:'+cat.color+'20">'+cat.icon+'</div>'+
+          '<div class="cat-info">'+
+            '<div class="cat-name">'+cat.label+'</div>'+
+            '<div class="cat-items">'+cat.items.length+'項目</div>'+
+            '<div class="score-bar"><div class="score-fill" style="width:'+score+'%;background:'+cat.color+'"></div></div>'+
+          '</div>'+
+          '<div class="cat-score">'+
+            '<div class="cat-pct" style="color:'+cat.color+'">'+score+'%</div>'+
+            '<div class="cat-arrow">'+(isOpen?"▲":"▼")+'</div>'+
+          '</div>'+
+        '</div>'+
+        (isOpen ? buildItems(cat) : '');
+    }
+    cont.appendChild(card);
+  });
+
+  // CTA
+  var cta = document.createElement("div");
+  cta.className = "cta-block";
+  cta.innerHTML =
+    '<div class="cta-eyebrow">＼ フル機能はこちら ／</div>'+
+    '<div class="cta-text">聴覚・前庭覚・固有受容覚・口腔感覚<br>観察日記・まとめレポート<br>すべて使い放題</div>'+
+    '<a class="cta-btn" href="https://buy.stripe.com/cNi28t9Vcg54ciSe8y73G05" target="_blank">感覚プロファイル観察ノートを購入する →</a>';
+  cont.appendChild(cta);
+}
+
+function buildItems(cat) {
+  var html = '<div class="cat-items-wrap">';
+  cat.items.forEach(function(item){
+    html += '<div class="check-item">'+
+      '<div class="check-label">'+item.label+'</div>'+
+      '<div class="freq-row">';
+    FREQ.forEach(function(f){
+      var active = ratings[item.id] === f.value;
+      html += '<button class="freq-btn'+(active?" active":"")+'"'+
+        (active?' style="background:'+f.color+'"':'')+
+        ' onclick="setRating(\''+item.id+'\','+f.value+')">'+f.label+'</button>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function toggleCat(id) {
+  expanded = expanded === id ? null : id;
+  renderProfile();
+}
+
+function setRating(itemId, val) {
+  ratings[itemId] = val;
+  renderProfile();
+}
+
+function getCategoryScore(cat) {
+  if (!cat.items) return 0;
+  var total = cat.items.reduce(function(s, item){ return s + (ratings[item.id] || 0); }, 0);
+  return Math.round((total / (cat.items.length * 3)) * 100);
+}
+</script>
+</body>
+</html>
