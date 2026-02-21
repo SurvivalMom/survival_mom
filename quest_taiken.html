@@ -1,28 +1,413 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quest 体験版</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ライフ・クエスト・ボード【体験版】</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Zen Kaku Gothic New','Nunito', sans-serif;
+      background: linear-gradient(160deg,#1e1b4b 0%,#312e81 40%,#4c1d95 100%);
+      min-height: 100vh; color: #fff;
+    }
 
-<style>
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP",sans-serif;background:#faf6f0;color:#2a2118;margin:0;line-height:1.7}
-.wrap{max-width:760px;margin:0 auto;padding:40px 18px 64px}
-.card{background:#fffdf8;border:1px solid rgba(42,33,24,.12);border-radius:18px;padding:20px;box-shadow:0 4px 18px rgba(42,33,24,.08)}
-h1{font-size:1.25rem;margin:0 0 14px}
-.btn{display:inline-block;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:12px;background:#c4714a;color:#fff}
-.back{display:inline-block;margin-top:14px;color:#6a5848;text-decoration:none}
-</style>
+    /* ── 体験版バナー ── */
+    .taiken-banner {
+      background: linear-gradient(90deg,rgba(251,191,36,0.22),rgba(251,191,36,0.10));
+      border-bottom: 1px solid rgba(251,191,36,0.35);
+      padding: 9px 16px; text-align: center;
+      font-size: 12px; font-weight: 800; color: #fde68a; letter-spacing: 0.05em;
+    }
+    .taiken-banner strong { color: #fbbf24; }
 
+    /* ── ヘッダー ── */
+    .hd {
+      background: rgba(0,0,0,0.35); border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 14px 16px;
+    }
+    .hd-inner { max-width: 600px; margin: 0 auto; display: flex; align-items: center; gap: 14px; }
+    .hd-icon { font-size: 34px; }
+    .hd-info { flex: 1; }
+    .hd-label { font-size: 11px; color: #fbbf24; font-weight: 800; letter-spacing: 1px; margin-bottom: 2px; }
+    .hd-rank  { font-size: 17px; font-weight: 900; }
+    .xp-bar   { height: 8px; background: rgba(255,255,255,0.15); border-radius: 99px; margin-top: 5px; overflow: hidden; }
+    .xp-fill  { height: 100%; border-radius: 99px; transition: width 0.7s cubic-bezier(.4,0,.2,1); }
+    .hd-xp    { text-align: right; font-size: 20px; font-weight: 900; color: #fbbf24; }
+    .hd-xp small { font-size: 10px; color: #fde68a; }
+
+    /* ── タブ ── */
+    .tabs {
+      background: rgba(0,0,0,0.22); border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .tabs-inner { max-width: 600px; margin: 0 auto; display: flex; }
+    .tab-btn {
+      flex: 1; padding: 13px 0; border: none; background: none; cursor: pointer;
+      font-family: 'Zen Kaku Gothic New','Nunito',sans-serif;
+      font-size: 13px; font-weight: 900; color: #a78bfa;
+      border-bottom: 3px solid transparent; transition: all 0.15s;
+    }
+    .tab-btn.active { color: #fff; border-bottom-color: #a5b4fc; }
+    .tab-btn.locked { color: rgba(167,139,250,0.38); cursor: pointer; }
+
+    /* ── メインコンテンツ ── */
+    .content { max-width: 600px; margin: 0 auto; padding: 18px 14px 120px; }
+
+    /* ── 進行バー ── */
+    .progress-box {
+      background: rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 14px 18px; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .progress-emoji { font-size: 38px; }
+    .progress-info { flex: 1; }
+    .progress-label { font-weight: 900; font-size: 15px; }
+    .progress-bar { height: 8px; background: rgba(255,255,255,0.15); border-radius: 99px; margin-top: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#34d399,#6ee7b7); transition: width 0.7s cubic-bezier(.4,0,.2,1); }
+    .reset-btn {
+      font-size: 11px; background: rgba(255,255,255,0.1); border: none;
+      color: #c4b5fd; border-radius: 8px; padding: 6px 10px; cursor: pointer;
+      font-family: inherit; font-weight: 700;
+    }
+    .reset-btn:hover { background: rgba(255,255,255,0.18); }
+
+    /* ── セクションタイトル ── */
+    .section-title {
+      font-weight: 900; font-size: 14px; margin-bottom: 10px; color: #c4b5fd;
+    }
+    .section-title.locked-title { color: rgba(196,181,253,0.35); }
+
+    /* ── クエストグリッド ── */
+    .quest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+    .quest-card {
+      background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 16px 10px; text-align: center; cursor: pointer;
+      transition: all 0.18s cubic-bezier(.4,2,.6,1);
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+    }
+    .quest-card:hover { transform: scale(1.04) translateY(-2px); }
+    .quest-card.done {
+      background: rgba(52,211,153,0.15); border-color: #34d399; opacity: 0.6;
+    }
+    .quest-icon { font-size: 36px; }
+    .quest-label { font-weight: 800; font-size: 13px; }
+    .quest-xp {
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+      background: rgba(165,180,252,0.15); color: #a5b4fc;
+    }
+    .quest-card.done .quest-xp { background: rgba(52,211,153,0.15); color: #34d399; }
+
+    /* ── ロックセクション ── */
+    .locked-section {
+      background: rgba(255,255,255,0.04);
+      border: 1.5px dashed rgba(167,139,250,0.22);
+      border-radius: 16px; padding: 16px; text-align: center;
+      color: rgba(167,139,250,0.45); font-size: 13px; font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    /* ── XPトースト ── */
+    .xp-toast {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: #fbbf24; color: #1e1b4b; font-size: 1.9rem; font-weight: 900;
+      padding: 14px 36px; border-radius: 999px; z-index: 9999;
+      box-shadow: 0 8px 32px rgba(251,191,36,0.6); pointer-events: none;
+      animation: toast-anim 1.6s ease forwards;
+    }
+    @keyframes toast-anim {
+      0%  { opacity:0; transform:translate(-50%,-62%); }
+      18% { opacity:1; transform:translate(-50%,-50%); }
+      80% { opacity:1; }
+      100%{ opacity:0; transform:translate(-50%,-38%); }
+    }
+
+    /* ── コンフェッティ ── */
+    @keyframes fall0 { to { top:110%; transform:rotate(360deg) translateX(30px); } }
+    @keyframes fall1 { to { top:110%; transform:rotate(-360deg) translateX(-20px); } }
+    @keyframes fall2 { to { top:110%; transform:rotate(180deg) translateX(40px); } }
+    @keyframes fall3 { to { top:110%; transform:rotate(-180deg) translateX(-35px); } }
+
+    /* ── CTA ── */
+    .cta-block {
+      background: linear-gradient(135deg,rgba(124,58,237,0.28),rgba(76,29,149,0.38));
+      border: 1px solid rgba(167,139,250,0.28); border-radius: 20px;
+      padding: 22px 18px; text-align: center; margin-top: 8px;
+    }
+    .cta-eyebrow { font-size: 11px; font-weight: 900; letter-spacing: 0.15em; color: #a78bfa; text-transform: uppercase; margin-bottom: 8px; }
+    .cta-text { font-size: 14px; font-weight: 800; color: #e0e0ff; line-height: 1.7; margin-bottom: 16px; }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg,#c8a97e,#d4b896);
+      color: #fff; font-size: 14px; font-weight: 900;
+      padding: 13px 26px; border-radius: 99px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(200,169,126,0.4);
+      font-family: 'Zen Kaku Gothic New','Nunito',sans-serif;
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+    }
+    .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(200,169,126,0.5); }
+
+    /* ── ロックページ ── */
+    .lock-page { padding: 32px 16px; text-align: center; }
+    .lock-big { font-size: 60px; margin-bottom: 14px; }
+    .lock-ttl { font-size: 19px; font-weight: 900; margin-bottom: 10px; }
+    .lock-sub { font-size: 13px; color: #a5b4fc; line-height: 1.8; margin-bottom: 22px; }
+    .lock-features {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 18px 20px; text-align: left; margin-bottom: 24px;
+    }
+    .lock-feat-ttl { font-size: 11px; font-weight: 900; color: #a78bfa; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+    .lock-feat-item { font-size: 13px; font-weight: 700; color: #c4b5fd; margin-bottom: 8px; display: flex; gap: 8px; }
+
+    /* hidden */
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <h1>Quest 体験版</h1>
-    <p>体験版ページです。製品版はこちらから購入できます。</p>
-    <a class="btn" href="https://buy.stripe.com/fZu7sN5EW1aa96Gfcz73G08" target="_blank">製品版を購入する</a><br>
-    <a class="back" href="./index.html">LPに戻る</a>
+
+<!-- 体験版バナー -->
+<div class="taiken-banner">
+  ⚠️ これは<strong>体験版</strong>です　／　一部機能はロックされています
+</div>
+
+<!-- ヘッダー -->
+<div class="hd">
+  <div class="hd-inner">
+    <div class="hd-icon">🗡️</div>
+    <div class="hd-info">
+      <div class="hd-label">【体験版】ライフ・クエスト・ボード</div>
+      <div class="hd-rank" id="rankName">みならいぼうけんしゃ</div>
+      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%;background:linear-gradient(90deg,#94a3b8,#fff)"></div></div>
+    </div>
+    <div class="hd-xp"><span id="xpVal">0</span><small>XP</small></div>
   </div>
 </div>
+
+<!-- タブ -->
+<div class="tabs">
+  <div class="tabs-inner">
+    <button class="tab-btn active" id="tab-board" onclick="switchTab('board')">🗺️ クエスト</button>
+    <button class="tab-btn locked" id="tab-hero"  onclick="switchTab('hero')">🧝 ヒーロー 🔒</button>
+    <button class="tab-btn locked" id="tab-shop"  onclick="switchTab('shop')">🏪 ショップ 🔒</button>
+  </div>
+</div>
+
+<!-- BOARD -->
+<div class="content" id="page-board">
+
+  <!-- 進行状況 -->
+  <div class="progress-box">
+    <div class="progress-emoji" id="progressEmoji">⚔️</div>
+    <div class="progress-info">
+      <div class="progress-label" id="progressLabel">朝のミッション 0 / 4</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <button class="reset-btn" onclick="resetDay()">リセット</button>
+  </div>
+
+  <!-- 朝ミッション（体験版: 4つ動作） -->
+  <div class="section-title">🌅 あさのミッション</div>
+  <div class="quest-grid" id="questGrid">
+    <!-- JSで挿入 -->
+  </div>
+
+  <!-- ひるミッション ロック -->
+  <div class="section-title locked-title">☀️ ひるのミッション　<span style="font-size:12px">🔒 製品版</span></div>
+  <div class="locked-section">🔒 製品版で解放されます（3クエスト）</div>
+
+  <!-- よるミッション ロック -->
+  <div class="section-title locked-title">🌙 よるのミッション　<span style="font-size:12px">🔒 製品版</span></div>
+  <div class="locked-section">🔒 製品版で解放されます（4クエスト）</div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <div class="cta-eyebrow">＼ フル機能はこちら ／</div>
+    <div class="cta-text">ひる・よるのミッション<br>ヒーロー育成・ショップ機能<br>すべて使い放題</div>
+    <a class="cta-btn" href="https://buy.stripe.com/fZu7sN5EWlaa9G6G373G08" target="_blank">ライフ・クエスト・ボードを購入する →</a>
+  </div>
+</div>
+
+<!-- HERO ロック -->
+<div class="content hidden" id="page-hero">
+  <div class="lock-page">
+    <div class="lock-big">🔒</div>
+    <div class="lock-ttl">🧝 ヒーローページは製品版で解放されます</div>
+    <div class="lock-sub">クエストをクリアしてXPを貯め、ヒーローを育てる機能です。</div>
+    <div class="lock-features">
+      <div class="lock-feat-ttl">製品版で使える機能</div>
+      <div class="lock-feat-item">✔ ランクアップでヒーローが成長</div>
+      <div class="lock-feat-item">✔ ステータス（XP・コイン・クリア数）</div>
+      <div class="lock-feat-item">✔ ゲットしたアイテムを装備</div>
+      <div class="lock-feat-item">✔ 全6段階のランク解放</div>
+    </div>
+    <div class="cta-block">
+      <div class="cta-eyebrow">＼ フル機能はこちら ／</div>
+      <div class="cta-text">ヒーロー育成・ショップ・全12クエスト<br>すべて使い放題</div>
+      <a class="cta-btn" href="https://buy.stripe.com/fZu7sN5EWlaa9G6G373G08" target="_blank">ライフ・クエスト・ボードを購入する →</a>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP ロック -->
+<div class="content hidden" id="page-shop">
+  <div class="lock-page">
+    <div class="lock-big">🔒</div>
+    <div class="lock-ttl">🏪 ショップ機能は製品版限定です</div>
+    <div class="lock-sub">クエストで貯めたコインでアイテムを購入し、ヒーローを装備できます。</div>
+    <div class="lock-features">
+      <div class="lock-feat-ttl">製品版で使える機能</div>
+      <div class="lock-feat-item">✔ 8種類のアイテム（剣・盾・王冠など）</div>
+      <div class="lock-feat-item">✔ コインでアイテムを購入</div>
+      <div class="lock-feat-item">✔ ヒーローに装備してカスタマイズ</div>
+      <div class="lock-feat-item">✔ レアアイテムを目指してモチベUP</div>
+    </div>
+    <div class="cta-block">
+      <div class="cta-eyebrow">＼ フル機能はこちら ／</div>
+      <div class="cta-text">ヒーロー育成・ショップ・全12クエスト<br>すべて使い放題</div>
+      <a class="cta-btn" href="https://buy.stripe.com/fZu7sN5EW1aa96Gfcz73G08" target="_blank">ライフ・クエスト・ボードを購入する →</a>
+    </div>
+  </div>
+</div>
+
+<!-- コンフェッティコンテナ -->
+<div id="confetti-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9997;"></div>
+<!-- XPトースト -->
+<div class="xp-toast hidden" id="xpToast"></div>
+
+<script>
+  // ── データ ──
+  var QUESTS = [
+    { id:"teeth",     icon:"🦷", label:"歯みがき",  xp:20 },
+    { id:"wash",      icon:"🧼", label:"てあらい",  xp:15 },
+    { id:"dress",     icon:"👕", label:"きがえ",    xp:25 },
+    { id:"breakfast", icon:"🍚", label:"ごはん",    xp:30 },
+  ];
+
+  var RANKS = [
+    { name:"みならいぼうけんしゃ", min:0,   color:"#94a3b8" },
+    { name:"みならいきし",         min:50,  color:"#a78bfa" },
+    { name:"ゆうかんなきし",       min:90,  color:"#60a5fa" },
+    { name:"でんせつのゆうしゃ",   min:300, color:"#fbbf24" },
+  ];
+
+  var CONFETTI_COLORS = ["#fbbf24","#f87171","#34d399","#60a5fa","#a78bfa","#fb923c"];
+
+  // ── 状態 ──
+  var completed = [];
+  var totalXP   = 0;
+
+  // ── 初期描画 ──
+  renderQuests();
+  updateHeader();
+
+  function renderQuests() {
+    var grid = document.getElementById("questGrid");
+    grid.innerHTML = "";
+    QUESTS.forEach(function(q) {
+      var done = completed.indexOf(q.id) !== -1;
+      var card = document.createElement("div");
+      card.className = "quest-card" + (done ? " done" : "");
+      card.innerHTML =
+        '<div class="quest-icon">' + q.icon + '</div>' +
+        '<div class="quest-label">' + q.label + '</div>' +
+        '<div class="quest-xp">' + (done ? "✅ クリア！" : "+" + q.xp + " XP") + '</div>';
+      if (!done) {
+        card.addEventListener("click", function() { completeQuest(q); });
+      }
+      grid.appendChild(card);
+    });
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var done = completed.length;
+    var total = QUESTS.length;
+    var all = done === total;
+    document.getElementById("progressEmoji").textContent = all ? "🏆" : "⚔️";
+    document.getElementById("progressLabel").textContent = all
+      ? "朝のミッション全クリア！ すごい！"
+      : "朝のミッション " + done + " / " + total;
+    document.getElementById("progressFill").style.width = ((done / total) * 100) + "%";
+  }
+
+  function updateHeader() {
+    var rank = getRank(totalXP);
+    var next = getNextRank(totalXP);
+    var pct  = next
+      ? Math.round(((totalXP - rank.min) / (next.min - rank.min)) * 100)
+      : 100;
+    document.getElementById("rankName").textContent = rank.name;
+    document.getElementById("rankName").style.color  = rank.color;
+    document.getElementById("xpFill").style.width    = pct + "%";
+    document.getElementById("xpFill").style.background = "linear-gradient(90deg," + rank.color + ",#fff)";
+    document.getElementById("xpVal").textContent = totalXP;
+  }
+
+  function getRank(xp) {
+    var rank = RANKS[0];
+    RANKS.forEach(function(r) { if (xp >= r.min) rank = r; });
+    return rank;
+  }
+  function getNextRank(xp) {
+    for (var i = 0; i < RANKS.length; i++) {
+      if (xp < RANKS[i].min) return RANKS[i];
+    }
+    return null;
+  }
+
+  function completeQuest(quest) {
+    if (completed.indexOf(quest.id) !== -1) return;
+    completed.push(quest.id);
+    totalXP += quest.xp;
+    showToast("+" + quest.xp + " XP！");
+    fireConfetti();
+    renderQuests();
+    updateHeader();
+  }
+
+  function resetDay() {
+    if (window.confirm("今日のクエストをリセットしますか？")) {
+      completed = [];
+      renderQuests();
+    }
+  }
+
+  // ── タブ切り替え ──
+  function switchTab(name) {
+    ["board","hero","shop"].forEach(function(n) {
+      document.getElementById("page-" + n).classList.toggle("hidden", n !== name);
+      var btn = document.getElementById("tab-" + n);
+      btn.classList.toggle("active", n === name);
+    });
+  }
+
+  // ── XPトースト ──
+  function showToast(msg) {
+    var el = document.getElementById("xpToast");
+    el.textContent = msg;
+    el.classList.remove("hidden");
+    setTimeout(function() { el.classList.add("hidden"); }, 1700);
+  }
+
+  // ── コンフェッティ ──
+  function fireConfetti() {
+    var container = document.getElementById("confetti-container");
+    container.innerHTML = "";
+    for (var i = 0; i < 24; i++) {
+      var dot = document.createElement("div");
+      dot.style.cssText =
+        "position:absolute;top:-20px;" +
+        "left:" + ((i * 4.2) % 100) + "%;" +
+        "width:10px;height:10px;border-radius:2px;" +
+        "background:" + CONFETTI_COLORS[i % 6] + ";" +
+        "animation:fall" + (i % 4) + " " + (0.9 + (i % 4) * 0.2) + "s ease-in forwards;" +
+        "animation-delay:" + ((i % 5) * 0.1) + "s;" +
+        "transform:rotate(" + (i * 15) + "deg);";
+      container.appendChild(dot);
+    }
+    setTimeout(function() { container.innerHTML = ""; }, 2000);
+  }
+</script>
 </body>
 </html>
