@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ここログ｜チームをそっと支える対話記録</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════ TOKENS ══════════ */
+    :root {
+      --paper:     #faf7f2;
+      --paper2:    #f3ede0;
+      --paper3:    #e8dfcc;
+      --warm-wh:   #fffef9;
+
+      --ink:       #2c2318;
+      --ink2:      #5a4a38;
+      --ink3:      #9a8878;
+      --ink4:      #c8b89a;
+      --ink5:      #e0d4c0;
+
+      --sage:      #5a7a5a;
+      --sage2:     #789a78;
+      --sage3:     #9ab89a;
+      --sage-lt:   #e8f0e8;
+
+      --blush:     #c87880;
+      --blush2:    #d89098;
+      --blush-lt:  #f8eced;
+
+      --amber:     #b8781a;
+      --amber2:    #d89030;
+      --amber-lt:  #fdf3e0;
+
+      --sky:       #5878a0;
+      --sky-lt:    #e0eaf5;
+
+      --lavender:  #8878a8;
+      --lav-lt:    #ede8f5;
+
+      --border:    rgba(44,35,24,0.13);
+      --shadow-sm: 0 2px 8px rgba(44,35,24,0.07);
+      --shadow:    0 4px 20px rgba(44,35,24,0.10);
+      --shadow-lg: 0 10px 48px rgba(44,35,24,0.14);
+
+      /* ユーザー設定 */
+      --theme-main: var(--sage);
+      --theme-lt:   var(--sage-lt);
+      --r-xl:26px; --r-lg:18px; --r-md:12px; --r-sm:7px;
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+
+    body{
+      font-family:'Zen Kaku Gothic New',sans-serif;
+      background:var(--paper);color:var(--ink);
+      min-height:100vh;overflow-x:hidden;position:relative;
+    }
+
+    /* 和紙テクスチャ背景 */
+    body::before{
+      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:
+        radial-gradient(ellipse 65% 55% at 5%  5%,  rgba(90,122,90,0.08),  transparent 55%),
+        radial-gradient(ellipse 50% 45% at 95% 20%,  rgba(184,120,128,0.07), transparent 55%),
+        radial-gradient(ellipse 45% 40% at 50% 95%,  rgba(184,120,26,0.06),  transparent 55%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+    }
+    body::after{content:'';position:fixed;inset:10px;z-index:0;pointer-events:none;border:1.5px solid rgba(44,35,24,0.08);border-radius:20px;}
+
+    /* ══════════ LAYOUT ══════════ */
+    .page{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:0 18px 100px;}
+
+
+    /* ── 初回ガイド ── */
+    #welcomeGuide{
+      position:fixed;inset:0;z-index:9999;
+      background:rgba(44,35,24,0.55);
+      display:flex;align-items:center;justify-content:center;
+      padding:24px;
+    }
+    .guide-card{
+      background:var(--warm-wh);
+      border-radius:var(--r-xl);
+      padding:36px 28px 30px;
+      max-width:440px;width:100%;
+      box-shadow:var(--shadow-lg);
+      position:relative;overflow:hidden;
+      animation:card-pop 0.45s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes card-pop{from{transform:scale(0.92) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+    .guide-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--sage),var(--sage2),#9ab89a,var(--sage2),var(--sage));border-radius:var(--r-xl) var(--r-xl) 0 0;}
+    .guide-icon{font-size:2.8rem;text-align:center;display:block;margin-bottom:12px;}
+    .guide-title{font-family:'Kaisei Tokumin',serif;font-size:1.25rem;font-weight:700;color:var(--ink);text-align:center;margin-bottom:8px;}
+    .guide-body{font-size:0.82rem;color:var(--ink2);line-height:1.9;margin-bottom:18px;}
+    .guide-checks{list-style:none;margin-bottom:20px;display:flex;flex-direction:column;gap:8px;}
+    .guide-checks li{display:flex;align-items:flex-start;gap:8px;font-size:0.82rem;color:var(--ink2);line-height:1.6;}
+    .guide-checks li .ico{color:var(--sage);flex-shrink:0;margin-top:1px;}
+    .guide-skip-wrap{display:flex;align-items:center;gap:8px;margin-top:12px;justify-content:center;}
+    .guide-skip-wrap label{font-size:0.72rem;color:var(--ink4);cursor:pointer;}
+
+    /* ══════════ SETUP SCREEN ══════════ */
+    #setupScreen{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:32px 18px;
+    }
+    .setup-card{
+      background:var(--warm-wh);
+      border:1.5px solid var(--border);
+      border-radius:var(--r-xl);
+      padding:40px 32px 36px;
+      width:100%;max-width:460px;
+      box-shadow:var(--shadow-lg);
+      position:relative;overflow:hidden;
+    }
+    .setup-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--sage),var(--sage2),var(--blush2),var(--sage2),var(--sage));border-radius:var(--r-xl) var(--r-xl) 0 0;}
+
+    .setup-icon{font-size:3rem;display:block;text-align:center;margin-bottom:14px;}
+    .setup-title{font-family:'Kaisei Tokumin',serif;font-size:1.5rem;font-weight:700;color:var(--ink);text-align:center;margin-bottom:6px;}
+    .setup-sub{font-size:0.82rem;color:var(--ink3);text-align:center;line-height:1.8;margin-bottom:28px;}
+
+    .setup-section{margin-bottom:20px;}
+    .setup-section-label{
+      font-family:'DM Mono',monospace;
+      font-size:0.6rem;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;
+      color:var(--ink4);margin-bottom:10px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .setup-section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    /* テーマカラー選択 */
+    .theme-picks{display:flex;gap:8px;flex-wrap:wrap;}
+    .theme-pick{
+      width:36px;height:36px;border-radius:99px;border:3px solid transparent;
+      cursor:pointer;transition:transform 0.15s,border-color 0.15s;
+      position:relative;
+    }
+    .theme-pick:hover{transform:scale(1.12);}
+    .theme-pick.active{border-color:var(--ink);}
+    .theme-pick.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#fff;font-weight:700;}
+
+    /* フォーム共通 */
+    .form-row{margin-bottom:14px;}
+    .form-label{display:block;font-size:0.78rem;font-weight:700;color:var(--ink2);margin-bottom:6px;}
+    .form-label .hint{font-size:0.68rem;font-weight:400;color:var(--ink4);margin-left:6px;}
+    .form-input,.form-select,.form-textarea{
+      width:100%;padding:11px 14px;
+      border:1.5px solid var(--border);border-radius:var(--r-md);
+      font-family:'Zen Kaku Gothic New',sans-serif;
+      font-size:0.9rem;font-weight:500;
+      color:var(--ink);background:rgba(255,255,255,0.75);
+      outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+    }
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--theme-main);box-shadow:0 0 0 3px rgba(90,122,90,0.12);}
+    .form-textarea{min-height:80px;resize:vertical;line-height:1.65;}
+
+    /* ボタン共通 */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:7px;
+      padding:12px 22px;border-radius:var(--r-md);border:1.5px solid transparent;
+      font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.88rem;font-weight:700;
+      cursor:pointer;transition:all 0.16s cubic-bezier(.34,1.4,.64,1);
+      text-decoration:none;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+    .btn:active{transform:scale(0.98);}
+    .btn-primary{background:var(--sage);color:#fff;border-color:var(--sage);box-shadow:0 3px 14px rgba(90,122,90,0.28);}
+    .btn-primary:hover{background:var(--sage2);}
+    .btn-secondary{background:rgba(255,255,255,0.7);color:var(--ink2);border-color:var(--border);}
+    .btn-danger{background:var(--blush-lt);color:var(--blush);border-color:rgba(200,120,128,0.3);}
+    .btn-full{width:100%;}
+    .btn-sm{padding:8px 14px;font-size:0.78rem;}
+    .btn-amber{background:var(--amber);color:#fff;border-color:var(--amber);box-shadow:0 3px 14px rgba(184,120,26,0.28);}
+    .btn-amber:hover{background:var(--amber2);}
+
+    /* ══════════ MAIN APP ══════════ */
+    #mainApp{display:none;}
+
+    /* サイトヘッダー */
+    .site-header{
+      padding:24px 0 18px;
+      display:flex;justify-content:space-between;align-items:flex-start;
+      border-bottom:1px solid var(--border);margin-bottom:24px;
+    }
+    .header-brand{}
+    .brand-name{
+      font-family:'Kaisei Tokumin',serif;
+      font-size:1.3rem;font-weight:700;color:var(--ink);
+      display:flex;align-items:center;gap:8px;
+    }
+    .brand-dot{
+      width:10px;height:10px;border-radius:99px;
+      background:var(--theme-main);
+      display:inline-block;
+    }
+    .brand-sub{font-size:0.7rem;color:var(--ink4);margin-top:2px;}
+    .user-chip{
+      background:var(--theme-lt);
+      border:1px solid rgba(90,122,90,0.2);
+      border-radius:99px;padding:5px 12px;
+      font-size:0.72rem;font-weight:700;color:var(--sage);
+      display:flex;align-items:center;gap:5px;
+    }
+
+    /* タブナビ */
+    .tab-nav{
+      display:flex;gap:6px;margin-bottom:22px;
+      background:rgba(255,255,255,0.5);
+      border:1.5px solid var(--border);
+      border-radius:var(--r-lg);padding:5px;
+    }
+    .tab-btn{
+      flex:1;padding:9px 8px;border-radius:var(--r-md);
+      font-family:'Zen Kaku Gothic New',sans-serif;
+      font-size:0.78rem;font-weight:700;
+      border:none;background:none;color:var(--ink3);cursor:pointer;
+      transition:all 0.18s;
+    }
+    .tab-btn.active{background:var(--warm-wh);color:var(--ink);box-shadow:var(--shadow-sm);border:1.5px solid var(--border);}
+
+    /* タブパネル */
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    /* ── カード共通 ── */
+    .card{
+      background:var(--warm-wh);
+      border:1.5px solid var(--border);
+      border-radius:var(--r-xl);
+      padding:24px 22px;
+      box-shadow:var(--shadow-sm);
+      margin-bottom:16px;
+      position:relative;overflow:hidden;
+    }
+    .card-title{
+      font-family:'Kaisei Tokumin',serif;
+      font-size:1rem;font-weight:700;color:var(--ink);
+      margin-bottom:16px;display:flex;align-items:center;gap:8px;
+    }
+
+    /* ── 記録フォーム ── */
+    .status-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+    .status-chip{
+      padding:6px 14px;border-radius:99px;
+      font-size:0.75rem;font-weight:700;
+      border:1.5px solid transparent;cursor:pointer;
+      transition:all 0.15s;
+    }
+    .status-chip:hover{transform:scale(1.04);}
+    .status-chip.active{box-shadow:0 2px 8px rgba(0,0,0,0.12);}
+    .sc-genki  {background:var(--sage-lt);color:var(--sage);border-color:rgba(90,122,90,0.3);}
+    .sc-tired  {background:var(--amber-lt);color:var(--amber);border-color:rgba(184,120,26,0.3);}
+    .sc-flat   {background:var(--blush-lt);color:var(--blush);border-color:rgba(200,120,128,0.3);}
+    .sc-unknown{background:var(--paper2);color:var(--ink3);border-color:var(--border);}
+    .sc-genki.active  {background:var(--sage);color:#fff;}
+    .sc-tired.active  {background:var(--amber);color:#fff;}
+    .sc-flat.active   {background:var(--blush);color:#fff;}
+    .sc-unknown.active{background:var(--ink3);color:#fff;}
+
+    .form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+
+    /* ── 記録リスト ── */
+    .entry-list{display:flex;flex-direction:column;gap:12px;}
+    .entry-card{
+      background:var(--warm-wh);
+      border:1.5px solid var(--border);
+      border-radius:var(--r-xl);
+      padding:18px 20px 16px;
+      position:relative;overflow:hidden;
+      box-shadow:var(--shadow-sm);
+      animation:fade-up 0.4s ease both;
+    }
+    @keyframes fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .entry-stripe{position:absolute;left:0;top:10%;bottom:10%;width:4px;border-radius:0 99px 99px 0;}
+    .es-genki  {background:var(--sage);}
+    .es-tired  {background:var(--amber);}
+    .es-flat   {background:var(--blush);}
+    .es-unknown{background:var(--ink4);}
+
+    .entry-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+    .entry-name{font-family:'Kaisei Tokumin',serif;font-size:1rem;font-weight:700;color:var(--ink);}
+    .entry-date{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--ink4);}
+    .entry-status-badge{
+      display:inline-flex;align-items:center;gap:4px;
+      font-size:0.68rem;font-weight:700;
+      padding:3px 10px;border-radius:99px;
+      margin-bottom:8px;
+    }
+    .eb-genki  {background:var(--sage-lt);color:var(--sage);}
+    .eb-tired  {background:var(--amber-lt);color:var(--amber);}
+    .eb-flat   {background:var(--blush-lt);color:var(--blush);}
+    .eb-unknown{background:var(--paper2);color:var(--ink3);}
+
+    .entry-body{font-size:0.82rem;color:var(--ink2);line-height:1.7;}
+    .entry-body strong{color:var(--ink3);font-size:0.7rem;display:block;margin-top:8px;margin-bottom:2px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;}
+    .entry-del{position:absolute;top:12px;right:14px;background:none;border:none;font-size:0.75rem;color:var(--ink5);cursor:pointer;padding:4px;}
+    .entry-del:hover{color:var(--blush);}
+
+    /* ── 気づきパネル ── */
+    .insight-card{
+      background:linear-gradient(145deg,var(--sage-lt),rgba(232,240,232,0.6));
+      border:1.5px solid rgba(90,122,90,0.2);
+      border-radius:var(--r-xl);
+      padding:22px 22px 18px;
+      margin-bottom:16px;
+    }
+    .insight-title{font-family:'Kaisei Tokumin',serif;font-size:0.95rem;font-weight:700;color:var(--sage);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+    .insight-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:0.82rem;}
+    .insight-dot{width:9px;height:9px;border-radius:99px;flex-shrink:0;}
+    .insight-empty{font-size:0.82rem;color:var(--ink4);text-align:center;padding:16px 0;}
+
+    /* ステータス分布バー */
+    .dist-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;gap:2px;margin-bottom:12px;}
+    .dist-seg{border-radius:99px;transition:flex 0.4s ease;}
+
+    /* ── 安心カードプレビュー ── */
+    .trust-card{
+      background:var(--warm-wh);
+      border:1.5px dashed var(--border);
+      border-radius:var(--r-lg);
+      padding:20px 18px;
+      font-size:0.82rem;color:var(--ink2);line-height:1.85;
+    }
+    .trust-card-title{font-family:'Kaisei Tokumin',serif;font-size:0.95rem;font-weight:700;color:var(--sage);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+    .trust-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;}
+    .trust-check{color:var(--sage);flex-shrink:0;margin-top:1px;}
+
+    /* ── 設定パネル ── */
+    .settings-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);}
+    .settings-label{font-size:0.85rem;font-weight:700;color:var(--ink2);}
+    .settings-value{font-size:0.82rem;color:var(--ink4);}
+
+    /* ── 空リスト ── */
+    .empty-state{text-align:center;padding:40px 20px;color:var(--ink4);}
+    .empty-icon{font-size:2.5rem;margin-bottom:10px;}
+    .empty-text{font-size:0.84rem;line-height:1.8;}
+
+    /* ── フィルター ── */
+    .filter-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+    .filter-chip{
+      padding:5px 12px;border-radius:99px;border:1.5px solid var(--border);
+      font-size:0.72rem;font-weight:700;background:rgba(255,255,255,0.6);
+      color:var(--ink3);cursor:pointer;transition:all 0.14s;
+    }
+    .filter-chip:hover{border-color:var(--sage);color:var(--sage);}
+    .filter-chip.active{background:var(--sage);color:#fff;border-color:var(--sage);}
+
+    /* ── 検索 ── */
+    .search-wrap{position:relative;margin-bottom:14px;}
+    .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:0.9rem;color:var(--ink4);}
+    .search-input{width:100%;padding:10px 14px 10px 34px;border:1.5px solid var(--border);border-radius:var(--r-md);font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.85rem;color:var(--ink);background:rgba(255,255,255,0.7);outline:none;transition:border-color 0.2s;}
+    .search-input:focus{border-color:var(--sage);}
+
+    /* ── トースト ── */
+    #toast{
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+      background:var(--ink);color:#fff;padding:11px 22px;border-radius:99px;
+      font-size:0.82rem;font-weight:700;
+      transition:transform 0.3s cubic-bezier(.34,1.4,.64,1);
+      z-index:9999;white-space:nowrap;
+    }
+    #toast.show{transform:translateX(-50%) translateY(0);}
+
+    /* ── 印刷 ── */
+    @media print{
+      body{background:white!important;}
+      #mainApp,.site-header,.tab-nav{display:none!important;}
+      #printArea{display:block!important;}
+    }
+    #printArea{display:none;}
+
+    /* レスポンシブ */
+    @media(max-width:480px){
+      .card{padding:18px 16px;}
+      .setup-card{padding:30px 20px 26px;}
+      .form-actions{flex-direction:column;}
+      .form-actions .btn{width:100%;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ 初回ガイドオーバーレイ ══════════ -->
+<div id="welcomeGuide" style="display:none">
+  <div class="guide-card">
+    <span class="guide-icon">🌿</span>
+    <h2 class="guide-title">このツールについて</h2>
+    <p class="guide-body">
+      <strong id="guideUserName">あなた</strong>が使うこの「ここログ」は、<br>
+      <strong id="guideTeam">チームのみなさん</strong>をそっと気にかけるための<br>
+      対話記録ツールです。
+    </p>
+    <ul class="guide-checks">
+      <li><span class="ico">✔</span><span>話してくれた内容は、サポート目的のみで使います</span></li>
+      <li><span class="ico">✔</span><span>評価・査定には一切使われません</span></li>
+      <li><span class="ico">✔</span><span>記録はこの端末にのみ保存されます</span></li>
+      <li><span class="ico">✔</span><span>話したくないことは、無理に話さなくて大丈夫です</span></li>
+    </ul>
+    <button class="btn btn-primary btn-full" onclick="closeGuide()">わかりました、はじめます 🌱</button>
+    <div class="guide-skip-wrap">
+      <input type="checkbox" id="guideSkipCheck" onchange="skipGuideForever(this)">
+      <label for="guideSkipCheck">今後この説明は表示しない</label>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ セットアップ画面 ══════════ -->
+<div id="setupScreen">
+  <div class="setup-card">
+    <span class="setup-icon">🌿</span>
+    <h1 class="setup-title">ここログへようこそ</h1>
+    <p class="setup-sub">
+      チームのメンバーをそっと気にかける<br>
+      シンプルな対話記録ツールです。<br>
+      まず、あなたの情報を教えてください。
+    </p>
+
+    <div class="setup-section">
+      <div class="setup-section-label">あなたについて</div>
+      <div class="form-row">
+        <label class="form-label">あなたのお名前<span class="hint">（例：佐藤）</span></label>
+        <input class="form-input" id="setupMyName" placeholder="例：田中さつき" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">あなたの役割・立場<span class="hint">（自由に入力できます）</span></label>
+        <input class="form-input" id="setupMyRole" placeholder="例：チームリーダー / 先輩スタッフ / 復帰組 等" />
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-section-label">チームについて</div>
+      <div class="form-row">
+        <label class="form-label">チーム名・部署名<span class="hint">（任意）</span></label>
+        <input class="form-input" id="setupTeamName" placeholder="例：午前チーム / 営業2課 / 子育てフレックス班 等" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">気にかける相手の呼び方<span class="hint">（複数可）</span></label>
+        <input class="form-input" id="setupMemberLabel" placeholder="例：スタッフ / メンバー / 仲間 / 同僚" />
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-section-label">テーマカラー</div>
+      <div class="theme-picks" id="themePicks">
+        <div class="theme-pick active" data-color="#5a7a5a" data-lt="#e8f0e8" style="background:#5a7a5a" title="セージグリーン"></div>
+        <div class="theme-pick" data-color="#8878a8" data-lt="#ede8f5" style="background:#8878a8" title="ラベンダー"></div>
+        <div class="theme-pick" data-color="#5878a0" data-lt="#e0eaf5" style="background:#5878a0" title="スチールブルー"></div>
+        <div class="theme-pick" data-color="#c87880" data-lt="#f8eced" style="background:#c87880" title="ローズ"></div>
+        <div class="theme-pick" data-color="#b8781a" data-lt="#fdf3e0" style="background:#b8781a" title="アンバー"></div>
+        <div class="theme-pick" data-color="#7a9878" data-lt="#e8f2e8" style="background:#7a9878" title="フレッシュグリーン"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="startApp()" style="margin-top:24px">
+      🌱 はじめる
+    </button>
+    <p style="font-size:0.68rem;color:var(--ink4);text-align:center;margin-top:10px;line-height:1.7;">
+      ※ 入力した情報はこの端末のみに保存されます<br>外部に送信されることはありません
+    </p>
+  </div>
+</div>
+
+<!-- ══════════ メインアプリ ══════════ -->
+<div id="mainApp">
+<div class="page">
+
+  <!-- サイトヘッダー -->
+  <header class="site-header">
+    <div class="header-brand">
+      <div class="brand-name">
+        <span class="brand-dot"></span>
+        ここログ
+      </div>
+      <div class="brand-sub" id="headerTeam">チーム</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="user-chip" id="headerUser">🌿 あなた</div>
+      <button class="btn btn-secondary btn-sm" onclick="showSettings()">⚙️</button>
+    </div>
+  </header>
+
+  <!-- タブナビ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('record')">✏️ 記録する</button>
+    <button class="tab-btn" onclick="switchTab('list')">📋 一覧</button>
+    <button class="tab-btn" onclick="switchTab('insight')">💡 気づき</button>
+    <button class="tab-btn" onclick="switchTab('guide')">🤝 共有カード</button>
+  </nav>
+
+  <!-- ── TAB: 記録 ── -->
+  <div id="tab-record" class="tab-panel active">
+    <div class="card">
+      <div class="card-title">🌿 今日の対話を記録する</div>
+
+      <div class="form-row">
+        <label class="form-label">日付</label>
+        <input class="form-input" type="date" id="fDate" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" id="memberLabel">相手の名前</label>
+        <input class="form-input" id="fName" placeholder="例：山田さん" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">今日の様子</label>
+        <div class="status-chips">
+          <div class="status-chip sc-genki active"  data-val="元気"     onclick="selectStatus(this)">😊 元気</div>
+          <div class="status-chip sc-tired"          data-val="疲れている" onclick="selectStatus(this)">😔 疲れている</div>
+          <div class="status-chip sc-flat"            data-val="表情が乏しい" onclick="selectStatus(this)">😶 表情が乏しい</div>
+          <div class="status-chip sc-unknown"        data-val="わからない" onclick="selectStatus(this)">🤔 わからない</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">話した内容<span class="hint">（任意）</span></label>
+        <textarea class="form-textarea" id="fTopic" placeholder="仕事のこと、家のこと、体調のこと — 書ける範囲で"></textarea>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">あなたが感じたこと<span class="hint">（任意）</span></label>
+        <textarea class="form-textarea" id="fReflection" placeholder="少し元気がない気がした、嬉しそうだった… など"></textarea>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">次のアクション<span class="hint">（任意）</span></label>
+        <input class="form-input" id="fAction" placeholder="例：来週また声をかける / 上に相談する" />
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="saveRecord()" style="flex:1">✏️ 記録する</button>
+        <button class="btn btn-secondary" onclick="clearForm()">クリア</button>
+      </div>
+    </div>
+
+    <!-- 最近の記録プレビュー（最新3件） -->
+    <div class="card-title" style="margin-left:4px;margin-top:8px">📋 最近の記録</div>
+    <div id="recentList" class="entry-list"></div>
+  </div>
+
+  <!-- ── TAB: 一覧 ── -->
+  <div id="tab-list" class="tab-panel">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="名前やキーワードで検索" oninput="renderList()">
+    </div>
+    <div class="filter-bar">
+      <div class="filter-chip active" data-filter="all" onclick="setFilter(this)">すべて</div>
+      <div class="filter-chip" data-filter="元気" onclick="setFilter(this)">😊 元気</div>
+      <div class="filter-chip" data-filter="疲れている" onclick="setFilter(this)">😔 疲れている</div>
+      <div class="filter-chip" data-filter="表情が乏しい" onclick="setFilter(this)">😶 表情が乏しい</div>
+      <div class="filter-chip" data-filter="わからない" onclick="setFilter(this)">🤔 わからない</div>
+    </div>
+    <div id="fullList" class="entry-list"></div>
+    <div style="text-align:right;margin-top:16px;">
+      <button class="btn btn-secondary btn-sm" onclick="downloadCSV()">📥 CSVで保存</button>
+    </div>
+  </div>
+
+  <!-- ── TAB: 気づき ── -->
+  <div id="tab-insight" class="tab-panel">
+    <div class="insight-card">
+      <div class="insight-title">📊 全体の様子</div>
+      <div class="dist-bar" id="distBar"></div>
+      <div id="insightRows"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💬 フォローアップ候補</div>
+      <div id="followUpList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📅 最後に記録した日から時間が経っている方</div>
+      <div id="staleList"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: 共有カード ── -->
+  <div id="tab-guide" class="tab-panel">
+    <div class="card">
+      <div class="card-title">🤝 相手に渡せる「安心カード」</div>
+      <p style="font-size:0.8rem;color:var(--ink3);margin-bottom:16px;line-height:1.75;">
+        「なぜ声をかけてくるの？」と思われないよう、<br>
+        このカードを最初に渡すと関係がスムーズになります。
+      </p>
+      <div class="trust-card" id="trustCardPreview">
+        <!-- JS生成 -->
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="printTrustCard()">🖨️ 印刷する</button>
+        <button class="btn btn-secondary" onclick="copyTrustCard()">📋 テキストをコピー</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✏️ カードの文章をカスタマイズ</div>
+      <div class="form-row">
+        <label class="form-label">カードのタイトル</label>
+        <input class="form-input" id="cardTitle" value="あなたのことを気にかけています" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">一言メッセージ</label>
+        <textarea class="form-textarea" id="cardMessage" style="min-height:70px">ちょっとした声かけをしているのは、評価のためではありません。あなたが毎日を少しでもラクに過ごせるよう、そっと気にかけていたいと思っているからです。</textarea>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="updateTrustCard()">カードを更新する</button>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</div><!-- /mainApp -->
+
+<!-- 設定モーダル -->
+<div id="settingsModal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(44,35,24,0.5);display:none;align-items:center;justify-content:center;padding:20px;">
+  <div class="setup-card" style="max-width:420px;max-height:90vh;overflow-y:auto;">
+    <h2 class="setup-title" style="font-size:1.1rem;text-align:left;margin-bottom:20px;">⚙️ 設定</h2>
+    <div class="settings-row">
+      <span class="settings-label">名前</span>
+      <span class="settings-value" id="setMyName"></span>
+    </div>
+    <div class="settings-row">
+      <span class="settings-label">役割</span>
+      <span class="settings-value" id="setMyRole"></span>
+    </div>
+    <div class="settings-row">
+      <span class="settings-label">チーム</span>
+      <span class="settings-value" id="setTeamName"></span>
+    </div>
+    <div class="settings-row" style="border:none">
+      <span class="settings-label">記録件数</span>
+      <span class="settings-value" id="setRecordCount"></span>
+    </div>
+    <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-secondary btn-full" onclick="hideSettings()">閉じる</button>
+      <button class="btn btn-danger btn-full btn-sm" onclick="resetApp()">🗑️ データをすべて削除してリセット</button>
+    </div>
+  </div>
+</div>
+
+<!-- トースト -->
+<div id="toast">保存しました</div>
+
+<!-- 印刷エリア -->
+<div id="printArea"></div>
+
+<script>
+/* ══════════ STATE ══════════ */
+var STATE = {
+  myName: '', myRole: '', teamName: '', memberLabel: 'メンバー',
+  themeColor: '#5a7a5a', themeLt: '#e8f0e8',
+  cardTitle: 'あなたのことを気にかけています',
+  cardMessage: 'ちょっとした声かけをしているのは、評価のためではありません。あなたが毎日を少しでもラクに過ごせるよう、そっと気にかけていたいと思っているからです。',
+  records: []
+};
+
+var STORAGE_KEY = 'kokoLog_v2';
+
+/* ── ロード ── */
+(function(){
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      STATE = Object.assign(STATE, JSON.parse(saved));
+      if (STATE.myName) {
+        startApp(true);
+        // 初回ガイド表示
+        if (localStorage.getItem('kokoLog_guideSkip') !== '1') {
+          setTimeout(function(){
+            var g = document.getElementById('welcomeGuide');
+            if (g) { updateGuideText(); g.style.display = 'flex'; }
+          }, 600);
+        }
+        return;
+      }
+    }
+  } catch(e) {}
+  // セットアップ
+  document.getElementById('fDate').value = today();
+})();
+
+function today() {
+  return new Date().toISOString().slice(0,10);
+}
+
+/* ── 保存 ── */
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); } catch(e) {}
+}
+
+/* ══════════ SETUP ══════════ */
+var selectedTheme = { color: '#5a7a5a', lt: '#e8f0e8' };
+
+// テーマピッカー
+document.querySelectorAll('.theme-pick').forEach(function(el){
+  el.addEventListener('click', function(){
+    document.querySelectorAll('.theme-pick').forEach(function(e){ e.classList.remove('active'); });
+    el.classList.add('active');
+    selectedTheme = { color: el.dataset.color, lt: el.dataset.lt };
+    document.documentElement.style.setProperty('--theme-main', selectedTheme.color);
+    document.documentElement.style.setProperty('--theme-lt', selectedTheme.lt);
+  });
+});
+
+function startApp(fromStorage) {
+  if (!fromStorage) {
+    var name = document.getElementById('setupMyName').value.trim();
+    if (!name) { document.getElementById('setupMyName').focus(); return; }
+    STATE.myName      = name;
+    STATE.myRole      = document.getElementById('setupMyRole').value.trim() || '記録する人';
+    STATE.teamName    = document.getElementById('setupTeamName').value.trim() || '';
+    STATE.memberLabel = document.getElementById('setupMemberLabel').value.trim() || 'メンバー';
+    STATE.themeColor  = selectedTheme.color;
+    STATE.themeLt     = selectedTheme.lt;
+    saveState();
+  }
+
+  // テーマ適用
+  document.documentElement.style.setProperty('--theme-main', STATE.themeColor);
+  document.documentElement.style.setProperty('--theme-lt', STATE.themeLt);
+
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+
+  // ヘッダー更新
+  document.getElementById('headerUser').textContent = '🌿 ' + STATE.myName;
+  document.getElementById('headerTeam').textContent = STATE.teamName || 'チーム';
+  document.getElementById('memberLabel').textContent = STATE.memberLabel + 'の名前';
+
+  // 日付初期化
+  document.getElementById('fDate').value = today();
+
+  // レンダリング
+  renderRecent();
+  renderList();
+  renderInsight();
+  renderTrustCard();
+}
+
+/* ══════════ TAB ══════════ */
+var currentTab = 'record';
+
+function switchTab(name) {
+  currentTab = name;
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  var btns = document.querySelectorAll('.tab-btn');
+  var idx = ['record','list','insight','guide'].indexOf(name);
+  if (btns[idx]) btns[idx].classList.add('active');
+
+  if (name === 'list')    renderList();
+  if (name === 'insight') renderInsight();
+  if (name === 'guide')   renderTrustCard();
+}
+
+/* ══════════ 記録フォーム ══════════ */
+var selectedStatus = '元気';
+
+function selectStatus(el) {
+  document.querySelectorAll('.status-chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  selectedStatus = el.dataset.val;
+}
+
+function saveRecord() {
+  var name = document.getElementById('fName').value.trim();
+  if (!name) { showToast('名前を入力してください'); document.getElementById('fName').focus(); return; }
+
+  var record = {
+    id:         Date.now(),
+    date:       document.getElementById('fDate').value || today(),
+    name:       name,
+    status:     selectedStatus,
+    topic:      document.getElementById('fTopic').value.trim(),
+    reflection: document.getElementById('fReflection').value.trim(),
+    action:     document.getElementById('fAction').value.trim(),
+  };
+
+  STATE.records.unshift(record);
+  saveState();
+  clearForm();
+  renderRecent();
+  showToast('✅ 記録しました');
+}
+
+function clearForm() {
+  document.getElementById('fName').value = '';
+  document.getElementById('fTopic').value = '';
+  document.getElementById('fReflection').value = '';
+  document.getElementById('fAction').value = '';
+  document.getElementById('fDate').value = today();
+  selectStatus(document.querySelector('.sc-genki'));
+}
+
+function deleteRecord(id) {
+  if (!confirm('この記録を削除しますか？')) return;
+  STATE.records = STATE.records.filter(function(r){ return r.id !== id; });
+  saveState();
+  renderRecent();
+  renderList();
+  renderInsight();
+}
+
+/* ══════════ レンダリング ══════════ */
+var statusMeta = {
+  '元気':      { cls:'es-genki',  badge:'eb-genki',  icon:'😊' },
+  '疲れている': { cls:'es-tired',  badge:'eb-tired',  icon:'😔' },
+  '表情が乏しい':{ cls:'es-flat',  badge:'eb-flat',   icon:'😶' },
+  'わからない':  { cls:'es-unknown',badge:'eb-unknown',icon:'🤔' },
+};
+
+function buildEntryCard(r, showDel) {
+  var meta  = statusMeta[r.status] || statusMeta['わからない'];
+  var card  = document.createElement('div');
+  card.className = 'entry-card';
+  var stripe = document.createElement('div');
+  stripe.className = 'entry-stripe ' + meta.cls;
+  card.appendChild(stripe);
+
+  var topDate = r.date ? r.date.replace(/-/g, '/') : '';
+  var badge = '<span class="entry-status-badge ' + meta.badge + '">' + meta.icon + ' ' + r.status + '</span>';
+  var topic = r.topic ? '<strong>話した内容</strong>' + esc(r.topic) : '';
+  var refl  = r.reflection ? '<strong>感じたこと</strong>' + esc(r.reflection) : '';
+  var act   = r.action ? '<strong>次のアクション</strong>' + esc(r.action) : '';
+  var del   = showDel ? '<button class="entry-del" onclick="deleteRecord(' + r.id + ')">🗑️</button>' : '';
+
+  card.innerHTML += del +
+    '<div class="entry-top">' +
+      '<div class="entry-name">' + esc(r.name) + '</div>' +
+      '<div class="entry-date">' + topDate + '</div>' +
+    '</div>' +
+    badge +
+    '<div class="entry-body">' + topic + refl + act + '</div>';
+
+  return card;
+}
+
+function renderRecent() {
+  var el = document.getElementById('recentList');
+  if (!el) return;
+  var recent = STATE.records.slice(0, 3);
+  if (!recent.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">まだ記録がありません<br>最初の対話を記録してみましょう</div></div>';
+    return;
+  }
+  el.innerHTML = '';
+  recent.forEach(function(r){ el.appendChild(buildEntryCard(r, true)); });
+}
+
+var currentFilter = 'all';
+
+function setFilter(el) {
+  document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  currentFilter = el.dataset.filter;
+  renderList();
+}
+
+function renderList() {
+  var el = document.getElementById('fullList');
+  if (!el) return;
+  var q = (document.getElementById('searchInput').value || '').toLowerCase();
+  var list = STATE.records.filter(function(r){
+    if (currentFilter !== 'all' && r.status !== currentFilter) return false;
+    if (q && !((r.name + r.topic + r.reflection + r.action).toLowerCase().includes(q))) return false;
+    return true;
+  });
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">該当する記録が見つかりません</div></div>';
+    return;
+  }
+  el.innerHTML = '';
+  list.forEach(function(r){ el.appendChild(buildEntryCard(r, true)); });
+}
+
+function renderInsight() {
+  var records = STATE.records;
+  // ── 分布バー
+  var counts = {'元気':0,'疲れている':0,'表情が乏しい':0,'わからない':0};
+  records.forEach(function(r){ if (counts[r.status] !== undefined) counts[r.status]++; });
+  var total = records.length || 1;
+  var bar = document.getElementById('distBar');
+  if (bar) {
+    bar.innerHTML =
+      '<div class="dist-seg" style="flex:' + counts['元気']    + ';background:var(--sage);min-width:' + (counts['元気']    ?4:0) + 'px"></div>' +
+      '<div class="dist-seg" style="flex:' + counts['疲れている'] + ';background:var(--amber);min-width:' + (counts['疲れている']?4:0) + 'px"></div>' +
+      '<div class="dist-seg" style="flex:' + counts['表情が乏しい'] + ';background:var(--blush);min-width:' + (counts['表情が乏しい']?4:0) + 'px"></div>' +
+      '<div class="dist-seg" style="flex:' + counts['わからない'] + ';background:var(--ink4);min-width:'  + (counts['わからない']?4:0) + 'px"></div>';
+  }
+  // ── 内訳テキスト
+  var rows = document.getElementById('insightRows');
+  if (rows) {
+    if (!records.length) { rows.innerHTML = '<div class="insight-empty">記録がまだありません</div>'; return; }
+    rows.innerHTML =
+      mkRow('#5a7a5a','😊 元気',counts['元気'],total) +
+      mkRow('#b8781a','😔 疲れている',counts['疲れている'],total) +
+      mkRow('#c87880','😶 表情が乏しい',counts['表情が乏しい'],total) +
+      mkRow('#9a8878','🤔 わからない',counts['わからない'],total);
+  }
+  // ── フォローアップ候補（「疲れている」「表情が乏しい」最新3件）
+  var fu = records.filter(function(r){ return r.status==='疲れている' || r.status==='表情が乏しい'; }).slice(0,3);
+  var fuEl = document.getElementById('followUpList');
+  if (fuEl) {
+    if (!fu.length) { fuEl.innerHTML = '<div class="insight-empty">該当なし 👍</div>'; }
+    else {
+      fuEl.innerHTML = '';
+      fu.forEach(function(r){ fuEl.appendChild(buildEntryCard(r, false)); });
+    }
+  }
+  // ── 最後の記録から7日超の人
+  var lastMap = {};
+  records.forEach(function(r){
+    if (!lastMap[r.name] || r.date > lastMap[r.name]) lastMap[r.name] = r.date;
+  });
+  var now = today();
+  var stale = Object.entries(lastMap).filter(function(e){
+    var diff = (new Date(now) - new Date(e[1])) / 86400000;
+    return diff >= 7;
+  }).sort(function(a,b){ return a[1] < b[1] ? -1 : 1; });
+  var staleEl = document.getElementById('staleList');
+  if (staleEl) {
+    if (!stale.length) { staleEl.innerHTML = '<div class="insight-empty">全員最近記録があります 👍</div>'; }
+    else {
+      staleEl.innerHTML = stale.map(function(e){
+        var days = Math.floor((new Date(now) - new Date(e[1])) / 86400000);
+        return '<div class="insight-row"><div class="insight-dot" style="background:var(--amber)"></div><span style="font-weight:700">' + esc(e[0]) + '</span><span style="color:var(--ink4);font-size:0.75rem">最終記録 ' + days + '日前</span></div>';
+      }).join('');
+    }
+  }
+}
+
+function mkRow(color, label, count, total) {
+  return '<div class="insight-row">' +
+    '<div class="insight-dot" style="background:' + color + '"></div>' +
+    '<span>' + label + '</span>' +
+    '<span style="margin-left:auto;font-weight:700;color:' + color + '">' + count + '件</span>' +
+    '<span style="color:var(--ink4);font-size:0.75rem;width:36px;text-align:right">' + Math.round(count/total*100) + '%</span>' +
+  '</div>';
+}
+
+/* ══════════ 安心カード ══════════ */
+function renderTrustCard() {
+  var el = document.getElementById('trustCardPreview');
+  if (!el) return;
+  var title   = STATE.cardTitle;
+  var message = STATE.cardMessage;
+  var name    = STATE.myName || 'わたし';
+  var role    = STATE.myRole  || '';
+  var team    = STATE.teamName ? '（' + STATE.teamName + '）' : '';
+  el.innerHTML =
+    '<div class="trust-card-title">🤝 ' + esc(title) + '</div>' +
+    '<p style="font-size:0.82rem;color:var(--ink2);margin-bottom:12px;line-height:1.8;">' + esc(message) + '</p>' +
+    '<div class="trust-item"><span class="trust-check">✔</span><span>話してくれた内容は、あなたへのサポート以外には使いません</span></div>' +
+    '<div class="trust-item"><span class="trust-check">✔</span><span>話したくないことは、無理に話さなくて大丈夫です</span></div>' +
+    '<div class="trust-item"><span class="trust-check">✔</span><span>記録はこの端末にのみ保存され、外部には送られません</span></div>' +
+    '<div class="trust-item"><span class="trust-check">✔</span><span>評価や査定などに使われることは一切ありません</span></div>' +
+    '<p style="font-size:0.72rem;color:var(--ink4);margin-top:14px;border-top:1px dashed var(--border);padding-top:10px;">' + esc(name) + (role ? '（' + esc(role) + '）' : '') + esc(team) + '</p>';
+}
+
+function updateTrustCard() {
+  STATE.cardTitle   = document.getElementById('cardTitle').value.trim() || STATE.cardTitle;
+  STATE.cardMessage = document.getElementById('cardMessage').value.trim() || STATE.cardMessage;
+  saveState();
+  renderTrustCard();
+  showToast('✅ カードを更新しました');
+}
+
+function copyTrustCard() {
+  var text = STATE.cardTitle + '\n\n' + STATE.cardMessage +
+    '\n\n✔ 話してくれた内容は、あなたへのサポート以外には使いません' +
+    '\n✔ 話したくないことは、無理に話さなくて大丈夫です' +
+    '\n✔ 記録はこの端末にのみ保存され、外部には送られません' +
+    '\n✔ 評価や査定などに使われることは一切ありません' +
+    '\n\n' + STATE.myName + (STATE.myRole ? '（' + STATE.myRole + '）' : '');
+  navigator.clipboard.writeText(text).then(function(){
+    showToast('📋 コピーしました');
+  }).catch(function(){
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('📋 コピーしました');
+  });
+}
+
+function printTrustCard() {
+  var w = window.open('', '', 'width=640,height=900');
+  w.document.write('<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>安心カード</title><style>body{font-family:sans-serif;padding:40px;background:white;color:#2c2318;} .card{border:2px solid #e0d4c0;border-radius:16px;padding:28px;max-width:420px;margin:auto;} h2{color:#5a7a5a;font-size:1.1rem;margin-bottom:14px;} p{font-size:0.88rem;line-height:1.8;margin-bottom:14px;} .item{display:flex;gap:8px;margin-bottom:8px;font-size:0.85rem;} .check{color:#5a7a5a;} .footer{font-size:0.72rem;color:#9a8878;margin-top:18px;border-top:1px dashed #e0d4c0;padding-top:10px;}</style></head><body><div class="card">');
+  w.document.write('<h2>🤝 ' + esc(STATE.cardTitle) + '</h2>');
+  w.document.write('<p>' + esc(STATE.cardMessage) + '</p>');
+  ['話してくれた内容は、あなたへのサポート以外には使いません',
+   '話したくないことは、無理に話さなくて大丈夫です',
+   '記録はこの端末にのみ保存され、外部には送られません',
+   '評価や査定などに使われることは一切ありません'].forEach(function(t){
+    w.document.write('<div class="item"><span class="check">✔</span><span>' + t + '</span></div>');
+  });
+  w.document.write('<div class="footer">' + esc(STATE.myName) + (STATE.myRole ? '（' + esc(STATE.myRole) + '）' : '') + '</div>');
+  w.document.write('</div></body></html>');
+  w.document.close(); w.print();
+}
+
+/* ══════════ CSV ══════════ */
+function downloadCSV() {
+  if (!STATE.records.length) { showToast('記録がありません'); return; }
+  var BOM = '\uFEFF';
+  var header = ['日付','名前','様子','話した内容','感じたこと','次のアクション'];
+  var rows = STATE.records.map(function(r){
+    return [r.date, r.name, r.status, r.topic, r.reflection, r.action].map(function(v){
+      return '"' + (v||'').replace(/"/g,'""') + '"';
+    }).join(',');
+  });
+  var csv = BOM + header.join(',') + '\n' + rows.join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kokoLog_' + today() + '.csv';
+  a.click();
+}
+
+/* ══════════ 設定 ══════════ */
+function showSettings() {
+  document.getElementById('setMyName').textContent = STATE.myName;
+  document.getElementById('setMyRole').textContent = STATE.myRole;
+  document.getElementById('setTeamName').textContent = STATE.teamName || '未設定';
+  document.getElementById('setRecordCount').textContent = STATE.records.length + '件';
+  document.getElementById('settingsModal').style.display = 'flex';
+}
+
+function hideSettings() {
+  document.getElementById('settingsModal').style.display = 'none';
+}
+
+function resetApp() {
+  if (!confirm('すべてのデータを削除してリセットします。よろしいですか？')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem('kokoLog_guideSkip');
+  location.reload();
+}
+
+/* ══════════ TOAST ══════════ */
+var toastTimer;
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2000);
+}
+
+/* ══════════ 初回ガイド ══════════ */
+function updateGuideText() {
+  var n = document.getElementById('guideUserName');
+  var t = document.getElementById('guideTeam');
+  if (n) n.textContent = STATE.myName || 'あなた';
+  if (t) t.textContent = STATE.teamName ? STATE.teamName + 'のみなさん' : 'チームのみなさん';
+}
+function closeGuide() {
+  var g = document.getElementById('welcomeGuide');
+  if (g) { g.style.opacity = '0'; g.style.transition = 'opacity 0.3s'; setTimeout(function(){ g.style.display = 'none'; }, 300); }
+}
+function skipGuideForever(cb) {
+  if (cb.checked) localStorage.setItem('kokoLog_guideSkip', '1');
+  else localStorage.removeItem('kokoLog_guideSkip');
+}
+
+/* ══════════ UTIL ══════════ */
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+</script>
+</body>
+</html>
