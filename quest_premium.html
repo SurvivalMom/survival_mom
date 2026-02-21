@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏆 survival mam Premium | 自走の正解</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Yomogi&family=BIZ+UDPGothic:wght@400;700&family=Fredoka:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --parch:     #fdf6e3;
+      --parch2:    #f5ead0;
+      --parch3:    #ede0b8;
+      --warm:      #fff9f0;
+      --forest:    #2d5a27;
+      --forest2:   #3d7a35;
+      --forest3:   #5a9e50;
+      --forest-lt: #dff0da;
+      --gold:      #c8860a;
+      --gold2:     #e8a020;
+      --gold3:     #f5c840;
+      --gold-lt:   #fef3d0;
+      --rose:      #d4608a;
+      --rose2:     #e87aaa;
+      --rose-lt:   #fce8f0;
+      --sky:       #4a88c8;
+      --sky-lt:    #ddeeff;
+      --ink:       #2a1e0e;
+      --ink2:      #5a4030;
+      --ink3:      #9a7a60;
+      --ink4:      #c8b090;
+      --border:    rgba(100,60,20,0.18);
+      --shadow:    0 4px 20px rgba(80,40,10,0.13);
+      --shadow-lg: 0 10px 48px rgba(80,40,10,0.18);
+      --r-xl:28px; --r-lg:20px; --r-md:14px; --r-sm:9px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'BIZ UDPGothic','Fredoka',sans-serif;
+      background:var(--parch);color:var(--ink);
+      min-height:100vh;overflow-x:hidden;position:relative;
+    }
+    body::before{
+      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:
+        radial-gradient(ellipse 70% 60% at 0% 0%,rgba(196,133,20,0.09),transparent 55%),
+        radial-gradient(ellipse 55% 50% at 100% 15%,rgba(45,90,39,0.07),transparent 55%),
+        radial-gradient(ellipse 45% 40% at 5% 95%,rgba(212,96,138,0.06),transparent 50%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    }
+    body::after{content:'';position:fixed;inset:10px;z-index:0;pointer-events:none;border:2.5px solid rgba(100,60,20,0.13);border-radius:22px;}
+
+    /* ── PW画面 ── */
+    #pw-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse 80% 80% at 35% 30%,#2d4a22,#0e1a0a);}
+    #pw-overlay.hide{animation:ov-out 0.55s ease forwards;}
+    @keyframes ov-out{to{opacity:0;visibility:hidden}}
+    .pw-card{background:var(--parch);border-radius:var(--r-xl);padding:48px 32px 40px;max-width:360px;width:100%;text-align:center;position:relative;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.55),0 0 0 3px rgba(165,130,50,0.45);animation:card-in 0.6s cubic-bezier(.22,1,.36,1) both;}
+    @keyframes card-in{from{transform:scale(0.88) translateY(24px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+    .pw-card::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--gold),var(--gold3),var(--gold2),var(--gold3),var(--gold));border-radius:var(--r-xl) var(--r-xl) 0 0;}
+    .pw-card::after{content:'';position:absolute;inset:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");border-radius:inherit;}
+    .pw-inner{position:relative;z-index:1}
+    .pw-mascot{font-size:4.5rem;display:block;margin-bottom:8px;animation:float 3.5s ease-in-out infinite;filter:drop-shadow(0 4px 14px rgba(200,130,20,0.4));}
+    @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+    .pw-eyebrow{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+    .pw-title{font-family:'Yomogi',cursive;font-size:1.55rem;color:var(--ink);line-height:1.35;margin-bottom:4px;}
+    .pw-sub{font-size:0.78rem;color:var(--ink3);margin-bottom:28px;line-height:1.6;}
+    .pw-input{width:100%;padding:14px 20px;border:2.5px solid var(--border);border-radius:var(--r-md);font-family:'BIZ UDPGothic',sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:0.25em;text-align:center;color:var(--ink);background:rgba(255,255,255,0.7);outline:none;margin-bottom:14px;transition:border-color 0.2s,box-shadow 0.2s;}
+    .pw-input:focus{border-color:var(--gold2);box-shadow:0 0 0 4px rgba(200,130,20,0.15);}
+    .pw-input.shake{animation:shake 0.4s ease;border-color:var(--rose);}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+    .pw-btn{width:100%;padding:15px;background:linear-gradient(145deg,var(--forest2),var(--forest));color:var(--gold3);border:2.5px solid rgba(200,160,40,0.5);border-radius:var(--r-md);font-family:'Fredoka',sans-serif;font-size:1.05rem;font-weight:700;cursor:pointer;letter-spacing:0.06em;box-shadow:0 6px 0 #1a3a15,0 10px 28px rgba(0,0,0,0.25);transition:transform 0.12s,box-shadow 0.12s;position:relative;overflow:hidden;}
+    .pw-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,0.1),transparent);}
+    .pw-btn:hover{transform:translateY(-2px);box-shadow:0 8px 0 #1a3a15,0 14px 36px rgba(0,0,0,0.3);}
+    .pw-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #1a3a15;}
+    .pw-error{font-size:0.78rem;color:var(--rose);font-weight:700;min-height:20px;margin-top:10px;}
+
+    /* ── メインアプリ ── */
+    #app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:24px 18px 120px;opacity:0;transform:translateY(20px);transition:opacity 0.6s ease 0.1s,transform 0.6s ease 0.1s;}
+    #app.visible{opacity:1;transform:translateY(0);}
+
+    /* ヘッダー */
+    .app-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:4px 0;}
+    .logo-main{font-family:'Yomogi',cursive;font-size:1.45rem;color:var(--forest);filter:drop-shadow(0 2px 6px rgba(45,90,39,0.25));line-height:1.2;}
+    .logo-sub{font-family:'DM Mono',monospace;font-size:0.54rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink4);margin-top:2px;}
+    .header-actions{display:flex;gap:8px;}
+    .header-btn{display:flex;align-items:center;gap:5px;padding:9px 14px;border:2px solid var(--border);border-radius:var(--r-md);background:rgba(255,255,255,0.6);font-family:'BIZ UDPGothic',sans-serif;font-size:0.78rem;font-weight:700;color:var(--ink2);cursor:pointer;transition:all 0.15s cubic-bezier(.34,1.4,.64,1);box-shadow:0 2px 8px rgba(80,40,10,0.08);}
+    .header-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+    .btn-consult{color:var(--rose);border-color:rgba(212,96,138,0.35);}
+    .btn-consult:hover{background:var(--rose-lt);}
+    .btn-consult.locked{color:var(--ink4);border-color:var(--border);cursor:not-allowed;}
+    .btn-print{color:var(--sky);border-color:rgba(74,136,200,0.35);}
+    .btn-print:hover{background:var(--sky-lt);}
+
+    /* ロック通知 */
+    .cooldown-bar{background:var(--rose-lt);border:1.5px solid rgba(212,96,138,0.25);border-radius:var(--r-md);padding:10px 14px;font-size:0.75rem;color:var(--rose);font-weight:700;margin-bottom:14px;line-height:1.55;display:none;}
+    .cooldown-bar.show{display:block;}
+
+    /* レベルカード */
+    .level-card{background:linear-gradient(145deg,var(--forest),var(--forest2));border-radius:var(--r-xl);padding:22px 22px 18px;margin-bottom:18px;position:relative;overflow:hidden;box-shadow:0 6px 28px rgba(45,90,39,0.32),0 2px 8px rgba(45,90,39,0.18);}
+    .level-card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 60% at 90% 10%,rgba(200,160,40,0.22),transparent 55%),radial-gradient(ellipse 50% 50% at 10% 90%,rgba(255,255,255,0.06),transparent 55%);}
+    .level-card::after{content:'🌿';position:absolute;top:-8px;right:14px;font-size:3.5rem;opacity:0.12;pointer-events:none;transform:rotate(20deg);}
+    .level-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;position:relative;z-index:1;}
+    .level-num{font-family:'Yomogi',cursive;font-size:2.2rem;color:var(--gold3);filter:drop-shadow(0 2px 8px rgba(200,160,40,0.5));line-height:1;}
+    .level-label{font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px;}
+    .streak-badge{background:rgba(200,160,40,0.25);border:1.5px solid rgba(200,160,40,0.45);border-radius:99px;padding:5px 12px;font-size:0.75rem;font-weight:700;color:var(--gold3);}
+    .xp-bar-bg{background:rgba(0,0,0,0.28);border-radius:99px;height:10px;overflow:hidden;margin-bottom:8px;position:relative;z-index:1;}
+    .xp-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold2),var(--gold3),#fff8c0);box-shadow:0 0 10px rgba(200,160,40,0.7);transition:width 0.6s cubic-bezier(.22,1,.36,1);position:relative;}
+    .xp-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,0.3),transparent 60%);border-radius:99px;}
+    .xp-labels{display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(255,255,255,0.6);font-weight:700;position:relative;z-index:1;}
+
+    /* 全クリアバナー */
+    .all-done-banner{background:linear-gradient(135deg,var(--gold),var(--gold3));border-radius:var(--r-lg);padding:16px 20px;text-align:center;margin-bottom:16px;box-shadow:0 4px 20px rgba(200,160,40,0.4);animation:shine-in 0.5s cubic-bezier(.22,1,.36,1) both;}
+    @keyframes shine-in{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}
+    .all-done-title{font-family:'Yomogi',cursive;font-size:1.2rem;color:var(--ink);margin-bottom:2px;}
+    .all-done-sub{font-size:0.78rem;color:var(--ink2);}
+
+    /* セクション見出し */
+    .section-heading{font-family:'Yomogi',cursive;font-size:1rem;color:var(--ink2);margin-bottom:12px;padding-left:4px;display:flex;align-items:center;gap:8px;}
+    .section-heading::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,var(--border),transparent);border-radius:99px;}
+
+    /* クエストカード */
+    .quest-list{display:flex;flex-direction:column;gap:12px;}
+    .quest-card{background:rgba(255,255,255,0.72);border:2px solid var(--border);border-radius:var(--r-xl);padding:16px 18px 14px;display:flex;align-items:center;gap:14px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 3px 14px rgba(80,40,10,0.09);transition:transform 0.18s cubic-bezier(.34,1.4,.64,1),box-shadow 0.18s;backdrop-filter:blur(6px);}
+    .quest-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:var(--shadow-lg);}
+    .quest-card:active{transform:scale(0.98);}
+    .quest-card.done{background:rgba(240,230,210,0.5);border-color:rgba(100,60,20,0.09);box-shadow:none;}
+    .quest-stripe{position:absolute;left:0;top:12%;bottom:12%;width:4.5px;border-radius:0 99px 99px 0;}
+    .qt-morning .quest-stripe{background:linear-gradient(to bottom,#f5c840,#e8a020);}
+    .qt-note .quest-stripe{background:linear-gradient(to bottom,#5a9e50,#3d7a35);}
+    .qt-night .quest-stripe{background:linear-gradient(to bottom,#b84aaa,#7a3085);}
+    .quest-icon-wrap{width:52px;height:52px;border-radius:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.7rem;box-shadow:0 3px 12px rgba(80,40,10,0.12);}
+    .qt-morning .quest-icon-wrap{background:linear-gradient(145deg,#fff3c0,#fde8a0);}
+    .qt-note .quest-icon-wrap{background:linear-gradient(145deg,#d0efc8,#b8e0ac);}
+    .qt-night .quest-icon-wrap{background:linear-gradient(145deg,#e8d0f8,#d0b8f0);}
+    .quest-body{flex:1;min-width:0;}
+    .quest-title{font-family:'BIZ UDPGothic',sans-serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.3;transition:color 0.2s;}
+    .quest-card.done .quest-title{text-decoration:line-through;color:var(--ink4);}
+    .quest-reward{font-size:0.72rem;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:4px;}
+    .quest-check{flex-shrink:0;width:36px;height:36px;border-radius:99px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:2.5px solid var(--border);background:rgba(255,255,255,0.6);transition:all 0.18s cubic-bezier(.34,1.4,.64,1);}
+    .quest-card.done .quest-check{background:var(--forest-lt);border-color:var(--forest3);box-shadow:0 2px 8px rgba(45,90,39,0.2);}
+
+    /* 底部クオート */
+    .bottom-quote{margin-top:36px;text-align:center;font-family:'Yomogi',cursive;font-size:0.88rem;color:var(--ink3);line-height:1.8;padding:18px 20px;background:rgba(255,255,255,0.4);border:1.5px solid var(--border);border-radius:var(--r-lg);}
+
+    /* ── モーダル ── */
+    #modal-overlay{position:fixed;inset:0;z-index:8888;background:rgba(14,26,10,0.8);display:flex;align-items:flex-start;justify-content:center;padding:20px 16px 40px;overflow-y:auto;}
+    #modal-overlay.hide{display:none;}
+    .modal-card{background:var(--parch);border-radius:var(--r-xl);padding:32px 24px 28px;width:100%;max-width:420px;position:relative;box-shadow:0 20px 80px rgba(0,0,0,0.4);border:2px solid var(--border);margin-top:20px;animation:modal-in 0.4s cubic-bezier(.22,1,.36,1) both;}
+    @keyframes modal-in{from{transform:translateY(24px) scale(0.96);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+    .modal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--rose),var(--rose2),var(--rose));border-radius:var(--r-xl) var(--r-xl) 0 0;}
+    .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.4rem;color:var(--ink3);cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:99px;transition:background 0.15s,color 0.15s;}
+    .modal-close:hover{background:var(--rose-lt);color:var(--rose);}
+    .modal-title{font-family:'Yomogi',cursive;font-size:1.3rem;color:var(--ink);margin-bottom:4px;}
+    .modal-sub{font-size:0.76rem;color:var(--ink3);margin-bottom:20px;line-height:1.65;}
+
+    /* プログレス */
+    .progress-wrap{margin-bottom:20px;}
+    .progress-top{display:flex;justify-content:space-between;align-items:center;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;}
+    .progress-bar-bg{background:var(--parch3);border-radius:99px;height:7px;overflow:hidden;margin-bottom:10px;}
+    .progress-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--rose),var(--rose2));transition:width 0.4s cubic-bezier(.22,1,.36,1);}
+    .step-pills{display:flex;gap:6px;}
+    .step-pill{flex:1;text-align:center;padding:6px 4px;border-radius:var(--r-sm);font-size:0.68rem;font-weight:700;border:1.5px solid var(--border);background:rgba(255,255,255,0.5);color:var(--ink4);transition:all 0.2s;}
+    .step-pill.active{background:var(--rose-lt);border-color:var(--rose2);color:var(--rose);}
+
+    /* フォーム */
+    .form-row{margin-bottom:14px;}
+    .form-label{display:block;font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;}
+    .form-label .req{color:var(--rose);margin-left:4px;font-size:0.65rem;}
+    .form-input,.form-textarea{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:var(--r-md);font-family:'BIZ UDPGothic',sans-serif;font-size:0.88rem;font-weight:700;color:var(--ink);background:rgba(255,255,255,0.75);outline:none;transition:border-color 0.2s,box-shadow 0.2s;resize:vertical;}
+    .form-input:focus,.form-textarea:focus{border-color:var(--rose2);box-shadow:0 0 0 3px rgba(212,96,138,0.12);}
+    .form-textarea{min-height:80px;}
+    .step-box{background:rgba(255,255,255,0.45);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:16px 16px 12px;margin-bottom:16px;}
+    .step-box-title{font-family:'Yomogi',cursive;font-size:0.92rem;color:var(--ink2);margin-bottom:14px;}
+
+    /* モーダルボタン */
+    .modal-btn-row{display:flex;gap:10px;margin-top:16px;}
+    .modal-btn{flex:1;padding:13px;border-radius:var(--r-md);font-family:'BIZ UDPGothic',sans-serif;font-size:0.88rem;font-weight:700;border:2px solid var(--border);cursor:pointer;transition:all 0.15s cubic-bezier(.34,1.4,.64,1);}
+    .modal-btn:hover{transform:translateY(-2px);}
+    .modal-btn.back{background:rgba(255,255,255,0.6);color:var(--ink3);}
+    .modal-btn.back:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
+    .modal-btn.next{background:var(--rose);color:#fff;border-color:var(--rose);box-shadow:0 4px 16px rgba(212,96,138,0.3);}
+    .modal-btn.next:hover{background:var(--rose2);}
+    .modal-btn.submit-btn{background:var(--forest);color:var(--gold3);border-color:var(--forest);box-shadow:0 4px 16px rgba(45,90,39,0.3);}
+    .modal-btn.submit-btn:hover{background:var(--forest2);}
+    .modal-status{text-align:center;font-size:0.75rem;font-weight:700;color:var(--rose);margin-top:10px;min-height:18px;}
+    .modal-status.success{color:var(--forest);}
+    .modal-footer-note{text-align:center;font-size:0.68rem;color:var(--ink4);margin-top:8px;line-height:1.65;}
+
+    /* アニメーション */
+    .fade-up{opacity:0;transform:translateY(14px);animation:fade-up 0.5s cubic-bezier(.22,1,.36,1) forwards;}
+    @keyframes fade-up{to{opacity:1;transform:translateY(0)}}
+
+    /* 印刷 */
+    @media print{
+      #pw-overlay,#modal-overlay,.no-print{display:none!important;}
+      #app{opacity:1!important;transform:none!important;}
+      .print-only{display:block!important;}
+      body{background:white!important;color:black!important;}
+    }
+    .print-only{display:none;}
+
+    @media(max-width:420px){
+      .pw-card{padding:36px 22px 30px;}
+      .quest-card{padding:14px 14px 12px;gap:11px;}
+      .quest-icon-wrap{width:44px;height:44px;font-size:1.4rem;}
+      .header-btn{padding:8px 10px;font-size:0.72rem;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ パスワード画面 ══ -->
+<div id="pw-overlay">
+  <div class="pw-card">
+    <div class="pw-inner">
+      <span class="pw-mascot">🏆</span>
+      <div class="pw-eyebrow">survival mam — Premium</div>
+      <h1 class="pw-title">自走の正解へ<br>ようこそ</h1>
+      <p class="pw-sub">パスワードを入力して<br>冒険をはじめましょう 🌿</p>
+      <input class="pw-input" id="pwInput" type="password" placeholder="パスワードを入力"
+        maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter')tryUnlock()"/>
+      <button class="pw-btn" onclick="tryUnlock()">✨ 冒険をはじめる</button>
+      <div class="pw-error" id="pwError"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ メインアプリ ══ -->
+<div id="app">
+  <div style="max-width:480px;margin:0 auto;padding:24px 18px 120px;position:relative;z-index:1">
+
+    <header class="app-header no-print">
+      <div>
+        <div class="logo-main">🏆 survival mam</div>
+        <div class="logo-sub">Premium Board</div>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn btn-consult no-print" id="consultBtn" onclick="openConsult()">📧 相談</button>
+        <button class="header-btn btn-print no-print" onclick="window.print()">🖨️ 印刷</button>
+      </div>
+    </header>
+
+    <div class="cooldown-bar no-print" id="cooldownBar"></div>
+
+    <!-- レベルカード -->
+    <div class="level-card fade-up" style="animation-delay:0.05s">
+      <div class="level-row">
+        <div>
+          <div class="level-label">ぼうけんランク</div>
+          <div class="level-num">LV. 1</div>
+        </div>
+        <div class="streak-badge">🔥 7 DAYS STREAK</div>
+      </div>
+      <div class="xp-bar-bg"><div class="xp-bar" id="xpBar" style="width:0%"></div></div>
+      <div class="xp-labels">
+        <span id="xpLeft">XP 0 / 100</span>
+        <span id="xpRight">0 / 3 クリア</span>
+      </div>
+    </div>
+
+    <!-- 全クリアバナー -->
+    <div id="allDoneBanner" class="all-done-banner" style="display:none">
+      <div class="all-done-title">🎉 ぜんぶクリア！すごい！！</div>
+      <div class="all-done-sub">今日のぼうけんをやりとげたよ 🌟</div>
+    </div>
+
+    <div class="section-heading fade-up" style="animation-delay:0.1s">📜 きょうのミッション</div>
+
+    <div class="quest-list no-print" id="questList"></div>
+
+    <p class="bottom-quote fade-up no-print" style="animation-delay:0.35s">
+      「大丈夫。あなたは、<br>決して一人ではありません。」 🌸
+    </p>
+  </div>
+</div>
+
+<!-- ══ 相談モーダル ══ -->
+<div id="modal-overlay" class="hide no-print">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeConsult()">×</button>
+    <h2 class="modal-title">📧 月イチ相談窓口</h2>
+    <p class="modal-sub">3ステップで今の状況を教えてください<br>（書ける範囲でOK）</p>
+
+    <div class="progress-wrap">
+      <div class="progress-top"><span id="stepLabel">Step 1 / 3</span><span id="stepPct">33%</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar" style="width:33%"></div></div>
+      <div class="step-pills">
+        <div class="step-pill active" id="pill0">特性</div>
+        <div class="step-pill" id="pill1">課題</div>
+        <div class="step-pill" id="pill2">好き</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">返信先メール（任意）</label>
+      <input class="form-input" id="f-email" type="email" placeholder="例：example@gmail.com"/>
+    </div>
+    <div class="form-row">
+      <label class="form-label">お子様のニックネーム<span class="req">必須</span></label>
+      <input class="form-input" id="f-name" placeholder="例：たろう"/>
+    </div>
+
+    <!-- Step1 特性 -->
+    <div id="step-0">
+      <div class="step-box">
+        <div class="step-box-title">🌟 1. お子様の特性</div>
+        <div class="form-row"><label class="form-label">得意なこと・よく褒められること</label><textarea class="form-textarea" id="f-strengths" placeholder="例：手先が器用、記憶力が良い 等"></textarea></div>
+        <div class="form-row"><label class="form-label">苦手なこと・サポートが必要な場面</label><textarea class="form-textarea" id="f-difficulties" placeholder="例：大きな音が苦手、急な変更でパニック 等"></textarea></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">コミュニケーションの様子</label><textarea class="form-textarea" id="f-communication" placeholder="例：言葉で気持ちを伝えられる／視線が合いにくい 等"></textarea></div>
+      </div>
+    </div>
+    <!-- Step2 課題 -->
+    <div id="step-1" style="display:none">
+      <div class="step-box">
+        <div class="step-box-title">🗺️ 2. 現状の課題</div>
+        <div class="form-row"><label class="form-label">生活・学習面での困りごと</label><textarea class="form-textarea" id="f-life" placeholder="例：着替えに時間がかかる、集中力が続かない 等"></textarea></div>
+        <div class="form-row"><label class="form-label">対人関係・社会性での困りごと</label><textarea class="form-textarea" id="f-social" placeholder="例：友達との距離感が近い、順番を待つのが難しい 等"></textarea></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">いちばん解決したいこと<span class="req">必須</span></label><textarea class="form-textarea" id="f-priority" style="min-height:90px" placeholder="優先順位を明確にするため、まず一番解決したいことを書いてください"></textarea></div>
+      </div>
+    </div>
+    <!-- Step3 好き -->
+    <div id="step-2" style="display:none">
+      <div class="step-box">
+        <div class="step-box-title">💝 3. 好きなもの・意欲のヒント</div>
+        <div class="form-row"><label class="form-label">興味・関心がある対象</label><textarea class="form-textarea" id="f-interests" placeholder="例：電車、恐竜、YouTube、お絵描き 等"></textarea></div>
+        <div class="form-row"><label class="form-label">モチベーションが上がる報酬・行動</label><textarea class="form-textarea" id="f-motivators" placeholder="例：シールがもらえる、特定の音楽 等"></textarea></div>
+        <div class="form-row" style="margin-bottom:0"><label class="form-label">リラックスできる方法</label><textarea class="form-textarea" id="f-relax" placeholder="例：毛布にくるまる、狭いところに入る 等"></textarea></div>
+      </div>
+    </div>
+
+    <div class="modal-btn-row">
+      <button class="modal-btn back" id="btnBack" onclick="prevStep()" disabled>← 戻る</button>
+      <button class="modal-btn next" id="btnNext" onclick="nextStep()">次へ →</button>
+      <button class="modal-btn submit-btn" id="btnSubmit" onclick="submitForm()" style="display:none">送信する</button>
+    </div>
+    <div class="modal-status" id="modalStatus"></div>
+    <p class="modal-footer-note">※ 書けるところだけで大丈夫です。まとまっていなくてOKです。</p>
+  </div>
+</div>
+
+<!-- ══ 印刷ワークシート ══ -->
+<div class="print-only" style="padding:40px;color:black;background:white;min-height:100vh;font-family:'BIZ UDPGothic',sans-serif;">
+  <div style="border-bottom:4px solid black;padding-bottom:24px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-start;">
+    <div>
+      <h2 style="font-size:2rem;font-weight:900;margin-bottom:8px;">1ヶ月伴走ワークシート</h2>
+      <span style="background:black;color:white;font-size:0.75rem;font-weight:700;padding:4px 10px;letter-spacing:0.1em;">survival mam Premium Asset</span>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px;">
+    <div style="border:3px solid black;padding:22px;">
+      <h3 style="font-weight:900;font-size:1.1rem;margin-bottom:14px;border-bottom:2px solid black;padding-bottom:8px;">📄 今週の生存戦略</h3>
+      <ul style="font-size:0.88rem;font-weight:600;line-height:2.2;list-style:none;">
+        <li>・今日も生きてる。それだけで100点です。</li>
+        <li>・パニックには、まず深呼吸で応じましょう。</li>
+        <li>・親の休み時間を、最優先の課題にする。</li>
+      </ul>
+    </div>
+    <div style="border:3px solid black;padding:22px;">
+      <h3 style="font-weight:900;font-size:1.1rem;margin-bottom:14px;border-bottom:2px solid black;padding-bottom:8px;">⭐ 変化の記録（手書き用）</h3>
+      <div style="display:flex;flex-direction:column;gap:20px;margin-top:8px;">
+        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
+        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
+        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
+        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:60px;">
+    <p style="font-size:1.1rem;font-weight:900;font-style:italic;">「大丈夫。あなたは、決して一人ではありません。」</p>
+    <p style="font-size:0.7rem;color:#999;margin-top:12px;letter-spacing:0.1em;">© 2026 survival mam | Premium Asset</p>
+  </div>
+</div>
+
+<script>
+/* ══ パスワードゲート ══ */
+(function(){
+  var overlay=document.getElementById('pw-overlay');
+  var appEl=document.getElementById('app');
+  if(sessionStorage.getItem('sm_premium_ok')==='1'){
+    overlay.style.display='none';
+    appEl.classList.add('visible');
+    initApp();return;
+  }
+  setTimeout(function(){document.getElementById('pwInput').focus();},300);
+})();
+
+function tryUnlock(){
+  var input=document.getElementById('pwInput');
+  var err=document.getElementById('pwError');
+  if(input.value.trim()==='life'){
+    sessionStorage.setItem('sm_premium_ok','1');
+    var overlay=document.getElementById('pw-overlay');
+    overlay.classList.add('hide');
+    setTimeout(function(){overlay.style.display='none';},600);
+    document.getElementById('app').classList.add('visible');
+    initApp();
+  }else{
+    input.classList.add('shake');
+    err.textContent='パスワードが違います 🙈 もう一度試してね';
+    input.value='';
+    setTimeout(function(){input.classList.remove('shake');err.textContent='';input.focus();},500);
+  }
+}
+
+/* ══ クエストデータ ══ */
+var QUESTS=[
+  {id:1,title:'朝の深呼吸',icon:'🧘',reward:'心の結晶',done:false,theme:'qt-morning'},
+  {id:2,title:'できたことをメモ',icon:'📝',reward:'知恵の栞',done:false,theme:'qt-note'},
+  {id:3,title:'夜の自分褒め',icon:'🕯️',reward:'安らぎの雫',done:false,theme:'qt-night'},
+];
+
+function initApp(){renderAll();checkCooldown();}
+
+function toggleQuest(id){
+  var q=QUESTS.find(function(q){return q.id===id;});
+  if(q){q.done=!q.done;renderAll();}
+}
+
+function renderAll(){renderQuests();updateXP();updateBanner();}
+
+function renderQuests(){
+  var list=document.getElementById('questList');
+  if(!list)return;list.innerHTML='';
+  QUESTS.forEach(function(q,i){
+    var card=document.createElement('div');
+    card.className='quest-card '+q.theme+(q.done?' done':'')+' fade-up';
+    card.style.animationDelay=(0.12+i*0.08)+'s';
+    card.onclick=function(){toggleQuest(q.id);};
+    card.innerHTML=
+      '<div class="quest-stripe"></div>'+
+      '<div class="quest-icon-wrap">'+q.icon+'</div>'+
+      '<div class="quest-body">'+
+        '<div class="quest-title">'+q.title+'</div>'+
+        '<div class="quest-reward">✨ 報酬：'+q.reward+'</div>'+
+      '</div>'+
+      '<div class="quest-check'+(q.done?' done-check':'')+'">'+
+        (q.done?'✅':'⭕')+
+      '</div>';
+    list.appendChild(card);
+  });
+}
+
+function updateXP(){
+  var done=QUESTS.filter(function(q){return q.done;}).length;
+  var total=QUESTS.length;
+  var pct=Math.round((done/total)*100);
+  var bar=document.getElementById('xpBar');
+  var left=document.getElementById('xpLeft');
+  var right=document.getElementById('xpRight');
+  if(bar)bar.style.width=pct+'%';
+  if(left)left.textContent='XP '+(done*33)+' / 100';
+  if(right)right.textContent=done+' / '+total+' クリア';
+}
+
+function updateBanner(){
+  var allDone=QUESTS.every(function(q){return q.done;});
+  var banner=document.getElementById('allDoneBanner');
+  if(banner)banner.style.display=allDone?'block':'none';
+}
+
+/* ══ 今月ロック ══ */
+var CONSULT_KEY='sm-premium-consult-ym';
+function getYM(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function nextMonthLabel(d){d=d||new Date();var next=new Date(d.getFullYear(),d.getMonth()+1,1);return next.getFullYear()+'年'+(next.getMonth()+1)+'月';}
+function isLockedThisMonth(){try{return localStorage.getItem(CONSULT_KEY)===getYM();}catch(e){return false;}}
+
+function checkCooldown(){
+  var bar=document.getElementById('cooldownBar');
+  var btn=document.getElementById('consultBtn');
+  if(!bar||!btn)return;
+  if(isLockedThisMonth()){
+    bar.textContent='今月分の相談は送信済みです。次回は '+nextMonthLabel()+' から相談できます。';
+    bar.classList.add('show');
+    btn.classList.add('locked');
+    btn.title='今月分は送信済み';
+  }else{
+    bar.classList.remove('show');
+    btn.classList.remove('locked');
+  }
+}
+
+/* ══ 相談モーダル ══ */
+var currentStep=0;
+
+function openConsult(){
+  if(isLockedThisMonth()){checkCooldown();return;}
+  currentStep=0;
+  document.getElementById('modalStatus').textContent='';
+  document.getElementById('modalStatus').className='modal-status';
+  showStep(0);
+  document.getElementById('modal-overlay').classList.remove('hide');
+}
+
+function closeConsult(){document.getElementById('modal-overlay').classList.add('hide');}
+
+function showStep(idx){
+  [0,1,2].forEach(function(i){
+    document.getElementById('step-'+i).style.display=i===idx?'block':'none';
+    var pill=document.getElementById('pill'+i);
+    if(pill)pill.className='step-pill'+(i===idx?' active':'');
+  });
+  var pct=Math.round(((idx+1)/3)*100);
+  document.getElementById('stepLabel').textContent='Step '+(idx+1)+' / 3';
+  document.getElementById('stepPct').textContent=pct+'%';
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('btnBack').disabled=idx===0;
+  if(idx<2){document.getElementById('btnNext').style.display='';document.getElementById('btnSubmit').style.display='none';}
+  else{document.getElementById('btnNext').style.display='none';document.getElementById('btnSubmit').style.display='';}
+}
+
+function nextStep(){
+  var name=document.getElementById('f-name').value.trim();
+  if(!name){document.getElementById('modalStatus').textContent='お子様のニックネーム（必須）を入力してください。';return;}
+  if(currentStep===1){var p=document.getElementById('f-priority').value.trim();if(!p){document.getElementById('modalStatus').textContent='「いちばん解決したいこと（必須）」を入力してください。';return;}}
+  document.getElementById('modalStatus').textContent='';
+  if(currentStep<2){currentStep++;showStep(currentStep);}
+}
+
+function prevStep(){document.getElementById('modalStatus').textContent='';if(currentStep>0){currentStep--;showStep(currentStep);}}
+
+async function submitForm(){
+  var name=document.getElementById('f-name').value.trim();
+  var priority=document.getElementById('f-priority').value.trim();
+  var status=document.getElementById('modalStatus');
+  if(!name){status.textContent='お子様のニックネーム（必須）を入力してください。';return;}
+  if(!priority){status.textContent='「いちばん解決したいこと（必須）」を入力してください。';return;}
+  if(isLockedThisMonth()){status.textContent='今月分は送信済みです。次回は '+nextMonthLabel()+' からご利用ください。';return;}
+  status.textContent='送信中...';
+  var formData=new FormData();
+  formData.append('access_key','7bc32ddd-3f06-4464-b9af-1582137cfd91');
+  formData.append('subject','【Premium相談】ヒアリングフォーム');
+  formData.append('reply_to',document.getElementById('f-email').value.trim());
+  formData.append('child_name',name);
+  formData.append('strengths',document.getElementById('f-strengths').value.trim());
+  formData.append('difficulties',document.getElementById('f-difficulties').value.trim());
+  formData.append('communication',document.getElementById('f-communication').value.trim());
+  formData.append('issues_life',document.getElementById('f-life').value.trim());
+  formData.append('issues_social',document.getElementById('f-social').value.trim());
+  formData.append('top_priority',priority);
+  formData.append('interests',document.getElementById('f-interests').value.trim());
+  formData.append('motivators',document.getElementById('f-motivators').value.trim());
+  formData.append('relax_methods',document.getElementById('f-relax').value.trim());
+  try{
+    var res=await fetch('https://api.web3forms.com/submit',{method:'POST',body:formData});
+    if(res.ok){
+      try{localStorage.setItem(CONSULT_KEY,getYM());}catch(e){}
+      status.textContent='✅ 送信完了！サバイバル・マムからの返信をお待ちください。';
+      status.className='modal-status success';
+      setTimeout(function(){closeConsult();checkCooldown();},2500);
+    }else{status.textContent='送信に失敗しました（サーバーエラー）。もう一度お試しください。';}
+  }catch(e){status.textContent='送信に失敗しました（通信エラー）。ネットワークを確認してください。';}
+}
+</script>
+</body>
+</html>
