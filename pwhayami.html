@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>パスワード早見表 | survival_mam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream:    #faf6f0;
+      --cream2:   #f2ead8;
+      --parch:    #fffdf8;
+      --terra:    #c4714a;
+      --terra2:   #d98b60;
+      --terra-lt: #f5e4d8;
+      --moss:     #4a6741;
+      --moss-lt:  #ddebd8;
+      --gold:     #c8941a;
+      --gold-lt:  #fdf5e0;
+      --gold-mid: #f0e0b0;
+      --violet:   #6b5b8a;
+      --violet-lt:#ede8f5;
+      --sky:      #4a7a9b;
+      --sky-lt:   #e0eef6;
+      --rose:     #b85070;
+      --rose-lt:  #fce8ef;
+      --ink:      #2a2118;
+      --ink2:     #4a3d30;
+      --ink3:     #7a6d60;
+      --ink4:     #b0a898;
+      --border:   rgba(42,33,24,0.10);
+      --shadow:   0 4px 20px rgba(42,33,24,0.09);
+      --shadow-lg:0 12px 48px rgba(42,33,24,0.13);
+      --r-xl: 28px; --r-lg: 18px; --r-md: 12px; --r-sm: 7px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 0% 0%,   rgba(196,113,74,0.10), transparent 55%),
+        radial-gradient(ellipse 50% 45% at 100% 80%, rgba(74,103,65,0.08),  transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 50%,  rgba(200,148,26,0.05), transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 8px; z-index: 0; pointer-events: none;
+      border: 1.5px solid rgba(196,113,74,0.11); border-radius: 20px;
+    }
+
+    /* ── Wrap ── */
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 720px; margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      padding: 56px 0 40px; text-align: center;
+      animation: rise 0.65s ease both;
+    }
+    .brand-row {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 22px;
+    }
+    .brand-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--terra), var(--terra2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; box-shadow: 0 5px 16px rgba(196,113,74,0.3);
+    }
+    .brand-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink3);
+    }
+    .brand-name strong { color: var(--terra); }
+
+    .page-title {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.4rem, 5vw, 1.9rem);
+      font-weight: 700; color: var(--ink); margin-bottom: 10px;
+    }
+    .page-title em { font-style: normal; color: var(--terra); }
+    .page-sub {
+      font-size: 0.82rem; color: var(--ink3); line-height: 1.8;
+    }
+
+    /* ── 管理者注意バナー ── */
+    .admin-banner {
+      background: var(--terra-lt);
+      border: 1.5px solid rgba(196,113,74,0.3);
+      border-left: 4px solid var(--terra);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin-bottom: 32px;
+      font-size: 0.78rem; color: var(--ink2); line-height: 1.75;
+      animation: rise 0.65s 0.08s ease both;
+    }
+    .admin-banner strong { color: var(--terra); }
+
+    /* ── セクションラベル ── */
+    .sec-label {
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink4);
+      margin-bottom: 16px;
+    }
+    .sec-label::before, .sec-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ── カード共通 ── */
+    .card {
+      background: var(--parch);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+      animation: rise 0.6s ease both;
+    }
+    .card-head {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-head-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .card-head-title {
+      font-family: 'Kaisei Decol', serif;
+      font-size: 0.98rem; font-weight: 700; color: var(--ink);
+    }
+    .card-head-sub { font-size: 0.72rem; color: var(--ink4); margin-top: 1px; }
+    .card-body { padding: 20px 22px; }
+
+    /* ── テーブル ── */
+    .pw-table { width: 100%; border-collapse: collapse; }
+    .pw-table th {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--ink4);
+      padding: 0 10px 10px 0; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .pw-table td {
+      padding: 11px 10px 11px 0;
+      border-bottom: 1px solid rgba(42,33,24,0.05);
+      font-size: 0.83rem; color: var(--ink2);
+      vertical-align: middle;
+    }
+    .pw-table tr:last-child td { border-bottom: none; }
+
+    .tool-name {
+      display: flex; align-items: center; gap: 8px; font-weight: 700;
+    }
+    .tool-emoji { font-size: 1rem; }
+
+    /* パスワードバッジ */
+    .pw-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'DM Sans', monospace; font-weight: 700;
+      font-size: 0.78rem; letter-spacing: 0.08em;
+      padding: 4px 12px; border-radius: var(--r-sm);
+      border: 1.5px solid; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative; user-select: all;
+    }
+    .pw-badge:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .pw-badge:active { transform: scale(0.97); }
+
+    /* コピー成功フィードバック */
+    .pw-badge.copied::after {
+      content: 'コピー！';
+      position: absolute; top: -26px; left: 50%; transform: translateX(-50%);
+      background: var(--ink); color: #fff;
+      font-size: 0.6rem; padding: 3px 8px; border-radius: 4px;
+      white-space: nowrap; pointer-events: none;
+      animation: fade-pop 1.2s ease forwards;
+    }
+    @keyframes fade-pop {
+      0%   { opacity: 0; transform: translateX(-50%) translateY(4px); }
+      20%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* カード別バッジ色 */
+    .b-package { color: var(--gold);   border-color: rgba(200,148,26,0.35); background: var(--gold-lt); }
+    .b-index   { color: var(--terra);  border-color: rgba(196,113,74,0.35); background: var(--terra-lt); }
+    .b-quest   { color: var(--violet); border-color: rgba(107,91,138,0.30); background: var(--violet-lt); }
+    .b-train   { color: var(--sky);    border-color: rgba(74,122,155,0.30); background: var(--sky-lt); }
+    .b-step    { color: var(--moss);   border-color: rgba(74,103,65,0.30);  background: var(--moss-lt); }
+    .b-sens    { color: var(--terra);  border-color: rgba(196,113,74,0.30); background: var(--terra-lt); }
+    .b-dial    { color: var(--rose);   border-color: rgba(184,80,112,0.30); background: var(--rose-lt); }
+
+    /* アイコン背景 */
+    .ic-pkg  { background: var(--gold-lt); }
+    .ic-idx  { background: var(--terra-lt); }
+    .ic-app  { background: var(--cream2); }
+
+    /* タグチップ */
+    .scope-chip {
+      display: inline-block;
+      font-size: 0.62rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 99px; border: 1px solid;
+      margin: 1px 2px;
+    }
+    .chip-exam { color: var(--gold);   border-color: rgba(200,148,26,0.3); background: var(--gold-lt); }
+    .chip-gray { color: var(--violet); border-color: rgba(107,91,138,0.25); background: var(--violet-lt); }
+    .chip-home { color: var(--moss);   border-color: rgba(74,103,65,0.25);  background: var(--moss-lt); }
+    .chip-all  { color: var(--terra);  border-color: rgba(196,113,74,0.25); background: var(--terra-lt); }
+
+    /* アニメ遅延 */
+    .card:nth-child(1) { animation-delay: 0.12s; }
+    .card:nth-child(2) { animation-delay: 0.22s; }
+    .card:nth-child(3) { animation-delay: 0.32s; }
+
+    /* ── 印刷ボタン ── */
+    .print-row {
+      text-align: center; margin-top: 28px;
+      animation: rise 0.6s 0.5s ease both;
+    }
+    .print-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 24px;
+      background: var(--parch); border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.8rem; font-weight: 700; color: var(--ink3);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .print-btn:hover { border-color: var(--terra); color: var(--terra); box-shadow: var(--shadow); }
+
+    /* ── フッター ── */
+    .footer {
+      text-align: center; margin-top: 44px;
+      font-size: 0.68rem; color: var(--ink4); line-height: 2;
+      animation: rise 0.6s 0.6s ease both;
+    }
+
+    /* ── アニメ ── */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── 印刷スタイル ── */
+    @media print {
+      body { background: white; font-size: 11pt; }
+      body::before, body::after { display: none; }
+      .admin-banner, .print-row, .footer { display: none; }
+      .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+      .pw-badge { border: 1px solid #999; }
+      .pw-badge:hover { transform: none; box-shadow: none; }
+    }
+
+    @media (max-width: 500px) {
+      .pw-table th:nth-child(3), .pw-table td:nth-child(3) { display: none; }
+      .card-body { padding: 16px 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ヘッダー -->
+  <header class="page-header">
+    <div class="brand-row">
+      <div class="brand-icon">🌱</div>
+      <div class="brand-name"><strong>survival</strong>_mam</div>
+    </div>
+    <div class="page-title">パスワード<em>早見表</em></div>
+    <div class="page-sub">全販売パッケージ・単体アプリのパスワード一覧です。<br>クリックでコピーできます。</div>
+  </header>
+
+  <!-- 管理者注意 -->
+  <div class="admin-banner">
+    ⚠️ <strong>この早見表は販売者・管理者専用です。</strong>
+    購入者への直接共有はしないでください。
+    各noteの記事ページから購入者に該当パスワードのみをお伝えください。
+  </div>
+
+  <!-- ① パッケージ販売 -->
+  <div class="sec-label" style="animation-delay:0.16s">パッケージ販売 — 3 Plans</div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon ic-pkg">📦</div>
+      <div>
+        <div class="card-head-title">3つのパッケージ</div>
+        <div class="card-head-sub">まとめて複数ツールが使えるセットプラン</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="pw-table">
+        <thead>
+          <tr>
+            <th>プラン名</th>
+            <th>パスワード</th>
+            <th>使えるツール</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="tool-name"><span class="tool-emoji">✏️</span> お受験セット</div>
+              <div style="margin-top:4px">
+                <span class="scope-chip chip-exam">お受験対策</span>
+              </div>
+            </td>
+            <td><span class="pw-badge b-package" onclick="copyPw(this,'juku25')">🔑 juku25</span></td>
+            <td>ライフクエスト・トレーニングカード</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tool-name"><span class="tool-emoji">🌀</span> "できる"を育てるサポートツールセット</div>
+              <div style="margin-top:4px">
+                <span class="scope-chip chip-gray">発達グレー</span>
+              </div>
+            </td>
+            <td><span class="pw-badge b-package" onclick="copyPw(this,'gray25')">🔑 gray25</span></td>
+            <td>スモールステップ・感覚ノート・対話プロンプト</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tool-name"><span class="tool-emoji">🏠</span> 不登校・在宅セット</div>
+              <div style="margin-top:4px">
+                <span class="scope-chip chip-home">不登校・在宅</span>
+              </div>
+            </td>
+            <td><span class="pw-badge b-package" onclick="copyPw(this,'home25')">🔑 home25</span></td>
+            <td>ライフクエスト・スモールステップ・対話プロンプト</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ② 全部入り（index用） -->
+  <div class="sec-label" style="animation-delay:0.22s">全ツール一括パッケージ — 塾講師・コンサル向け</div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon ic-idx">🗂️</div>
+      <div>
+        <div class="card-head-title">おまとめパック（index.html）</div>
+        <div class="card-head-sub">全5ツールのリンク一覧ページへのアクセス</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="pw-table">
+        <thead>
+          <tr>
+            <th>対象</th>
+            <th>パスワード</th>
+            <th>内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="tool-name"><span class="tool-emoji">🏫</span> 塾講師・コンサル向け</div>
+              <div style="margin-top:4px">
+                <span class="scope-chip chip-all">全セグメント共通</span>
+              </div>
+            </td>
+            <td><span class="pw-badge b-index" onclick="copyPw(this,'omatome')">🔑 omatome</span></td>
+            <td>全5ツールへのリンク一覧ページにアクセス可能</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ③ 単体販売 -->
+  <div class="sec-label" style="animation-delay:0.28s">単体アプリ販売 — 5 Apps</div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-head-icon ic-app">🧩</div>
+      <div>
+        <div class="card-head-title">各アプリ 個別パスワード</div>
+        <div class="card-head-sub">単体購入者にはそれぞれのパスワードを案内してください</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="pw-table">
+        <thead>
+          <tr>
+            <th>アプリ名</th>
+            <th>パスワード</th>
+            <th>対象</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="tool-name"><span class="tool-emoji">🗡️</span> ライフ・クエスト・ボード</div></td>
+            <td><span class="pw-badge b-quest" onclick="copyPw(this,'quest25')">🔑 quest25</span></td>
+            <td>
+              <span class="scope-chip chip-gray">発達グレー</span>
+              <span class="scope-chip chip-home">不登校</span>
+            </td>
+          </tr>
+          <tr>
+            <td><div class="tool-name"><span class="tool-emoji">✋</span> 巧緻性×言語トレーニングカード</div></td>
+            <td><span class="pw-badge b-train" onclick="copyPw(this,'train25')">🔑 train25</span></td>
+            <td><span class="scope-chip chip-exam">お受験</span></td>
+          </tr>
+          <tr>
+            <td><div class="tool-name"><span class="tool-emoji">✅</span> スモールステップカード</div></td>
+            <td><span class="pw-badge b-step" onclick="copyPw(this,'step25')">🔑 step25</span></td>
+            <td>
+              <span class="scope-chip chip-gray">発達グレー</span>
+              <span class="scope-chip chip-home">不登校</span>
+            </td>
+          </tr>
+          <tr>
+            <td><div class="tool-name"><span class="tool-emoji">📝</span> 感覚プロファイル観察ノート</div></td>
+            <td><span class="pw-badge b-sens" onclick="copyPw(this,'sens25')">🔑 sens25</span></td>
+            <td><span class="scope-chip chip-gray">発達グレー</span></td>
+          </tr>
+          <tr>
+            <td><div class="tool-name"><span class="tool-emoji">💬</span> 対話プロンプト 100</div></td>
+            <td><span class="pw-badge b-dial" onclick="copyPw(this,'dial25')">🔑 dial25</span></td>
+            <td>
+              <span class="scope-chip chip-gray">発達グレー</span>
+              <span class="scope-chip chip-home">不登校</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 印刷 -->
+  <div class="print-row">
+    <button class="print-btn" onclick="window.print()">🖨️ この早見表を印刷する</button>
+  </div>
+
+  <!-- フッター -->
+  <footer class="footer">
+    survival_mam | time design labo<br>
+    © 2025 — 販売者・管理者専用ドキュメント
+  </footer>
+
+</div>
+
+<script>
+function copyPw(el, pw) {
+  navigator.clipboard.writeText(pw).then(function() {
+    el.classList.add('copied');
+    setTimeout(function() { el.classList.remove('copied'); }, 1400);
+  }).catch(function() {
+    // フォールバック
+    var ta = document.createElement('textarea');
+    ta.value = pw; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    el.classList.add('copied');
+    setTimeout(function() { el.classList.remove('copied'); }, 1400);
+  });
+}
+</script>
+
+</body>
+</html>
