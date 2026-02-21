@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>survival_mam | 5アプリ おまとめパック</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════ TOKENS ══════════ */
+    :root {
+      --bg:        #0e120e;
+      --bg2:       #131a13;
+      --bg3:       #1a2318;
+      --surface:   #1e2a1c;
+      --surface2:  #243022;
+
+      --gold:      #c8941a;
+      --gold2:     #e8b030;
+      --gold3:     #f0c84a;
+      --gold-dim:  rgba(200,148,26,0.18);
+      --gold-line: rgba(200,148,26,0.28);
+
+      --cream:     #f0e8d0;
+      --cream2:    #d8ccb0;
+      --cream-dim: rgba(240,232,208,0.55);
+
+      --moss:      #4a7a42;
+      --moss2:     #5a9050;
+      --moss-dim:  rgba(74,122,66,0.22);
+
+      --ink:       rgba(240,232,208,0.92);
+      --ink2:      rgba(240,232,208,0.65);
+      --ink3:      rgba(240,232,208,0.38);
+      --ink4:      rgba(240,232,208,0.22);
+
+      /* アプリ固有カラー */
+      --c-quest:    #8470a8;
+      --c-training: #4a94b8;
+      --c-step:     #5a9050;
+      --c-sensory:  #c47040;
+      --c-dialog:   #b84078;
+
+      --r-xl: 26px;
+      --r-lg: 16px;
+      --r-md: 10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── 背景グロウ ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 10%,  rgba(200,148,26,0.09), transparent 55%),
+        radial-gradient(ellipse 50% 60% at 85% 80%,  rgba(74,122,66,0.10),  transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 40%,  rgba(200,148,26,0.04), transparent 60%);
+    }
+    /* ── ノイズテクスチャ ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ══════════ パスワードオーバーレイ ══════════ */
+    #pw-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background: radial-gradient(ellipse 80% 80% at 40% 30%, #1a2a18, #080d08);
+      transition: opacity 0.6s ease, visibility 0.6s;
+    }
+    #pw-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .pw-wrap {
+      width: 100%; max-width: 400px;
+      animation: pw-in 0.7s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes pw-in {
+      from { transform: translateY(32px) scale(0.95); opacity: 0; }
+      to   { transform: translateY(0)    scale(1);    opacity: 1; }
+    }
+
+    /* 装飾ライン */
+    .pw-deco {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 28px;
+    }
+    .pw-deco-line { flex: 1; height: 1px; background: var(--gold-line); }
+    .pw-deco-ico  { font-size: 1.4rem; filter: drop-shadow(0 0 8px rgba(200,148,26,0.5)); }
+
+    .pw-brand {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold);
+      text-align: center; margin-bottom: 10px;
+    }
+    .pw-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 600; line-height: 1.2;
+      color: var(--cream); text-align: center;
+      margin-bottom: 6px;
+    }
+    .pw-title em { font-style: italic; color: var(--gold2); }
+    .pw-sub {
+      font-size: 0.78rem; color: var(--ink2); text-align: center;
+      line-height: 1.75; margin-bottom: 32px;
+    }
+
+    .pw-field {
+      position: relative; margin-bottom: 14px;
+    }
+    .pw-input {
+      width: 100%; padding: 16px 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid var(--gold-line);
+      border-radius: var(--r-md);
+      font-family: 'DM Mono', monospace;
+      font-size: 1.1rem; letter-spacing: 0.3em; text-align: center;
+      color: var(--cream); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .pw-input::placeholder { color: var(--ink4); letter-spacing: 0.1em; font-size: 0.85rem; font-family: 'Zen Kaku Gothic New', sans-serif; }
+    .pw-input:focus {
+      border-color: var(--gold2);
+      background: rgba(200,148,26,0.06);
+      box-shadow: 0 0 0 3px rgba(200,148,26,0.12), 0 0 20px rgba(200,148,26,0.08);
+    }
+    .pw-input.shake { animation: shake 0.4s ease; border-color: #e05060; }
+    @keyframes shake {
+      0%,100%{ transform:translateX(0) }
+      20%    { transform:translateX(-8px) }
+      40%    { transform:translateX(8px) }
+      60%    { transform:translateX(-5px) }
+      80%    { transform:translateX(5px) }
+    }
+
+    .pw-btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--bg);
+      border: none; border-radius: var(--r-md);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.92rem; font-weight: 900; letter-spacing: 0.08em;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(200,148,26,0.3), 0 1px 0 rgba(255,255,255,0.15) inset;
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+      position: relative; overflow: hidden;
+    }
+    .pw-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.18), transparent);
+    }
+    .pw-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,148,26,0.4); }
+    .pw-btn:active { transform: translateY(1px); }
+
+    .pw-error {
+      text-align: center; font-size: 0.75rem; font-weight: 700;
+      color: #e06070; margin-top: 10px; min-height: 18px;
+    }
+
+    .pw-bottom-deco {
+      display: flex; align-items: center; gap: 12px; margin-top: 28px;
+    }
+
+    /* ══════════ メインコンテンツ ══════════ */
+    #app {
+      position: relative; z-index: 1;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+      pointer-events: none;
+    }
+    #app.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    .wrap { max-width: 680px; margin: 0 auto; padding: 0 20px 100px; }
+
+    /* ── ヘッダー ── */
+    .site-header {
+      padding: 48px 0 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--gold-line);
+      margin-bottom: 48px;
+      position: relative;
+    }
+    .site-header::after {
+      content: '';
+      position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+    }
+
+    .header-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem; font-weight: 500; letter-spacing: 0.32em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .header-eyebrow::before, .header-eyebrow::after {
+      content: ''; width: 32px; height: 1px; background: var(--gold-line);
+    }
+
+    .header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 700; line-height: 1.2;
+      color: var(--cream); margin-bottom: 10px;
+    }
+    .header-title em { font-style: italic; color: var(--gold2); }
+
+    .header-sub {
+      font-size: 0.84rem; color: var(--ink2); line-height: 1.9;
+      max-width: 440px; margin: 0 auto 20px;
+    }
+
+    .header-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-line);
+      border-radius: 99px; padding: 6px 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.14em;
+      color: var(--gold2);
+    }
+
+    /* ── セクション見出し ── */
+    .sec-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem; font-weight: 500; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--ink3);
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .sec-label::after { content: ''; flex: 1; height: 1px; background: rgba(240,232,208,0.08); }
+
+    /* ══════════ アプリカード ══════════ */
+    .apps-grid {
+      display: flex; flex-direction: column; gap: 14px;
+      margin-bottom: 56px;
+    }
+
+    .app-card {
+      background: var(--surface);
+      border: 1px solid rgba(240,232,208,0.07);
+      border-radius: var(--r-xl);
+      padding: 24px 24px 20px;
+      display: flex; align-items: flex-start; gap: 20px;
+      position: relative; overflow: hidden;
+      transition: transform 0.22s cubic-bezier(.34,1.4,.64,1), border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      text-decoration: none; color: inherit;
+    }
+    .app-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      border-radius: 99px 0 0 99px;
+      opacity: 0.85;
+    }
+    .app-card::after {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 130px; height: 130px; border-radius: 50%; opacity: 0.04;
+      transition: opacity 0.3s;
+    }
+    .app-card:hover {
+      transform: translateX(6px);
+      border-color: rgba(240,232,208,0.14);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+    .app-card:hover::after { opacity: 0.09; }
+
+    /* カラー別 */
+    .ac-quest::before   { background: var(--c-quest); }
+    .ac-quest::after    { background: var(--c-quest); }
+    .ac-quest:hover     { box-shadow: 0 8px 40px rgba(132,112,168,0.18); }
+
+    .ac-training::before { background: var(--c-training); }
+    .ac-training::after  { background: var(--c-training); }
+    .ac-training:hover   { box-shadow: 0 8px 40px rgba(74,148,184,0.18); }
+
+    .ac-step::before    { background: var(--c-step); }
+    .ac-step::after     { background: var(--c-step); }
+    .ac-step:hover      { box-shadow: 0 8px 40px rgba(90,144,80,0.18); }
+
+    .ac-sensory::before { background: var(--c-sensory); }
+    .ac-sensory::after  { background: var(--c-sensory); }
+    .ac-sensory:hover   { box-shadow: 0 8px 40px rgba(196,112,64,0.18); }
+
+    .ac-dialog::before  { background: var(--c-dialog); }
+    .ac-dialog::after   { background: var(--c-dialog); }
+    .ac-dialog:hover    { box-shadow: 0 8px 40px rgba(184,64,120,0.18); }
+
+    /* アイコン */
+    .app-icon-wrap {
+      flex-shrink: 0;
+      width: 52px; height: 52px; border-radius: 15px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      position: relative; z-index: 1;
+      border: 1px solid rgba(240,232,208,0.1);
+    }
+    .ac-quest    .app-icon-wrap { background: rgba(132,112,168,0.18); }
+    .ac-training .app-icon-wrap { background: rgba(74,148,184,0.18); }
+    .ac-step     .app-icon-wrap { background: rgba(90,144,80,0.18); }
+    .ac-sensory  .app-icon-wrap { background: rgba(196,112,64,0.18); }
+    .ac-dialog   .app-icon-wrap { background: rgba(184,64,120,0.18); }
+
+    /* テキスト */
+    .app-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
+    .app-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.56rem; letter-spacing: 0.2em; color: var(--ink3);
+      margin-bottom: 4px;
+    }
+    .app-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 600; line-height: 1.3;
+      margin-bottom: 5px;
+    }
+    .ac-quest    .app-name { color: #b8a8d8; }
+    .ac-training .app-name { color: #8ac4de; }
+    .ac-step     .app-name { color: #8ac078; }
+    .ac-sensory  .app-name { color: #dea080; }
+    .ac-dialog   .app-name { color: #d888a8; }
+
+    .app-desc { font-size: 0.78rem; color: var(--ink2); line-height: 1.65; margin-bottom: 10px; }
+
+    .app-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .app-tag {
+      font-size: 0.62rem; font-weight: 700; padding: 2px 9px;
+      border-radius: 99px;
+      border: 1px solid rgba(240,232,208,0.1);
+      background: rgba(240,232,208,0.06);
+      color: var(--ink3);
+    }
+
+    /* 矢印 */
+    .app-arrow {
+      position: relative; z-index: 1;
+      flex-shrink: 0; align-self: center;
+      font-size: 1rem; color: var(--ink3);
+      transition: transform 0.2s, color 0.2s;
+    }
+    .app-card:hover .app-arrow { transform: translateX(4px); color: var(--gold2); }
+
+    /* ══════════ PW参照パネル ══════════ */
+    .pw-ref-panel {
+      background: var(--surface);
+      border: 1px solid var(--gold-line);
+      border-radius: var(--r-xl);
+      padding: 28px 26px;
+      margin-bottom: 40px;
+      position: relative; overflow: hidden;
+    }
+    .pw-ref-panel::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold3), var(--gold2), var(--gold));
+    }
+
+    .pw-ref-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 600; color: var(--cream);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .pw-ref-title::after { content: ''; flex: 1; height: 1px; background: var(--gold-line); }
+
+    .pw-ref-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .pw-ref-item {
+      background: rgba(200,148,26,0.07);
+      border: 1px solid rgba(200,148,26,0.15);
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .pw-ref-ico { font-size: 1.1rem; flex-shrink: 0; }
+    .pw-ref-body { flex: 1; min-width: 0; }
+    .pw-ref-app { font-size: 0.7rem; color: var(--ink3); margin-bottom: 2px; }
+    .pw-ref-pw  {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem; font-weight: 500; letter-spacing: 0.1em;
+      color: var(--gold2);
+    }
+
+    /* まとめPW（強調） */
+    .pw-master {
+      background: rgba(200,148,26,0.12);
+      border: 1.5px solid rgba(200,148,26,0.35);
+      border-radius: var(--r-lg);
+      padding: 18px 22px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .pw-master-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .pw-master-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.8rem; font-weight: 500; letter-spacing: 0.2em;
+      color: var(--gold3);
+      text-shadow: 0 0 20px rgba(240,200,74,0.3);
+    }
+    .pw-master-note { font-size: 0.7rem; color: var(--ink3); margin-top: 6px; }
+
+    .pw-copy-btn {
+      display: block; width: 100%; padding: 11px;
+      background: rgba(200,148,26,0.15);
+      border: 1px solid rgba(200,148,26,0.3);
+      border-radius: var(--r-md);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.8rem; font-weight: 700; color: var(--gold2);
+      cursor: pointer; letter-spacing: 0.05em;
+      transition: all 0.15s;
+      margin-top: 12px;
+    }
+    .pw-copy-btn:hover { background: rgba(200,148,26,0.25); }
+    .pw-copy-btn.copied { background: rgba(74,122,66,0.25); color: #8ac078; border-color: rgba(74,122,66,0.3); }
+
+    /* ══════════ フッター ══════════ */
+    .site-footer {
+      border-top: 1px solid rgba(240,232,208,0.06);
+      padding-top: 32px;
+      text-align: center;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 600; font-style: italic;
+      color: var(--gold); margin-bottom: 6px;
+    }
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.14em;
+      color: var(--ink3); text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--gold2); }
+    .footer-disc {
+      font-size: 0.68rem; color: var(--ink4); line-height: 1.9;
+      margin-top: 14px; max-width: 480px; margin-left: auto; margin-right: auto;
+    }
+
+    /* ══════════ アニメーション ══════════ */
+    .fade-up {
+      opacity: 0; transform: translateY(16px);
+      animation: fade-up 0.55s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    @keyframes fade-up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════ レスポンシブ ══════════ */
+    @media (max-width: 480px) {
+      .pw-ref-grid { grid-template-columns: 1fr; }
+      .app-card { padding: 18px 16px 16px; gap: 14px; }
+      .app-icon-wrap { width: 44px; height: 44px; font-size: 1.3rem; }
+      .header-title { font-size: 1.8rem; }
+      .pw-master-val { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ パスワードオーバーレイ ══════════ -->
+<div id="pw-overlay">
+  <div class="pw-wrap">
+    <div class="pw-deco">
+      <div class="pw-deco-line"></div>
+      <div class="pw-deco-ico">🌿</div>
+      <div class="pw-deco-line"></div>
+    </div>
+
+    <div class="pw-brand">survival_mam — 5 Apps Collection</div>
+    <h1 class="pw-title">おまとめ<em>パック</em></h1>
+    <p class="pw-sub">ご購入ありがとうございます。<br>パスワードを入力してコレクションを開いてください。</p>
+
+    <input class="pw-input" id="pwInput" type="password" placeholder="パスワードを入力"
+      maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter')tryUnlock()" />
+    <button class="pw-btn" onclick="tryUnlock()">コレクションを開く　→</button>
+    <div class="pw-error" id="pwError"></div>
+
+    <div class="pw-bottom-deco">
+      <div class="pw-deco-line"></div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.56rem;letter-spacing:0.2em;color:var(--ink4)">PREMIUM</div>
+      <div class="pw-deco-line"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ メインアプリ ══════════ -->
+<div id="app">
+<div class="wrap">
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="header-eyebrow">survival_mam</div>
+    <h1 class="header-title">5 Apps <em>Collection</em></h1>
+    <p class="header-sub">
+      5つのツールがひとつのパスワードで使えます。<br>
+      各アプリをブックマークして、毎日の支援に活用してください。
+    </p>
+    <div class="header-badge">
+      <span>✦</span>
+      <span>5 APPS — COMPLETE COLLECTION</span>
+      <span>✦</span>
+    </div>
+  </header>
+
+  <!-- アプリ一覧 -->
+  <div class="sec-label">Your Apps — 5 Tools</div>
+
+  <div class="apps-grid">
+
+    <a class="app-card ac-quest fade-up" style="animation-delay:0.05s" href="quest.html" target="_blank">
+      <div class="app-icon-wrap">🗡️</div>
+      <div class="app-body">
+        <div class="app-num">App 01</div>
+        <div class="app-name">ライフ・クエスト・ボード <span style="font-size:0.7em;font-weight:400;opacity:0.6;letter-spacing:0.12em">Standard</span></div>
+        <div class="app-desc">日常の行動をゲーム化して習慣づけ。XPとアイテムで子どものやる気を引き出す習慣トラッカー。</div>
+        <div class="app-tags">
+          <span class="app-tag">習慣化</span>
+          <span class="app-tag">ゲーミフィケーション</span>
+          <span class="app-tag">意欲サポート</span>
+        </div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+
+    <a class="app-card ac-training fade-up" style="animation-delay:0.11s" href="training.html" target="_blank">
+      <div class="app-icon-wrap">✋</div>
+      <div class="app-body">
+        <div class="app-num">App 02</div>
+        <div class="app-name">巧緻性×言語トレーニングカード</div>
+        <div class="app-desc">手先と言語を同時に育てる課題カード。紐通し・折り紙課題を段階的に指示し、お受験の口頭試問対策も兼ねたトレーニング集。</div>
+        <div class="app-tags">
+          <span class="app-tag">お受験対策</span>
+          <span class="app-tag">巧緻性</span>
+          <span class="app-tag">言語発達</span>
+        </div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+
+    <a class="app-card ac-step fade-up" style="animation-delay:0.17s" href="smallstep.html" target="_blank">
+      <div class="app-icon-wrap">✅</div>
+      <div class="app-body">
+        <div class="app-num">App 03</div>
+        <div class="app-name">スモールステップカード</div>
+        <div class="app-desc">「できる」を積み重ねる行動分解カード。「宿題しなさい」を「筆箱を出す」から始める細分化で、自己肯定感と実行機能を育てる。</div>
+        <div class="app-tags">
+          <span class="app-tag">発達グレー</span>
+          <span class="app-tag">実行機能</span>
+          <span class="app-tag">自己肯定感</span>
+        </div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+
+    <a class="app-card ac-sensory fade-up" style="animation-delay:0.23s" href="sensory.html" target="_blank">
+      <div class="app-icon-wrap">📝</div>
+      <div class="app-body">
+        <div class="app-num">App 04</div>
+        <div class="app-name">感覚プロファイル観察ノート</div>
+        <div class="app-desc">感覚特性を見える化する記録ツール。視覚・聴覚・触覚など6感覚を観察・記録し、専門家への相談資料にも活用できる。</div>
+        <div class="app-tags">
+          <span class="app-tag">感覚統合</span>
+          <span class="app-tag">観察記録</span>
+          <span class="app-tag">専門家連携</span>
+        </div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+
+    <a class="app-card ac-dialog fade-up" style="animation-delay:0.29s" href="dialog.html" target="_blank">
+      <div class="app-icon-wrap">💬</div>
+      <div class="app-body">
+        <div class="app-num">App 05</div>
+        <div class="app-name">対話プロンプト100</div>
+        <div class="app-desc">親子・支援者の会話を助ける質問集。「叱る」を「問う」に変える100の声かけフレーズ。朝・宿題・けんか・食事など場面別に整理済み。</div>
+        <div class="app-tags">
+          <span class="app-tag">コミュニケーション</span>
+          <span class="app-tag">不登校サポート</span>
+          <span class="app-tag">声かけ改善</span>
+        </div>
+      </div>
+      <div class="app-arrow">›</div>
+    </a>
+
+  </div>
+
+  <!-- パスワード参照 -->
+  <div class="sec-label">Passwords — 各アプリの起動パスワード</div>
+
+  <div class="pw-ref-panel fade-up" style="animation-delay:0.35s">
+
+    <div class="pw-master">
+      <div class="pw-master-label">このページのパスワード</div>
+      <div class="pw-master-val">omatome</div>
+      <div class="pw-master-note">このページ自体の起動に使用したパスワードです</div>
+    </div>
+
+    <div class="pw-ref-title">各アプリのパスワード</div>
+    <div class="pw-ref-grid">
+      <div class="pw-ref-item">
+        <div class="pw-ref-ico">🗡️</div>
+        <div class="pw-ref-body">
+          <div class="pw-ref-app">ライフ・クエスト・ボード</div>
+          <div class="pw-ref-pw" id="pw-quest">quest25</div>
+        </div>
+      </div>
+      <div class="pw-ref-item">
+        <div class="pw-ref-ico">✋</div>
+        <div class="pw-ref-body">
+          <div class="pw-ref-app">巧緻性×言語カード</div>
+          <div class="pw-ref-pw" id="pw-training">train25</div>
+        </div>
+      </div>
+      <div class="pw-ref-item">
+        <div class="pw-ref-ico">✅</div>
+        <div class="pw-ref-body">
+          <div class="pw-ref-app">スモールステップカード</div>
+          <div class="pw-ref-pw" id="pw-step">step25</div>
+        </div>
+      </div>
+      <div class="pw-ref-item">
+        <div class="pw-ref-ico">📝</div>
+        <div class="pw-ref-body">
+          <div class="pw-ref-app">感覚プロファイル観察ノート</div>
+          <div class="pw-ref-pw" id="pw-sensory">sens25</div>
+        </div>
+      </div>
+      <div class="pw-ref-item" style="grid-column: span 2">
+        <div class="pw-ref-ico">💬</div>
+        <div class="pw-ref-body">
+          <div class="pw-ref-app">対話プロンプト100</div>
+          <div class="pw-ref-pw" id="pw-dialog">dial25</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="pw-copy-btn" id="copyAllBtn" onclick="copyAllPw()">
+      📋 全パスワードをコピーする
+    </button>
+
+  </div>
+
+  <!-- フッター -->
+  <footer class="site-footer fade-up" style="animation-delay:0.42s">
+    <div class="footer-brand">survival_mam</div>
+    <div class="footer-links">
+      <a href="https://note.com/survival_mom_lab" target="_blank">@survival_mam</a>
+    </div>
+    <div class="footer-disc">
+      本ツールはnoteにて販売中のコンテンツに付属する購入者専用Webアプリです。<br>
+      医療的診断を行うものではありません。日常の観察・工夫・習慣づくりをサポートする目的で提供しています。
+    </div>
+  </footer>
+
+</div>
+</div>
+
+<script>
+/* ══════════ パスワードゲート ══════════ */
+(function(){
+  var PW      = 'omatome';
+  var overlay = document.getElementById('pw-overlay');
+  var appEl   = document.getElementById('app');
+
+  // sessionStorage でログイン維持
+  if (sessionStorage.getItem('sm_omatome') === '1') {
+    overlay.style.display = 'none';
+    appEl.classList.add('visible');
+    return;
+  }
+  overlay.style.display = 'flex';
+  setTimeout(function(){ document.getElementById('pwInput').focus(); }, 400);
+})();
+
+function tryUnlock() {
+  var input = document.getElementById('pwInput');
+  var err   = document.getElementById('pwError');
+  var val   = input.value.trim();
+
+  if (val === 'omatome') {
+    sessionStorage.setItem('sm_omatome', '1');
+    var overlay = document.getElementById('pw-overlay');
+    overlay.classList.add('hide');
+    setTimeout(function(){ overlay.style.display = 'none'; }, 650);
+    document.getElementById('app').classList.add('visible');
+  } else {
+    input.classList.add('shake');
+    err.textContent = 'パスワードが違います。メールをご確認ください。';
+    input.value = '';
+    setTimeout(function(){
+      input.classList.remove('shake');
+      err.textContent = '';
+      input.focus();
+    }, 480);
+  }
+}
+
+/* ══════════ 全PW一括コピー ══════════ */
+function copyAllPw() {
+  var text = [
+    '【survival_mam 5アプリ パスワード一覧】',
+    '',
+    '● このページ（おまとめパック）: omatome',
+    '● ライフ・クエスト・ボード: quest25',
+    '● 巧緻性×言語カード: train25',
+    '● スモールステップカード: step25',
+    '● 感覚プロファイル観察ノート: sens25',
+    '● 対話プロンプト100: dial25',
+  ].join('\n');
+
+  var btn = document.getElementById('copyAllBtn');
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = '✅ コピーしました！メモ帳などに貼り付けて保存できます';
+    btn.classList.add('copied');
+    setTimeout(function(){
+      btn.textContent = '📋 全パスワードをコピーする';
+      btn.classList.remove('copied');
+    }, 3000);
+  }).catch(function(){
+    var ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    setTimeout(function(){
+      btn.textContent = '📋 全パスワードをコピーする';
+      btn.classList.remove('copied');
+    }, 3000);
+  });
+}
+</script>
+</body>
+</html>
