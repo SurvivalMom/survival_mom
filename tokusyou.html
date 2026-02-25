@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>特定商取引法に基づく表記｜music office Intime</title>
+  <meta name="description" content="music office Intime の特定商取引法に基づく表記（デジタル商品・買い切り型）" />
+  <style>
+    :root{
+      --bg:#faf7f2;
+      --card:#fffef9;
+      --ink:#2c2318;
+      --ink2:#5a4a38;
+      --muted:#9a8878;
+      --border: rgba(44,35,24,0.13);
+      --shadow: 0 10px 40px rgba(44,35,24,0.10);
+      --r:18px;
+      --pad:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.9;
+    }
+    .wrap{
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 18px 80px;
+    }
+    header{
+      margin: 10px 0 18px;
+    }
+    h1{
+      font-size: 1.35rem;
+      margin: 0 0 6px;
+      letter-spacing: .02em;
+    }
+    .sub{
+      color: var(--muted);
+      font-size: .88rem;
+      margin: 0;
+    }
+    .card{
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: var(--pad);
+      box-shadow: var(--shadow);
+      margin-top: 16px;
+    }
+    .note{
+      margin-top: 16px;
+      color: var(--ink2);
+      font-size: .92rem;
+    }
+    dl{
+      margin: 0;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 10px 16px;
+    }
+    dt{
+      color: var(--ink2);
+      font-weight: 700;
+      padding-top: 2px;
+    }
+    dd{
+      margin: 0;
+      color: var(--ink);
+      word-break: break-word;
+    }
+    .divider{
+      height:1px;
+      background: var(--border);
+      margin: 18px 0;
+    }
+    footer{
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .pill{
+      display:inline-block;
+      padding: 4px 10px;
+      border:1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.6);
+      font-size: .78rem;
+      color: var(--ink2);
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    @media (max-width: 640px){
+      dl{grid-template-columns: 1fr}
+      dt{padding-top: 10px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>特定商取引法に基づく表記</h1>
+      <p class="sub">music office Intime</p>
+    </header>
+
+    <section class="card" aria-label="特定商取引法に基づく表記">
+      <div style="margin-bottom:10px;">
+        <span class="pill">デジタル商品</span>
+        <span class="pill">買い切り型</span>
+        <span class="pill">Stripe決済</span>
+      </div>
+
+      <dl>
+        <dt>販売事業者</dt>
+        <dd>music office Intime</dd>
+
+        <dt>運営責任者</dt>
+        <dd>萩原 友樹</dd>
+
+        <dt>所在地</dt>
+        <dd>愛知県名古屋市千種区松軒2‐9‐16‐205</dd>
+
+        <dt>メールアドレス</dt>
+        <dd><a href="mailto:blow.up@ymail.ne.jp">blow.up@ymail.ne.jp</a></dd>
+
+        <dt>販売価格</dt>
+        <dd>各商品ページに記載</dd>
+
+        <dt>支払方法</dt>
+        <dd>クレジットカード決済（Stripe）</dd>
+
+        <dt>支払時期</dt>
+        <dd>購入時</dd>
+
+        <dt>商品の引渡時期</dt>
+        <dd>決済完了後、即時利用可能</dd>
+
+        <dt>返品・キャンセル</dt>
+        <dd>デジタル商品のため原則不可</dd>
+      </dl>
+
+      <div class="divider"></div>
+
+      <p class="note">
+        ※ ご不明点がある場合は、上記メールアドレスまでお問い合わせください。<br>
+        ※ 「各商品ページに記載」とある項目は、販売ページ（LP）側の表示内容が優先されます。
+      </p>
+
+      <footer>
+        最終更新日：<span id="updatedAt">2026-02-25</span>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    // 最終更新日を自動で今日に（不要なら削除OK）
+    (function(){
+      try{
+        var d = new Date();
+        var yyyy = d.getFullYear();
+        var mm = String(d.getMonth()+1).padStart(2,'0');
+        var dd = String(d.getDate()).padStart(2,'0');
+        document.getElementById('updatedAt').textContent = yyyy + '-' + mm + '-' + dd;
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>
