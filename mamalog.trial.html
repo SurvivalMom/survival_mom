@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MamaLog 体験版｜今日の私を、1行で記録する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:      #1c1710;
+    --dark2:     #2c2318;
+    --dark3:     #3a2f22;
+    --sage:      #4a6a4a;
+    --sage2:     #6a8e6a;
+    --sage3:     #8aae8a;
+    --blush:     #b86870;
+    --gold:      #c8961a;
+    --border:    rgba(255,255,255,0.08);
+    --border-sage: rgba(74,106,74,0.3);
+    --font-main: 'Zen Kaku Gothic New', sans-serif;
+    --font-serif:'Kaisei Tokumin', serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: var(--font-main);
+    background: var(--dark);
+    color: rgba(255,255,255,0.85);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  /* ── TRIAL BANNER ── */
+  .trial-banner {
+    background: linear-gradient(90deg, var(--sage) 0%, var(--sage2) 100%);
+    text-align: center;
+    padding: 11px 20px;
+    font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.12em;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .trial-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 2px 10px; border-radius: 99px;
+    font-size: 11px; letter-spacing: 0.1em;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--dark2);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display:flex; align-items:center; gap:10px; }
+  .logo-dot { width:10px; height:10px; border-radius:50%; background:var(--sage2); }
+  .logo-name { font-family:var(--font-serif); font-size:22px; font-weight:700; color:#fff; }
+  .logo-tag { font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:0.1em; margin-top:2px; }
+  .header-date { font-family:var(--font-mono); font-size:12px; color:rgba(255,255,255,0.25); }
+
+  /* ── MAIN ── */
+  main {
+    flex:1;
+    max-width: 560px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 20px 40px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+
+  /* ── STEP INDICATOR ── */
+  .steps {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 4px;
+  }
+  .step {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.1em;
+    transition: color 0.3s;
+  }
+  .step.active { color: var(--sage3); }
+  .step.done { color: rgba(255,255,255,0.35); }
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    transition: all 0.3s;
+  }
+  .step.active .step-num { background: var(--sage); border-color: var(--sage); color: #fff; }
+  .step.done .step-num { background: rgba(255,255,255,0.1); }
+  .step-line { flex:1; height:1px; background: var(--border); margin: 0 8px; }
+
+  /* ── CARD BASE ── */
+  .card {
+    background: linear-gradient(145deg, var(--dark2) 0%, #1d2c1d 100%);
+    border: 1px solid var(--border-sage);
+    border-radius: 22px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background: linear-gradient(90deg, var(--sage), var(--sage3), transparent);
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-eyebrow {
+    font-size: 11px; font-weight: 700;
+    color: var(--sage3); letter-spacing: 0.2em;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .q-eyebrow::before { content:''; width:18px; height:1px; background:var(--sage2); }
+
+  .q-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(74,106,74,0.18);
+    border: 1px solid var(--border-sage);
+    border-radius: 99px;
+    font-size: 12px; font-weight: 700;
+    color: var(--sage3); letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-family: var(--font-serif);
+    font-size: 28px; font-weight: 700;
+    color: #fff; line-height: 1.5;
+    margin-bottom: 22px;
+    letter-spacing: 0.02em;
+    min-height: 84px;
+    transition: opacity 0.25s;
+  }
+
+  .q-actions { display:flex; align-items:center; gap:10px; }
+
+  .btn-shuffle {
+    display:flex; align-items:center; gap:7px;
+    background:none; border:1px solid var(--border-sage);
+    border-radius:99px; padding:8px 16px;
+    color:var(--sage3); font-family:var(--font-main);
+    font-size:13px; font-weight:700; cursor:pointer;
+    transition:all 0.2s; letter-spacing:0.06em;
+  }
+  .btn-shuffle:hover { background:rgba(74,106,74,0.15); transform:translateY(-1px); }
+
+  /* ── MEMO CARD ── */
+  .memo-card { display:none; }
+  .memo-card.visible { display:block; }
+
+  .memo-label {
+    font-size:12px; font-weight:700;
+    color:rgba(255,255,255,0.3); letter-spacing:0.14em;
+    margin-bottom:12px;
+  }
+
+  .q-recap {
+    font-size:14px; color:var(--sage3);
+    margin-bottom:14px; font-weight:700;
+    line-height:1.5;
+  }
+
+  .memo-textarea {
+    width:100%;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px 16px;
+    color:rgba(255,255,255,0.85);
+    font-family:var(--font-main); font-size:16px;
+    resize:none; line-height:1.65;
+    transition:border 0.2s;
+  }
+  .memo-textarea:focus { outline:none; border-color:var(--sage2); background:rgba(74,106,74,0.07); }
+  .memo-textarea::placeholder { color:rgba(255,255,255,0.18); }
+
+  .btn-save {
+    width:100%; margin-top:14px;
+    padding:16px;
+    background:var(--sage); border:none; border-radius:14px;
+    color:#fff; font-family:var(--font-main);
+    font-size:15px; font-weight:700; cursor:pointer;
+    transition:all 0.2s; letter-spacing:0.08em;
+  }
+  .btn-save:hover { background:var(--sage2); transform:translateY(-2px); box-shadow:0 8px 24px rgba(74,106,74,0.35); }
+  .btn-save:active { transform:scale(0.98); }
+
+  /* ── DONE CARD ── */
+  .done-card { display:none; text-align:center; }
+  .done-card.visible { display:block; }
+
+  .done-icon { font-size:40px; margin-bottom:16px; }
+
+  .done-title {
+    font-family:var(--font-serif);
+    font-size:24px; font-weight:700;
+    color:#fff; margin-bottom:10px; line-height:1.4;
+  }
+
+  .done-memo-display {
+    background:rgba(255,255,255,0.05);
+    border-left:3px solid var(--sage2);
+    border-radius:0 10px 10px 0;
+    padding:14px 16px;
+    margin:16px 0;
+    font-size:16px; color:rgba(255,255,255,0.75);
+    line-height:1.65; text-align:left;
+  }
+
+  .done-note {
+    font-size:14px; color:rgba(255,255,255,0.4);
+    line-height:1.8; margin-bottom:24px;
+  }
+  .done-note strong { color:rgba(255,255,255,0.6); }
+
+  /* ── LP CTA ── */
+  .cta-card {
+    background:rgba(28,23,16,0.8);
+    border:1px solid var(--border-sage);
+    border-radius:18px;
+    padding:24px 22px;
+    text-align:center;
+  }
+
+  .cta-label {
+    font-size:11px; font-weight:700;
+    color:var(--sage3); letter-spacing:0.2em;
+    margin-bottom:12px;
+  }
+
+  .cta-title {
+    font-family:var(--font-serif);
+    font-size:20px; font-weight:700;
+    color:#fff; line-height:1.5;
+    margin-bottom:8px;
+  }
+
+  .cta-features {
+    list-style:none;
+    margin:14px 0 20px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .cta-features li {
+    display:flex; align-items:center; gap:10px;
+    font-size:14px; color:rgba(255,255,255,0.6);
+    text-align:left;
+  }
+  .cta-features li::before {
+    content:'✓';
+    color:var(--sage3); font-weight:700;
+    flex-shrink:0;
+  }
+
+  .btn-lp {
+    display:block; width:100%;
+    padding:16px;
+    background:linear-gradient(135deg, var(--sage) 0%, var(--sage2) 100%);
+    border:none; border-radius:14px;
+    color:#fff; font-family:var(--font-main);
+    font-size:15px; font-weight:700; cursor:pointer;
+    transition:all 0.2s; letter-spacing:0.08em;
+    text-decoration:none;
+  }
+  .btn-lp:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(74,106,74,0.45); }
+  .btn-lp:active { transform:scale(0.98); }
+
+  /* ── TOAST ── */
+  .toast {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--sage); color:#fff;
+    padding:12px 24px; border-radius:99px;
+    font-size:14px; font-weight:700; letter-spacing:0.06em;
+    opacity:0; transition:opacity 0.3s;
+    pointer-events:none; white-space:nowrap; z-index:100;
+  }
+  .toast.show { opacity:1; }
+
+  @media(max-width:480px){
+    .q-text { font-size:23px; }
+    main { padding:24px 16px 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="trial-banner">
+  <span class="trial-badge">体験版</span>
+  今日の問いを1つ体験できます ── 記録の保存・振り返りは製品版で
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div>
+      <div class="logo-name">MamaLog</div>
+      <div class="logo-tag">今日の私を、1行で記録する</div>
+    </div>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<main>
+
+  <!-- ステップ表示 -->
+  <div class="steps">
+    <div class="step active" id="step1"><span class="step-num">1</span>問いを受け取る</div>
+    <div class="step-line"></div>
+    <div class="step" id="step2"><span class="step-num">2</span>1行で答える</div>
+    <div class="step-line"></div>
+    <div class="step" id="step3"><span class="step-num">3</span>今日が終わる</div>
+  </div>
+
+  <!-- STEP 1: 問いカード -->
+  <div class="card" id="questionCard">
+    <div class="q-eyebrow">今日の問い</div>
+    <div class="q-tag" id="qTag">朝の問い</div>
+    <div class="q-text" id="qText">今日一日、どんな気持ちで過ごせたら満足できるかな？</div>
+    <div class="q-actions">
+      <button class="btn-shuffle" onclick="shuffle()">↻ 別の問いを見る</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: メモカード -->
+  <div class="card memo-card" id="memoCard">
+    <div class="memo-label">TODAY'S MEMO</div>
+    <div class="q-recap" id="memoQRecap"></div>
+    <textarea class="memo-textarea" id="memoInput" rows="3" placeholder="今日感じたこと、ひとことで…"></textarea>
+    <button class="btn-save" onclick="saveMemo()">記録する →</button>
+  </div>
+
+  <!-- STEP 3: 完了カード -->
+  <div class="card done-card" id="doneCard">
+    <div class="done-icon">🌿</div>
+    <div class="done-title">今日の1行、受け取りました。</div>
+    <div class="done-memo-display" id="doneMemoDisplay"></div>
+    <div class="done-note">
+      この記録は<strong>今日限り</strong>です。<br>
+      蓄積・振り返り・感情グラフは製品版で使えます。
+    </div>
+  </div>
+
+  <!-- LP CTA（常に表示） -->
+  <div class="cta-card" id="ctaCard">
+    <div class="cta-label">製品版でできること</div>
+    <div class="cta-title">毎日の記録が、<br>「自分のペース」になる。</div>
+    <ul class="cta-features">
+      <li>30問からランダムに毎日の問いを表示</li>
+      <li>1行感情メモを蓄積・保存</li>
+      <li>週・月単位での振り返り</li>
+      <li>感情の傾向をグラフで可視化</li>
+      <li>お気に入りの問いを保存</li>
+    </ul>
+    <button class="btn-lp" onclick="goLP()">製品版を見てみる →</button>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LP_URL = '【ここにLPのURLを貼ってください】';
+
+const questions = [
+  { text:'今日一日、どんな気持ちで過ごせたら満足できるかな？', tag:'朝の問い' },
+  { text:'今朝の自分は、どんな気分？それを受け止めてあげよう。', tag:'朝の問い' },
+  { text:'今日、子どもと目を合わせて話せた瞬間はあった？', tag:'朝の問い' },
+  { text:'今、心がふっとゆるんだ瞬間はあった？', tag:'日中の問い' },
+  { text:'この作業をしているとき、どんな気持ちでいる？', tag:'日中の問い' },
+  { text:'今日「ああ、これでよかった」と思えた瞬間はある？', tag:'日中の問い' },
+  { text:'今日、心が動いた時間はどこだった？', tag:'夜の問い' },
+  { text:'子どもと過ごした時間、どんな気持ちだった？', tag:'夜の問い' },
+  { text:'今日いちばん、自分らしくいられた瞬間はいつ？', tag:'夜の問い' },
+  { text:'今週、いちばん心が満たされた時間はいつ？', tag:'週末の問い' },
+  { text:'今の自分に、一言かけるとしたら何を言う？', tag:'いつでも' },
+  { text:'今日、小さくでも「できた」と思えたことは何？', tag:'夜の問い' },
+  { text:'今、一番必要なものは何だろう？', tag:'いつでも' },
+  { text:'最近、自分のために使えた時間はあった？', tag:'いつでも' },
+  { text:'今日の疲れは、どこからきている？', tag:'夜の問い' },
+];
+
+let idx = 0;
+let shuffleCount = 0;
+const MAX_SHUFFLE = 2;
+let step = 1;
+
+function init() {
+  const now = new Date();
+  document.getElementById('headerDate').textContent =
+    `${now.getMonth()+1}月${now.getDate()}日 ${['日','月','火','水','木','金','土'][now.getDay()]}曜日`;
+  // 時間帯で初期問いを選ぶ
+  const h = now.getHours();
+  const tagFilter = h < 11 ? '朝の問い' : h < 17 ? '日中の問い' : '夜の問い';
+  const pool = questions.filter(q => q.tag === tagFilter);
+  idx = questions.indexOf(pool[Math.floor(Math.random()*pool.length)]);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[idx];
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qTag').textContent = q.tag;
+  // シャッフル上限でメモカードを表示
+  if (shuffleCount >= MAX_SHUFFLE) {
+    document.getElementById('memoCard').classList.add('visible');
+    document.getElementById('memoQRecap').textContent = q.text;
+    setStep(2);
+  }
+}
+
+function shuffle() {
+  if (step > 1) return;
+  shuffleCount++;
+  const prev = idx;
+  while (idx === prev) idx = Math.floor(Math.random()*questions.length);
+  const qEl = document.getElementById('qText');
+  qEl.style.opacity = '0';
+  setTimeout(() => { renderQuestion(); qEl.style.opacity = '1'; }, 200);
+
+  if (shuffleCount >= MAX_SHUFFLE) {
+    showToast('この問いで、書いてみましょう');
+  }
+}
+
+function saveMemo() {
+  const memo = document.getElementById('memoInput').value.trim();
+  if (!memo) { showToast('ひとこと書いてみましょう'); return; }
+  // 完了へ
+  document.getElementById('doneMemoDisplay').textContent = memo;
+  document.getElementById('memoCard').style.display = 'none';
+  document.getElementById('questionCard').style.opacity = '0.4';
+  document.getElementById('doneCard').classList.add('visible');
+  setStep(3);
+  showToast('🌿 今日の1行、受け取りました');
+}
+
+function setStep(n) {
+  step = n;
+  [1,2,3].forEach(i => {
+    const el = document.getElementById(`step${i}`);
+    el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function goLP() { window.location.href = LP_URL; }
+
+init();
+</script>
+</body>
+</html>

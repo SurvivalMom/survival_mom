@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MamaLog｜今日の私を、1行で記録する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:      #1c1710;
+    --dark2:     #2c2318;
+    --dark3:     #3a2f22;
+    --sage:      #4a6a4a;
+    --sage2:     #6a8e6a;
+    --sage3:     #8aae8a;
+    --blush:     #b86870;
+    --amber:     #a87020;
+    --gold:      #c8961a;
+    --border:    rgba(255,255,255,0.08);
+    --border-sage: rgba(74,106,74,0.28);
+    --shadow:    0 4px 24px rgba(0,0,0,0.3);
+    --font-main: 'Zen Kaku Gothic New', sans-serif;
+    --font-serif:'Kaisei Tokumin', serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:var(--font-main);
+    background:var(--dark);
+    color:rgba(255,255,255,0.85);
+    min-height:100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background:var(--dark2);
+    border-bottom:1px solid var(--border);
+    padding:16px 22px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:50;
+  }
+  .logo { display:flex; align-items:center; gap:10px; }
+  .logo-dot { width:10px; height:10px; border-radius:50%; background:var(--sage2); }
+  .logo-name { font-family:var(--font-serif); font-size:20px; font-weight:700; color:#fff; }
+  .logo-tag { font-size:10px; color:rgba(255,255,255,0.28); letter-spacing:0.1em; margin-top:2px; }
+  .header-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+  .header-date { font-family:var(--font-mono); font-size:12px; color:rgba(255,255,255,0.28); }
+  .streak {
+    font-size:11px; font-weight:700;
+    color:var(--gold); letter-spacing:0.08em;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display:flex;
+    background:var(--dark2);
+    border-bottom:1px solid var(--border);
+    padding:0 18px;
+    overflow-x:auto;
+  }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab {
+    padding:13px 18px;
+    font-size:13px; font-weight:700;
+    color:rgba(255,255,255,0.3);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    transition:all 0.2s;
+    letter-spacing:0.06em;
+    white-space:nowrap;
+  }
+  .tab.active { color:var(--sage3); border-bottom-color:var(--sage2); }
+
+  /* ── MAIN ── */
+  main {
+    max-width:580px;
+    margin:0 auto;
+    padding:24px 18px 100px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background:linear-gradient(145deg, var(--dark2) 0%, #1d2c1d 100%);
+    border:1px solid var(--border-sage);
+    border-radius:20px;
+    padding:24px 22px;
+    margin-bottom:18px;
+    position:relative; overflow:hidden;
+  }
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, var(--sage), var(--sage3), transparent);
+  }
+  .card-plain {
+    background:var(--dark2);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:14px;
+  }
+
+  /* ── TODAY ── */
+  .q-eyebrow {
+    font-size:11px; font-weight:700;
+    color:var(--sage3); letter-spacing:0.2em;
+    margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .q-eyebrow::before { content:''; width:16px; height:1px; background:var(--sage2); }
+
+  .q-tag {
+    display:inline-block;
+    padding:4px 12px;
+    background:rgba(74,106,74,0.18);
+    border:1px solid var(--border-sage);
+    border-radius:99px;
+    font-size:12px; font-weight:700;
+    color:var(--sage3); letter-spacing:0.08em;
+    margin-bottom:14px;
+  }
+
+  .q-text {
+    font-family:var(--font-serif);
+    font-size:26px; font-weight:700;
+    color:#fff; line-height:1.5;
+    margin-bottom:20px;
+    letter-spacing:0.02em;
+    min-height:78px;
+    transition:opacity 0.2s;
+  }
+
+  .q-actions { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+
+  .btn-shuffle {
+    display:flex; align-items:center; gap:7px;
+    background:none; border:1px solid var(--border-sage);
+    border-radius:99px; padding:8px 14px;
+    color:var(--sage3); font-family:var(--font-main);
+    font-size:12px; font-weight:700; cursor:pointer;
+    transition:all 0.2s; letter-spacing:0.06em;
+  }
+  .btn-shuffle:hover { background:rgba(74,106,74,0.15); transform:translateY(-1px); }
+
+  .btn-fav {
+    background:none; border:none;
+    font-size:20px; cursor:pointer;
+    color:rgba(255,255,255,0.2);
+    transition:all 0.2s; padding:4px;
+    margin-left:auto;
+  }
+  .btn-fav.on { color:var(--gold); }
+
+  /* 感情タグ選択 */
+  .emotion-label {
+    font-size:12px; font-weight:700;
+    color:rgba(255,255,255,0.28); letter-spacing:0.12em;
+    margin-bottom:10px;
+  }
+  .emotion-chips {
+    display:flex; flex-wrap:wrap; gap:8px;
+    margin-bottom:18px;
+  }
+  .chip {
+    padding:6px 14px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--border);
+    border-radius:99px;
+    font-size:13px; font-weight:700;
+    color:rgba(255,255,255,0.45);
+    cursor:pointer; transition:all 0.15s;
+  }
+  .chip:hover { border-color:var(--border-sage); color:var(--sage3); }
+  .chip.selected {
+    background:rgba(74,106,74,0.22);
+    border-color:var(--sage2);
+    color:var(--sage3);
+  }
+
+  /* メモ */
+  .memo-section-label {
+    font-size:12px; font-weight:700;
+    color:rgba(255,255,255,0.28); letter-spacing:0.14em;
+    margin-bottom:10px;
+  }
+  .memo-textarea {
+    width:100%;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:14px 15px;
+    color:rgba(255,255,255,0.85);
+    font-family:var(--font-main); font-size:15px;
+    resize:none; line-height:1.65;
+    transition:border 0.2s;
+  }
+  .memo-textarea:focus { outline:none; border-color:var(--sage2); background:rgba(74,106,74,0.07); }
+  .memo-textarea::placeholder { color:rgba(255,255,255,0.18); }
+
+  .btn-save {
+    width:100%; margin-top:13px;
+    padding:15px;
+    background:var(--sage); border:none; border-radius:13px;
+    color:#fff; font-family:var(--font-main);
+    font-size:14px; font-weight:700; cursor:pointer;
+    transition:all 0.2s; letter-spacing:0.08em;
+  }
+  .btn-save:hover { background:var(--sage2); transform:translateY(-2px); box-shadow:0 8px 24px rgba(74,106,74,0.35); }
+  .btn-save:active { transform:scale(0.98); }
+
+  /* ── RECORDS ── */
+  .section-title {
+    font-size:12px; font-weight:700;
+    color:rgba(255,255,255,0.25); letter-spacing:0.18em;
+    margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .record-card {
+    background:var(--dark2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px 17px;
+    margin-bottom:11px;
+    transition:border 0.2s;
+  }
+  .record-card:hover { border-color:var(--border-sage); }
+  .record-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+  .record-date { font-family:var(--font-mono); font-size:11px; color:rgba(255,255,255,0.22); }
+  .record-chip {
+    padding:2px 10px; background:rgba(74,106,74,0.15);
+    border-radius:99px; font-size:11px; color:var(--sage3); font-weight:700;
+  }
+  .record-q { font-size:12px; color:rgba(255,255,255,0.35); margin-bottom:5px; line-height:1.5; }
+  .record-memo { font-size:15px; color:rgba(255,255,255,0.78); line-height:1.6; }
+
+  /* 空状態 */
+  .empty {
+    text-align:center; padding:48px 20px;
+    color:rgba(255,255,255,0.2); font-size:14px; line-height:2;
+  }
+  .empty-icon { font-size:36px; margin-bottom:12px; opacity:0.4; }
+
+  /* ── GRAPH ── */
+  .weekly-card {
+    background:linear-gradient(145deg, var(--dark2), #1a2e1a);
+    border:1px solid var(--border-sage);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:16px;
+  }
+  .weekly-label { font-size:11px; font-weight:700; color:var(--sage3); letter-spacing:0.2em; margin-bottom:10px; }
+  .weekly-best { font-family:var(--font-serif); font-size:18px; font-weight:700; color:#fff; line-height:1.6; margin-bottom:5px; }
+  .weekly-sub { font-size:12px; color:rgba(255,255,255,0.3); }
+
+  .graph-card { background:var(--dark2); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px; }
+  .graph-title { font-size:13px; font-weight:700; color:rgba(255,255,255,0.5); margin-bottom:16px; }
+
+  .emotion-bars { display:flex; flex-direction:column; gap:11px; }
+  .emotion-row { display:flex; align-items:center; gap:12px; }
+  .e-label { font-size:13px; color:rgba(255,255,255,0.45); width:64px; flex-shrink:0; }
+  .e-bar-wrap { flex:1; height:7px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
+  .e-bar { height:100%; border-radius:99px; background:linear-gradient(90deg, var(--sage), var(--sage3)); transition:width 0.9s ease; }
+  .e-count { font-family:var(--font-mono); font-size:11px; color:rgba(255,255,255,0.22); width:22px; text-align:right; }
+
+  .stats-row { display:flex; gap:12px; margin-bottom:16px; }
+  .stat-box { flex:1; background:var(--dark2); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center; }
+  .stat-num { font-family:var(--font-serif); font-size:32px; font-weight:800; color:#fff; }
+  .stat-unit { font-size:14px; color:rgba(255,255,255,0.3); }
+  .stat-label { font-size:12px; color:rgba(255,255,255,0.3); margin-top:4px; }
+
+  /* ── FAVORITES ── */
+  .fav-item {
+    background:var(--dark2); border:1px solid var(--border);
+    border-radius:13px; padding:14px 16px;
+    margin-bottom:10px;
+    display:flex; align-items:center; gap:12px;
+    cursor:pointer; transition:border 0.2s;
+  }
+  .fav-item:hover { border-color:var(--border-sage); }
+  .fav-star { color:var(--gold); font-size:15px; flex-shrink:0; }
+  .fav-text { font-size:14px; color:rgba(255,255,255,0.7); line-height:1.5; }
+  .fav-tag-small { font-size:11px; color:rgba(255,255,255,0.25); margin-top:3px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--sage); color:#fff;
+    padding:11px 22px; border-radius:99px;
+    font-size:13px; font-weight:700; letter-spacing:0.06em;
+    opacity:0; transition:opacity 0.3s;
+    pointer-events:none; white-space:nowrap; z-index:200;
+  }
+  .toast.show { opacity:1; }
+
+  /* ── VIEWS ── */
+  .view { display:none; }
+  .view.active { display:block; }
+
+  @media(max-width:480px){
+    .q-text { font-size:22px; }
+    main { padding:20px 14px 90px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div>
+      <div class="logo-name">MamaLog</div>
+      <div class="logo-tag">今日の私を、1行で記録する</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-date" id="headerDate"></div>
+    <div class="streak" id="streakEl"></div>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('today')">今日</div>
+  <div class="tab" onclick="switchTab('records')">記録</div>
+  <div class="tab" onclick="switchTab('graph')">振り返り</div>
+  <div class="tab" onclick="switchTab('favorites')">お気に入り</div>
+</div>
+
+<main>
+
+  <!-- TODAY -->
+  <div class="view active" id="view-today">
+    <div class="card">
+      <div class="q-eyebrow">今日の問い</div>
+      <div class="q-tag" id="qTag">朝の問い</div>
+      <div class="q-text" id="qText">今日一日、どんな気持ちで過ごせたら満足できるかな？</div>
+      <div class="q-actions">
+        <button class="btn-shuffle" onclick="shuffle()">↻ 別の問いを見る</button>
+        <button class="btn-fav" id="favBtn" onclick="toggleFav()">☆</button>
+      </div>
+
+      <div class="emotion-label">今の気持ちを選ぶ（任意）</div>
+      <div class="emotion-chips" id="emotionChips"></div>
+
+      <div class="memo-section-label">TODAY'S MEMO ── 1行で書いてみる</div>
+      <textarea class="memo-textarea" id="memoInput" rows="3" placeholder="今日感じたこと、ひとことで…"></textarea>
+      <button class="btn-save" onclick="saveMemo()">記録する</button>
+    </div>
+  </div>
+
+  <!-- RECORDS -->
+  <div class="view" id="view-records">
+    <div class="section-title">最近の記録</div>
+    <div id="recordsList"></div>
+    <div id="emptyRecords" class="empty" style="display:none;">
+      <div class="empty-icon">📝</div>
+      まだ記録がありません。<br>今日の問いに答えてみましょう。
+    </div>
+  </div>
+
+  <!-- GRAPH -->
+  <div class="view" id="view-graph">
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num" id="totalDays">0</div>
+        <div class="stat-unit">日</div>
+        <div class="stat-label">今月の記録</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="streakDays">0</div>
+        <div class="stat-unit">日</div>
+        <div class="stat-label">連続記録</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="totalAll">0</div>
+        <div class="stat-unit">件</div>
+        <div class="stat-label">総記録数</div>
+      </div>
+    </div>
+
+    <div class="weekly-card">
+      <div class="weekly-label">最近の1行</div>
+      <div class="weekly-best" id="weeklyBest">記録が増えると、ここに表示されます。</div>
+      <div class="weekly-sub" id="weeklySub"></div>
+    </div>
+
+    <div class="graph-card">
+      <div class="graph-title">感情の傾向（全記録）</div>
+      <div class="emotion-bars" id="emotionBars"></div>
+    </div>
+  </div>
+
+  <!-- FAVORITES -->
+  <div class="view" id="view-favorites">
+    <div class="section-title">お気に入りの問い</div>
+    <div id="favList"></div>
+    <div id="emptyFavs" class="empty" style="display:none;">
+      <div class="empty-icon">☆</div>
+      ☆ でお気に入りに追加できます。<br>繰り返し使いたい問いを保存しましょう。
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 30問 DB ──
+const questions = [
+  { text:'今日一日、どんな気持ちで過ごせたら満足できるかな？', tag:'朝の問い' },
+  { text:'今朝の自分は、どんな気分？それを受け止めてあげよう。', tag:'朝の問い' },
+  { text:'今日、子どもに伝えたいことは何だろう？', tag:'朝の問い' },
+  { text:'今朝、一番最初に感じた気持ちは何だった？', tag:'朝の問い' },
+  { text:'今日「これだけできれば十分」という1つは何？', tag:'朝の問い' },
+  { text:'今日、自分を少しでも労われたら、どんな形がいい？', tag:'朝の問い' },
+  { text:'今、心がふっとゆるんだ瞬間はあった？', tag:'日中の問い' },
+  { text:'この作業をしているとき、どんな気持ちでいる？', tag:'日中の問い' },
+  { text:'今日「ああ、これでよかった」と思えた瞬間はある？', tag:'日中の問い' },
+  { text:'今、誰かに感謝したいと思っていることはある？', tag:'日中の問い' },
+  { text:'今この瞬間、体のどこかに緊張を感じている？', tag:'日中の問い' },
+  { text:'今日、心が動いた時間はどこだった？', tag:'夜の問い' },
+  { text:'子どもと過ごした時間、どんな気持ちだった？', tag:'夜の問い' },
+  { text:'今日いちばん、自分らしくいられた瞬間はいつ？', tag:'夜の問い' },
+  { text:'今日、小さくでも「できた」と思えたことは何？', tag:'夜の問い' },
+  { text:'今日の疲れは、どこからきている？', tag:'夜の問い' },
+  { text:'今日、自分に優しくできた瞬間はあった？', tag:'夜の問い' },
+  { text:'今夜、明日の自分に伝えておきたいことは？', tag:'夜の問い' },
+  { text:'今日、誰かのひとことで心が動いた場面はあった？', tag:'夜の問い' },
+  { text:'今週、いちばん心が満たされた時間はいつ？', tag:'週末の問い' },
+  { text:'来週、どんな気持ちで過ごせたら嬉しいかな？', tag:'週末の問い' },
+  { text:'今週の自分を、ひとことで表すとしたら？', tag:'週末の問い' },
+  { text:'今週、誰かに「ありがとう」と思った瞬間は？', tag:'週末の問い' },
+  { text:'来週、自分のために使いたい時間は何分あればいい？', tag:'週末の問い' },
+  { text:'今の自分に、一言かけるとしたら何を言う？', tag:'いつでも' },
+  { text:'今、一番必要なものは何だろう？', tag:'いつでも' },
+  { text:'最近、自分のために使えた時間はあった？', tag:'いつでも' },
+  { text:'最近「これでよかった」と思えた選択は何？', tag:'いつでも' },
+  { text:'今の私が、少し楽になれることが一つあるとしたら？', tag:'いつでも' },
+  { text:'10年後の自分が今の私を見たら、何と言うだろう？', tag:'いつでも' },
+];
+
+const emotions = ['嬉しい','感謝','安心','疲れた','焦り','悔しい','愛おしい','穏やか','達成感','モヤモヤ','寂しい','充実'];
+
+// ── STATE ──
+let curIdx = 0;
+let selEmotion = '';
+let records = [];
+let favorites = [];
+
+// ── INIT ──
+function init() {
+  const now = new Date();
+  document.getElementById('headerDate').textContent =
+    `${now.getMonth()+1}月${now.getDate()}日 ${['日','月','火','水','木','金','土'][now.getDay()]}曜日`;
+
+  loadStorage();
+  renderEmotionChips();
+  setTodayQuestion();
+  renderRecords();
+  renderGraph();
+  renderFavorites();
+  updateStreak();
+}
+
+function loadStorage() {
+  try {
+    const r = localStorage.getItem('mamalog_records');
+    const f = localStorage.getItem('mamalog_favorites');
+    if (r) records = JSON.parse(r);
+    if (f) favorites = JSON.parse(f);
+  } catch(e) {}
+}
+
+function saveStorage() {
+  try {
+    localStorage.setItem('mamalog_records', JSON.stringify(records));
+    localStorage.setItem('mamalog_favorites', JSON.stringify(favorites));
+  } catch(e) {}
+}
+
+// ── QUESTION ──
+function setTodayQuestion() {
+  const h = new Date().getHours();
+  const tag = h < 11 ? '朝の問い' : h < 17 ? '日中の問い' : h < 21 ? '夜の問い' : '夜の問い';
+  const pool = questions.filter(q => q.tag === tag || q.tag === 'いつでも');
+  curIdx = questions.indexOf(pool[Math.floor(Math.random()*pool.length)]);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[curIdx];
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qTag').textContent = q.tag;
+  const isFav = favorites.some(f => f.idx === curIdx);
+  const btn = document.getElementById('favBtn');
+  btn.textContent = isFav ? '★' : '☆';
+  btn.classList.toggle('on', isFav);
+}
+
+function shuffle() {
+  const prev = curIdx;
+  while(curIdx === prev) curIdx = Math.floor(Math.random()*questions.length);
+  const el = document.getElementById('qText');
+  el.style.opacity = '0';
+  setTimeout(() => { renderQuestion(); el.style.opacity = '1'; }, 180);
+  selEmotion = '';
+  renderEmotionChips();
+  document.getElementById('memoInput').value = '';
+}
+
+function toggleFav() {
+  const exists = favorites.findIndex(f => f.idx === curIdx);
+  if (exists >= 0) {
+    favorites.splice(exists, 1);
+    showToast('お気に入りから削除しました');
+  } else {
+    favorites.push({ idx: curIdx, text: questions[curIdx].text, tag: questions[curIdx].tag });
+    showToast('★ お気に入りに追加しました');
+  }
+  saveStorage();
+  renderQuestion();
+  renderFavorites();
+}
+
+// ── EMOTION CHIPS ──
+function renderEmotionChips() {
+  const el = document.getElementById('emotionChips');
+  el.innerHTML = emotions.map(e => `
+    <div class="chip${selEmotion===e?' selected':''}" onclick="selectEmotion('${e}')">${e}</div>
+  `).join('');
+}
+
+function selectEmotion(e) {
+  selEmotion = selEmotion === e ? '' : e;
+  renderEmotionChips();
+}
+
+// ── SAVE ──
+function saveMemo() {
+  const memo = document.getElementById('memoInput').value.trim();
+  if (!memo) { showToast('ひとこと書いてみましょう'); return; }
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+  records.unshift({
+    id: Date.now(),
+    date: dateStr,
+    question: questions[curIdx].text,
+    tag: questions[curIdx].tag,
+    emotion: selEmotion,
+    memo,
+  });
+  saveStorage();
+  document.getElementById('memoInput').value = '';
+  selEmotion = '';
+  renderEmotionChips();
+  renderRecords();
+  renderGraph();
+  updateStreak();
+  showToast('🌿 記録しました');
+}
+
+// ── RECORDS ──
+function renderRecords() {
+  const list = document.getElementById('recordsList');
+  const empty = document.getElementById('emptyRecords');
+  list.innerHTML = '';
+  if (records.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  records.slice(0, 40).forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'record-card';
+    d.innerHTML = `
+      <div class="record-head">
+        <div class="record-date">${r.date}</div>
+        ${r.emotion ? `<div class="record-chip">${r.emotion}</div>` : ''}
+      </div>
+      <div class="record-q">${r.question}</div>
+      <div class="record-memo">${r.memo}</div>
+    `;
+    list.appendChild(d);
+  });
+}
+
+// ── GRAPH ──
+function renderGraph() {
+  // stats
+  const now = new Date();
+  const thisM = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/`;
+  const days = new Set(records.filter(r => r.date.startsWith(thisM)).map(r => r.date));
+  document.getElementById('totalDays').textContent = days.size;
+  document.getElementById('totalAll').textContent = records.length;
+
+  // weekly best
+  if (records.length > 0) {
+    document.getElementById('weeklyBest').textContent = `「${records[0].memo}」`;
+    document.getElementById('weeklySub').textContent = records[0].date;
+  }
+
+  // emotion bars
+  const counts = {};
+  records.forEach(r => { if(r.emotion) counts[r.emotion] = (counts[r.emotion]||0)+1; });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const max = sorted.length > 0 ? sorted[0][1] : 1;
+  const barsEl = document.getElementById('emotionBars');
+  if (sorted.length === 0) {
+    barsEl.innerHTML = '<div style="color:rgba(255,255,255,0.22);font-size:13px;">感情を選んで記録すると表示されます</div>';
+  } else {
+    barsEl.innerHTML = sorted.map(([label,cnt]) => `
+      <div class="emotion-row">
+        <div class="e-label">${label}</div>
+        <div class="e-bar-wrap"><div class="e-bar" style="width:${Math.round(cnt/max*100)}%"></div></div>
+        <div class="e-count">${cnt}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ── STREAK ──
+function updateStreak() {
+  if (records.length === 0) { document.getElementById('streakEl').textContent = ''; document.getElementById('streakDays').textContent = '0'; return; }
+  const dates = [...new Set(records.map(r => r.date))].sort().reverse();
+  let streak = 0;
+  let check = new Date();
+  check.setHours(0,0,0,0);
+  for (const d of dates) {
+    const ds = `${check.getFullYear()}/${String(check.getMonth()+1).padStart(2,'0')}/${String(check.getDate()).padStart(2,'0')}`;
+    if (d === ds) { streak++; check.setDate(check.getDate()-1); }
+    else break;
+  }
+  document.getElementById('streakDays').textContent = streak;
+  if (streak >= 3) document.getElementById('streakEl').textContent = `🔥 ${streak}日連続`;
+  else document.getElementById('streakEl').textContent = '';
+}
+
+// ── FAVORITES ──
+function renderFavorites() {
+  const list = document.getElementById('favList');
+  const empty = document.getElementById('emptyFavs');
+  list.innerHTML = '';
+  if (favorites.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  favorites.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'fav-item';
+    el.innerHTML = `
+      <span class="fav-star">★</span>
+      <div>
+        <div class="fav-text">${f.text}</div>
+        <div class="fav-tag-small">${f.tag}</div>
+      </div>
+    `;
+    el.onclick = () => {
+      curIdx = f.idx;
+      renderQuestion();
+      selEmotion = ''; renderEmotionChips();
+      document.getElementById('memoInput').value = '';
+      switchTab('today');
+    };
+    list.appendChild(el);
+  });
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  ['today','records','graph','favorites'].forEach(t => {
+    document.getElementById(`view-${t}`).classList.toggle('active', t===tab);
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['today','records','graph','favorites'][i]===tab);
+  });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2300);
+}
+
+init();
+</script>
+</body>
+</html>
