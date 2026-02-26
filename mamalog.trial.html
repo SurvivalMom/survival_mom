@@ -347,7 +347,7 @@
     </div>
   </div>
 
-  <!-- LP CTA（常に表示） -->
+  <!-- 製品版の紹介（ボタンなし） -->
   <div class="cta-card" id="ctaCard">
     <div class="cta-label">製品版でできること</div>
     <div class="cta-title">毎日の記録が、<br>「自分のペース」になる。</div>
@@ -358,7 +358,6 @@
       <li>感情の傾向をグラフで可視化</li>
       <li>お気に入りの問いを保存</li>
     </ul>
-    <button class="btn-lp" onclick="goLP()">製品版を見てみる →</button>
   </div>
 
 </main>
@@ -366,8 +365,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const LP_URL = '【ここにLPのURLを貼ってください】';
-
 const questions = [
   { text:'今日一日、どんな気持ちで過ごせたら満足できるかな？', tag:'朝の問い' },
   { text:'今朝の自分は、どんな気分？それを受け止めてあげよう。', tag:'朝の問い' },
@@ -456,7 +453,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-function goLP() { window.location.href = LP_URL; }
 
 init();
 </script>
