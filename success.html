@@ -6,9 +6,7 @@
   <title>🌿 今日の大ぼうけん</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Yomogi&family=BIZ+UDPGothic:wght@400;700&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-
   <style>
-    /* ══════════ トークン ══════════ */
     :root {
       --forest-deep:  #1a2e1a;
       --forest-mid:   #233323;
@@ -26,32 +24,22 @@
       --rose-soft:    #f4a7b9;
       --sky-soft:     #a8d8ea;
       --lavender-soft:#c5b8e8;
-
       --text-dark:    #1a1a0e;
       --text-mid:     #3d3d20;
       --text-mute:    #7a7a50;
-
-      --card-bg:      rgba(253,246,227,0.88);
+      --card-bg:      rgba(253,246,227,0.92);
       --card-border:  rgba(165,130,50,0.35);
       --card-shadow:  0 8px 32px rgba(10,30,10,0.35), 0 2px 8px rgba(10,30,10,0.2);
-
-      --r-xl: 32px;
-      --r-lg: 22px;
-      --r-md: 14px;
+      --r-xl: 32px; --r-lg: 22px; --r-md: 14px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-
     body {
-      font-family: 'BIZ UDPGothic', 'Fredoka', sans-serif;
+      font-family: 'BIZ UDPGothic', sans-serif;
       background: var(--forest-deep);
       min-height: 100vh;
       overflow-x: hidden;
-      position: relative;
     }
-
-    /* ── 森の背景レイヤー ── */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -63,7 +51,7 @@
         radial-gradient(ellipse 40% 40% at 95% 80%,  rgba(61,107,56,0.3)   0%, transparent 70%);
     }
 
-    /* ── 浮かぶ木の葉パーティクル ── */
+    /* ── パーティクル ── */
     .leaf-particle {
       position: fixed; pointer-events: none; z-index: 0;
       font-size: 1.2rem; opacity: 0;
@@ -75,13 +63,10 @@
       90%  { opacity: 0.4; }
       100% { transform: translateX(var(--drift, 40px)) translateY(105vh) rotate(360deg); opacity: 0; }
     }
-
-    /* ── キラキラ光の粒 ── */
     .sparkle {
       position: fixed; pointer-events: none; z-index: 0;
       width: var(--sz, 4px); height: var(--sz, 4px);
-      border-radius: 50%;
-      background: var(--gold);
+      border-radius: 50%; background: var(--gold);
       box-shadow: 0 0 6px 2px rgba(245,200,66,0.6);
       animation: sparkle-twinkle var(--d, 3s) var(--delay, 0s) ease-in-out infinite;
     }
@@ -98,31 +83,23 @@
       transition: opacity 0.6s ease, visibility 0.6s;
     }
     #pw-overlay.hide { opacity: 0; visibility: hidden; }
-
     .pw-card {
       background: var(--parchment);
-      border-radius: var(--r-xl);
-      padding: 52px 36px 44px;
+      border-radius: var(--r-xl); padding: 52px 36px 44px;
       max-width: 370px; width: 100%;
-      text-align: center;
-      position: relative; overflow: hidden;
+      text-align: center; position: relative; overflow: hidden;
       box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 3px rgba(165,130,50,0.5), inset 0 1px 0 rgba(255,255,255,0.5);
     }
-    /* 羊皮紙テクスチャのオーバーレイ */
     .pw-card::before {
-      content: '';
-      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
       background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
       border-radius: inherit;
     }
-    /* 上部の金のリボン */
     .pw-card::after {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 7px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 7px;
       background: linear-gradient(90deg, var(--gold3), var(--gold), var(--amber), var(--gold), var(--gold3));
       border-radius: var(--r-xl) var(--r-xl) 0 0;
     }
-
     .pw-inner { position: relative; z-index: 1; }
     .pw-mascot {
       font-size: 4.8rem; display: block; margin-bottom: 6px;
@@ -133,56 +110,30 @@
       0%,100% { transform: translateY(0) rotate(-3deg); }
       50%      { transform: translateY(-12px) rotate(3deg); }
     }
-
-    .pw-subtitle {
-      font-family: 'Yomogi', cursive;
-      font-size: 0.78rem; color: var(--moss); margin-bottom: 6px;
-      letter-spacing: 0.15em;
-    }
-    .pw-title {
-      font-family: 'Yomogi', cursive;
-      font-size: 1.7rem; font-weight: 400; color: var(--text-dark);
-      line-height: 1.3; margin-bottom: 6px;
-    }
+    .pw-subtitle { font-family: 'Yomogi', cursive; font-size: 0.78rem; color: var(--moss); margin-bottom: 6px; letter-spacing: 0.15em; }
+    .pw-title { font-family: 'Yomogi', cursive; font-size: 1.7rem; color: var(--text-dark); line-height: 1.3; margin-bottom: 6px; }
     .pw-sub { font-size: 0.78rem; color: var(--text-mute); margin-bottom: 32px; line-height: 1.6; }
-
-    .pw-label {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--text-mute);
-      display: block; text-align: left; margin-bottom: 8px;
-    }
+    .pw-label { font-family: 'Fredoka', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-mute); display: block; text-align: left; margin-bottom: 8px; }
     .pw-input {
       width: 100%; padding: 15px 20px;
-      border: 2.5px solid rgba(165,130,50,0.4);
-      border-radius: var(--r-md);
-      font-family: 'BIZ UDPGothic', sans-serif;
-      font-size: 1.05rem; font-weight: 700;
-      color: var(--text-dark);
-      background: rgba(255,255,255,0.7);
+      border: 2.5px solid rgba(165,130,50,0.4); border-radius: var(--r-md);
+      font-family: 'BIZ UDPGothic', sans-serif; font-size: 1.05rem; font-weight: 700;
+      color: var(--text-dark); background: rgba(255,255,255,0.7);
       outline: none; letter-spacing: 0.2em; text-align: center;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      margin-bottom: 18px;
+      transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 18px;
     }
     .pw-input:focus { border-color: var(--gold2); box-shadow: 0 0 0 4px rgba(245,200,66,0.2); }
     .pw-input.error { border-color: #e05a80; animation: shake 0.4s; }
-
     .pw-btn {
       width: 100%; padding: 16px;
-      background: linear-gradient(160deg, var(--fern) 0%, var(--moss) 100%);
-      color: var(--gold);
-      border: 2.5px solid rgba(245,200,66,0.5);
-      border-radius: var(--r-md);
+      background: linear-gradient(160deg, var(--fern), var(--moss));
+      color: var(--gold); border: 2.5px solid rgba(245,200,66,0.5); border-radius: var(--r-md);
       font-family: 'Fredoka', sans-serif; font-size: 1.05rem; font-weight: 700;
       cursor: pointer; letter-spacing: 0.08em;
       box-shadow: 0 6px 0 var(--forest-deep), 0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
-      transition: transform 0.15s, box-shadow 0.15s;
-      position: relative; overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s; position: relative; overflow: hidden;
     }
-    .pw-btn::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent);
-    }
+    .pw-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent); }
     .pw-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--forest-deep), 0 14px 36px rgba(0,0,0,0.35); }
     .pw-btn:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--forest-deep); }
     .pw-error { margin-top: 12px; font-size: 0.8rem; font-weight: 700; color: #c0392b; min-height: 20px; }
@@ -197,138 +148,107 @@
     }
     #app.visible { opacity: 1; transform: translateY(0); }
 
-    /* ── ヘッダー ── */
+    /* ヘッダー */
     .app-header {
       display: flex; justify-content: space-between; align-items: flex-start;
       margin-bottom: 22px; padding: 0 4px;
     }
-    .logo-block {}
     .logo-main {
-      font-family: 'Yomogi', cursive;
-      font-size: 1.55rem; color: var(--gold);
+      font-family: 'Yomogi', cursive; font-size: 1.55rem; color: var(--gold);
       filter: drop-shadow(0 2px 8px rgba(245,200,66,0.5));
       line-height: 1.1; margin-bottom: 2px;
       display: flex; align-items: center; gap: 8px;
     }
-    .logo-sub {
-      font-size: 0.68rem; font-weight: 700; color: rgba(245,200,66,0.55);
-      letter-spacing: 0.18em; text-transform: uppercase;
-    }
-    .print-btn {
-      padding: 10px 16px;
-      background: rgba(245,200,66,0.12);
-      border: 1.5px solid rgba(245,200,66,0.35);
-      border-radius: var(--r-md);
-      color: var(--gold); font-size: 0.85rem; font-weight: 700;
+    .logo-sub { font-size: 0.68rem; font-weight: 700; color: rgba(245,200,66,0.55); letter-spacing: 0.18em; text-transform: uppercase; }
+    .header-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      padding: 10px 14px;
+      background: rgba(245,200,66,0.1); border: 1.5px solid rgba(245,200,66,0.3);
+      border-radius: var(--r-md); color: var(--gold); font-size: 0.82rem; font-weight: 700;
       cursor: pointer; font-family: 'BIZ UDPGothic', sans-serif;
       transition: background 0.2s, transform 0.15s;
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 5px;
     }
-    .print-btn:hover { background: rgba(245,200,66,0.22); transform: translateY(-1px); }
-    .print-btn:active { transform: scale(0.96); }
+    .icon-btn:hover { background: rgba(245,200,66,0.2); transform: translateY(-1px); }
+    .icon-btn:active { transform: scale(0.96); }
 
-    /* ── レベルカード ── */
+    /* レベルカード */
     .level-card {
-      background: var(--card-bg);
-      border-radius: var(--r-xl);
-      padding: 22px 26px 18px;
-      border: 2px solid var(--card-border);
-      box-shadow: var(--card-shadow);
-      margin-bottom: 20px;
-      position: relative; overflow: hidden;
-      backdrop-filter: blur(4px);
+      background: var(--card-bg); border-radius: var(--r-xl);
+      padding: 22px 26px 18px; border: 2px solid var(--card-border);
+      box-shadow: var(--card-shadow); margin-bottom: 20px;
+      position: relative; overflow: hidden; backdrop-filter: blur(4px);
     }
     .level-card::before {
-      content: '';
-      position: absolute; inset: 0; pointer-events: none;
+      content: ''; position: absolute; inset: 0; pointer-events: none;
       background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
       border-radius: inherit;
     }
-    /* 装飾のツタ */
-    .level-card::after {
-      content: '🌿';
-      position: absolute; right: -4px; top: -6px;
-      font-size: 3.5rem; opacity: 0.12; transform: rotate(30deg);
-      pointer-events: none;
-    }
-
+    .level-card::after { content: '🌿'; position: absolute; right: -4px; top: -6px; font-size: 3.5rem; opacity: 0.12; transform: rotate(30deg); pointer-events: none; }
     .level-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
     .level-label { font-size: 0.65rem; font-weight: 700; color: var(--text-mute); letter-spacing: 0.12em; text-transform: uppercase; }
-    .level-num {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 2.4rem; font-weight: 700; color: var(--moss);
-      line-height: 1; letter-spacing: -0.02em;
-    }
+    .level-num { font-family: 'Fredoka', sans-serif; font-size: 2.4rem; font-weight: 700; color: var(--moss); line-height: 1; letter-spacing: -0.02em; }
     .streak-badge {
-      background: linear-gradient(135deg, #fff9e6, #fef0b0);
-      border: 2px solid var(--amber);
-      border-radius: 99px; padding: 5px 13px;
-      font-size: 0.75rem; font-weight: 700; color: var(--gold3);
+      background: linear-gradient(135deg, #fff9e6, #fef0b0); border: 2px solid var(--amber);
+      border-radius: 99px; padding: 5px 13px; font-size: 0.75rem; font-weight: 700; color: var(--gold3);
       box-shadow: 0 2px 10px rgba(245,200,66,0.3), inset 0 1px 0 rgba(255,255,255,0.6);
     }
-
-    /* XPバー */
-    .xp-bar-bg {
-      background: rgba(61,107,56,0.2);
-      border: 1.5px solid rgba(61,107,56,0.25);
-      border-radius: 99px; height: 14px; overflow: hidden;
-      margin-bottom: 5px;
-    }
-    .xp-bar {
-      height: 100%; border-radius: 99px;
-      background: linear-gradient(90deg, var(--fern), var(--gold));
-      box-shadow: 0 0 10px rgba(245,200,66,0.5);
-      transition: width 0.9s cubic-bezier(.4,0,.2,1);
-      position: relative;
-    }
-    .xp-bar::after {
-      content: ''; position: absolute; top: 2px; left: 4px; right: 4px; height: 4px;
-      background: rgba(255,255,255,0.35); border-radius: 99px;
-    }
+    .xp-bar-bg { background: rgba(61,107,56,0.2); border: 1.5px solid rgba(61,107,56,0.25); border-radius: 99px; height: 14px; overflow: hidden; margin-bottom: 5px; }
+    .xp-bar { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--fern), var(--gold)); box-shadow: 0 0 10px rgba(245,200,66,0.5); transition: width 0.9s cubic-bezier(.4,0,.2,1); position: relative; }
+    .xp-bar::after { content: ''; position: absolute; top: 2px; left: 4px; right: 4px; height: 4px; background: rgba(255,255,255,0.35); border-radius: 99px; }
     .xp-labels { display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 700; color: var(--text-mute); }
 
-    /* ── セクション見出し ── */
+    /* 達成バナー */
+    .all-done-banner {
+      background: linear-gradient(135deg, #fff9e6, #fef3c0); border: 2.5px solid var(--amber);
+      border-radius: var(--r-xl); padding: 20px 24px; text-align: center;
+      box-shadow: 0 8px 32px rgba(245,168,37,0.25), 0 0 0 6px rgba(245,200,66,0.08);
+      animation: celebrate 0.5s cubic-bezier(.34,1.56,.64,1); margin-bottom: 16px;
+    }
+    .all-done-title { font-family: 'Yomogi', cursive; font-size: 1.4rem; color: var(--gold3); filter: drop-shadow(0 2px 6px rgba(245,200,66,0.4)); margin-bottom: 4px; }
+    .all-done-sub { font-size: 0.82rem; color: var(--text-mid); font-weight: 600; }
+    @keyframes celebrate {
+      from { transform: scale(0.85) rotate(-2deg); opacity: 0; }
+      60%  { transform: scale(1.05) rotate(1deg); }
+      to   { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    /* セクション見出し */
     .section-heading {
-      font-family: 'Yomogi', cursive;
-      font-size: 1.05rem; color: var(--gold);
+      font-family: 'Yomogi', cursive; font-size: 1.05rem; color: var(--gold);
       margin-bottom: 14px; padding-left: 4px;
       display: flex; align-items: center; gap: 8px;
       filter: drop-shadow(0 1px 4px rgba(245,200,66,0.35));
     }
 
-    /* ── クエストカード ── */
+    /* クエストカード */
     .quest-list { display: flex; flex-direction: column; gap: 13px; }
-
     .quest-card {
-      background: var(--card-bg);
-      border-radius: var(--r-lg);
-      padding: 17px 18px;
-      border: 2px solid var(--card-border);
-      box-shadow: var(--card-shadow);
-      display: flex; align-items: center; gap: 14px;
-      cursor: pointer;
+      background: var(--card-bg); border-radius: var(--r-lg);
+      border: 2px solid var(--card-border); box-shadow: var(--card-shadow);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      position: relative; overflow: hidden; backdrop-filter: blur(3px);
       transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
-      -webkit-tap-highlight-color: transparent;
-      position: relative; overflow: hidden;
-      backdrop-filter: blur(3px);
     }
     .quest-card::before {
-      content: '';
-      position: absolute; inset: 0; pointer-events: none;
+      content: ''; position: absolute; inset: 0; pointer-events: none;
       background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
       border-radius: inherit;
     }
     .quest-card:hover { transform: translateY(-4px) scale(1.015); box-shadow: 0 16px 48px rgba(10,30,10,0.45), 0 4px 12px rgba(10,30,10,0.25); }
     .quest-card:active { transform: scale(0.975); }
-    .quest-card.done { opacity: 0.55; }
+    .quest-card.done { opacity: 0.6; }
     .quest-card.done .quest-title { text-decoration: line-through; color: var(--text-mute); }
 
-    /* カードの左端カラーストライプ */
+    /* カード上部クリックエリア */
+    .quest-main {
+      padding: 17px 18px;
+      display: flex; align-items: center; gap: 14px;
+    }
     .quest-stripe {
       position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
       border-radius: var(--r-lg) 0 0 var(--r-lg);
     }
-
     .quest-icon-wrap {
       width: 54px; height: 54px; border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
@@ -336,70 +256,61 @@
       box-shadow: 0 4px 12px rgba(10,30,10,0.2), inset 0 1px 0 rgba(255,255,255,0.5);
     }
     .quest-body { flex: 1; min-width: 0; }
-    .quest-title { font-size: 0.97rem; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; line-height: 1.3; }
-    .quest-reward {
-      font-size: 0.72rem; font-weight: 700;
-      color: var(--gold3); display: flex; align-items: center; gap: 3px;
-    }
-
+    .quest-title { font-size: 0.97rem; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; line-height: 1.3; }
+    .quest-hint { font-size: 0.72rem; color: var(--text-mute); margin-bottom: 3px; font-weight: 400; }
+    .quest-reward { font-size: 0.72rem; font-weight: 700; color: var(--gold3); display: flex; align-items: center; gap: 3px; }
     .quest-check {
       width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.3rem; border: 2.5px solid rgba(165,130,50,0.35);
-      background: rgba(255,255,255,0.5);
-      transition: transform 0.25s, box-shadow 0.2s;
+      background: rgba(255,255,255,0.5); transition: transform 0.25s, box-shadow 0.2s;
     }
-    .quest-check.done-check {
-      border-color: var(--fern); background: rgba(110,181,95,0.15);
-      transform: scale(1.15);
-      box-shadow: 0 0 14px rgba(110,181,95,0.4);
-    }
+    .quest-check.done-check { border-color: var(--fern); background: rgba(110,181,95,0.15); transform: scale(1.15); box-shadow: 0 0 14px rgba(110,181,95,0.4); }
 
-    /* ── 達成バナー ── */
-    .all-done-banner {
-      background: linear-gradient(135deg, #fff9e6, #fef3c0);
-      border: 2.5px solid var(--amber);
-      border-radius: var(--r-xl);
-      padding: 20px 24px;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(245,168,37,0.25), 0 0 0 6px rgba(245,200,66,0.08);
-      animation: celebrate 0.5s cubic-bezier(.34,1.56,.64,1);
-      margin-bottom: 16px;
+    /* メモ入力エリア（カード展開） */
+    .quest-memo-area {
+      border-top: 1.5px dashed rgba(165,130,50,0.25);
+      padding: 14px 18px;
+      display: none;
+      flex-direction: column; gap: 10px;
+      background: rgba(253,246,227,0.5);
     }
-    @keyframes celebrate {
-      from { transform: scale(0.85); opacity: 0; }
-      to   { transform: scale(1);    opacity: 1; }
+    .quest-memo-area.open { display: flex; }
+    .memo-label-sm { font-size: 0.72rem; font-weight: 700; color: var(--text-mute); letter-spacing: 0.1em; }
+    .memo-textarea {
+      width: 100%; min-height: 72px;
+      border: 1.5px solid rgba(165,130,50,0.35); border-radius: 12px;
+      padding: 11px 13px;
+      font-family: 'BIZ UDPGothic', sans-serif; font-size: 0.9rem;
+      color: var(--text-dark); background: rgba(255,255,255,0.75);
+      resize: none; line-height: 1.6; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .all-done-title {
-      font-family: 'Yomogi', cursive;
-      font-size: 1.4rem; color: var(--gold3);
-      filter: drop-shadow(0 2px 6px rgba(245,200,66,0.4));
-      margin-bottom: 4px;
+    .memo-textarea:focus { border-color: var(--gold2); box-shadow: 0 0 0 3px rgba(245,200,66,0.18); }
+    .memo-textarea::placeholder { color: rgba(122,122,80,0.5); }
+    .memo-save-btn {
+      align-self: flex-end;
+      padding: 9px 22px;
+      background: linear-gradient(160deg, var(--fern), var(--moss));
+      color: var(--gold); border: 1.5px solid rgba(245,200,66,0.4); border-radius: 99px;
+      font-family: 'Fredoka', sans-serif; font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.06em;
+      box-shadow: 0 4px 0 var(--forest-deep), inset 0 1px 0 rgba(255,255,255,0.12);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .all-done-sub { font-size: 0.82rem; color: var(--text-mid); font-weight: 600; }
+    .memo-save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--forest-deep), 0 8px 20px rgba(0,0,0,0.2); }
+    .memo-save-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--forest-deep); }
 
-    /* ── ひとこと ── */
-    .bottom-quote {
-      text-align: center; margin-top: 28px; padding: 0 12px;
-      font-family: 'Yomogi', cursive;
-      font-size: 0.88rem; color: rgba(245,200,66,0.7);
-      line-height: 1.8; letter-spacing: 0.03em;
-      filter: drop-shadow(0 1px 4px rgba(245,200,66,0.2));
+    /* 過去メモ表示 */
+    .memo-history { display: flex; flex-direction: column; gap: 6px; }
+    .memo-history-item {
+      background: rgba(255,255,255,0.5); border-radius: 8px;
+      padding: 8px 11px; font-size: 0.8rem; color: var(--text-mid); line-height: 1.5;
+      border-left: 3px solid var(--fern);
     }
+    .memo-history-date { font-size: 0.65rem; color: var(--text-mute); margin-bottom: 2px; font-weight: 700; letter-spacing: 0.08em; }
 
-    /* ══════════ アニメ共通 ══════════ */
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%      { transform: translateX(-7px); }
-      60%      { transform: translateX(7px); }
-    }
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .fade-up { animation: fade-up 0.5s ease both; }
-
-    /* ── クエストカードの個別テーマ ── */
+    /* カードテーマ */
     .qt-morning .quest-stripe { background: linear-gradient(to bottom, #a8d8ea, #5ba8c4); }
     .qt-morning .quest-icon-wrap { background: linear-gradient(135deg, #dff1f9, #b8e0ef); }
     .qt-note    .quest-stripe { background: linear-gradient(to bottom, #a8e6b0, #4caf82); }
@@ -407,19 +318,68 @@
     .qt-night   .quest-stripe { background: linear-gradient(to bottom, #c5b8e8, #8c7bc8); }
     .qt-night   .quest-icon-wrap { background: linear-gradient(135deg, #ede9f8, #d8d0f0); }
 
-    /* ══════════ 印刷 ══════════ */
+    /* ひとこと */
+    .bottom-quote {
+      text-align: center; margin-top: 28px; padding: 0 12px;
+      font-family: 'Yomogi', cursive; font-size: 0.88rem; color: rgba(245,200,66,0.7);
+      line-height: 1.8; letter-spacing: 0.03em;
+      filter: drop-shadow(0 1px 4px rgba(245,200,66,0.2));
+    }
+
+    /* ══════════ 記録ページ ══════════ */
+    #history-view {
+      position: fixed; inset: 0; z-index: 500;
+      background: radial-gradient(ellipse at 40% 30%, #2d4a2a, #0e1e0e);
+      overflow-y: auto;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.35s, visibility 0.35s;
+    }
+    #history-view.open { opacity: 1; visibility: visible; }
+    .history-inner { max-width: 480px; margin: 0 auto; padding: 28px 18px 80px; }
+    .history-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+    }
+    .back-btn {
+      padding: 9px 16px; background: rgba(245,200,66,0.1); border: 1.5px solid rgba(245,200,66,0.3);
+      border-radius: var(--r-md); color: var(--gold); font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; font-family: 'BIZ UDPGothic', sans-serif;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: rgba(245,200,66,0.2); }
+    .history-title { font-family: 'Yomogi', cursive; font-size: 1.3rem; color: var(--gold); filter: drop-shadow(0 1px 6px rgba(245,200,66,0.4)); }
+    .history-day-block { margin-bottom: 22px; }
+    .history-day-label {
+      font-family: 'Fredoka', sans-serif; font-size: 0.75rem; font-weight: 700;
+      color: rgba(245,200,66,0.6); letter-spacing: 0.15em; text-transform: uppercase;
+      margin-bottom: 10px; padding-left: 4px;
+    }
+    .history-entry {
+      background: var(--card-bg); border-radius: var(--r-md);
+      padding: 13px 16px; margin-bottom: 8px;
+      border: 1.5px solid var(--card-border); box-shadow: 0 4px 16px rgba(10,30,10,0.25);
+    }
+    .history-entry-quest { font-size: 0.72rem; font-weight: 700; color: var(--text-mute); margin-bottom: 5px; letter-spacing: 0.06em; }
+    .history-entry-memo { font-size: 0.92rem; color: var(--text-dark); line-height: 1.6; }
+    .history-empty { text-align: center; padding: 60px 20px; color: rgba(245,200,66,0.35); font-family: 'Yomogi', cursive; font-size: 1rem; line-height: 2; }
+
+    /* 印刷 */
     @media print {
-      #pw-overlay, .no-print, body::before, .leaf-particle, .sparkle { display: none !important; }
+      #pw-overlay, .no-print, body::before, .leaf-particle, .sparkle, #history-view { display: none !important; }
       body { background: white !important; }
       #app { padding: 0; max-width: 100%; opacity: 1 !important; transform: none !important; }
       .print-only { display: block !important; }
     }
     .print-only { display: none; }
+
+    /* アニメ */
+    @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 60% { transform: translateX(7px); } }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fade-up 0.5s ease both; }
+    @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
   </style>
 </head>
 <body>
 
-<!-- ══════════ 背景パーティクル ══════════ -->
 <div id="particles"></div>
 
 <!-- ══════════ パスワード画面 ══════════ -->
@@ -440,14 +400,15 @@
 
 <!-- ══════════ メインアプリ ══════════ -->
 <div id="app" class="no-print">
-
-  <!-- ヘッダー -->
   <header class="app-header">
     <div class="logo-block">
       <div class="logo-main">🌿 今日の大ぼうけん</div>
       <div class="logo-sub">survival mam · Premium</div>
     </div>
-    <button class="print-btn" onclick="window.print()">🖨️ 印刷</button>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openHistory()">📖 きろく</button>
+      <button class="icon-btn" onclick="window.print()">🖨️ 印刷</button>
+    </div>
   </header>
 
   <!-- レベルカード -->
@@ -455,9 +416,9 @@
     <div class="level-row">
       <div>
         <div class="level-label">ぼうけんランク</div>
-        <div class="level-num">LV. 1</div>
+        <div class="level-num" id="levelNum">LV. 1</div>
       </div>
-      <div class="streak-badge">🔥 7日れんぞく！</div>
+      <div class="streak-badge" id="streakBadge">🔥 0日れんぞく</div>
     </div>
     <div class="xp-bar-bg">
       <div class="xp-bar" id="xpBar" style="width:0%"></div>
@@ -468,27 +429,35 @@
     </div>
   </div>
 
-  <!-- 達成バナー（全クリア時） -->
+  <!-- 達成バナー -->
   <div id="allDoneBanner" class="all-done-banner" style="display:none">
     <div class="all-done-title">🎉 ぜんぶクリア！すごい！！</div>
     <div class="all-done-sub">今日のぼうけんをやりとげたよ 🌟</div>
   </div>
 
   <!-- クエスト見出し -->
-  <div class="section-heading fade-up" style="animation-delay:0.1s">
-    📜 きょうのミッション
-  </div>
+  <div class="section-heading fade-up" style="animation-delay:0.1s">📜 きょうのミッション</div>
 
   <!-- クエストリスト -->
   <div class="quest-list" id="questList"></div>
 
-  <!-- ひとこと -->
   <p class="bottom-quote fade-up" style="animation-delay:0.35s">
     「大丈夫。あなたは、決して一人ではありません。」 🌸
   </p>
 </div>
 
-<!-- ══════════ 印刷用ワークシート ══════════ -->
+<!-- ══════════ 記録ページ ══════════ -->
+<div id="history-view">
+  <div class="history-inner">
+    <div class="history-header">
+      <button class="back-btn" onclick="closeHistory()">← もどる</button>
+      <div class="history-title">📖 ぼうけんのきろく</div>
+    </div>
+    <div id="historyContent"></div>
+  </div>
+</div>
+
+<!-- 印刷用 -->
 <div class="print-only" style="padding:40px;color:black;background:white;min-height:100vh;font-family:'BIZ UDPGothic',sans-serif;">
   <div style="border-bottom:4px solid black;padding-bottom:24px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-start;">
     <div>
@@ -507,11 +476,23 @@
     </div>
     <div style="border:3px solid black;padding:22px;">
       <h3 style="font-weight:900;font-size:1.1rem;margin-bottom:14px;border-bottom:2px solid black;padding-bottom:8px;">⭐ 変化の記録（手書き用）</h3>
-      <div style="display:flex;flex-direction:column;gap:18px;margin-top:8px;">
-        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
-        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
-        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
-        <div style="border-bottom:1.5px solid black;padding-bottom:4px;font-size:0.65rem;color:#999;">DATE: ___/___</div>
+      <div style="display:flex;flex-direction:column;gap:0;">
+        <div style="display:grid;grid-template-columns:80px 1fr;border-bottom:1.5px solid #ccc;padding:10px 0;">
+          <span style="font-size:0.72rem;font-weight:700;color:#999;">DATE ___/___</span>
+          <span style="font-size:0.72rem;color:#ccc;">朝のきもち：</span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;border-bottom:1.5px solid #ccc;padding:10px 0;">
+          <span style="font-size:0.72rem;font-weight:700;color:#999;">DATE ___/___</span>
+          <span style="font-size:0.72rem;color:#ccc;">できたこと：</span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;border-bottom:1.5px solid #ccc;padding:10px 0;">
+          <span style="font-size:0.72rem;font-weight:700;color:#999;">DATE ___/___</span>
+          <span style="font-size:0.72rem;color:#ccc;">夜の自分褒め：</span>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;padding:10px 0;">
+          <span style="font-size:0.72rem;font-weight:700;color:#999;">DATE ___/___</span>
+          <span style="font-size:0.72rem;color:#ccc;">今週の変化：</span>
+        </div>
       </div>
     </div>
   </div>
@@ -522,132 +503,318 @@
 </div>
 
 <script>
-  /* ══════════ 背景パーティクル生成 ══════════ */
-  (function() {
-    const container = document.getElementById('particles');
-    const leaves = ['🍃','🌿','🍀','🌱'];
-    // 葉っぱ
-    for (let i = 0; i < 12; i++) {
-      const el = document.createElement('div');
-      el.className = 'leaf-particle';
-      el.textContent = leaves[Math.floor(Math.random() * leaves.length)];
-      const d = 7 + Math.random() * 8;
-      const delay = Math.random() * 10;
-      const drift = (Math.random() - 0.5) * 120;
-      el.style.cssText = `left:${Math.random()*100}%;--d:${d}s;--delay:${delay}s;--drift:${drift}px;font-size:${0.8+Math.random()*0.8}rem;`;
-      container.appendChild(el);
-    }
-    // 光の粒
-    for (let i = 0; i < 18; i++) {
-      const el = document.createElement('div');
-      el.className = 'sparkle';
-      const sz = 2 + Math.random() * 4;
-      el.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--sz:${sz}px;--d:${2+Math.random()*3}s;--delay:${Math.random()*4}s;`;
-      container.appendChild(el);
-    }
-  })();
+/* ── パーティクル ── */
+(function() {
+  const c = document.getElementById('particles');
+  const leaves = ['🍃','🌿','🍀','🌱'];
+  for (let i = 0; i < 12; i++) {
+    const el = document.createElement('div');
+    el.className = 'leaf-particle';
+    el.textContent = leaves[Math.floor(Math.random() * leaves.length)];
+    const d = 7 + Math.random() * 8, delay = Math.random() * 10, drift = (Math.random() - 0.5) * 120;
+    el.style.cssText = `left:${Math.random()*100}%;--d:${d}s;--delay:${delay}s;--drift:${drift}px;font-size:${0.8+Math.random()*0.8}rem;`;
+    c.appendChild(el);
+  }
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'sparkle';
+    const sz = 2 + Math.random() * 4;
+    el.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--sz:${sz}px;--d:${2+Math.random()*3}s;--delay:${Math.random()*4}s;`;
+    c.appendChild(el);
+  }
+})();
 
-  /* ══════════ パスワードゲート ══════════ */
-  (function() {
-    const CORRECT = 'bouken';
-    const overlay = document.getElementById('pw-overlay');
-    const appEl   = document.getElementById('app');
-    const input   = document.getElementById('pwInput');
-    const btn     = document.getElementById('pwBtn');
-    const errEl   = document.getElementById('pwError');
-    let unlocked  = false;
+/* ── ストレージキー ── */
+const SK = {
+  pw:      'bouken_pw_hash',
+  quests:  'bouken_quests',
+  memos:   'bouken_memos',
+  streak:  'bouken_streak',
+  xp:      'bouken_xp',
+  lastDay: 'bouken_lastday',
+};
 
-    function tryUnlock() {
-      if (unlocked) return;
-      if (input.value === CORRECT) {
-        unlocked = true;
-        overlay.classList.add('hide');
-        setTimeout(() => overlay.style.display = 'none', 650);
-        appEl.classList.add('visible');
-        initApp();
-      } else {
-        input.classList.add('error');
-        errEl.textContent = 'ちがうよ！もういちどためしてね 🙈';
-        setTimeout(() => {
-          input.classList.remove('error');
-          input.value = '';
-          errEl.textContent = '';
-          input.focus();
-        }, 520);
-      }
-    }
-    btn.addEventListener('click', tryUnlock);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
-  })();
+/* ── シンプルなハッシュ（難読化） ── */
+function simpleHash(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return h.toString(36);
+}
+const CORRECT_HASH = simpleHash('bouken');
 
-  /* ══════════ アプリ本体 ══════════ */
-  const QUESTS = [
-    { id:1, title:'朝の深呼吸',      icon:'🧘', reward:'心の結晶',   done:false, theme:'qt-morning' },
-    { id:2, title:'できたことをメモ', icon:'📝', reward:'知恵の栞',   done:false, theme:'qt-note'    },
-    { id:3, title:'夜の自分褒め',    icon:'🕯️', reward:'安らぎの雫', done:false, theme:'qt-night'   },
-  ];
+/* ── 今日の日付キー ── */
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function formatDate(key) {
+  const [y,m,d] = key.split('-');
+  const days = ['日','月','火','水','木','金','土'];
+  const dt = new Date(+y, +m-1, +d);
+  return `${m}月${d}日（${days[dt.getDay()]}）`;
+}
 
-  function initApp() {
-    renderAll();
+/* ── パスワードゲート ── */
+(function() {
+  const overlay = document.getElementById('pw-overlay');
+  const appEl   = document.getElementById('app');
+  const input   = document.getElementById('pwInput');
+  const btn     = document.getElementById('pwBtn');
+  const errEl   = document.getElementById('pwError');
+  let unlocked  = false;
+
+  // セッションで既にロック解除済みか確認
+  if (sessionStorage.getItem('bouken_unlocked') === '1') {
+    overlay.style.display = 'none';
+    appEl.classList.add('visible');
+    initApp();
+    return;
   }
 
-  function toggleQuest(id) {
-    const q = QUESTS.find(q => q.id === id);
-    if (q) {
-      q.done = !q.done;
-      renderAll();
+  function tryUnlock() {
+    if (unlocked) return;
+    if (simpleHash(input.value) === CORRECT_HASH) {
+      unlocked = true;
+      sessionStorage.setItem('bouken_unlocked', '1');
+      overlay.classList.add('hide');
+      setTimeout(() => overlay.style.display = 'none', 650);
+      appEl.classList.add('visible');
+      initApp();
+    } else {
+      input.classList.add('error');
+      errEl.textContent = 'ちがうよ！もういちどためしてね 🙈';
+      setTimeout(() => { input.classList.remove('error'); input.value = ''; errEl.textContent = ''; input.focus(); }, 520);
     }
   }
+  btn.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+})();
 
-  function renderAll() {
-    renderQuests();
-    updateProgress();
-    updateBanner();
+/* ── クエスト定義 ── */
+const QUEST_DEFS = [
+  { id:1, title:'朝の深呼吸',      icon:'🧘', reward:'心の結晶',   hint:'1分間、息を吸う。MP回復。',          theme:'qt-morning', placeholder:'どんな気持ちで深呼吸できた？' },
+  { id:2, title:'できたことをメモ', icon:'📝', reward:'知恵の栞',   hint:'「皿洗い」「褒めた」OK。頑張りを可視化。', theme:'qt-note',    placeholder:'今日できたこと、なんでも書いてね' },
+  { id:3, title:'夜の自分褒め',    icon:'🕯️', reward:'安らぎの雫', hint:'「お疲れ様」と労う。明日への活力。',      theme:'qt-night',   placeholder:'今日の自分に、ひとこと褒めてあげて' },
+];
+
+let questStates = {}; // { 1: true/false, ... }
+let memoStore   = {}; // { 'YYYY-MM-DD': { 1: 'text', ... } }
+let streakData  = { count: 0, lastDay: '' };
+let totalXP     = 0;
+
+function initApp() {
+  loadStorage();
+  checkNewDay();
+  renderAll();
+}
+
+function loadStorage() {
+  try {
+    const qs = localStorage.getItem(SK.quests);
+    const ms = localStorage.getItem(SK.memos);
+    const st = localStorage.getItem(SK.streak);
+    const xp = localStorage.getItem(SK.xp);
+    if (qs) questStates = JSON.parse(qs);
+    if (ms) memoStore   = JSON.parse(ms);
+    if (st) streakData  = JSON.parse(st);
+    if (xp) totalXP     = parseInt(xp) || 0;
+  } catch(e) {}
+}
+
+function saveStorage() {
+  try {
+    localStorage.setItem(SK.quests,  JSON.stringify(questStates));
+    localStorage.setItem(SK.memos,   JSON.stringify(memoStore));
+    localStorage.setItem(SK.streak,  JSON.stringify(streakData));
+    localStorage.setItem(SK.xp,      String(totalXP));
+  } catch(e) {}
+}
+
+function checkNewDay() {
+  const today = todayKey();
+  const last  = localStorage.getItem(SK.lastDay) || '';
+  if (last !== today) {
+    // 昨日全クリアしていたか確認してストリーク更新
+    const yesterday = (() => { const d = new Date(); d.setDate(d.getDate()-1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
+    const allDoneYesterday = QUEST_DEFS.every(q => (memoStore[yesterday] && memoStore[yesterday][q.id]));
+    if (allDoneYesterday) {
+      streakData.count++;
+    } else if (last && last !== yesterday) {
+      streakData.count = 0;
+    }
+    questStates = {};
+    localStorage.setItem(SK.lastDay, today);
+    saveStorage();
   }
+}
 
-  function renderQuests() {
-    const list = document.getElementById('questList');
-    list.innerHTML = '';
-    QUESTS.forEach((q, i) => {
-      const card = document.createElement('div');
-      card.className = `quest-card ${q.theme} ${q.done ? 'done' : ''} fade-up`;
-      card.style.animationDelay = `${0.13 + i * 0.08}s`;
-      card.onclick = () => toggleQuest(q.id);
+/* ── レンダリング ── */
+function renderAll() {
+  renderQuests();
+  updateProgress();
+  updateBanner();
+  updateStreakBadge();
+}
 
-      card.innerHTML = `
-        <div class="quest-stripe"></div>
+function renderQuests() {
+  const list = document.getElementById('questList');
+  list.innerHTML = '';
+  const today = todayKey();
+  if (!memoStore[today]) memoStore[today] = {};
+
+  QUEST_DEFS.forEach((q, i) => {
+    const isDone  = !!questStates[q.id];
+    const savedMemo = memoStore[today][q.id] || '';
+
+    // 過去3日分のメモ取得
+    const pastMemos = getPastMemos(q.id, 3);
+
+    const card = document.createElement('div');
+    card.className = `quest-card ${q.theme} ${isDone ? 'done' : ''} fade-up`;
+    card.style.animationDelay = `${0.13 + i * 0.08}s`;
+    card.id = `card-${q.id}`;
+
+    card.innerHTML = `
+      <div class="quest-stripe"></div>
+      <div class="quest-main" onclick="toggleMemoArea(${q.id})">
         <div class="quest-icon-wrap">${q.icon}</div>
         <div class="quest-body">
           <div class="quest-title">${q.title}</div>
+          <div class="quest-hint">${q.hint}</div>
           <div class="quest-reward">✨ 報酬：${q.reward}</div>
         </div>
-        <div class="quest-check ${q.done ? 'done-check' : ''}">
-          ${q.done ? '✅' : '⭕'}
+        <div class="quest-check ${isDone ? 'done-check' : ''}" id="check-${q.id}">
+          ${isDone ? '✅' : '⭕'}
         </div>
-      `;
-      list.appendChild(card);
-    });
+      </div>
+      <div class="quest-memo-area" id="memo-area-${q.id}">
+        <div class="memo-label-sm">📝 きょうのメモ</div>
+        <textarea class="memo-textarea" id="memo-input-${q.id}" placeholder="${q.placeholder}">${savedMemo}</textarea>
+        <button class="memo-save-btn" onclick="saveMemoAndComplete(${q.id})">
+          ${isDone ? '✅ きろく済み' : 'クリアする ✨'}
+        </button>
+        ${pastMemos.length > 0 ? `
+          <div class="memo-label-sm" style="margin-top:6px;">📚 過去のきろく</div>
+          <div class="memo-history">
+            ${pastMemos.map(m => `<div class="memo-history-item"><div class="memo-history-date">${formatDate(m.date)}</div>${m.text}</div>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function toggleMemoArea(id) {
+  const area = document.getElementById(`memo-area-${id}`);
+  const isOpen = area.classList.contains('open');
+  // 全部閉じる
+  document.querySelectorAll('.quest-memo-area').forEach(a => a.classList.remove('open'));
+  if (!isOpen) {
+    area.classList.add('open');
+    setTimeout(() => { const ta = document.getElementById(`memo-input-${id}`); if(ta) ta.focus(); }, 100);
+  }
+}
+
+function saveMemoAndComplete(id) {
+  const today = todayKey();
+  const ta    = document.getElementById(`memo-input-${id}`);
+  const text  = ta ? ta.value.trim() : '';
+
+  if (!memoStore[today]) memoStore[today] = {};
+  if (text) memoStore[today][id] = text;
+
+  const wasDone = !!questStates[id];
+  questStates[id] = true;
+
+  if (!wasDone) {
+    totalXP += 33;
+    // ポップアニメ
+    const check = document.getElementById(`check-${id}`);
+    if (check) { check.style.animation = 'pop 0.35s ease'; setTimeout(() => check.style.animation = '', 400); }
   }
 
-  function updateProgress() {
-    const done  = QUESTS.filter(q => q.done).length;
-    const total = QUESTS.length;
-    const pct   = Math.round((done / total) * 100);
+  saveStorage();
+  renderAll();
+}
 
-    const bar   = document.getElementById('xpBar');
-    const left  = document.getElementById('xpLeft');
-    const right = document.getElementById('xpRight');
+function getPastMemos(questId, days) {
+  const result = [];
+  for (let i = 1; i <= days + 6; i++) {
+    if (result.length >= days) break;
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (memoStore[key] && memoStore[key][questId]) {
+      result.push({ date: key, text: memoStore[key][questId] });
+    }
+  }
+  return result;
+}
 
-    if (bar)   bar.style.width   = pct + '%';
-    if (left)  left.textContent  = `XP ${done * 33} / 100`;
-    if (right) right.textContent = `${done} / ${total} クリア`;
+function updateProgress() {
+  const done  = QUEST_DEFS.filter(q => !!questStates[q.id]).length;
+  const total = QUEST_DEFS.length;
+  const pct   = Math.round((done / total) * 100);
+  const lv    = Math.floor(totalXP / 100) + 1;
+
+  const bar   = document.getElementById('xpBar');
+  const left  = document.getElementById('xpLeft');
+  const right = document.getElementById('xpRight');
+  const lvEl  = document.getElementById('levelNum');
+
+  if (bar)   bar.style.width   = (totalXP % 100) + '%';
+  if (left)  left.textContent  = `XP ${totalXP % 100} / 100`;
+  if (right) right.textContent = `${done} / ${total} クリア`;
+  if (lvEl)  lvEl.textContent  = `LV. ${lv}`;
+}
+
+function updateBanner() {
+  const allDone = QUEST_DEFS.every(q => !!questStates[q.id]);
+  const banner  = document.getElementById('allDoneBanner');
+  if (banner) banner.style.display = allDone ? 'block' : 'none';
+}
+
+function updateStreakBadge() {
+  const el = document.getElementById('streakBadge');
+  if (!el) return;
+  const n = streakData.count || 0;
+  el.textContent = n >= 3 ? `🔥 ${n}日れんぞく！` : n > 0 ? `⭐ ${n}日れんぞく` : '✨ はじめよう！';
+}
+
+/* ── 記録ページ ── */
+function openHistory() {
+  renderHistory();
+  document.getElementById('history-view').classList.add('open');
+}
+function closeHistory() {
+  document.getElementById('history-view').classList.remove('open');
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyContent');
+  const days = Object.keys(memoStore).sort().reverse();
+
+  if (days.length === 0) {
+    el.innerHTML = '<div class="history-empty">まだきろくがないよ。<br>クエストをクリアすると<br>ここに残っていくよ 🌿</div>';
+    return;
   }
 
-  function updateBanner() {
-    const allDone = QUESTS.every(q => q.done);
-    const banner  = document.getElementById('allDoneBanner');
-    if (banner) banner.style.display = allDone ? 'block' : 'none';
-  }
+  el.innerHTML = days.map(day => {
+    const entries = QUEST_DEFS.filter(q => memoStore[day] && memoStore[day][q.id]);
+    if (entries.length === 0) return '';
+    return `
+      <div class="history-day-block">
+        <div class="history-day-label">${formatDate(day)}</div>
+        ${entries.map(q => `
+          <div class="history-entry">
+            <div class="history-entry-quest">${q.icon} ${q.title}</div>
+            <div class="history-entry-memo">${memoStore[day][q.id]}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+}
 </script>
 </body>
 </html>
