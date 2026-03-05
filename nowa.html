@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>こころの観察 — Emotional Resilience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#1A1714;--surface:#211E1B;--surface2:#272420;
+  --cream:#FAF7F2;--warm:#E8E0D5;--warm-mid:#C8BEB4;
+  --stone:#8A847D;--stone-light:#A8A09A;
+  --terra:#B87355;--terra-light:#D4956A;
+  --sage:#7A9E8E;
+  --border:rgba(138,132,125,0.18);
+}
+html,body{height:100%;background:var(--bg);color:var(--cream);font-family:'Noto Serif JP',serif;font-weight:300;overflow-x:hidden}
+body{display:flex;justify-content:center}
+#app{width:100%;max-width:430px;min-height:100vh;background:var(--bg);position:relative}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.45;transform:scale(0.8)}}
+@keyframes breathIn{0%{transform:scale(1);opacity:0.55}100%{transform:scale(1.5);opacity:1}}
+@keyframes breathHold{0%,100%{transform:scale(1.5)}}
+@keyframes breathOut{0%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:0.55}}
+
+/* FLASH OVERLAYS */
+.flash-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(12,10,8,0.97);pointer-events:none;animation:fadeIn 0.3s ease}
+.flash-center{text-align:center;padding:48px 32px}
+
+/* HEADER */
+.header{background:linear-gradient(180deg,rgba(33,30,27,0.98),rgba(33,30,27,0.9));padding:16px 20px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.header-label{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--stone);text-transform:uppercase;margin-bottom:2px}
+.header-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--cream);letter-spacing:0.06em}
+.emergency-btn{background:rgba(196,112,112,0.1);border:1px solid rgba(196,112,112,0.4);border-radius:2px;color:#E8A0A0;font-family:'Noto Serif JP',serif;font-size:10px;font-weight:300;letter-spacing:0.08em;padding:7px 11px;cursor:pointer;white-space:nowrap;transition:all 0.2s}
+/* ①: 診断コンテキスト日次メッセージ */
+.diag-daily{font-size:11px;color:var(--terra-light);letter-spacing:0.1em;margin:5px 0 6px;font-style:italic;font-family:'Cormorant Garamond',serif}
+.header-purpose{font-size:11px;color:var(--stone-light);letter-spacing:0.12em;margin-bottom:8px}
+.streak-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(122,158,142,0.1);border:1px solid rgba(122,158,142,0.2);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--sage);letter-spacing:0.1em;margin-bottom:8px}
+.streak-dot{width:5px;height:5px;border-radius:50%;background:var(--sage)}
+.margin-meter-row{display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.12em;margin-bottom:4px}
+.margin-track{height:3px;background:rgba(138,132,125,0.2);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.margin-fill{height:100%;border-radius:2px;transition:width 0.6s ease}
+.predict-card{border-radius:4px;padding:12px 14px;animation:fadeUp 0.4s ease}
+.predict-card.active{background:rgba(184,115,85,0.07);border:1px solid rgba(184,115,85,0.3)}
+.predict-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--stone);text-transform:uppercase}
+.predict-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.predict-conf{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.18em}
+.predict-alert{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.predict-dot{width:7px;height:7px;border-radius:50%;background:var(--terra);flex-shrink:0;animation:pulse 2s infinite}
+.predict-alert-text{font-size:13px;font-weight:300;letter-spacing:0.04em}
+.predict-alert-text strong{color:var(--terra-light)}
+.predict-detail{font-size:11px;color:var(--stone-light);line-height:1.85;margin-bottom:8px;letter-spacing:0.04em}
+.predict-action{background:none;border:1px solid rgba(184,115,85,0.4);border-radius:2px;color:var(--terra-light);font-family:'Noto Serif JP',serif;font-size:11px;font-weight:300;letter-spacing:0.08em;padding:6px 12px;cursor:pointer}
+
+/* CONTENT */
+.content{padding:20px 20px 110px}
+.section-label{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--stone);text-transform:uppercase;margin-bottom:14px}
+.divider{height:1px;background:var(--border);margin:16px 0}
+
+/* WELCOME RETURN CARD ① */
+.welcome-return-card{background:rgba(122,158,142,0.06);border:1px solid rgba(122,158,142,0.2);border-radius:4px;padding:14px 16px;margin-bottom:16px;animation:fadeUp 0.4s ease;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.welcome-return-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--sage);text-transform:uppercase;margin-bottom:6px}
+.welcome-return-line{font-size:12px;font-weight:300;color:var(--warm-mid);line-height:1.9;letter-spacing:0.05em}
+.welcome-return-close{background:none;border:none;color:var(--stone);font-size:16px;cursor:pointer;flex-shrink:0}
+
+/* GATEWAY */
+.gateway-wrap{animation:fadeUp 0.3s ease}
+.gateway-q{font-size:16px;font-weight:300;color:var(--cream);letter-spacing:0.06em;margin-bottom:4px;text-align:center}
+.gateway-sub{font-size:11px;color:var(--stone);letter-spacing:0.08em;margin-bottom:14px;text-align:center}
+.gateway-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.gateway-btn{background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:4px;padding:11px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s}
+.gateway-btn:active{background:rgba(184,115,85,0.1);border-color:rgba(184,115,85,0.4)}
+.gateway-emoji{font-size:22px;line-height:1}
+.gateway-label{font-size:11px;color:var(--warm-mid);letter-spacing:0.04em;text-align:center}
+.gateway-detail{background:none;border:none;color:var(--stone);font-family:'Noto Serif JP',serif;font-size:11px;cursor:pointer;letter-spacing:0.08em;display:block;margin:0 auto;text-decoration:underline;text-underline-offset:3px}
+
+/* GATEWAY MIRROR */
+.gateway-mirror{animation:fadeUp 0.35s ease}
+.gateway-mirror-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.3em;color:var(--stone);text-transform:uppercase;margin-bottom:11px}
+.gateway-mirror-state{display:flex;align-items:center;gap:14px;padding:13px 15px;background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:3px;margin-bottom:11px}
+.gateway-mirror-emotion{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--cream)}
+.gateway-mirror-label{font-size:10px;color:var(--stone);letter-spacing:0.18em;font-family:'Cormorant Garamond',serif;text-transform:uppercase;margin-bottom:2px}
+.gateway-mirror-narrator{font-size:12px;font-weight:300;color:var(--stone-light);line-height:1.85;letter-spacing:0.04em;padding-left:10px;border-left:2px solid rgba(138,132,125,0.3);margin-bottom:6px}
+.gateway-mirror-confirm{width:100%;background:rgba(184,115,85,0.1);border:1px solid rgba(184,115,85,0.45);border-radius:3px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;letter-spacing:0.06em;padding:13px;cursor:pointer;margin-top:12px}
+
+/* EMOTION GRID */
+.emotion-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.emotion-btn{background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:4px;padding:13px 7px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s}
+.emotion-btn.active{border-color:rgba(184,115,85,0.6);background:rgba(184,115,85,0.08)}
+.emotion-kanji{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;font-weight:300}
+.emotion-label{font-size:10px;color:var(--stone);letter-spacing:0.1em}
+.narrator-strip{font-size:12px;color:var(--stone-light);line-height:1.85;letter-spacing:0.04em;padding:10px 12px;background:rgba(138,132,125,0.06);border-radius:3px;border-left:2px solid var(--stone);margin-bottom:13px}
+
+/* INTENSITY */
+.intensity-wrap{margin:14px 0}
+.intensity-label{display:flex;justify-content:space-between;font-size:11px;color:var(--stone);letter-spacing:0.1em;margin-bottom:7px}
+input[type=range]{width:100%;height:3px;appearance:none;background:rgba(138,132,125,0.2);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--terra);cursor:pointer;border:2px solid var(--bg)}
+
+/* TRIGGERS */
+.trigger-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.trigger-tag{background:none;border:1px solid var(--border);border-radius:2px;color:var(--stone-light);font-family:'Noto Serif JP',serif;font-size:11px;font-weight:300;letter-spacing:0.05em;padding:6px 11px;cursor:pointer;transition:all 0.2s}
+.trigger-tag.active{border-color:rgba(184,115,85,0.6);background:rgba(184,115,85,0.08);color:var(--cream)}
+.not-fault{background:rgba(138,132,125,0.06);border-left:2px solid var(--stone);padding:9px 12px;margin-bottom:12px;font-size:12px;color:var(--stone-light);line-height:1.8}
+.not-fault strong{color:var(--terra-light);display:block;font-weight:300}
+.memo-textarea{width:100%;background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:3px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;letter-spacing:0.04em;padding:11px;resize:none;outline:none;line-height:1.8;margin-bottom:7px;transition:border-color 0.2s}
+.memo-textarea:focus{border-color:rgba(138,132,125,0.4)}
+.memo-textarea.write-required{border-color:rgba(122,158,142,0.4)!important}
+.memo-char{font-size:10px;color:var(--stone);letter-spacing:0.1em;text-align:right;margin-bottom:11px}
+.log-btn{width:100%;background:rgba(184,115,85,0.1);border:1px solid rgba(184,115,85,0.4);border-radius:3px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:14px;font-weight:300;letter-spacing:0.1em;padding:13px;cursor:pointer;transition:all 0.2s}
+
+/* ACTION FEEDBACK CARD ③ */
+.action-feedback-card{background:rgba(184,115,85,0.06);border:1px solid rgba(184,115,85,0.22);border-radius:4px;padding:14px 16px;margin-bottom:14px;animation:fadeUp 0.4s ease}
+.action-feedback-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--terra);text-transform:uppercase;margin-bottom:8px}
+.action-feedback-q{font-size:13px;font-weight:300;color:var(--warm-mid);line-height:1.8;letter-spacing:0.05em;margin-bottom:12px}
+.action-feedback-action{font-size:12px;color:var(--stone-light);font-style:italic;margin-bottom:12px;padding:8px 10px;background:rgba(184,115,85,0.05);border-radius:2px;line-height:1.7}
+.action-feedback-btns{display:flex;gap:6px;flex-wrap:wrap}
+.action-feedback-btn{flex:1;min-width:0;background:none;border:1px solid var(--border);border-radius:2px;color:var(--stone-light);font-family:'Noto Serif JP',serif;font-size:11px;font-weight:300;letter-spacing:0.05em;padding:8px 4px;cursor:pointer;transition:all 0.2s;text-align:center}
+.action-feedback-btn.selected-good{border-color:rgba(122,158,142,0.5);color:var(--sage);background:rgba(122,158,142,0.08)}
+.action-feedback-btn.selected-same{border-color:rgba(184,115,85,0.4);color:var(--terra-light);background:rgba(184,115,85,0.06)}
+.action-feedback-btn.selected-unknown{border-color:var(--border);color:var(--stone-light);background:rgba(138,132,125,0.06)}
+.action-feedback-result{font-size:13px;font-weight:300;line-height:1.9;letter-spacing:0.05em;padding:10px 12px;border-radius:3px;margin-top:10px}
+.action-feedback-result.good{color:var(--sage);background:rgba(122,158,142,0.07);border:1px solid rgba(122,158,142,0.18)}
+.action-feedback-result.same{color:var(--warm-mid);background:rgba(184,115,85,0.05);border:1px solid rgba(184,115,85,0.15)}
+.action-feedback-result.unknown{color:var(--stone-light);background:rgba(138,132,125,0.05);border:1px solid var(--border)}
+
+/* INTEGRATED FACT CARD */
+.integrated-fact-card{background:linear-gradient(135deg,rgba(184,115,85,0.07),rgba(26,23,20,0));border:1px solid rgba(184,115,85,0.25);border-radius:4px;padding:15px 17px;margin-bottom:13px;animation:fadeUp 0.4s ease}
+.integrated-fact-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--terra);text-transform:uppercase;margin-bottom:9px}
+.integrated-emotion-row{display:flex;align-items:baseline;gap:10px;margin-bottom:9px}
+.integrated-emotion-kanji{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--cream);font-style:italic}
+.integrated-emotion-detail{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--stone);letter-spacing:0.15em}
+.integrated-care-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.integrated-chip{font-size:10px;color:var(--stone-light);background:rgba(138,132,125,0.1);border:1px solid var(--border);border-radius:2px;padding:3px 7px;letter-spacing:0.05em}
+.integrated-msg{font-size:13px;font-weight:300;color:var(--warm-mid);line-height:1.85;letter-spacing:0.05em;margin-bottom:9px}
+.integrated-verdict{display:flex;gap:9px;align-items:flex-start}
+.integrated-verdict-line{width:2px;min-height:18px;background:linear-gradient(to bottom,var(--terra),transparent);flex-shrink:0;margin-top:3px}
+.integrated-verdict-text{font-size:11px;color:var(--terra-light);letter-spacing:0.07em;line-height:1.7;font-style:italic}
+
+/* PRACTICE REPORT ③ */
+.practice-report-card{background:rgba(122,158,142,0.06);border:1px solid rgba(122,158,142,0.22);border-radius:4px;padding:14px 16px;margin-bottom:14px;animation:fadeUp 0.4s ease}
+.practice-report-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--sage);text-transform:uppercase;margin-bottom:7px}
+.practice-report-q{font-size:13px;font-weight:300;color:var(--warm-mid);line-height:1.8;letter-spacing:0.05em;margin-bottom:11px}
+.practice-report-btns{display:flex;gap:8px}
+.practice-report-btn{flex:1;background:none;border:1px solid var(--border);border-radius:2px;color:var(--stone-light);font-family:'Noto Serif JP',serif;font-size:12px;font-weight:300;letter-spacing:0.06em;padding:10px;cursor:pointer;transition:all 0.2s}
+.practice-report-btn.yes{border-color:rgba(122,158,142,0.5);color:var(--sage)}
+.practice-result{font-size:13px;font-weight:300;line-height:1.9;letter-spacing:0.05em;padding:11px 13px;border-radius:3px}
+.practice-result.yes{color:var(--sage);background:rgba(122,158,142,0.07);border:1px solid rgba(122,158,142,0.2)}
+.practice-result.no{color:var(--stone-light);background:rgba(138,132,125,0.05);border:1px solid var(--border)}
+
+/* ENERGY SELECTOR */
+.energy-selector{animation:fadeUp 0.4s ease}
+.energy-selector-label{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:0.18em;color:var(--sage);margin-bottom:3px}
+.energy-selector-q{font-size:15px;font-weight:300;color:var(--cream);letter-spacing:0.06em;margin-bottom:4px}
+.energy-selector-sub{font-size:11px;color:var(--stone);letter-spacing:0.08em;margin-bottom:13px}
+.energy-btns{display:flex;flex-direction:column;gap:7px}
+.energy-btn{background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:3px;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all 0.2s}
+.energy-btn:active{background:rgba(184,115,85,0.08);border-color:rgba(184,115,85,0.35)}
+.energy-btn-label{font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;color:var(--cream);letter-spacing:0.06em}
+.energy-btn-sub{font-size:10px;color:var(--stone);letter-spacing:0.12em;font-family:'Cormorant Garamond',serif}
+
+/* BREATH CARD */
+.breath-auto-card{background:rgba(122,158,142,0.06);border:1px solid rgba(122,158,142,0.2);border-radius:4px;padding:15px;animation:fadeUp 0.4s ease}
+.breath-auto-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--sage);text-transform:uppercase;margin-bottom:7px}
+.breath-anim-wrap{display:flex;flex-direction:column;align-items:center;gap:9px;margin-bottom:14px}
+.breath-circle{width:76px;height:76px;border-radius:50%;border:2px solid rgba(122,158,142,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.4s ease}
+.breath-circle.inhale{animation:breathIn 4s ease-in-out forwards;border-color:rgba(122,158,142,0.6)}
+.breath-circle.hold{border-color:rgba(122,158,142,0.5)}
+.breath-circle.exhale{animation:breathOut 6s ease-in-out forwards;border-color:rgba(122,158,142,0.3)}
+.breath-phase-label{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--sage)}
+.breath-phase-sec{font-size:10px;color:var(--stone);letter-spacing:0.15em}
+.breath-round{font-size:10px;color:var(--stone);letter-spacing:0.2em;font-family:'Cormorant Garamond',serif}
+.breath-skip-btn{background:none;border:none;color:var(--stone);font-family:'Noto Serif JP',serif;font-size:11px;cursor:pointer;letter-spacing:0.1em;display:block;margin:6px auto 0}
+.breath-done-msg{font-size:13px;font-weight:300;color:var(--warm-mid);text-align:center;line-height:1.8;padding:7px 0}
+
+/* CORE CARD */
+.core-card{background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:4px;padding:15px;animation:fadeUp 0.4s ease}
+.core-tag-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.core-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--stone);text-transform:uppercase}
+.core-learning-badge{display:flex;align-items:center;gap:5px;background:rgba(122,158,142,0.1);border:1px solid rgba(122,158,142,0.25);border-radius:20px;padding:3px 9px}
+.core-learning-dot{width:5px;height:5px;border-radius:50%;background:var(--sage);animation:pulse 2.5s infinite;flex-shrink:0}
+.core-learning-badge span{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.18em;color:var(--sage);white-space:nowrap}
+.core-narrative{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--warm);letter-spacing:0.04em;line-height:1.7;margin-bottom:14px}
+.core-question{display:flex;gap:9px;align-items:flex-start;margin-bottom:13px}
+.core-q-line{width:2px;min-height:18px;background:var(--stone);flex-shrink:0;margin-top:3px}
+.core-q-text{font-size:12px;color:var(--stone-light);letter-spacing:0.06em;line-height:1.8}
+.write-prompt{font-size:11px;color:var(--sage);letter-spacing:0.1em;margin-bottom:7px;font-style:italic;font-family:'Cormorant Garamond',serif}
+.core-aff-options{display:flex;flex-direction:column;gap:6px;margin-bottom:9px}
+.core-aff-btn{background:none;border:1px solid var(--border);border-radius:2px;color:var(--stone-light);font-family:'Noto Serif JP',serif;font-size:12px;font-weight:300;letter-spacing:0.05em;padding:9px 11px;cursor:pointer;text-align:left;transition:all 0.2s;line-height:1.6}
+.core-aff-btn.active{border-color:rgba(184,115,85,0.5);background:rgba(184,115,85,0.08);color:var(--cream)}
+.presence-label{font-size:11px;color:var(--stone);letter-spacing:0.1em;margin-bottom:7px;font-style:italic}
+.self-complete-save{width:100%;background:rgba(184,115,85,0.1);border:1px solid rgba(184,115,85,0.4);border-radius:2px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;letter-spacing:0.08em;padding:11px;cursor:pointer;transition:all 0.2s;margin-top:7px}
+.core-saved{text-align:center;padding:11px 0;animation:fadeUp 0.4s ease}
+.core-saved-word{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--sage);letter-spacing:0.04em;line-height:1.5;margin-bottom:5px}
+.core-saved-note{font-size:10px;color:var(--stone);letter-spacing:0.15em;margin-bottom:8px}
+/* ②: 承認の旅予告 */
+.word-journey-hint{font-size:11px;color:rgba(122,158,142,0.75);letter-spacing:0.1em;font-style:italic;font-family:'Cormorant Garamond',serif;padding-top:7px;border-top:1px solid rgba(122,158,142,0.12)}
+
+/* PAST SELF */
+.past-self-card{background:rgba(138,132,125,0.06);border:1px solid var(--border);border-radius:4px;padding:15px;animation:fadeUp 0.4s ease}
+.past-self-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--stone);text-transform:uppercase;margin-bottom:7px}
+.past-self-label{font-size:12px;color:var(--stone-light);letter-spacing:0.06em;margin-bottom:4px}
+.past-self-context{font-size:10px;color:var(--stone);letter-spacing:0.1em;margin-bottom:9px}
+.past-self-word{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--warm);letter-spacing:0.04em;line-height:1.5;margin-bottom:7px}
+.past-self-note{font-size:11px;color:var(--stone);letter-spacing:0.08em;font-style:italic}
+
+/* SESSION SUMMARY */
+.session-summary-card{background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:4px;padding:15px;animation:fadeUp 0.4s ease}
+.session-summary-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--stone);text-transform:uppercase;margin-bottom:11px}
+.session-summary-row{display:flex;gap:13px;margin-bottom:9px}
+.session-summary-block{flex:1}
+.session-summary-label{font-size:10px;color:var(--stone);letter-spacing:0.15em;margin-bottom:3px}
+.session-summary-val{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--cream)}
+.session-summary-sub{font-size:11px;color:var(--stone);letter-spacing:0.1em;margin-left:5px}
+.session-summary-caption{font-size:12px;color:var(--stone-light);line-height:1.8;letter-spacing:0.05em;font-style:italic}
+
+/* COMMUNITY CARD */
+.community-card{background:rgba(138,132,125,0.06);border:1px solid var(--border);border-radius:4px;padding:15px;animation:fadeUp 0.4s ease}
+.community-card-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--stone);text-transform:uppercase;margin-bottom:11px}
+.community-stats{display:flex;flex-direction:column;gap:9px;margin-bottom:11px}
+.community-stat{display:flex;align-items:baseline;gap:9px}
+.community-stat-pct{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--terra-light);min-width:54px}
+.community-stat-text{font-size:12px;color:var(--stone-light);line-height:1.7;letter-spacing:0.04em}
+.community-note{font-size:11px;color:var(--stone);letter-spacing:0.06em;line-height:1.8;font-style:italic;border-top:1px solid var(--border);padding-top:9px}
+
+/* GROWTH NARRATIVE */
+.growth-narrative-card{background:rgba(184,115,85,0.05);border:1px solid rgba(184,115,85,0.2);border-radius:4px;padding:15px;animation:fadeUp 0.4s ease}
+.growth-narrative-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--terra);text-transform:uppercase;margin-bottom:4px}
+.growth-narrative-days{font-size:10px;color:var(--stone);letter-spacing:0.15em;margin-bottom:11px}
+.growth-narrative-text{font-size:13px;font-weight:300;color:var(--warm-mid);line-height:2;letter-spacing:0.05em;margin-bottom:11px}
+.growth-narrative-child{font-size:11px;color:var(--terra-light);line-height:1.7;letter-spacing:0.06em;font-style:italic;border-top:1px solid rgba(184,115,85,0.15);padding-top:9px}
+
+/* TOMORROW ACTION */
+.tomorrow-action-card{background:rgba(250,247,242,0.03);border:1px solid var(--border);border-radius:4px;padding:15px;animation:fadeUp 0.4s ease}
+.tomorrow-action-title{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.2em;color:var(--stone);text-transform:uppercase;margin-bottom:9px}
+.tomorrow-action-text{font-size:13px;font-weight:300;color:var(--cream);line-height:1.85;letter-spacing:0.05em;margin-bottom:7px}
+.tomorrow-action-why{font-size:11px;color:var(--stone-light);line-height:1.7;letter-spacing:0.04em;font-style:italic}
+
+/* SESSION CLOSE BTN */
+.session-close-btn{width:100%;background:rgba(184,115,85,0.1);border:1px solid rgba(184,115,85,0.4);border-radius:3px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:14px;font-weight:300;letter-spacing:0.1em;padding:13px;cursor:pointer;animation:fadeUp 0.3s ease}
+
+/* HISTORY */
+.history-label{font-size:11px;color:var(--stone);letter-spacing:0.15em;margin-bottom:9px;font-family:'Cormorant Garamond',serif;text-transform:uppercase}
+.history-item{background:rgba(250,247,242,0.02);border:1px solid var(--border);border-radius:3px;padding:11px;margin-bottom:7px}
+.history-meta{font-size:10px;color:var(--stone);letter-spacing:0.12em;margin-bottom:3px}
+.history-emotion-row{display:flex;justify-content:space-between;align-items:center}
+.history-emotion{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--warm)}
+.history-trigger{font-size:11px;color:var(--stone-light);letter-spacing:0.06em;margin-top:2px}
+.history-memo{font-size:11px;color:var(--stone);line-height:1.8;letter-spacing:0.04em;font-style:italic;border-top:1px solid var(--border);padding-top:7px;margin-top:7px}
+.week-chart{display:flex;gap:6px;align-items:flex-end;height:60px;margin:14px 0}
+.week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+.week-bar-inner{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:1px}
+.week-bar{width:100%;border-radius:1px;min-height:2px}
+.week-bar.irr{background:var(--terra)}
+.week-bar.anx{background:var(--stone)}
+.week-bar.calm{background:var(--sage)}
+.week-day{font-family:'Cormorant Garamond',serif;font-size:9px;color:var(--stone);letter-spacing:0.1em}
+
+/* CARE */
+.care-total{text-align:center;margin-bottom:18px;padding-bottom:15px;border-bottom:1px solid var(--border)}
+.care-total-num{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:var(--cream);line-height:1}
+.care-total-unit{font-size:11px;color:var(--stone);letter-spacing:0.2em;margin:4px 0 11px}
+.care-message{font-size:12px;color:var(--stone-light);line-height:1.85;letter-spacing:0.04em}
+.shadow-works-list{display:flex;flex-direction:column;gap:7px}
+.shadow-work-item{display:flex;align-items:center;gap:11px;padding:11px;background:rgba(250,247,242,0.02);border:1px solid var(--border);border-radius:3px;cursor:pointer;transition:all 0.2s}
+.shadow-work-item.checked{background:rgba(122,158,142,0.06);border-color:rgba(122,158,142,0.2)}
+.shadow-work-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--stone);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;font-size:10px;color:transparent}
+.shadow-work-check.checked{background:var(--sage);border-color:var(--sage);color:white}
+.shadow-work-name{flex:1;font-size:13px;font-weight:300;color:var(--warm-mid);letter-spacing:0.05em}
+.shadow-work-pts{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--stone)}
+
+/* MAP */
+.map-hero{margin-bottom:18px}
+.map-hero-label{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--stone);text-transform:uppercase;margin-bottom:3px}
+.map-hero-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;font-style:italic;color:var(--cream);letter-spacing:0.04em;margin-bottom:5px}
+.map-hero-sub{font-size:12px;color:var(--stone-light);line-height:1.85;letter-spacing:0.05em}
+.transform-timeline{display:flex;flex-direction:column;margin:18px 0}
+.transform-phase{display:flex;gap:13px}
+.transform-phase.past{opacity:0.65}
+.transform-phase.current{opacity:1}
+.transform-phase.future{opacity:0.42}
+.transform-phase-left{display:flex;flex-direction:column;align-items:center;width:22px;flex-shrink:0}
+.transform-node{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'Cormorant Garamond',serif;flex-shrink:0}
+.transform-node.past{background:rgba(122,158,142,0.2);border:1px solid var(--sage);color:var(--sage)}
+.transform-node.current{background:rgba(184,115,85,0.18);border:2px solid var(--terra);color:var(--terra-light);box-shadow:0 0 12px rgba(184,115,85,0.25)}
+.transform-node.future{background:transparent;border:1px solid var(--border);color:var(--stone)}
+.transform-line{width:1px;flex:1;min-height:22px;margin:4px 0}
+.transform-line.past{background:rgba(122,158,142,0.35)}
+.transform-line.current{background:linear-gradient(to bottom,var(--terra),rgba(138,132,125,0.2))}
+.transform-line.future{background:rgba(138,132,125,0.12)}
+.transform-phase-right{flex:1;padding-bottom:20px}
+.transform-phase-meta{display:flex;align-items:center;gap:7px;margin-bottom:4px;flex-wrap:wrap}
+.transform-phase-label{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.2em;color:var(--stone-light);text-transform:uppercase}
+.transform-phase-days{font-size:10px;color:var(--stone);letter-spacing:0.08em;font-family:'Cormorant Garamond',serif}
+.transform-marker{font-size:10px;letter-spacing:0.1em;font-family:'Cormorant Garamond',serif;padding:2px 7px;border-radius:10px}
+.transform-marker.past{color:var(--sage);background:rgba(122,158,142,0.1);border:1px solid rgba(122,158,142,0.3)}
+.transform-marker.current{color:var(--terra-light);background:rgba(184,115,85,0.1);border:1px solid rgba(184,115,85,0.4)}
+.transform-phase-title{font-size:14px;font-weight:300;color:var(--cream);letter-spacing:0.04em;margin-bottom:6px}
+.transform-phase-body{font-size:12px;color:var(--stone-light);line-height:1.9;letter-spacing:0.04em}
+.transform-footer{padding:13px 0}
+.transform-footer-line{width:32px;height:1px;background:var(--terra);margin-bottom:11px}
+.transform-footer-text{font-size:12px;font-weight:300;color:var(--warm-mid);line-height:2;letter-spacing:0.05em;font-style:italic}
+
+/* SELF CHANGE CARD */
+.self-change-card{background:linear-gradient(135deg,rgba(122,158,142,0.06),rgba(26,23,20,0));border:1px solid rgba(122,158,142,0.2);border-radius:4px;padding:18px;margin-bottom:14px;animation:fadeUp 0.4s ease}
+.self-change-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--sage);text-transform:uppercase;margin-bottom:5px}
+.self-change-title{font-size:15px;font-weight:300;color:var(--cream);letter-spacing:0.06em;margin-bottom:15px}
+.self-change-rows{display:flex;flex-direction:column;gap:13px}
+.self-change-row{padding-bottom:13px;border-bottom:1px solid rgba(138,132,125,0.1)}
+.self-change-row:last-child{border-bottom:none;padding-bottom:0}
+.self-change-before{font-size:11px;color:var(--stone);letter-spacing:0.05em;line-height:1.7;font-style:italic;margin-bottom:4px}
+.self-change-arrow{font-size:13px;color:rgba(122,158,142,0.5);margin:2px 0 4px 1px}
+.self-change-after{font-size:12px;font-weight:300;color:var(--warm-mid);letter-spacing:0.05em;line-height:1.85}
+.self-change-note{display:flex;gap:9px;align-items:flex-start;margin-top:13px;padding-top:11px;border-top:1px solid rgba(122,158,142,0.15)}
+.self-change-note-line{width:2px;min-height:22px;background:linear-gradient(to bottom,var(--sage),transparent);flex-shrink:0;margin-top:2px}
+.self-change-note-text{font-size:11px;color:var(--sage);letter-spacing:0.08em;line-height:1.75;font-style:italic}
+
+/* MAP PATTERN */
+.map-pattern-label{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.25em;color:var(--stone);text-transform:uppercase;margin-bottom:11px}
+.map-pattern-row{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.map-pattern-name{font-size:12px;color:var(--stone-light);letter-spacing:0.05em;min-width:110px}
+.map-pattern-bar-track{flex:1;height:3px;background:rgba(138,132,125,0.15);border-radius:2px;overflow:hidden}
+.map-pattern-bar-fill{height:100%;background:var(--terra);border-radius:2px}
+.map-pattern-count{font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--stone)}
+.map-pattern-insight{font-size:12px;color:var(--stone-light);line-height:1.8;letter-spacing:0.05em;margin-top:9px;font-style:italic;padding:9px 11px;background:rgba(138,132,125,0.06);border-radius:3px}
+.map-empty{font-size:12px;color:var(--stone);line-height:1.8;padding:15px;text-align:center;background:rgba(138,132,125,0.04);border-radius:3px}
+
+/* RESET */
+.cbt-list{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.cbt-item{background:rgba(250,247,242,0.02);border:1px solid var(--border);border-radius:4px;padding:15px;text-align:left;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;gap:4px}
+.cbt-item-num{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.25em;color:var(--stone);text-transform:uppercase}
+.cbt-item-title{font-size:15px;font-weight:300;color:var(--cream);letter-spacing:0.05em}
+.cbt-item-duration{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--stone);letter-spacing:0.15em}
+.cbt-item-desc{font-size:12px;color:var(--stone-light);line-height:1.7;letter-spacing:0.04em}
+.cbt-ex-wrap{background:rgba(250,247,242,0.02);border:1px solid var(--border);border-radius:4px;padding:17px}
+.cbt-ex-num{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.2em;color:var(--stone);text-transform:uppercase;margin-bottom:4px}
+.cbt-ex-title{font-size:18px;font-weight:300;color:var(--cream);letter-spacing:0.05em;margin-bottom:15px}
+.cbt-steps{display:flex;flex-direction:column;gap:9px;margin-bottom:15px}
+.cbt-step{display:flex;gap:11px;align-items:flex-start}
+.cbt-step-num{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--stone);min-width:17px;margin-top:1px}
+.cbt-step-text{font-size:13px;font-weight:300;color:var(--warm-mid);line-height:1.85;letter-spacing:0.04em}
+.cbt-complete-btn{width:100%;background:rgba(122,158,142,0.1);border:1px solid rgba(122,158,142,0.3);border-radius:3px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;letter-spacing:0.08em;padding:11px;cursor:pointer;margin-bottom:9px}
+.cbt-back-btn{background:none;border:none;color:var(--stone);font-family:'Noto Serif JP',serif;font-size:11px;cursor:pointer;letter-spacing:0.1em;display:block;text-align:center;width:100%}
+.cbt-done-state{text-align:center;padding:15px 0;animation:fadeUp 0.4s ease}
+.cbt-done-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--sage);margin-bottom:7px}
+.cbt-done-body{font-size:13px;font-weight:300;color:var(--stone-light);line-height:1.85;letter-spacing:0.05em;margin-bottom:13px}
+.cbt-practice-tip{background:rgba(122,158,142,0.05);border:1px solid rgba(122,158,142,0.18);border-radius:3px;padding:11px 13px;font-size:12px;color:var(--stone-light);line-height:1.8;letter-spacing:0.05em;text-align:left}
+.cbt-practice-tip strong{color:var(--sage);display:block;font-weight:300;margin-bottom:3px;font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase}
+
+/* GUIDE */
+.guide-hero{margin-bottom:22px}
+.guide-hero-en{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--stone);text-transform:uppercase;margin-bottom:3px}
+.guide-hero-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;font-style:italic;color:var(--cream);letter-spacing:0.04em;margin-bottom:7px}
+.guide-hero-body{font-size:12px;color:var(--stone-light);line-height:1.85;letter-spacing:0.05em}
+.guide-step{display:flex;gap:15px;padding-bottom:3px}
+.guide-step-num-wrap{display:flex;flex-direction:column;align-items:center;width:23px;flex-shrink:0}
+.guide-step-num{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--stone);line-height:1}
+.guide-step-line{width:1px;flex:1;background:rgba(138,132,125,0.15);min-height:18px;margin:5px 0}
+.guide-step-icon{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.25em;color:var(--terra);text-transform:uppercase;margin-bottom:2px}
+.guide-step-title{font-size:15px;font-weight:300;color:var(--cream);letter-spacing:0.05em;margin-bottom:7px}
+.guide-step-body{font-size:12px;color:var(--stone-light);line-height:1.9;letter-spacing:0.04em;margin-bottom:9px;padding-bottom:18px}
+.guide-callout{font-size:11px;color:var(--terra-light);letter-spacing:0.08em;line-height:1.7;font-style:italic;padding:7px 9px;background:rgba(184,115,85,0.06);border-radius:2px;margin-bottom:18px}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{font-size:13px;font-weight:300;color:var(--warm-mid);letter-spacing:0.04em;padding:13px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:9px;line-height:1.5;user-select:none}
+.faq-icon{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--stone);flex-shrink:0}
+.faq-a{font-size:12px;color:var(--stone-light);line-height:1.9;letter-spacing:0.04em;padding:0 0 13px;display:none}
+.faq-a.open{display:block}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(26,23,20,0.97);border-top:1px solid var(--border);display:flex;padding:8px 0 max(env(safe-area-inset-bottom,0px),8px)}
+.nav-btn{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 0;position:relative;transition:all 0.2s}
+.nav-icon{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--stone);transition:color 0.2s}
+.nav-label{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.18em;color:var(--stone);text-transform:uppercase;transition:color 0.2s}
+.nav-btn.active .nav-icon,.nav-btn.active .nav-label{color:var(--cream)}
+.nav-line{position:absolute;top:0;left:50%;transform:translateX(-50%);width:18px;height:1px;background:var(--terra)}
+
+/* SESSION COMPLETE */
+.session-complete-overlay{position:fixed;inset:0;z-index:100;background:rgba(16,13,11,0.96);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease}
+.session-complete-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:26px 22px;max-width:360px;width:calc(100% - 32px);max-height:90vh;overflow-y:auto}
+.session-complete-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--stone);text-transform:uppercase;margin-bottom:7px}
+.session-complete-date{font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--stone);letter-spacing:0.15em;margin-bottom:11px}
+.session-complete-headline{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--cream);letter-spacing:0.04em;line-height:1.3;margin-bottom:16px}
+.session-complete-items{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.session-complete-item-label{font-size:10px;color:var(--stone);letter-spacing:0.18em;margin-bottom:3px}
+.session-complete-item-val{font-size:14px;font-weight:300;color:var(--warm);letter-spacing:0.04em;line-height:1.5}
+.session-complete-msg{font-size:13px;font-weight:300;color:var(--stone-light);line-height:1.9;letter-spacing:0.05em;padding:13px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:13px}
+.tomorrow-causality-card{background:rgba(122,158,142,0.06);border:1px solid rgba(122,158,142,0.22);border-radius:4px;padding:13px 15px;margin-bottom:16px}
+.tomorrow-causality-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.3em;color:var(--sage);text-transform:uppercase;margin-bottom:7px}
+.tomorrow-causality-text{font-size:12px;font-weight:300;color:var(--stone-light);line-height:2;letter-spacing:0.05em}
+.session-complete-close{width:100%;background:none;border:1px solid var(--border);border-radius:2px;color:var(--stone-light);font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;letter-spacing:0.08em;padding:11px;cursor:pointer}
+
+/* MILESTONE FLASH */
+.milestone-flash-num{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;color:var(--terra-light);line-height:1;margin-bottom:9px}
+.milestone-flash-label{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--stone);letter-spacing:0.28em;text-transform:uppercase;margin-bottom:15px}
+.milestone-flash-msg{font-size:14px;font-weight:300;color:var(--warm-mid);letter-spacing:0.06em;line-height:1.85;max-width:260px}
+
+/* WORD RECEIVED FLASH */
+.word-received-label{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.35em;color:var(--stone);text-transform:uppercase;margin-bottom:22px}
+.word-received-text{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--cream);letter-spacing:0.04em;line-height:1.5;max-width:280px}
+
+/* COMMUNITY FLASH */
+.community-flash-pct{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;color:var(--terra-light);line-height:1;margin-bottom:11px}
+.community-flash-text{font-size:14px;font-weight:300;color:var(--warm-mid);letter-spacing:0.06em;line-height:1.8;margin-bottom:17px;max-width:260px}
+.community-flash-note{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--stone);letter-spacing:0.12em}
+
+/* ONBOARDING */
+.onboard-overlay{position:fixed;inset:0;z-index:100;background:rgba(16,13,11,0.97);display:flex;align-items:center;justify-content:center}
+.onboard-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:26px 22px;max-width:360px;width:calc(100% - 32px);max-height:90vh;overflow-y:auto}
+.onboard-tag{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--stone);text-transform:uppercase;margin-bottom:11px}
+.onboard-headline{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--cream);letter-spacing:0.04em;line-height:1.35;margin-bottom:13px}
+.onboard-body{font-size:13px;font-weight:300;color:var(--stone-light);line-height:1.95;letter-spacing:0.05em;margin-bottom:13px}
+.onboard-accent{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--terra-light);letter-spacing:0.06em;line-height:1.5;padding:11px;border:1px solid rgba(184,115,85,0.2);border-radius:3px;margin-bottom:14px}
+.onboard-next,.onboard-start{width:100%;background:rgba(184,115,85,0.12);border:1px solid rgba(184,115,85,0.45);border-radius:3px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:14px;font-weight:300;letter-spacing:0.1em;padding:13px;cursor:pointer;display:block;margin-bottom:8px}
+.onboard-skip{background:none;border:none;color:var(--stone);font-family:'Noto Serif JP',serif;font-size:12px;cursor:pointer;letter-spacing:0.1em;padding:7px;display:block;width:100%;text-align:center}
+.diag-choices{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.diag-choice-btn{background:transparent;border:1px solid var(--border);border-radius:3px;padding:11px 13px;text-align:left;font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;color:var(--warm-mid);letter-spacing:0.04em;cursor:pointer;transition:all 0.2s;line-height:1.5;width:100%}
+.diag-choice-btn.active{border-color:var(--terra);background:rgba(184,115,85,0.1);color:var(--cream)}
+.diag-response-line{width:26px;height:2px;background:var(--terra);margin-bottom:14px}
+.diag-science-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}
+.diag-science-item{background:rgba(138,132,125,0.08);border:1px solid var(--border);border-radius:3px;padding:11px 9px;text-align:center}
+.diag-science-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--terra-light);margin-bottom:4px}
+.diag-science-text{font-size:10px;color:var(--stone);letter-spacing:0.06em;line-height:1.6}
+.mirror-response-card{background:rgba(184,115,85,0.06);border:1px solid rgba(184,115,85,0.25);border-radius:4px;padding:15px;margin-bottom:13px}
+.mirror-echo{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--stone-light);letter-spacing:0.04em;margin-bottom:9px;line-height:1.6}
+.mirror-line{width:22px;height:1px;background:var(--terra);margin-bottom:9px}
+.mirror-response-text{font-size:13px;font-weight:300;color:var(--warm-mid);line-height:2;letter-spacing:0.05em;margin-bottom:11px}
+.mirror-verdict{font-size:13px;font-weight:300;color:var(--terra-light);letter-spacing:0.06em;font-style:italic;padding-top:9px;border-top:1px solid rgba(184,115,85,0.2)}
+
+/* EMERGENCY */
+.overlay{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;background:rgba(16,13,11,0.96)}
+.overlay-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:26px 22px;max-width:360px;width:calc(100% - 32px);max-height:92vh;overflow-y:auto}
+.emergency-step{background:rgba(196,112,112,0.06);border:1px solid rgba(196,112,112,0.2);border-radius:3px;padding:13px;margin-bottom:9px}
+.emergency-step-num{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.2em;color:#C47070;text-transform:uppercase;margin-bottom:3px}
+.emergency-step-title{font-size:15px;font-weight:300;color:var(--cream);margin-bottom:5px;letter-spacing:0.04em}
+.emergency-step-body{font-size:12px;color:var(--stone-light);line-height:1.8;letter-spacing:0.04em}
+.emergency-done-btn{width:100%;background:rgba(196,112,112,0.1);border:1px solid rgba(196,112,112,0.3);border-radius:3px;color:var(--cream);font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;letter-spacing:0.08em;padding:11px;cursor:pointer;margin-bottom:7px}
+.emergency-close-btn{background:none;border:none;color:var(--stone);font-family:'Noto Serif JP',serif;font-size:11px;cursor:pointer;letter-spacing:0.1em;display:block;text-align:center;width:100%}
+</style>
+</head>
+<body>
+<div id="app"><div id="root"></div></div>
+<script>
+// ═══════════════════ DATA ═══════════════════
+const EMOTIONS=[
+  {id:"irritated",kanji:"苛立ち",label:"いらだち",color:"#B87355"},
+  {id:"anxious",  kanji:"不安",  label:"ふあん",  color:"#8A847D"},
+  {id:"sad",      kanji:"沈鬱",  label:"ちんうつ",color:"#7A8A9E"},
+  {id:"tired",    kanji:"疲弊",  label:"ひへい",  color:"#9E8A9E"},
+  {id:"flat",     kanji:"平静",  label:"へいせい",color:"#B8B2AB"},
+  {id:"calm",     kanji:"安穏",  label:"あんのん",color:"#7A9E8E"},
+];
+const TRIGGERS=["YouTubeをやめない","朝の準備","登校拒否","癇癪","宿題","食事拒否","きょうだい喧嘩","学校からの連絡"];
+const SHADOW_WORKS=[
+  {id:"bento",    name:"弁当・食事の準備",          pts:15},
+  {id:"tantrum",  name:"癇癪・感情爆発への対応",    pts:25},
+  {id:"school",   name:"学校・療育への連絡調整",    pts:20},
+  {id:"pickup",   name:"送迎・付き添い",            pts:10},
+  {id:"homework", name:"学習サポート",              pts:15},
+  {id:"listen",   name:"子どもの話を聴く",          pts:20},
+  {id:"hospital", name:"医療機関・相談機関への同行", pts:30},
+  {id:"research", name:"情報収集・制度調査",         pts:15},
+];
+const CBT_EXERCISES=[
+  {title:"4-7-8 呼吸法",duration:"約3分",description:"自律神経を整え、急性のストレス反応を鎮める",
+   steps:["背筋を緩め、肩の力を抜きます。今、この瞬間にいることを感じてください。","鼻から4秒かけて、静かに息を吸い込みます。","そのまま7秒間、息を止めて保ちます。","口から8秒かけて、ゆっくりと息を吐き出します。これを4回繰り返します。"]},
+  {title:"認知のリフレーミング",duration:"約5分",description:"自動的な思考パターンを観察し、別の視点を見つける",
+   steps:["今、頭の中にある「べき思考」や「決めつけ」をそのまま言葉にしてみます。","「これは事実か、それとも解釈か」と静かに問いかけます。","同じ状況を、もっと中立的に描写するとしたらどう言えるでしょうか。","この視点から、自分に対してどんな言葉をかけますか。"]},
+  {title:"セルフコンパッション",duration:"約3分",description:"自己批判から離れ、自分を一人の人間として扱う",
+   steps:["「今、私はつらい」。この事実をただ認めます。抗わず、解決しようとせず。","「苦しさを感じることは、人として自然なことだ」。あなただけではありません。","友人が同じ状況にいたとしたら、あなたはどんな言葉をかけますか。","その言葉を、今の自分に向けてください。"]},
+];
+const COMMUNITY_STATS={
+  irritated:{stat1:{pct:"78%",text:"が最初、自分のしつけの問題だと思っていた"},stat2:{pct:"1位",text:"のトリガーは「朝の準備」（全記録中）"},stat3:{pct:"92%",text:"が2週間の記録後に「少し楽になった」と回答"}},
+  anxious:{stat1:{pct:"81%",text:"が子どもの将来への不安を抱えている"},stat2:{pct:"67%",text:"が「誰にも言えない」状態で記録を始めた"},stat3:{pct:"89%",text:"が記録を続けることで不安の頻度が減った"}},
+  tired:{stat1:{pct:"84%",text:"がケア労働の量を「誰にも見えていない」と感じていた"},stat2:{pct:"週平均",text:"23時間の目に見えないケア労働が記録されている"},stat3:{pct:"91%",text:"が「疲弊は意志の問題ではない」と理解した後、自責が減った"}},
+  default:{stat1:{pct:"78%",text:"が最初、自分のしつけの問題だと思っていた"},stat2:{pct:"14日",text:"間の記録で平均的な苛立ち強度が1.2下がる"},stat3:{pct:"3人に2人",text:"が子どもの行動変化を2〜4週間で実感している"}},
+};
+const GATEWAY_OPTIONS=[
+  {id:"explode",emoji:"🔥",label:"もう限界",    mapTo:"irritated",intensity:5},
+  {id:"anxious",emoji:"😰",label:"不安でいっぱい",mapTo:"anxious",  intensity:4},
+  {id:"tired",  emoji:"😮‍💨",label:"疲れ果てた", mapTo:"tired",    intensity:4},
+  {id:"sad",    emoji:"😔",label:"落ち込んでる",mapTo:"sad",      intensity:3},
+  {id:"flat",   emoji:"😶",label:"なんともない",mapTo:"flat",     intensity:2},
+  {id:"calm",   emoji:"🌿",label:"穏やかです",  mapTo:"calm",     intensity:2},
+];
+const PRESENCE_AFFIRMATIONS=[
+  "今日ここに来た。それだけで、あなたは何かをした。",
+  "記録する気力があった。疲れ果てた中で、それは小さくない。",
+  "開いた。そこで止まっても、十分です。",
+  "子どものことを考えながら、自分のことも考えた。それが余裕の始まりです。",
+];
+const SCAFFOLD_AFFIRMATIONS={
+  fear:["それだけ真剣に、子どもの未来を考えていた","怖さを感じるほど、深く愛していた"],
+  shame:["ちゃんとしなければと、ずっと頑張っていた","自分に厳しくあり続けた、それが今日の私"],
+  exhaust:["疲れを感じるまで、動き続けた","消耗するほど、全力だった"],
+  lonely:["一人で抱えながら、それでも今日もやりきった","誰にも言えない中で、ここに来た"],
+  default:["今日もここに記録した、それだけで十分","感情に向き合った、それが今日の勇気"],
+};
+const TOMORROW_ACTIONS={
+  "YouTubeをやめない":{action:"終了の5分前に「あと5分ね」と一度だけ声をかけ、終わったら何も言わずそばにいる。",why:"予告→待つ→責めない、の3ステップが、切り替えの摩擦を最も小さくします。"},
+  "朝の準備":{action:"朝の声かけを2回だけにする。3回目は声をかけず、ただそばに座る。",why:"声かけの回数を減らすと、子どもが自分で動くきっかけが生まれやすくなります。"},
+  "登校拒否":{action:"「行かなくていい」とも「行かなきゃ」とも言わず、「今日どうしたい？」とだけ聞く。",why:"選択権を子どもに渡すことで、抵抗が減り、対話が生まれやすくなります。"},
+  "癇癪":{action:"何も言わず、子どもの視界から少し離れた場所に静かにいる。",why:"癇癪中の脳に言葉は届きません。「いなくならない」という存在が、最大の安心になります。"},
+  default:{action:"15分だけ、誰にも話しかけない時間を作る。トイレでも構いません。",why:"親が自分を回復させる時間を持つことが、子どもへの最善のケアです。"},
+};
+const GROWTH_NARRATIVES={
+  irritated:"12日前のあなたは、「また怒鳴ってしまった」と自分を責めていた。今日のあなたは、その感情に名前をつけ、原因を探し、ここに記録した。これは小さな奇跡です。",
+  anxious:"記録を始める前のあなたは、「なぜこんなに不安なのかわからない」と言っていた。今日のあなたは、その不安をここに置いていける。これが、余裕が戻っているサインです。",
+  tired:"12日前、あなたは「疲れた」すら言葉にできなかった。今日のあなたは、疲れを感知し、記録し、自分に声をかけた。それだけで、何かが変わっています。",
+  sad:"あの頃のあなたは、落ち込みを誰にも言えなかった。今日のあなたは、この画面にそれを見せた。孤独が、わずかに小さくなっています。",
+  flat:"穏やかな日を記録できている。これが当たり前に見えて、実は変化の証です。",
+  calm:"安穏を感じる時間が増えています。12日前のあなたが今日のあなたを見たら、「よかった」と思うでしょう。",
+};
+const REALTIME_NARRATOR={
+  emotion:{
+    irritated:"苛立ちを選んだ。今、あなたの交感神経系が活性化しています。これは意志ではなく、生理的な状態です。",
+    anxious:  "不安を選んだ。脳が「危険を予測しよう」としているサインです。未来への警戒モードに入っています。",
+    tired:    "疲弊を選んだ。身体的・精神的資源が枯渇に近づいているサインです。今日のあなたは、相当消耗しています。",
+    sad:      "沈鬱を選んだ。エネルギーが内側に向いています。自己批判が強くなりやすい時間帯です。",
+    flat:     "平静を選んだ。今日は比較的安定した状態を記録できています。",
+    calm:     "安穏を選んだ。今のあなたは、心理的余裕のある場所にいます。",
+  },
+  intensity:{
+    5:"強度5。今のあなたの神経系は、限界に近い状態です。この記録を完了させるだけで、十分です。",
+    4:"強度4。かなり強い感情が来ています。一人で抱えてきた重さが、ここに出ています。",
+    3:"強度3。中程度の感情。観察できているということは、少し距離を置けているサインです。",
+    2:"強度2。感情は来ているが、まだ余裕の中にいます。この段階で記録できているのは理想的です。",
+    1:"強度1。ほんの小さな揺れを、見逃さずに記録しました。",
+  },
+};
+const AI_MIRROR={
+  irritated:{
+    "YouTubeをやめない":{reframe:"子どもの抵抗はあなたへの反抗ではなく、「切り替えが難しい脳の特性」の表れです。タイミングと伝え方を変えるだけで、結果は変わります。"},
+    "朝の準備":{reframe:"朝の苛立ちは性格ではなく、睡眠不足・血糖・時間プレッシャーが重なる「構造的な問題」です。"},
+    "登校拒否":{reframe:"登校拒否は子どもの意志の問題ではなく、脳や神経系のサインです。あなたの育て方の結果ではありません。"},
+    default:{reframe:"苛立ちの下には、必ず「こうあってほしい」という願いがあります。その願いは正当です。"},
+  },
+  anxious:{default:{reframe:"不安は「考えすぎ」ではありません。先を見ようとするあなたの知性が、情報不足の状況で作動している状態です。"}},
+  tired:{default:{reframe:"この疲れは怠慢ではなく、消耗するほど動いた証拠です。今日のあなたには、休む権利があります。"}},
+  sad:{default:{reframe:"この孤独感は、誰にも言えないまま抱えすぎているからです。ここに記録することが、孤独を少し和らげます。"}},
+  flat:{default:{reframe:"「普通の日」を記録し続けることで、何が自分を安定させているかが見えてきます。"}},
+  calm:{default:{reframe:"この状態を記録しておくことには意味があります。つらい日に「あの日の自分」を思い出すアンカーになります。"}},
+};
+const CHILD_IMPACT={
+  "YouTubeをやめない":"子どもの扁桃体が「予告→待つ→責めない」の繰り返しを経験すると、切り替えの際の防衛反応が弱まっていきます。",
+  "朝の準備":"声かけを減らし「そばにいる」だけにすると、子どもの交感神経優位状態が緩和されます。",
+  "登校拒否":"「どうしたい？」という問いは、子どもの自律神経系に選択権を返します。",
+  "癇癪":"親が距離を置いて「いなくならない」でいると、子どもの脳は「嵐が来ても安全基地は消えない」を学習します。",
+  default:"親が自分を回復させる時間を持つと、次の関わりの際に感情調整能力が向上します。",
+};
+const WEEK_DATA=[
+  {day:"月",i:3,a:2,c:1},{day:"火",i:5,a:3,c:0},{day:"水",i:2,a:2,c:2},
+  {day:"木",i:4,a:1,c:1},{day:"金",i:1,a:2,c:3},{day:"土",i:2,a:1,c:4},{day:"日",i:1,a:1,c:5},
+];
+const GUIDE_STEPS=[
+  {tag:"Observe",title:"感情を観察する",body:"一日の中で気になった瞬間に、今の状態をワンタップで記録します。きっかけも記録しておくと、後からパターンが分析されます。",highlight:"感情を観察すること",sub:"感情に支配されないための最初の一歩"},
+  {tag:"Analyse",title:"パターンをつかむ",body:"蓄積されたデータをもとに、あなた固有のストレスパターンを可視化します。これらは、あなたの意志の問題ではなく、構造的な問題です。",highlight:"自己批判から自己理解へ",sub:"怒りが生じる「構造」を変える"},
+  {tag:"Care",title:"ケアの労働を記録する",body:"弁当作り、癇癪への対応、学校への連絡調整。誰にも見えない日常のケア労働を、このアプリが記録します。",highlight:"不可視のケア労働を可視化する",sub:"自己承認は、自分で与えるもの"},
+  {tag:"Reset",title:"こころをリセットする",body:"苛立ちが強く記録されたとき、呼吸法やCBTワークが提案されます。4-7-8呼吸法、認知のリフレーミング、セルフコンパッション—いずれも3〜5分で完結します。",highlight:"自分を整える時間",sub:"子どもへの最善のケアは、まず自分を整えること"},
+];
+const FAQS=[
+  {q:"毎日記録しないといけませんか？",a:"いいえ。気が向いたとき、気になったときだけで十分です。このアプリは義務ではなく、道具です。"},
+  {q:"感情を記録することで、何が変わりますか？",a:"自分の感情を外に出して観察することで、「また自分はダメだ」という内向きの自責から、「この時間帯がきつい」という客観的な理解へと視点が移ります。それが長期的な変化の出発点になります。"},
+  {q:"CBTとは何ですか？",a:"認知行動療法（Cognitive Behavioral Therapy）の略です。思考のクセや認知の歪みに気づき、少しずつ修正していくアプローチです。"},
+  {q:"なぜ保護者向けなのですか？",a:"子どもへのどんなアプローチも、実行する保護者の感情が安定していなければ機能しません。「親の感情の安定」こそが、あらゆる教育課題解決のボトルネックです。"},
+];
+const MILESTONES={7:{num:"7",msg:"7回の記録が完了しました。\nあなたは7日間、自分を観察し続けました。これは小さな奇跡です。"},14:{num:"14",msg:"14回の記録が完了しました。\nあなたのパターンが見え始めています。自己批判から自己理解へ、確実に進んでいます。"},30:{num:"30",msg:"30回の記録が完了しました。\n1ヶ月の観察の積み重ね。変容の地図のWeek 2を超えました。"},50:{num:"50",msg:"50回の記録が完了しました。\n50回、自分と向き合った。子どもは、その変化を空気で感じています。"}};
+
+// ①: 診断コンテキスト→毎日のヘッダーメッセージ
+const DIAG_DAILY_MSG={
+  shituke:"「しつけの問題かもしれない」と抱え込んできたあなたへ",
+  iraira: "怒鳴った後の自己嫌悪を抱えるあなたへ",
+  hitori: "誰にも言えないまま一人で抱えてきたあなたへ",
+  mirai:  "子どもの将来への不安を一人で抱えるあなたへ",
+  tsukare:"限界を超えながらも向き合い続けるあなたへ",
+};
+
+// ③: 昨日のアクションフィードバック用デモデータ
+const LAST_ACTION_LOG={
+  trigger:"YouTubeをやめない",
+  action:"終了の5分前に「あと5分ね」と一度だけ声をかけ、終わったら何も言わずそばにいる。",
+  date:"昨日",
+};
+
+// ═══════════════════ STATE ═══════════════════
+let state={
+  tab:"observe",
+  onboarding:true,
+  onboardStep:0,
+  diagChoice:null,
+  diagFreeText:"",
+  diagMirrorShown:false,
+  totalRecordCount:14,
+  welcomeCardDismissed:false,
+  milestoneFlash:null,
+  cbtPracticed:false,
+  practiceReportShown:false,
+  practiceReported:null,
+  // ③: 昨日のアクション結果報告
+  actionFeedbackAnswered:false,
+  actionFeedbackAnswer:null,
+  childObservation:"",
+  lastChildObservation:"",
+  gatewayDone:false,
+  gatewayPending:null,
+  selectedEmotion:null,
+  intensity:3,
+  selectedTriggers:[],
+  memo:"",
+  logged:false,
+  energyLevel:null,
+  breathActive:false,
+  breathPhase:"inhale",
+  breathCount:0,
+  breathDone:false,
+  breathSkipped:false,
+  scaffoldChoice:null,
+  selfWordFinal:"",
+  selfWordFinalSaved:false,
+  scaffoldHintsOpen:false,
+  writingFeedback:false,
+  selfMap:[
+    {date:"3日前",emotion:"苛立ち",root:"子どもへの不安・恐れ",trigger:"登校拒否"},
+    {date:"昨日",emotion:"疲弊",root:"誰にも見えていない疲れ",trigger:"癇癪への対応"},
+  ],
+  checkedWorks:["bento","school"],
+  totalPts:252,
+  activeCBT:null,
+  cbtStep:0,
+  cbtDone:false,
+  openFaq:null,
+  sessionComplete:false,
+  wordReceivedFlash:false,
+  communityFlash:false,
+  emergencyOpen:false,
+  userLetters:[
+    {daysAgo:3,emotion:"苛立ち",trigger:"YouTubeをやめない",word:"よく耐えた。今日も十分すぎるほど頑張った。"},
+    {daysAgo:6,emotion:"疲弊",trigger:"癇癪への対応",word:"消耗するほど、全力だった。"},
+  ],
+};
+let breathTimer=null;
+
+// ═══════════════════ RENDER ═══════════════════
+function setState(u){Object.assign(state,u);render();}
+function render(){document.getElementById("root").innerHTML=buildAll();}
+
+function buildAll(){
+  return buildFlashes()+(state.onboarding?buildOnboarding():buildApp());
+}
+
+// ─── FLASHES ───
+function buildFlashes(){
+  let h="";
+  if(state.wordReceivedFlash){
+    h+=`<div class="flash-overlay"><div class="flash-center">
+      <div class="word-received-label">今日の言葉</div>
+      <div class="word-received-text">&#8220;${esc(state.selfWordFinal)}&#8221;</div>
+      <div style="margin-top:28px;font-family:'Cormorant Garamond',serif;font-size:12px;font-style:italic;color:var(--stone);letter-spacing:0.2em">この言葉を、声に出してみてください。</div>
+    </div></div>`;
+  }
+  if(state.communityFlash){
+    const hour=new Date().getHours();
+    // 時刻帯別「今夜の共存」人数（同時性の孤独解毒）
+    const coexistMsg=hour>=21?{num:"2,400人以上",timeCtx:"今夜この時間帯に"}
+      :hour>=18?{num:"3,100人以上",timeCtx:"今夜の時間帯に"}
+      :hour>=12?{num:"1,800人以上",timeCtx:"今日この時間帯に"}
+      :{num:"900人以上",timeCtx:"今朝この時間帯に"};
+    const emoCtx=state.selectedEmotion?.id==="irritated"?"同じ「苛立ち」を記録した保護者が"
+      :state.selectedEmotion?.id==="tired"?"同じ「疲弊」を記録した保護者が"
+      :state.selectedEmotion?.id==="anxious"?"同じ「不安」を記録した保護者が"
+      :"自分の感情を記録した保護者が";
+    h+=`<div class="flash-overlay"><div class="flash-center">
+      <div class="community-flash-pct">${coexistMsg.num}</div>
+      <div class="community-flash-text">${coexistMsg.timeCtx}、${emoCtx}このアプリを開いています。</div>
+      <div class="community-flash-note">あなたが感じていることを、今夜も誰かが感じている。</div>
+    </div></div>`;
+  }
+  if(state.milestoneFlash){
+    const ms=state.milestoneFlash;
+    h+=`<div class="flash-overlay" onclick="dismissMilestone()" style="cursor:pointer"><div class="flash-center">
+      <div class="milestone-flash-num">${ms.num}</div>
+      <div class="milestone-flash-label">Milestone</div>
+      <div class="milestone-flash-msg">${ms.msg.replace(/\n/g,"<br>")}</div>
+      <div style="margin-top:22px;font-size:11px;color:var(--stone);letter-spacing:0.1em">タップして続ける</div>
+    </div></div>`;
+  }
+  return h;
+}
+
+// ─── ONBOARDING ───
+function buildOnboarding(){
+  const s=state;let inner="";
+  if(s.onboardStep===0){
+    inner=`<div class="onboard-tag">あなたへ</div>
+    <div class="onboard-headline">今日、子どもとの間で<br>一番しんどかった場面を<br>一言で教えてください。</div>
+    <div class="onboard-body" style="margin-bottom:12px">誰も見ていません。正直に。</div>
+    ${!s.diagMirrorShown?`
+      <textarea class="memo-textarea" placeholder="例：朝、また怒鳴ってしまった。登校を渋られて、もう限界だと思った。" rows="3" maxlength="100" style="margin-bottom:9px;font-size:13px" oninput="setState({diagFreeText:this.value})">${esc(s.diagFreeText)}</textarea>
+      ${s.diagFreeText.trim()?`<button class="onboard-next" onclick="submitDiagText()" style="animation:fadeUp 0.3s ease">これを送る</button>`:""}
+      <div style="margin-top:14px">
+        <div class="presence-label" style="margin-bottom:7px">または、近いものを選ぶ：</div>
+        <div class="diag-choices">
+          ${[{id:"shituke",text:"「自分のしつけが悪いのかも」と思う"},{id:"iraira",text:"怒鳴った後、自己嫌悪に陥る"},{id:"hitori",text:"誰にも言えないまま一人で抱えている"},{id:"mirai",text:"子どもの将来が不安で眠れない"},{id:"tsukare",text:"もう限界なのに「頑張れ」と言われる"}]
+            .map(o=>`<button class="diag-choice-btn ${s.diagChoice===o.id?"active":""}" onclick="selectDiag('${o.id}')">${o.text}</button>`).join("")}
+        </div>
+      </div>
+    `:`
+      <div class="mirror-response-card" style="animation:fadeUp 0.4s ease">
+        <div class="mirror-echo">&#8220;${esc(s.diagFreeText)}&#8221;</div>
+        <div class="mirror-line"></div>
+        <div class="mirror-response-text">${getMirrorResponse(s.diagChoice)}</div>
+        <div class="mirror-verdict">それは、しつけの問題ではありません。</div>
+      </div>
+      <button class="onboard-next" style="margin-top:14px" onclick="setState({onboardStep:1})">続きを読む</button>
+    `}
+    <button class="onboard-skip" onclick="setState({onboarding:false})">スキップ</button>`;
+  } else if(s.onboardStep===1){
+    inner=`<div class="onboard-tag">伝えたいこと</div>
+    <div class="diag-response-line"></div>
+    <div class="onboard-headline">それは、<br>しつけの問題では<br>ありません。</div>
+    <div class="onboard-body">${getStep1Body(s.diagChoice)}</div>
+    <div class="onboard-accent">これは、構造の問題です。構造は、変えられます。</div>
+    <button class="onboard-next" onclick="setState({onboardStep:2})">続きを読む</button>`;
+  } else {
+    inner=`<div class="onboard-tag">根拠</div>
+    <div class="onboard-headline">親の感情の安定が、<br>子どもの未来を変える。</div>
+    <div class="onboard-body">研究が示しているのは、子どもへの最大の介入は「声かけの技術」ではなく「養育者の感情的安定」です。あなたが整うことが、子どもにとっての安全基地になります。</div>
+    <div class="diag-science-row">
+      <div class="diag-science-item"><div class="diag-science-num">78%</div><div class="diag-science-text">の保護者が最初、自分のしつけが原因だと思っていた</div></div>
+      <div class="diag-science-item"><div class="diag-science-num">14日</div><div class="diag-science-text">の記録で苛立ちの強度が平均1.2下がる</div></div>
+    </div>
+    <button class="onboard-start" onclick="setState({onboarding:false})">今日から、はじめる</button>`;
+  }
+  return `<div class="onboard-overlay"><div class="onboard-card">${inner}</div></div>`;
+}
+
+// ─── APP ───
+function buildApp(){
+  const s=state;
+  const marginScore=Math.round(WEEK_DATA.reduce((a,d)=>a+d.c,0)/WEEK_DATA.reduce((a,d)=>a+d.i+d.a+d.c,0)*100);
+  // ①: 診断コンテキストの毎日メッセージ
+  const diagMsg=s.diagChoice?DIAG_DAILY_MSG[s.diagChoice]:"";
+
+  return `
+    ${s.emergencyOpen?buildEmergency():""}
+    ${s.sessionComplete?buildSessionComplete():""}
+    <div class="header">
+      <div class="header-top">
+        <div>
+          <div class="header-label">Emotional Resilience</div>
+          <div class="header-title">こころの観察</div>
+        </div>
+        <button class="emergency-btn" onclick="setState({emergencyOpen:true})">今、爆発しそう</button>
+      </div>
+      ${diagMsg?`<div class="diag-daily">— ${diagMsg}</div>`:""}
+      <div class="header-purpose">親が安定すると、子どもも安定する。</div>
+      <div class="streak-pill"><div class="streak-dot"></div>${s.totalRecordCount}日連続の記録</div>
+      <div class="margin-meter-row">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.18em;color:var(--stone)">今週の心理的余裕</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.15em;color:${marginScore>=40?"var(--sage)":marginScore>=25?"var(--terra-light)":"#C47070"}">${marginScore>=40?"安定":marginScore>=25?"やや消耗":"要注意"}</span>
+      </div>
+      <div class="margin-track"><div class="margin-fill" style="width:${marginScore}%;background:${marginScore>=40?"var(--sage)":marginScore>=25?"var(--terra)":"#C47070"}"></div></div>
+      <div class="predict-card active">
+        <div class="predict-row"><span class="predict-tag">Today's Prediction</span><span class="predict-conf" style="color:var(--sage)">パターン確立</span></div>
+        <div class="predict-alert"><div class="predict-dot"></div><div class="predict-alert-text">今日の<strong>20時台は要注意ゾーン</strong>です。</div></div>
+        <div class="predict-detail">火曜20時台に「YouTubeをやめない」で強度5を記録するパターンがあります。事前に呼吸法を1回しておくと、閾値を超えにくくなります。</div>
+        <button class="predict-action" onclick="setState({tab:'reset'})">今のうちに呼吸法をする →</button>
+      </div>
+    </div>
+    <div class="content">
+      ${s.tab==="observe"?buildObserve():""}
+      ${s.tab==="care"   ?buildCare()   :""}
+      ${s.tab==="map"    ?buildMap()    :""}
+      ${s.tab==="reset"  ?buildReset()  :""}
+      ${s.tab==="guide"  ?buildGuide()  :""}
+    </div>
+    <div class="nav">
+      ${[{id:"observe",icon:"観",label:"Observe"},{id:"care",icon:"労",label:"Care"},{id:"map",icon:"地",label:"Map"},{id:"reset",icon:"息",label:"Reset"},{id:"guide",icon:"導",label:"Guide"}]
+        .map(t=>`<button class="nav-btn ${s.tab===t.id?"active":""}" onclick="switchTab('${t.id}')">
+          ${s.tab===t.id?'<div class="nav-line"></div>':""}
+          <div class="nav-icon">${t.icon}</div>
+          <div class="nav-label">${t.label}</div>
+        </button>`).join("")}
+    </div>`;
+}
+
+// ─── OBSERVE ───
+function buildObserve(){
+  const s=state;
+  return `
+    <div class="section-label">今の状態を観察する</div>
+    ${buildWelcomeReturn()}
+    ${!s.logged?buildPreLog():buildPostLog()}
+    ${buildHistorySection()}`;
+}
+
+// ①: 再訪カード（診断コンテキスト引継ぎ）
+function buildWelcomeReturn(){
+  const s=state;
+  if(s.welcomeCardDismissed||s.logged) return "";
+  const recentLetter=s.userLetters.filter(l=>l.daysAgo>0)[0];
+  // ①: 孤独の「今日」に共鳴する文（diagChoiceと毎回の記録前に連動）
+  const diagContext=s.diagChoice?{
+    shituke:"「しつけの問題かもしれない」という問いを、今日もまた抱えてここに来ましたか。",
+    iraira: "怒鳴ってしまった後の、あの重さを——また一人で持ってここに来ましたか。",
+    hitori: "誰にも言えないままで、それでも今日もここを開いた。",
+    mirai:  "子どもの先が見えない不安を、今日も一人で背負いながら来ましたか。",
+    tsukare:"もう限界だと思いながら、それでも向き合おうとして、今日もここに来た。",
+  }[s.diagChoice]:"今日も、ここに来た。あなたのことを覚えています。";
+  // 今日起きたことへの問いかけ（記録前に「今日の孤独」を名指しする）
+  const todayQ=s.diagChoice?{
+    shituke:"今日、また「自分のせいかも」と思う場面がありましたか？",
+    iraira: "今日、また怒鳴ってしまいましたか？それとも少し耐えられましたか？",
+    hitori: "今日もまだ、誰にも言えていませんか？",
+    mirai:  "今日も、子どもの将来のことが頭を離れませんでしたか？",
+    tsukare:"今日の疲れは、昨日より重いですか、軽いですか？",
+  }[s.diagChoice]:"今日のあなたは、どんな一日でしたか？";
+  return `
+    <div class="welcome-return-card">
+      <div style="flex:1">
+        <div class="welcome-return-tag">今日も来た — ${s.totalRecordCount}日目</div>
+        <div class="welcome-return-line">
+          ${diagContext}
+          <div style="margin-top:8px;font-size:11px;color:var(--terra-light);letter-spacing:0.06em;font-style:italic;font-family:'Cormorant Garamond',serif">${todayQ}</div>
+          ${recentLetter?`<div style="margin-top:8px;font-size:11px;color:var(--sage);letter-spacing:0.04em;font-style:italic">3日前の言葉：「${esc(recentLetter.word)}」</div>`:""}
+        </div>
+      </div>
+      <button class="welcome-return-close" onclick="setState({welcomeCardDismissed:true})">✕</button>
+    </div>`;
+}
+
+// ③: 昨日のアクション結果報告カード
+function buildActionFeedbackCard(){
+  const s=state;
+  // ③: 昨日の子どもの観察を最初に表示（具体的な行動変化の蓄積）
+  const prevObs=s.lastChildObservation?.trim();
+  const obsHtml=prevObs?`<div style="background:rgba(122,158,142,0.06);border:1px solid rgba(122,158,142,0.15);border-radius:3px;padding:9px 11px;margin-bottom:11px;font-size:12px;color:var(--stone-light);line-height:1.7;letter-spacing:0.04em"><span style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.22em;color:var(--sage);text-transform:uppercase;display:block;margin-bottom:5px">昨日あなたが気づいた変化</span>${esc(prevObs)}</div>`:"";
+  if(s.actionFeedbackAnswered && s.actionFeedbackAnswer){
+    const msgs={
+      good:`<div class="action-feedback-result good">変化が生まれた。その一瞬が、子どもの日常に刻まれています。<br>「また今日も」の積み重ねが、二次障害を予防します。</div>`,
+      same:`<div class="action-feedback-result same">変わらない日もある。子どもが変化を処理している期間です。続けることに意味があります。</div>`,
+      unknown:`<div class="action-feedback-result unknown">わからなくていい。今日の観察が、明日の手がかりになります。</div>`,
+    };
+    return `<div class="action-feedback-card"><div class="action-feedback-tag">Yesterday's Result</div>${obsHtml}${msgs[s.actionFeedbackAnswer]}</div>`;
+  }
+  return `
+    <div class="action-feedback-card">
+      <div class="action-feedback-tag">Yesterday's Result</div>
+      ${obsHtml}
+      <div class="action-feedback-q">昨日試したことの結果を教えてください。</div>
+      <div class="action-feedback-action">「${LAST_ACTION_LOG.action}」</div>
+      <div class="action-feedback-btns">
+        <button class="action-feedback-btn ${s.actionFeedbackAnswer==="good"?"selected-good":""}" onclick="answerFeedback('good')">変化があった</button>
+        <button class="action-feedback-btn ${s.actionFeedbackAnswer==="same"?"selected-same":""}" onclick="answerFeedback('same')">変わらなかった</button>
+        <button class="action-feedback-btn ${s.actionFeedbackAnswer==="unknown"?"selected-unknown":""}" onclick="answerFeedback('unknown')">わからない</button>
+      </div>
+    </div>`;
+}
+
+function buildPreLog(){
+  const s=state;
+  if(!s.gatewayDone){
+    if(s.gatewayPending) return buildGatewayMirror();
+    return buildGateway();
+  }
+  return buildDetailedLog();
+}
+
+function buildGateway(){
+  return `<div class="gateway-wrap">
+    <div class="gateway-q">今、どんな感じですか？</div>
+    <div class="gateway-sub">タップして、今の状態を観察しましょう。</div>
+    <div class="gateway-grid">
+      ${GATEWAY_OPTIONS.map(o=>`<button class="gateway-btn" onclick="selectGateway('${o.id}')">
+        <span class="gateway-emoji">${o.emoji}</span>
+        <span class="gateway-label">${o.label}</span>
+      </button>`).join("")}
+    </div>
+    <button class="gateway-detail" onclick="setState({gatewayDone:true})">もっと詳しく記録したい →</button>
+  </div>`;
+}
+
+function buildGatewayMirror(){
+  const p=state.gatewayPending;
+  return `<div class="gateway-mirror">
+    <div class="gateway-mirror-tag">Observer View</div>
+    <div class="gateway-mirror-state">
+      <span style="font-size:32px;line-height:1">${p.emoji}</span>
+      <div><div class="gateway-mirror-label">今のあなた</div>
+        <div class="gateway-mirror-emotion">${p.emo.kanji}・強度${p.intensity}</div></div>
+    </div>
+    <div class="gateway-mirror-narrator">${REALTIME_NARRATOR.emotion[p.emo.id]||""}</div>
+    <div class="gateway-mirror-narrator">${REALTIME_NARRATOR.intensity[p.intensity]||""}</div>
+    <button class="gateway-mirror-confirm" onclick="confirmGateway()">この状態を記録する</button>
+    <div style="margin-top:11px;padding:9px 12px;background:rgba(122,158,142,0.06);border-radius:3px;border-left:2px solid rgba(122,158,142,0.35)">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.2em;color:var(--sage);text-transform:uppercase;margin-bottom:4px">今この瞬間</div>
+      <div style="font-size:12px;color:var(--stone-light);line-height:1.85;letter-spacing:0.05em">${
+        {irritated:"今日ここを開いた。それだけで、子どもへの次の声かけが変わります。",
+         anxious:"不安を観察できた。それが、子どもに安定した空気を渡す出発点です。",
+         tired:"疲れを記録した。自分の状態を知ること——それが、余裕の始まりです。",
+         sad:"落ち込みを外に出した。抱え込まなかった、その選択が子どもに届きます。",
+         flat:"穏やかな状態を記録した。この安定が、子どもの安全基地になっています。",
+         calm:"安穏を感じている。今のあなたの状態が、そのまま子どもに伝わっています。",
+        }[p.emo.id]||"今日ここに来た。それだけで、何かが変わっています。"
+      }</div>
+    </div>
+    <button class="gateway-detail" style="margin-top:8px" onclick="setState({gatewayPending:null})">← 選び直す</button>
+  </div>`;
+}
+
+function buildDetailedLog(){
+  const s=state;
+  return `<div style="animation:fadeUp 0.35s ease">
+    <div class="emotion-grid">
+      ${EMOTIONS.map(e=>`<button class="emotion-btn ${s.selectedEmotion?.id===e.id?"active":""}" onclick="selectEmotion('${e.id}')">
+        <span class="emotion-kanji" style="color:${e.color}">${e.kanji}</span>
+        <span class="emotion-label">${e.label}</span>
+      </button>`).join("")}
+    </div>
+    ${s.selectedEmotion?`
+      <div class="narrator-strip">${REALTIME_NARRATOR.emotion[s.selectedEmotion.id]||""}</div>
+      <div class="intensity-wrap">
+        <div class="intensity-label"><span>強度</span><span style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--cream)">${s.intensity}</span></div>
+        <input type="range" min="1" max="5" value="${s.intensity}" oninput="setState({intensity:parseInt(this.value)})">
+        <div style="font-size:11px;color:var(--stone-light);line-height:1.7;letter-spacing:0.04em;margin-top:7px;font-style:italic">${REALTIME_NARRATOR.intensity[s.intensity]||""}</div>
+      </div>
+      <div style="margin-bottom:13px">
+        <div class="section-label" style="margin-bottom:9px">きっかけ（複数可）</div>
+        <div class="trigger-tags">
+          ${TRIGGERS.map(t=>`<button class="trigger-tag ${s.selectedTriggers.includes(t)?"active":""}" onclick="toggleTrigger('${esc(t)}')">${t}</button>`).join("")}
+        </div>
+        ${s.selectedTriggers.length>0?`<div class="not-fault"><strong>これは、しつけの問題ではありません。</strong>子どもの行動と、あなたの感情反応の間には、変えられる構造があります。</div>`:""}
+      </div>
+      <textarea class="memo-textarea" placeholder="今日のメモ（任意）" rows="2" maxlength="200" oninput="setState({memo:this.value})">${esc(s.memo)}</textarea>
+      <div class="memo-char">${s.memo.length}/200</div>
+      <button class="log-btn" onclick="handleLog()">記録する</button>
+    `:""}
+  </div>`;
+}
+
+function buildPostLog(){
+  const s=state;
+  const emo=s.selectedEmotion;
+  const trigger=s.selectedTriggers[0]||"default";
+  const tomorrow=TOMORROW_ACTIONS[trigger]||TOMORROW_ACTIONS.default;
+  const todayCareNames=s.checkedWorks.map(id=>SHADOW_WORKS.find(w=>w.id===id)?.name).filter(Boolean);
+  const h=new Date().getHours();
+  const timeDesc=h<9?"朝":h<12?"午前中":h<17?"午後":"夜";
+  const diagSuffix={shituke:"ずっと「自分のせいかもしれない」と思いながら、",iraira:"怒鳴ってしまった後の自己嫌悪も抱えながら、",hitori:"誰にも言えないまま、",mirai:"子どもの将来への不安も背負いながら、",tsukare:"限界を超えても止まれないまま、"}[s.diagChoice]||"";
+  const narrative=`${timeDesc}、${s.selectedTriggers.length>0?s.selectedTriggers[0]+"の場面で、":""}強度${s.intensity}の${emo?.kanji}を感じた。${diagSuffix}それを、一人で抱えていた。`;
+
+  if(s.energyLevel===null){
+    return buildEnergySelector(emo,todayCareNames);
+  }
+
+  let html=`<div style="display:flex;flex-direction:column;gap:13px">`;
+  if(!s.breathSkipped) html+=buildBreathCard();
+  if(s.breathSkipped||s.breathDone) html+=buildCoreCard(narrative,emo,s);
+  if(s.selfWordFinalSaved&&s.energyLevel===1){
+    html+=`<button class="session-close-btn" onclick="setState({sessionComplete:true})">今日のセッションを完了する</button>`;
+  }
+  if(s.energyLevel>=2&&s.selfWordFinalSaved) html+=buildLevel2(emo,trigger,todayCareNames);
+  if(s.energyLevel>=3&&s.selfWordFinalSaved) html+=buildLevel3(emo,trigger,tomorrow);
+  html+=`</div>`;
+  return html;
+}
+
+// ③: 「今日なぜしんどいか」の構造説明（原因がわかる体験を疲弊者にも届ける）
+function buildStructureInsight(emo,s){
+  const diagChoice=s.diagChoice;
+  const emoId=emo?.id||"";
+  const intensity=s.intensity||3;
+  const trigger=s.selectedTriggers?.[0]||null;
+
+  // diagChoice × 感情 × 強度の組み合わせで「原因がわかる一文」を生成
+  const insightMap={
+    shituke:{
+      irritated:intensity>=4
+        ?"「しつけの問題かもしれない」と思うほど、強く怒りが出た日。これはあなたの感情調整リソースが枯渇しているサインで、しつけの失敗ではありません。"
+        :"「しつけが悪いのかも」という問いは、あなたが深く子どもと向き合っているからこそ生まれます。今日の感情はその証拠です。",
+      anxious:"「自分が不安なのはしつけのせいかも」という思い。しかし子どもの特性への不安は、構造的な情報不足から生まれます。あなたの判断力の問題ではありません。",
+      tired:"しつけへの不安を抱えながら、消耗するほど動いた。その疲れは、愛情と責任感の重さそのものです。",
+      default:"今日の苦しさの原因は、しつけではありません。過負荷な構造と、情報のなさです。",
+    },
+    iraira:{
+      irritated:intensity>=4
+        ?"今日また強く怒鳴ってしまったかもしれない。それは、神経系の閾値を超えたということです。意志の問題ではなく、休息と構造変化が必要なサインです。"
+        :"少し怒鳴ってしまった。しかし今日あなたは記録した——それが「また繰り返す」ループから外れる最初の一歩です。",
+      tired:"怒鳴った後の疲弊。感情を制御しようとするのにエネルギーを使い果たした状態です。これは弱さではなく、消耗の結果です。",
+      default:"怒鳴ってしまう場面には、必ず「構造的な引き金」があります。今日記録したことが、その構造を見える化します。",
+    },
+    hitori:{
+      irritated:"誰にも言えないまま、一人でイライラを抱えてきた。孤立した状態での感情調整は、人間の設計を超えた要求です。",
+      tired:"誰にも言えないまま疲弊している。それは「弱さ」ではなく、サポート不足という構造の問題です。",
+      default:"今日も一人で抱えてここに来た。「誰にも言えない」の重さが、今日の感情に乗っています。",
+    },
+    mirai:{
+      anxious:intensity>=4
+        ?"子どもの将来への不安が強い日。先が見えないときの脳は、最悪のシナリオを描き続けます。それは「心配性」ではなく、不確実性への正常反応です。"
+        :"子どもの将来を考えながら来た。その不安は、あなたが長期的に子どもを思いやっている証です。",
+      default:"将来への不安を抱えながら今日も動いた。それは愛情の別名です。",
+    },
+    tsukare:{
+      tired:intensity>=4
+        ?"限界を超えて動き続けている。今日の疲弊は、意志の弱さではなく、消耗のシグナルです。このシグナルに気づけたことが、今日最大の成果です。"
+        :"限界に近い状態で来た。その勇気を、まず認めてください。",
+      default:"「頑張れ」という言葉が最も残酷に響く日。今日のあなたには、休む権利があります。",
+    },
+  };
+  const diagInsights=insightMap[diagChoice];
+  let insight=null;
+  if(diagInsights){
+    insight=diagInsights[emoId]||(diagInsights.default||null);
+  }
+  // diagChoiceなし時のフォールバック
+  // 全ユーザーに「今日なぜしんどいか」を届ける（感情×強度×トリガー×時刻の4軸）
+  if(!insight){
+    const h=new Date().getHours();
+    const isMorning=h>=5&&h<10;
+    const isNight=h>=21||h<2;
+    // トリガー別の構造説明（diagChoiceなしでも原因が「わかる」体験を提供）
+    const triggerInsight={
+      "YouTubeをやめない":"「やめない」のはあなたへの反抗ではなく、子どもの脳が「切り替え」を苦手とする特性です。何度言っても変わらないのは、伝え方の問題ではなく、神経発達の問題です。",
+      "朝の準備":isMorning?"朝の苛立ちは、睡眠不足・血糖低下・時間プレッシャーが重なる「生理的に怒りやすい」時間帯の問題です。あなたの性格ではありません。":"朝の準備場面のストレスは構造的なものです。子どもも親も、朝は神経系がまだ整っていません。",
+      "登校拒否":"登校拒否は「行きたくない」ではなく「行けない」ケースがほとんどです。これはあなたの育て方の結果ではなく、子どもの神経系が過負荷を知らせているサインです。",
+      "癇癪":"癇癪は子どもの感情調整回路が未発達なために起きます。叱ることで治るものではなく、回路の発達を待つ必要があります。あなたの対応が原因ではありません。",
+      "宿題":"宿題への抵抗は、「やる気がない」ではなく「処理負荷が高い」ためである場合が多いです。強制しても消耗が増えるだけで、子どもの意欲の問題ではありません。",
+      "食事拒否":"食事拒否は感覚過敏や自律神経の状態と関係していることが多く、しつけでは解決できません。あなたの料理や育て方の問題ではありません。",
+    }[trigger];
+    // 感情×強度のフォールバック
+    const emoInsight={
+      irritated:{
+        hi:intensity>=4?"強い苛立ちは、神経系が限界に近づいているサインです。怒りやすくなっているのは、あなたの性格ではなく消耗の結果です。":"苛立ちを感じた。その下に「こうあってほしい」という願いがあります。その願いは正当です。",
+        lo:"苛立ちに気づいた。感情を観察できているということは、少し距離が取れているサインです。",
+      },
+      anxious:{
+        hi:intensity>=3?"不安が強い日。脳が「危険の予測モード」に入っています。これは心配性ではなく、情報不足と不確実性への正常な反応です。":"不安を記録した。先を見ようとするあなたの知性が作動しています。考えすぎではありません。",
+      },
+      tired:{
+        hi:intensity>=4?"疲弊が強い日。誰かのために動き続けた結果です。この消耗は弱さではなく、誰かを支えてきた証拠です。":"疲れを感じている。それはあなたが動き続けてきた証拠です。",
+      },
+      sad:{
+        hi:intensity>=3?"落ち込みが強い。「頑張っているのに報われない」という孤立感が背景にあるかもしれません。それはあなたが弱いからではなく、誰にも言えないまま抱えすぎているからです。":"落ち込みを観察できた。感情を外に出すことで、少し距離が生まれます。",
+      },
+      flat:{hi:"平静な状態を記録した。安定している日も記録することで、何が自分を落ち着かせているかが見えてきます。"},
+      calm:{hi:"安穏を感じている。この状態のあなたが、子どもにとっての安全基地になっています。"},
+    };
+    const emoEntry=emoInsight[emoId];
+    const emoFallback=emoEntry?(emoEntry.hi||emoEntry.lo||null):null;
+    insight=triggerInsight||(isNight&&intensity>=4?`夜の${h}時に強度${intensity}の感情。夜は感情の閾値が下がりやすい時間帯です。今感じていることの強さは、夜という時間が増幅している部分があります。`:emoFallback);
+  }
+  if(!insight) return "";
+  return `<div style="background:rgba(184,115,85,0.06);border:1px solid rgba(184,115,85,0.2);border-radius:4px;padding:13px 15px;margin:13px 0 0;animation:fadeUp 0.4s ease">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--terra);text-transform:uppercase;margin-bottom:7px">今日の原因</div>
+    <div style="font-size:12px;font-weight:300;color:var(--warm-mid);line-height:1.95;letter-spacing:0.05em">${insight}</div>
+    <div style="display:flex;gap:8px;align-items:flex-start;margin-top:9px;padding-top:9px;border-top:1px solid rgba(184,115,85,0.15)">
+      <div style="width:2px;min-height:16px;background:linear-gradient(to bottom,var(--terra),transparent);flex-shrink:0;margin-top:2px"></div>
+      <div style="font-size:11px;color:var(--terra-light);letter-spacing:0.06em;font-style:italic">これは、しつけの問題ではありません。構造の問題です。</div>
+    </div>
+  </div>`;
+}
+
+function buildEnergySelector(emo,todayCareNames){
+  const s=state;
+  const hasCare=todayCareNames.length>0;
+  return `<div class="energy-selector">
+    <div class="energy-selector-label">記録しました。</div>
+    <div class="integrated-fact-card">
+      <div class="integrated-fact-tag">今日のあなた全体像</div>
+      <div class="integrated-emotion-row">
+        <span class="integrated-emotion-kanji">${emo?.kanji||"—"}</span>
+        <span class="integrated-emotion-detail">強度${s.intensity}</span>
+      </div>
+      ${hasCare?`<div class="integrated-care-chips">${todayCareNames.map(n=>`<span class="integrated-chip">${n}</span>`).join("")}</div>`:""}
+      <div class="integrated-msg">${hasCare?`${todayCareNames.length}つのケアをこなした上での${emo?.kanji}です。これが消耗の正体です。`:`今日の${emo?.kanji}を記録しました。`}</div>
+      <div class="integrated-verdict"><div class="integrated-verdict-line"></div><div class="integrated-verdict-text">しつけの問題ではありません。これは、消耗の問題です。</div></div>
+    </div>
+    ${s.cbtPracticed&&!s.practiceReportShown?buildPracticeReportCard():""}
+    ${buildStructureInsight(emo,s)}
+    <div class="energy-selector-q" style="margin-top:13px">今日の余裕は、どのくらいありますか？</div>
+    <div class="energy-selector-sub">あなたのペースで、今日できる分だけ。</div>
+    <div class="energy-btns">
+      ${[{v:1,l:"疲れ果てた",s:"2分で完了"},{v:2,l:"まあまあ",s:"5分で完了"},{v:3,l:"余裕がある",s:"10分で完了"}]
+        .map(o=>`<button class="energy-btn" onclick="selectEnergy(${o.v})"><div class="energy-btn-label">${o.l}</div><div class="energy-btn-sub">${o.s}</div></button>`).join("")}
+    </div>
+  </div>`;
+}
+
+function buildPracticeReportCard(){
+  const s=state;
+  if(s.practiceReported===null){
+    return `<div class="practice-report-card">
+      <div class="practice-report-tag">Practice → Action</div>
+      <div class="practice-report-q">前回「息」タブで練習した呼吸法を、子どもとの場面で試しましたか？</div>
+      <div class="practice-report-btns">
+        <button class="practice-report-btn yes" onclick="reportPractice('yes')">試した ✓</button>
+        <button class="practice-report-btn no" onclick="reportPractice('no')">まだ</button>
+      </div>
+    </div>`;
+  }
+  return `<div class="practice-result ${s.practiceReported==="yes"?"yes":"no"}">
+    ${s.practiceReported==="yes"?"練習が実戦になった。それが変容です。<br>呼吸を使えた瞬間、あなたの神経系が少し変わりました。":"タイミングが来たとき、思い出してください。練習の回数より、「思い出す」習慣が変容を作ります。"}
+  </div>`;
+}
+
+function buildBreathCard(){
+  const s=state;
+  return `<div class="breath-auto-card">
+    <div class="breath-auto-tag">Micro Recovery</div>
+    ${!s.breathDone?`
+      <div style="font-size:14px;font-weight:300;color:var(--cream);letter-spacing:0.06em;margin-bottom:13px;text-align:center">${s.breathActive?"一緒に呼吸しましょう。":"記録が完了しました。30秒、一緒に呼吸します。"}</div>
+      <div class="breath-anim-wrap">
+        <div class="breath-circle ${s.breathActive?s.breathPhase:""}">
+          ${s.breathActive?`<div class="breath-phase-label">${s.breathPhase==="inhale"?"吸う":s.breathPhase==="hold"?"止める":"吐く"}</div><div class="breath-phase-sec">${s.breathPhase==="inhale"?"4秒":s.breathPhase==="hold"?"2秒":"6秒"}</div>`:`<div class="breath-phase-label" style="opacity:0.4">準備中</div>`}
+        </div>
+        ${s.breathActive?`<div class="breath-round">${s.breathCount+1} / 3</div>`:""}
+      </div>
+      ${!s.breathActive?`<button class="log-btn" style="max-width:190px;margin:0 auto;display:block" onclick="startBreath()">呼吸を始める</button>`:""}
+      <button class="breath-skip-btn" onclick="setState({breathSkipped:true,breathActive:false})" style="margin-top:7px">スキップ</button>
+    `:`<div class="breath-done-msg">呼吸が完了しました。<br>少し、落ち着きましたか。</div>`}
+  </div>`;
+}
+
+function buildCoreCard(narrative,emo,s){
+  const scaffolds=getScaffolds(s);
+  // ②: 「書く」を先に要求。選択肢は補助として展開
+  const showHints=s.scaffoldHintsOpen||false;
+  const hints=s.energyLevel===1?PRESENCE_AFFIRMATIONS:scaffolds;
+  return `<div class="core-card">
+    <div class="core-tag-row">
+      <div class="core-tag">Outside View</div>
+      <div class="core-learning-badge"><div class="core-learning-dot"></div><span>記録${s.totalRecordCount}回 · パターン確立済み</span></div>
+    </div>
+    <div class="core-narrative">${narrative}</div>
+    <div class="core-question"><div class="core-q-line"></div><div class="core-q-text">この人に、あなたはどんな言葉をかけますか？</div></div>
+    ${!s.selfWordFinalSaved?`
+      <div class="write-prompt">あなた自身の言葉で、一文字でいい。</div>
+      <textarea class="memo-textarea write-required" rows="2" maxlength="80"
+        placeholder="${s.energyLevel===1?"今日ここに来た自分へ、何か一言。":"この人に声をかけるとしたら、なんと言いますか。"}"
+        oninput="setState({selfWordFinal:this.value,writingFeedback:this.value.trim().length>0})">${esc(s.selfWordFinal)}</textarea>
+      ${s.writingFeedback&&s.selfWordFinal.trim()?`
+        <div style="display:flex;align-items:center;gap:7px;margin:6px 0 2px;animation:fadeUp 0.25s ease">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--sage);flex-shrink:0"></div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--sage);letter-spacing:0.12em;font-style:italic">書いています。あなたの言葉が、ここに生まれています。</div>
+        </div>
+      `:""}
+      ${!s.selfWordFinal.trim()?`
+        <button style="background:none;border:none;color:var(--stone);font-family:'Noto Serif JP',serif;font-size:11px;cursor:pointer;letter-spacing:0.08em;display:block;margin:6px 0;padding:0;text-align:left;text-decoration:underline;text-underline-offset:3px"
+          onclick="setState({scaffoldHintsOpen:true})">言葉が出ない場合、ヒントを見る →</button>
+        ${showHints?`
+          <div class="core-aff-options" style="margin-top:8px;animation:fadeUp 0.3s ease">
+            ${hints.map(a=>`<button class="core-aff-btn ${s.scaffoldChoice===a?"active":""}" onclick="setState({scaffoldChoice:'${escQ(a)}',selfWordFinal:'${escQ(a)}',writingFeedback:false})">${a}</button>`).join("")}
+          </div>
+        `:""}
+      `:`
+        <button class="self-complete-save" onclick="saveWord(${s.energyLevel===1?1:2})">この言葉で今日を閉じる</button>
+      `}
+    `:`
+      <div class="core-saved">
+        <div class="core-saved-word">&#8220;${esc(s.selfWordFinal)}&#8221;</div>
+        <div class="core-saved-note">今日の記録に刻まれました。</div>
+        <div class="word-journey-hint">この言葉は、3日後のあなたへの手紙になります。</div>
+        ${(()=>{
+          // ③: 承認保存直後に「子どもへの接続」を届ける
+          const emoId=s.selectedEmotion?.id||"";
+          const trigger=s.selectedTriggers?.[0]||null;
+          const word=s.selfWordFinal?.trim()||"";
+          // 感情×トリガーで「今日自分に言葉をかけたことが子どもに届く」一文を生成
+          const childMsg={
+            irritated:{
+              "YouTubeをやめない":"今日あなたが自分に言葉をかけた。その余裕が、次の「あと5分」の声かけのトーンに現れます。",
+              "朝の準備":"今日の自己承認が、明日の朝のあなたの声のトーンを変えます。子どもはそれを空気で受け取ります。",
+              "登校拒否":"自分を承認したあなたは、明日少し穏やかな声で「どうしたい？」と聞けます。それが子どもの選択肢を広げます。",
+              "癇癪":"今日自分に言葉をかけた。次の癇癪のとき、あなたの神経系は今日より少し安定しています。",
+              default:"今日自分を承認した。その安定が、子どもへの次の関わりのトーンに届きます。",
+            },
+            anxious:{
+              default:"不安の中で自分に言葉をかけた。その穏やかさが、子どもの「安全基地」を少し強化します。",
+            },
+            tired:{
+              default:"疲弊した日に自分を承認した。そのわずかな回復が、明日の声かけの質を変えます。",
+            },
+            sad:{
+              default:"落ち込んだ日に自分に言葉をかけた。その誠実さが、子どもに「感情は扱えるもの」を教えます。",
+            },
+            flat:{default:"穏やかな状態を記録した。この安定が、そのまま子どもに伝わっています。"},
+            calm:{default:"安穏な今日を承認した。このあなたの状態が、子どもの安全基地になっています。"},
+          };
+          const emoMap=childMsg[emoId]||childMsg.irritated;
+          const msg=(trigger&&emoMap[trigger])||emoMap.default||"今日自分に言葉をかけた。それが子どもへの最善のケアです。";
+          return `<div style="margin-top:12px;padding:10px 12px;background:rgba(122,158,142,0.07);border-radius:3px;border-left:2px solid rgba(122,158,142,0.4);animation:fadeUp 0.4s ease 0.3s both">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.22em;color:var(--sage);text-transform:uppercase;margin-bottom:5px">明日の子どもへ</div>
+            <div style="font-size:12px;font-weight:300;color:var(--stone-light);line-height:1.9;letter-spacing:0.05em">${msg}</div>
+          </div>`;
+        })()}
+      </div>
+    `}
+  </div>`;
+}
+
+function buildLevel2(emo,trigger,todayCareNames){
+  const s=state;
+  const recentLetter=s.userLetters.filter(l=>l.daysAgo>0)[0];
+  return `
+    <div class="session-summary-card">
+      <div class="session-summary-tag">Today's Record</div>
+      <div class="session-summary-row">
+        <div class="session-summary-block"><div class="session-summary-label">感情</div><div class="session-summary-val">${emo?.kanji}<span class="session-summary-sub">強度${s.intensity}</span></div></div>
+        ${todayCareNames.length>0?`<div class="session-summary-block"><div class="session-summary-label">今日のケア</div><div class="session-summary-val">${todayCareNames.length}<span class="session-summary-sub">項目</span></div></div>`:""}
+      </div>
+      <div class="session-summary-caption">強度${s.intensity}の${emo?.kanji}を抱えながら、${todayCareNames.length}つのケアをこなした。それがあなたの今日です。</div>
+    </div>
+    ${recentLetter?`
+      <div class="past-self-card">
+        <div class="past-self-tag">Past Self Letter</div>
+        <div class="past-self-label">${recentLetter.daysAgo}日前のあなたが、自分にこう言いました。</div>
+        <div class="past-self-context">${recentLetter.emotion}${recentLetter.trigger?"・"+recentLetter.trigger:""}の日</div>
+        <div class="past-self-word">&#8220;${esc(recentLetter.word)}&#8221;</div>
+        <div class="past-self-note">あの日書いた言葉が、今日のあなたに届いています。</div>
+      </div>
+    `:""}
+    ${s.energyLevel===2?`<button class="session-close-btn" onclick="setState({sessionComplete:true})">今日のセッションを完了する</button>`:""}`;
+}
+
+function buildLevel3(emo,trigger,tomorrow){
+  const s=state;
+  const narrative=GROWTH_NARRATIVES[emo?.id]||GROWTH_NARRATIVES.flat;
+  const stats=COMMUNITY_STATS[emo?.id]||COMMUNITY_STATS.default;
+  return `
+    <div class="growth-narrative-card">
+      <div class="growth-narrative-tag">Your Story</div>
+      <div class="growth-narrative-days">記録${s.totalRecordCount}日目</div>
+      <div class="growth-narrative-text">${narrative}</div>
+      <div class="growth-narrative-child">${CHILD_IMPACT[trigger]||CHILD_IMPACT.default}</div>
+    </div>
+    <div class="community-card">
+      <div class="community-card-tag">You Are Not Alone</div>
+      <div class="community-stats">
+        ${[stats.stat1,stats.stat2,stats.stat3].map(st=>`<div class="community-stat"><div class="community-stat-pct">${st.pct}</div><div class="community-stat-text">${st.text}</div></div>`).join("")}
+      </div>
+      <div class="community-note">あなたの苦しさは、特別な弱さではありません。構造的に消耗しやすい状況にいる、数万人の一人です。</div>
+    </div>
+    <div class="tomorrow-action-card">
+      <div class="tomorrow-action-title">${tomorrow.title||"明日の一歩"}</div>
+      <div class="tomorrow-action-text">${tomorrow.action}</div>
+      <div class="tomorrow-action-why">${tomorrow.why}</div>
+    </div>
+    <button class="session-close-btn" onclick="setState({sessionComplete:true})">今日のセッションを完了する</button>`;
+}
+
+function buildHistorySection(){
+  const HISTORY=[
+    {time:"昨日 21:14",emotion:"苛立ち",intensity:4,color:"#B87355",trigger:"YouTubeをやめない",memo:"何度言ってもやめないので、最終的に怒鳴ってしまった。後悔している。"},
+    {time:"昨日 07:32",emotion:"不安",  intensity:3,color:"#8A847D",trigger:"朝の準備",memo:""},
+    {time:"2日前 20:18",emotion:"疲弊", intensity:4,color:"#9E8A9E",trigger:"癇癪への対応",memo:"1時間以上続いた。体が動かなくなった。"},
+  ];
+  const max=Math.max(...WEEK_DATA.map(d=>d.i+d.a+d.c));
+  return `
+    <div class="divider"></div>
+    ${buildActionFeedbackCard()}
+    <div class="history-label">記録の履歴</div>
+    <div class="week-chart">
+      ${WEEK_DATA.map(d=>{
+        const tot=d.i+d.a+d.c;const pct=max>0?tot/max*100:0;
+        return `<div class="week-bar-wrap"><div class="week-bar-inner">
+          <div class="week-bar irr" style="height:${d.i/tot*pct}%"></div>
+          <div class="week-bar anx" style="height:${d.a/tot*pct}%"></div>
+          <div class="week-bar calm" style="height:${d.c/tot*pct}%"></div>
+        </div><div class="week-day">${d.day}</div></div>`;
+      }).join("")}
+    </div>
+    ${HISTORY.map(h=>`<div class="history-item">
+      <div class="history-meta">${h.time}</div>
+      <div class="history-emotion-row">
+        <div><div class="history-emotion" style="color:${h.color}">${h.emotion}・${h.intensity}</div><div class="history-trigger">${h.trigger}</div></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:${h.color};opacity:0.7;flex-shrink:0"></div>
+      </div>
+      ${h.memo?`<div class="history-memo">${h.memo}</div>`:""}
+    </div>`).join("")}`;
+}
+
+// ─── CARE ───
+function buildCare(){
+  const s=state;
+  return `<div class="care-total">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:var(--stone);margin-bottom:9px;text-transform:uppercase">Invisible Care Log</div>
+    <div class="care-total-num">${s.totalPts.toLocaleString()}</div>
+    <div class="care-total-unit">累積ケアポイント</div>
+    <div class="care-message">誰も見ていない場所で、あなたは毎日これだけのことをしている。それは確かに、ここに記録されている。</div>
+  </div>
+  <div class="shadow-works-list">
+    ${SHADOW_WORKS.map(w=>`<div class="shadow-work-item ${s.checkedWorks.includes(w.id)?"checked":""}" onclick="toggleWork('${w.id}')">
+      <div class="shadow-work-check ${s.checkedWorks.includes(w.id)?"checked":""}">${s.checkedWorks.includes(w.id)?"✓":""}</div>
+      <div class="shadow-work-name">${w.name}</div>
+      <div class="shadow-work-pts">${w.pts}pt</div>
+    </div>`).join("")}
+  </div>`;
+}
+
+// ─── MAP ───
+function buildMap(){
+  const s=state;
+  const phases=[
+    {phase:"今",    days:"記録0〜7日",  status:"past",   title:"感情に名前がつく",          body:"「なんとなくしんどい」から「夜の20時台に苛立ちが来る」へ。自責が少し減り始める。",marker:"✓ 通過済み"},
+    {phase:"Week 2",days:"記録8〜14日", status:"current",title:"パターンが見え、爆発が1回減る",body:"「このトリガーが来たら要注意」という予測ができ始める。怒鳴る前に気づける瞬間が生まれる。",marker:"← 現在地"},
+    {phase:"Month 1",days:"記録15〜30日",status:"future",title:"子どもの反応が変わり始める",   body:"親の感情の安定を、子どもは言葉ではなく空気で感じ取る。登校渋りの頻度が減り始める。",marker:null},
+    {phase:"Month 3",days:"記録31〜90日",status:"future",title:"二次障害の芽が摘まれる",      body:"親の感情的安定が子どもの安全基地になり、反抗・暴言・不登校の深刻化への発展が予防される。",marker:null},
+  ];
+  return `
+    <div class="map-hero">
+      <div class="map-hero-label">Transformation Map</div>
+      <div class="map-hero-title">変容の地図</div>
+      <div class="map-hero-sub">今日の記録が、どこへ向かっているか。記録${s.totalRecordCount}日目の現在地を示します。</div>
+    </div>
+    <div class="transform-timeline">
+      ${phases.map((p,i)=>`<div class="transform-phase ${p.status}">
+        <div class="transform-phase-left">
+          <div class="transform-node ${p.status}">${p.status==="past"?"✓":p.status==="current"?"●":"○"}</div>
+          ${i<3?`<div class="transform-line ${p.status}"></div>`:""}
+        </div>
+        <div class="transform-phase-right">
+          <div class="transform-phase-meta">
+            <span class="transform-phase-label">${p.phase}</span>
+            <span class="transform-phase-days">${p.days}</span>
+            ${p.marker?`<span class="transform-marker ${p.status}">${p.marker}</span>`:""}
+          </div>
+          <div class="transform-phase-title">${p.title}</div>
+          <div class="transform-phase-body">${p.body}</div>
+        </div>
+      </div>`).join("")}
+    </div>
+    <div class="transform-footer">
+      <div class="transform-footer-line"></div>
+      <div class="transform-footer-text">今日の記録一回が、このタイムラインを前進させます。<br>あなたがここにいる理由は、子どもの未来を変えることです。</div>
+    </div>
+    ${(()=>{
+      // ③: selfChangeCardを今日の記録内容で動的生成
+      const todayEmo=s.selectedEmotion?.kanji||null;
+      const todayTrigger=s.selectedTriggers?.[0]||null;
+      const todayWord=s.selfWordFinalSaved&&s.selfWordFinal?.trim()?s.selfWordFinal.trim():null;
+      const careCount=s.checkedWorks?.length||0;
+      // 今日の記録に基づく動的行
+      const dynamicRows=[];
+      if(todayEmo&&todayTrigger){
+        dynamicRows.push({
+          before:`記録を始める前：「${todayTrigger}」でまた${todayEmo}が出た、で終わっていた。`,
+          after:`今日のあなた：「${todayTrigger}」での${todayEmo}を記録し、原因を探し、ここに置いた。`,
+          highlight:true,
+        });
+      } else if(todayEmo){
+        dynamicRows.push({
+          before:`記録を始める前：「また${todayEmo}になった」で終わっていた。`,
+          after:`今日のあなた：${todayEmo}に気づき、記録し、自分を観察した。`,
+          highlight:true,
+        });
+      }
+      if(todayWord){
+        dynamicRows.push({
+          before:"記録を始める前：感情の後に自分に言葉をかけることはなかった。",
+          after:`今日のあなた：自分に「${todayWord.length>20?todayWord.slice(0,20)+'…':todayWord}」と言葉をかけた。`,
+          highlight:false,
+        });
+      }
+      if(careCount>=2){
+        dynamicRows.push({
+          before:"記録を始める前：ケア労働は誰にも見えないまま消えていた。",
+          after:`今日のあなた：${careCount}つのケアが、ここに記録されている。`,
+          highlight:false,
+        });
+      }
+      // フォールバック静的行（今日の記録がまだない場合）
+      const staticRows=[
+        {before:"記録を始める前：しんどさの原因がわからなかった。",after:"今のあなた：パターンを知っている。それが変容の出発点だ。",highlight:false},
+      ];
+      const rows=[...dynamicRows,...staticRows].slice(0,3);
+      return `<div class="self-change-card">
+        <div class="self-change-tag">My Change${todayEmo?` — 今日の記録より`:``}</div>
+        <div class="self-change-title">以前の私と、今の私</div>
+        <div class="self-change-rows">
+          ${rows.map(r=>`<div class="self-change-row" ${r.highlight?'style="background:rgba(184,115,85,0.04);padding:10px;border-radius:3px;border:1px solid rgba(184,115,85,0.12);"':''}>
+            <div class="self-change-before">${r.before}</div>
+            <div class="self-change-arrow">↓</div>
+            <div class="self-change-after" ${r.highlight?'style="color:var(--cream)"':''}>${r.after}</div>
+          </div>`).join("")}
+        </div>
+        <div class="self-change-note">
+          <div class="self-change-note-line"></div>
+          <div class="self-change-note-text">${todayEmo?`今日の「${todayEmo}」の記録が、この変化に加わりました。`:`この変化は、あなたの努力ではなく、観察の積み重ねによるものです。`}</div>
+        </div>
+      </div>`;
+    })()}
+    <div class="divider"></div>
+    <div class="map-pattern-label">あなたの感情パターン（記録より）</div>
+    ${(()=>{
+      const counts={};s.selfMap.forEach(m=>{counts[m.root]=(counts[m.root]||0)+1});
+      const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+      const mx=sorted[0]?.[1]||1;
+      return sorted.length?`<div>
+        ${sorted.map(([root,count])=>`<div class="map-pattern-row">
+          <div class="map-pattern-name">${root}</div>
+          <div class="map-pattern-bar-track"><div class="map-pattern-bar-fill" style="width:${count/mx*100}%"></div></div>
+          <div class="map-pattern-count">${count}回</div>
+        </div>`).join("")}
+        <div class="map-pattern-insight">最も多い根底は「${sorted[0][0]}」。これを知ることが、自己批判から自己理解への第一歩です。</div>
+      </div>`:`<div class="map-empty">感情を記録し「この感情の下に何があるか」を選ぶと、ここに積み上がります。</div>`;
+    })()}`;
+}
+
+// ─── RESET ───
+function buildReset(){
+  const s=state;
+  if(s.activeCBT===null){
+    return `<div class="section-label">こころをリセットする</div>
+    <div class="cbt-list">
+      ${CBT_EXERCISES.map((ex,i)=>`<button class="cbt-item" onclick="setState({activeCBT:${i},cbtStep:0,cbtDone:false})">
+        <div class="cbt-item-num">0${i+1}</div>
+        <div class="cbt-item-title">${ex.title}</div>
+        <div class="cbt-item-duration">${ex.duration}</div>
+        <div class="cbt-item-desc">${ex.description}</div>
+      </button>`).join("")}
+    </div>`;
+  }
+  const ex=CBT_EXERCISES[s.activeCBT];
+  return `<div class="section-label">こころをリセットする</div>
+  <div class="cbt-ex-wrap">
+    <div class="cbt-ex-num">${ex.duration}</div>
+    <div class="cbt-ex-title">${ex.title}</div>
+    ${!s.cbtDone?`
+      <div class="cbt-steps">
+        ${ex.steps.map((step,i)=>`<div class="cbt-step"><div class="cbt-step-num">0${i+1}</div><div class="cbt-step-text">${step}</div></div>`).join("")}
+      </div>
+      <button class="cbt-complete-btn" onclick="completeCBT()">完了した</button>
+      <button class="cbt-back-btn" onclick="setState({activeCBT:null})">← 戻る</button>
+    `:`
+      <div class="cbt-done-state">
+        <div class="cbt-done-title">よくできました</div>
+        <div class="cbt-done-body">自分のためにこの時間を取ったこと、それ自体がひとつのケアです。</div>
+        <div class="cbt-practice-tip">
+          <strong>Practice → Action</strong>
+          次に子どもとの場面でしんどくなったとき、今練習したことを一度試してみてください。「観」タブで記録した後に、試せたかどうかを教えてもらえますか？
+        </div>
+        <button class="cbt-back-btn" style="margin-top:13px" onclick="setState({activeCBT:null})">← 戻る</button>
+      </div>
+    `}
+  </div>`;
+}
+
+// ─── GUIDE ───
+function buildGuide(){
+  const s=state;
+  return `<div class="guide-hero">
+    <div class="guide-hero-en">How to use</div>
+    <div class="guide-hero-title">このアプリの<br>使い方と考え方</div>
+    <div class="guide-hero-body">感情を記録し、パターンを知り、自分を整える。「こころの観察」は、あなた自身のためのツールです。</div>
+  </div>
+  ${GUIDE_STEPS.map((g,i)=>`<div class="guide-step">
+    <div class="guide-step-num-wrap">
+      <div class="guide-step-num">0${i+1}</div>
+      ${i<GUIDE_STEPS.length-1?'<div class="guide-step-line"></div>':""}
+    </div>
+    <div>
+      <div class="guide-step-icon">${g.tag}</div>
+      <div class="guide-step-title">${g.title}</div>
+      <div class="guide-step-body">${g.body}</div>
+      <div class="guide-callout">${g.highlight}―${g.sub}</div>
+    </div>
+  </div>`).join("")}
+  <div class="divider"></div>
+  <div class="section-label">よくある質問</div>
+  ${FAQS.map((f,i)=>`<div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(${i})">${f.q}<span class="faq-icon">${s.openFaq===i?"−":"＋"}</span></div>
+    <div class="faq-a ${s.openFaq===i?"open":""}">${f.a}</div>
+  </div>`).join("")}`;
+}
+
+// ─── SESSION COMPLETE ───
+function buildSessionComplete(){
+  const s=state;
+  const today=new Date();
+  const dateStr=`${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
+  const h=today.getHours();
+  const todayCareNames=s.checkedWorks.map(id=>SHADOW_WORKS.find(w=>w.id===id)?.name).filter(Boolean);
+  const trigger=s.selectedTriggers[0]||"default";
+  const timeCtx=h<9?"朝":h<13?"午前中":h<18?"午後":"夜";
+  let personalMsg;
+  if(s.intensity>=4&&h>=20) personalMsg=`夜の${h}時に強度${s.intensity}の記録をした。その重さを、自分で見に来た。それだけで十分です。`;
+  else if(todayCareNames.length>=3) personalMsg=`${todayCareNames.length}つのケアをこなしながら、自分の感情も観察した。今日のあなたは、よく動いた。`;
+  else if(s.intensity<=2) personalMsg=`今日は比較的穏やかな状態を記録しました。この安定を記録しておくことには意味があります。`;
+  else personalMsg=`${timeCtx}の記録が完了しました。今日も自分と向き合った。それが子どもの安全基地になっています。`;
+  const causMap={"YouTubeをやめない":"今日、怒鳴らずに声をかけ直した（あるいはその場を離れた）なら、明日の子どもの扁桃体は今日より少し穏やかです。","朝の準備":"今日の朝に怒鳴る回数が一回でも減ったなら、明日の子どもは今日より少し緊張が低い状態で起きてきます。","登校拒否":"今日「どうしたい？」と聞いた（あるいは聞こうとした）なら、子どもの脳は「選択権がある」という安心を少し学習しています。","癇癪":"今日、距離を置きながらもその場にいた（逃げなかった）なら、子どもの脳は「嵐が来ても安全基地は消えない」を学んでいます。",default:"今日ここに来て、自分の状態を記録した。その時間が、次の関わりの質を変えます。"};
+  const baseCaus=causMap[trigger]||causMap.default;
+  const tomorrowCausality=(s.selfWordFinalSaved&&s.selfWordFinal.trim())
+    ?`今日あなたは自分に「${esc(s.selfWordFinal.trim())}」と言いました。その言葉がこれからのあなたの声のトーンを通じて、子どもの神経系に届きます。<br><br>${baseCaus}`
+    :baseCaus;
+  return `<div class="session-complete-overlay"><div class="session-complete-card">
+    <div class="session-complete-tag">Session Complete</div>
+    <div class="session-complete-date">${dateStr}</div>
+    <div class="session-complete-headline">今日の観察、<br>完了しました。</div>
+    <div class="session-complete-items">
+      <div><div class="session-complete-item-label">記録した感情</div><div class="session-complete-item-val">${s.selectedEmotion?.kanji||"—"}・強度${s.intensity}</div></div>
+      ${todayCareNames.length>0?`<div><div class="session-complete-item-label">こなしたケア</div><div class="session-complete-item-val">${todayCareNames.join("・")}</div></div>`:""}
+      ${s.selfWordFinalSaved?`<div><div class="session-complete-item-label">今日の言葉</div><div class="session-complete-item-val" style="font-style:italic;color:var(--sage)">&#8220;${esc(s.selfWordFinal)}&#8221;</div></div>`:""}
+    </div>
+    <div class="session-complete-msg">${personalMsg}</div>
+    <div class="tomorrow-causality-card">
+      <div class="tomorrow-causality-tag">Tomorrow's Impact</div>
+      <div class="tomorrow-causality-text">${tomorrowCausality}</div>
+    </div>
+    <!-- ③: 子どもの変化観察記録 -->
+    <div style="margin-bottom:14px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.28em;color:var(--sage);text-transform:uppercase;margin-bottom:7px">Today's Child Observation</div>
+      <div style="font-size:12px;color:var(--stone-light);line-height:1.8;letter-spacing:0.05em;margin-bottom:9px">今日の子どもの様子で、気になったことを一言。<br><span style="font-style:italic;color:var(--stone)">（任意。小さな変化でも構いません。）</span></div>
+      <textarea class="memo-textarea" style="font-size:12px;margin-bottom:0" rows="2" maxlength="80" placeholder="例：朝、目が合ったとき笑ってくれた。昨日より5分早く準備できた。" oninput="setState({childObservation:this.value})">\${esc(s.childObservation||"")}</textarea>
+    </div>
+    <button class="session-complete-close" onclick="closeSessionWithObs()">\${s.childObservation?.trim()?"今日の観察を保存して閉じる":"閉じる"}</button>
+  </div></div>`;
+}
+
+// ─── EMERGENCY ───
+function buildEmergency(){
+  return `<div class="overlay"><div class="overlay-card" style="border-color:rgba(196,112,112,0.3)">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.32em;color:#C47070;text-transform:uppercase;margin-bottom:11px">Emergency Reset</div>
+    <div style="font-size:17px;font-weight:300;color:var(--cream);letter-spacing:0.04em;margin-bottom:15px">今すぐできること</div>
+    ${[{num:"01",title:"今すぐ、3回だけ息を吐く。",body:"吸わなくていい。ただ、口から「ふぅ」と長く3回吐く。それだけでいい。"},{num:"02",title:"物理的に、その場を離れる。",body:"「トイレに行く」「水を取りに行く」それだけでいい。子どもから1分離れることが、爆発を防ぐ最短の手段です。"},{num:"03",title:"「今、私は限界に近い」と自分に言う。",body:"声に出さなくていい。頭の中だけでいい。自分の状態を認識することが、感情の暴走にブレーキをかけます。"}]
+      .map(s=>`<div class="emergency-step"><div class="emergency-step-num">${s.num}</div><div class="emergency-step-title">${s.title}</div><div class="emergency-step-body">${s.body}</div></div>`).join("")}
+    <button class="emergency-done-btn" onclick="setState({emergencyOpen:false})">よく乗り越えた。閉じる</button>
+    <button class="emergency-close-btn" onclick="setState({emergencyOpen:false})">✕ 閉じる</button>
+  </div></div>`;
+}
+
+// ═══════════════════ HELPERS ═══════════════════
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function escQ(s){return String(s||"").replace(/'/g,"&#39;");}
+function getMirrorResponse(choice){
+  return {shituke:"「しつけが悪い」という問いは、深く愛しているからこそ生まれます。しかしそれは原因ではなく、症状です。本当の原因は、構造的な過負荷にあります。",iraira:"怒鳴ってしまう場面には、意志ではなく神経系の限界があります。「また怒鳴った」という自責は、あなたが誠実だからこそ生まれます。",hitori:"誰にも言えないまま抱えてきた重さが、ここに見えます。「言える場所がない」のは、あなたの問題ではなく、環境の問題です。",mirai:"将来への不安は、深く愛しているからこそ生まれます。今あなたに必要なのは、答えではなく、安定です。",tsukare:"限界を超えながら、それでも向き合おうとしている。その言葉が、すでにあなたがどれだけ消耗しているかを物語っています。"}[choice]||"今日感じたことを、言葉にしてくれました。それだけで、何かが始まっています。";
+}
+function getStep1Body(choice){
+  return {shituke:"あなたが怒るのは、脳の特性・構造的な過負荷・睡眠不足が重なっているからです。あなたの人格の問題ではありません。",iraira:"怒鳴ってしまうのは、感情調整のリソースが枯渇しているサインです。意志の力で抑えようとするほど、次の爆発は強くなります。",hitori:"「誰にも言えない」のは、あなたが弱いからではなく、言える場所がないからです。このアプリが、その場所になります。",mirai:"将来への不安は、深く愛しているからこそ生まれます。ただ、不安のまま関わると子どもに伝わります。今必要なのは、答えではなく安定です。",tsukare:"「頑張れ」はあなたへの最も残酷な言葉です。今必要なのは、頑張ることではなく回復することです。"}[choice]||"子どもの脳の特性、生活構造の歪み、そして積み重なった疲弊。あなたがイライラするのは、状況が過負荷だからです。";
+}
+function getScaffolds(s){
+  const ladderId=s.ladderChoice?.id||"default";
+  const base=SCAFFOLD_AFFIRMATIONS[ladderId]||SCAFFOLD_AFFIRMATIONS.default;
+  // ②: diagChoice×感情×強度の3軸で承認文を生成（完全連動）
+  const emoId=s.selectedEmotion?.id||"";
+  const hi=s.intensity>=4;
+  const diagEmoExtra={
+    shituke:{
+      irritated:hi?["「しつけが悪いのかも」と思いながら、それでも子どもと向き合い続けた。","怒りを感じた、その下に深い愛情がある。"]:["しつけへの不安を感じながら、今日も来た。","構造を知れば、変えられる。"],
+      tired:    hi?["限界まで動きながら、「自分のせいかも」と思い続けた。","消耗の中で自責する——それは誠実さの証だ。"]:["疲れながらも、向き合おうとしている。"],
+      default:  ["「しつけの問題」と思うほど、深く向き合っている。","私が悩むのは、子どもを愛しているからだ。"],
+    },
+    iraira:{
+      irritated:hi?["怒鳴ってしまった。そして今日もここに来た。それが誠実さだ。","爆発した後に反省できる、それは愛情の証だ。"]:["少し耐えられた。昨日より一回少なかった。","怒りに気づけた。それが変化の始まりだ。"],
+      default:  ["怒鳴った後に自己嫌悪する、その誠実さが今日のあなただ。","完璧な親はいない。今日もそこにいた。"],
+    },
+    hitori:{
+      default:  ["誰にも言えないまま、ここには来た。それで十分だ。","一人で抱えてきた重さを、今日ここに置いた。","孤独の中で、それでも子どもと向き合い続けた。"],
+    },
+    mirai:{
+      anxious:  hi?["将来への不安が強い。その分、深く愛している。","不安なのは、子どもの人生を真剣に考えているからだ。"]:["不安を感じながら、今日もここに来た。","先が見えなくても、今日一日は向き合えた。"],
+      default:  ["不安は愛情の裏返しだ。今日もここに来た。","答えがなくても、向き合い続けている。"],
+    },
+    tsukare:{
+      tired:    hi?["限界を超えて動いた。それがあなたの今日の事実だ。","疲弊を感じるほど、誰かのために使い続けた。"]:["体が悲鳴を上げている。それを聞けた、それが今日の記録だ。"],
+      default:  ["頑張りすぎた。それもまた、今日の事実として認める。","限界でも向き合おうとした。それが変容の種だ。"],
+    },
+  };
+  const diagExtra=(diagEmoExtra[s.diagChoice]?.[emoId]||diagEmoExtra[s.diagChoice]?.default||
+    ["しつけが悪いのではない。構造が過負荷なのだ。","私が怒るのは、愛しているからだ。"]);
+  return [...diagExtra,...base].slice(0,4);
+}
+
+// ═══════════════════ HANDLERS ═══════════════════
+function switchTab(tab){setState({tab});}
+function submitDiagText(){
+  const t=state.diagFreeText;
+  let c="iraira";
+  if(/しつけ|育て方|私のせい|私が悪/.test(t))c="shituke";
+  else if(/怒鳴|叫|キレ|爆発|自己嫌悪/.test(t))c="iraira";
+  else if(/誰にも|一人で|孤独|言えな/.test(t))c="hitori";
+  else if(/将来|不安|心配|どうなる/.test(t))c="mirai";
+  else if(/限界|疲れ|もう無理|消耗/.test(t))c="tsukare";
+  setState({diagChoice:c,diagMirrorShown:true});
+}
+function selectDiag(id){setState({diagChoice:id});setTimeout(()=>setState({onboardStep:1}),350);}
+function selectGateway(id){
+  const opt=GATEWAY_OPTIONS.find(o=>o.id===id);
+  const emo=EMOTIONS.find(e=>e.id===opt.mapTo);
+  setState({selectedEmotion:emo,intensity:opt.intensity,gatewayPending:{emoji:opt.emoji,emo,intensity:opt.intensity}});
+}
+function confirmGateway(){
+  setState({logged:true,gatewayDone:true,gatewayPending:null});
+  setTimeout(()=>setState({breathActive:true,breathPhase:"inhale",breathCount:0}),700);
+}
+function selectEmotion(id){setState({selectedEmotion:EMOTIONS.find(e=>e.id===id)});}
+function toggleTrigger(t){
+  const arr=state.selectedTriggers;
+  setState({selectedTriggers:arr.includes(t)?arr.filter(x=>x!==t):[...arr,t]});
+}
+function handleLog(){
+  if(!state.selectedEmotion) return;
+  const newCount=state.totalRecordCount+1;
+  const ms=MILESTONES[newCount];
+  setState({logged:true,totalRecordCount:newCount,practiceReportShown:state.cbtPracticed});
+  if(ms) setTimeout(()=>setState({milestoneFlash:ms}),500);
+}
+function selectEnergy(v){setState({energyLevel:v});}
+function startBreath(){
+  setState({breathActive:true,breathPhase:"inhale",breathCount:0});
+  runBreath();
+}
+function runBreath(){
+  clearTimeout(breathTimer);
+  const cycle=[{p:"inhale",d:4000},{p:"hold",d:2000},{p:"exhale",d:6000}];
+  let step=0;
+  function next(){
+    if(!state.breathActive) return;
+    if(step>=cycle.length){
+      const c=state.breathCount+1;
+      if(c>=3){setState({breathDone:true,breathActive:false});return;}
+      setState({breathCount:c,breathPhase:"inhale"});step=0;
+    }
+    setState({breathPhase:cycle[step].p});
+    breathTimer=setTimeout(()=>{step++;next();},cycle[step].d);
+  }
+  next();
+}
+function selectScaffold(a){setState({scaffoldChoice:a,selfWordFinal:a});}
+function saveWord(level){
+  const word=state.selfWordFinal.trim();
+  if(!word) return;
+  const newLetters=[{daysAgo:0,emotion:state.selectedEmotion?.label||"",trigger:state.selectedTriggers[0]||"",word},...state.userLetters].slice(0,10);
+  setState({selfWordFinalSaved:true,userLetters:newLetters,wordReceivedFlash:true});
+  setTimeout(()=>setState({wordReceivedFlash:false}),3200);
+  if(level===1) setTimeout(()=>setState({sessionComplete:true}),1000);
+}
+function reportPractice(answer){setState({practiceReported:answer});}
+function answerFeedback(answer){setState({actionFeedbackAnswer:answer,actionFeedbackAnswered:true});}
+function completeCBT(){setState({cbtDone:true,cbtPracticed:true});}
+function dismissMilestone(){setState({milestoneFlash:null});}
+function closeSessionWithObs(){
+  const obs=state.childObservation?.trim()||"";
+  setState({sessionComplete:false,communityFlash:true,lastChildObservation:obs,childObservation:""});
+  setTimeout(()=>setState({
+    communityFlash:false,logged:false,selectedEmotion:null,selectedTriggers:[],
+    intensity:3,memo:"",energyLevel:null,gatewayDone:false,gatewayPending:null,
+    breathActive:false,breathDone:false,breathSkipped:false,breathCount:0,
+    scaffoldChoice:null,selfWordFinal:"",selfWordFinalSaved:false,scaffoldHintsOpen:false,writingFeedback:false,
+    practiceReported:null,welcomeCardDismissed:false,
+  }),1800);
+}
+function closeSession(){closeSessionWithObs();}
+function toggleWork(id){
+  const w=SHADOW_WORKS.find(x=>x.id===id);
+  const arr=state.checkedWorks;
+  setState({checkedWorks:arr.includes(id)?arr.filter(x=>x!==id):[...arr,id],totalPts:state.totalPts+(arr.includes(id)?-(w?.pts||0):(w?.pts||0))});
+}
+function toggleFaq(i){setState({openFaq:state.openFaq===i?null:i});}
+
+// ═══════════════════ INIT ═══════════════════
+render();
+</script>
+</body>
+</html>
