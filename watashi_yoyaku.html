@@ -234,7 +234,7 @@
     padding-right: 28px;
   }
 
-  .field { margin-bottom: 28px; }
+  .field { margin-bottom: 28px; position: relative; z-index: 2; }
 
   .tag-group {
     display: flex;
@@ -255,7 +255,7 @@
     font-family: 'Noto Serif JP', serif;
     background: var(--paper);
     position: relative;
-    z-index: 2;
+    z-index: 3;
   }
   .tag:hover { border-color: var(--rust-light); color: var(--rust); }
   .tag.selected { 
@@ -289,6 +289,7 @@
     background: var(--rust);
     transform: translateX(-100%);
     transition: transform 0.3s;
+    z-index: -1;
   }
   .btn-primary:hover::after { transform: translateX(0); }
   .btn-primary span { position: relative; z-index: 1; }
@@ -488,111 +489,6 @@
     .step-line { width: 24px; }
   }
 
-  /* ===== SHARE CARD (off-screen render target) ===== */
-  #share-card {
-    position: fixed;
-    left: -9999px;
-    top: 0;
-    width: 640px;
-    background: #faf7f2;
-    font-family: 'Noto Serif JP', serif;
-    color: #2c2416;
-  }
-  .share-card-inner {
-    padding: 48px 52px 40px 52px;
-    position: relative;
-    background-image: repeating-linear-gradient(
-      transparent, transparent 31px,
-      rgba(180,160,120,0.18) 31px, rgba(180,160,120,0.18) 32px
-    );
-  }
-  .share-card-margin {
-    position: absolute;
-    top: 0; left: 44px; bottom: 0;
-    width: 1px;
-    background: rgba(184,92,56,0.22);
-  }
-  .share-card-logo {
-    font-family: 'Klee One', cursive;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: #b85c38;
-    opacity: 0.7;
-    margin-bottom: 6px;
-  }
-  .share-card-title {
-    font-family: 'Zen Old Mincho', serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: #2c2416;
-    margin-bottom: 4px;
-    letter-spacing: 0.05em;
-  }
-  .share-card-wish {
-    font-size: 13px;
-    color: #9c8e78;
-    margin-bottom: 28px;
-    font-style: italic;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(201,168,76,0.3);
-  }
-  .share-card-section {
-    margin-bottom: 20px;
-    padding: 16px 18px;
-    background: rgba(201,168,76,0.07);
-    border-left: 3px solid #c9a84c;
-  }
-  .share-card-section-label {
-    font-family: 'Klee One', cursive;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: #b85c38;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-  .share-card-section-text {
-    font-size: 13.5px;
-    line-height: 2;
-    color: #2c2416;
-    white-space: pre-wrap;
-  }
-  .share-card-footer {
-    margin-top: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px dashed rgba(156,142,120,0.4);
-    padding-top: 14px;
-  }
-  .share-card-footer-brand {
-    font-family: 'Klee One', cursive;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #9c8e78;
-  }
-  .share-card-footer-date {
-    font-family: 'Klee One', cursive;
-    font-size: 10px;
-    color: #c9a84c;
-    opacity: 0.8;
-  }
-  .share-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: #b85c38;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-family: 'Noto Serif JP', serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.05em;
-  }
-  .share-btn:hover { background: #d4845f; }
-  .share-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 </style>
 </head>
@@ -977,214 +873,132 @@ async function shareAsImage() {
   const btn = document.getElementById('share-btn');
   btn.disabled = true;
   btn.textContent = '⏳ 画像を生成中…';
-
   try {
     const canvas = await buildShareCanvas();
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'watashi_script.png', { type: 'image/png' });
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-          await navigator.share({
-            title: '私の人生、予約します。',
-            text: '伝え方スクリプト — survival_mam',
-            files: [file]
-          });
+          await navigator.share({ title: '私の人生、予約します。', text: '伝え方スクリプト', files: [file] });
           showToast('シェアしました ✓');
-        } catch(e) {
-          if (e.name !== 'AbortError') fallbackDownload(canvas);
-        }
-      } else {
-        fallbackDownload(canvas);
-      }
-      btn.disabled = false;
-      btn.innerHTML = '📤 画像でシェア';
+        } catch(e) { if (e.name !== 'AbortError') fallbackDownload(canvas); }
+      } else { fallbackDownload(canvas); }
+      btn.disabled = false; btn.innerHTML = '📤 画像でシェア';
     }, 'image/png');
   } catch(e) {
-    console.error(e);
     showToast('画像の生成に失敗しました');
-    btn.disabled = false;
-    btn.innerHTML = '📤 画像でシェア';
+    btn.disabled = false; btn.innerHTML = '📤 画像でシェア';
   }
 }
 
 function fallbackDownload(canvas) {
-  const link = document.createElement('a');
-  link.download = 'watashi_script.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+  const a = document.createElement('a');
+  a.download = 'watashi_script.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
   showToast('画像を保存しました 📷');
 }
 
 async function buildShareCanvas() {
-  // Collect script data from DOM
   const wish = document.getElementById('wish').value.trim();
   const d = new Date();
   const dateStr = d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日';
-
   const sections = [];
   document.querySelectorAll('.script-section').forEach(sec => {
     sections.push({
-      label: (sec.querySelector('.script-section-title')?.textContent || '').trim(),
-      text:  (sec.querySelector('.script-text')?.textContent || '').trim()
+      text: (sec.querySelector('.script-text')?.textContent||'').trim()
     });
   });
 
-  // ── Canvas setup (scale x2 for retina)
-  const SCALE = 2;
-  const W = 640, PAD = 52, MARGIN_X = 44;
-  const CREAM = '#faf7f2', INK = '#2c2416', RUST = '#b85c38',
-        GOLD = '#c9a84c', INK_FAINT = '#9c8e78', GOLD_BG = 'rgba(201,168,76,0.07)';
+  const SCALE=2, W=560, PAD=48;
+  const CREAM='#faf7f2', INK='#2c2416', GOLD='rgba(201,168,76,0.3)', INK_FAINT='#9c8e78';
 
-  // ── Measure total height first
-  const tmpC = document.createElement('canvas');
-  tmpC.width = W * SCALE;
-  const tmpCtx = tmpC.getContext('2d');
-  tmpCtx.scale(SCALE, SCALE);
-
-  function setFont(ctx, size, weight, family) {
-    ctx.font = (weight||'normal') + ' ' + size + 'px ' + (family||'serif');
-  }
-
-  function measureWrappedLines(ctx, text, maxW, size, weight, family) {
-    setFont(ctx, size, weight, family);
+  function wrapText(ctx, text, maxW) {
     const lines = [];
-    text.split('
-').forEach(para => {
-      const words = para.split('');
+    text.split('\n').forEach(para => {
+      if (!para.trim()) { lines.push(''); return; }
       let line = '';
-      for (const ch of words) {
-        const test = line + ch;
-        if (ctx.measureText(test).width > maxW && line) {
-          lines.push(line); line = ch;
-        } else { line = test; }
+      for (const ch of para) {
+        if (ctx.measureText(line+ch).width > maxW && line) { lines.push(line); line=ch; }
+        else line+=ch;
       }
       if (line) lines.push(line);
-      if (para === '' ) lines.push('');
     });
     return lines;
   }
 
-  function calcSectionHeight(ctx, sec, contentW) {
-    const labelLines = 1;
-    const textLines = measureWrappedLines(ctx, sec.text, contentW - 36, 13.5, 'normal', 'serif');
-    return 16 + labelLines * 16 + 10 + textLines.length * 13.5 * 2 + 16 + 20; // pad+label+gap+text+pad+margin
-  }
+  // measure height
+  const tmpC = document.createElement('canvas');
+  tmpC.width = W*SCALE;
+  const tx = tmpC.getContext('2d');
+  tx.scale(SCALE,SCALE);
+  tx.font = 'normal 15px serif';
+  const innerW = W - PAD*2;
 
-  const contentW = W - PAD * 2;
-  let totalH = 48; // top pad
-  totalH += 16 + 12; // logo
-  totalH += 24 + 8;  // title
-  totalH += 18 + 28; // wish + border gap
-  sections.forEach(sec => { totalH += calcSectionHeight(tmpCtx, sec, contentW); });
-  totalH += 24 + 14 + 16 + 40; // divider line + footer + bottom pad
+  let h = 56; // top padding
+  sections.forEach((s, i) => {
+    const lines = wrapText(tx, s.text, innerW);
+    h += lines.length * 30; // line height 30px
+    if (i < sections.length - 1) h += 32; // gap between sections
+  });
+  h += 56; // bottom padding + footer
 
-  // ── Real canvas
-  const canvas = document.createElement('canvas');
-  canvas.width = W * SCALE;
-  canvas.height = totalH * SCALE;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(SCALE, SCALE);
+  // real canvas
+  const cv = document.createElement('canvas');
+  cv.width = W*SCALE; cv.height = h*SCALE;
+  const ctx = cv.getContext('2d');
+  ctx.scale(SCALE,SCALE);
 
-  // Background
+  // background
   ctx.fillStyle = CREAM;
-  ctx.fillRect(0, 0, W, totalH);
+  ctx.fillRect(0,0,W,h);
 
-  // Ruled lines
-  ctx.strokeStyle = 'rgba(180,160,120,0.18)';
+  // subtle ruled lines
+  ctx.strokeStyle = 'rgba(180,160,120,0.12)';
   ctx.lineWidth = 1;
-  for (let y = 32; y < totalH; y += 32) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  for(let y=30; y<h; y+=30) {
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
   }
 
-  // Left margin line (rust)
-  ctx.strokeStyle = 'rgba(184,92,56,0.22)';
+  // left margin line
+  ctx.strokeStyle = 'rgba(184,92,56,0.15)';
   ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(MARGIN_X, 0); ctx.lineTo(MARGIN_X, totalH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(36,0); ctx.lineTo(36,h); ctx.stroke();
 
-  let y = 48;
+  let y = 56;
 
-  // Logo
-  setFont(ctx, 10, 'normal', 'serif');
-  ctx.fillStyle = RUST;
-  ctx.globalAlpha = 0.7;
-  ctx.fillText('SURVIVAL_MAM  ✦  私の人生、予約します。', PAD, y);
-  ctx.globalAlpha = 1;
-  y += 16 + 12;
-
-  // Title
-  setFont(ctx, 20, 'bold', 'serif');
-  ctx.fillStyle = INK;
-  ctx.fillText('伝え方スクリプト', PAD, y);
-  y += 24 + 8;
-
-  // Wish subtitle
-  setFont(ctx, 13, 'normal', 'serif');
-  ctx.fillStyle = INK_FAINT;
-  ctx.fillText('「' + wish + '」の伝え方', PAD, y);
-  y += 18;
-
-  // Separator line (gold)
-  ctx.strokeStyle = 'rgba(201,168,76,0.35)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
-  y += 28;
-
-  // Sections
-  sections.forEach(sec => {
-    const secX = PAD;
-    const secW = contentW;
-    const innerPad = 18;
-    const innerW = secW - innerPad * 2;
-
-    // measure text lines
-    const textLines = measureWrappedLines(ctx, sec.text, innerW, 13.5, 'normal', 'serif');
-    const secH = 16 + 16 + 10 + textLines.length * 13.5 * 2 + 16;
-
-    // Section background
-    ctx.fillStyle = GOLD_BG;
-    ctx.fillRect(secX, y, secW, secH);
-
-    // Gold left border
-    ctx.fillStyle = GOLD;
-    ctx.fillRect(secX, y, 3, secH);
-
-    // Section label
-    setFont(ctx, 10, 'normal', 'serif');
-    ctx.fillStyle = RUST;
-    ctx.fillText(sec.label.toUpperCase(), secX + innerPad, y + 16 + 10);
-
-    // Section text
-    setFont(ctx, 13.5, 'normal', 'serif');
+  // sections - text only, no labels
+  sections.forEach((s, i) => {
+    ctx.font = 'normal 15px serif';
     ctx.fillStyle = INK;
-    let ty = y + 16 + 10 + 16;
-    textLines.forEach(line => {
-      ctx.fillText(line, secX + innerPad, ty);
-      ty += 13.5 * 2;
+    const lines = wrapText(ctx, s.text, innerW);
+    lines.forEach(line => {
+      if (line) ctx.fillText(line, PAD, y);
+      y += 30;
     });
 
-    y += secH + 20;
+    // subtle divider between sections (not after last)
+    if (i < sections.length - 1) {
+      y += 8;
+      ctx.strokeStyle = GOLD;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(PAD + 20, y);
+      ctx.lineTo(W - PAD - 20, y);
+      ctx.stroke();
+      y += 24;
+    }
   });
 
-  // Footer separator (dashed)
-  y += 4;
-  ctx.strokeStyle = 'rgba(156,142,120,0.4)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
-  ctx.setLineDash([]);
-  y += 14;
-
-  // Footer brand + date
-  setFont(ctx, 10, 'normal', 'serif');
+  // footer - date only, subtle
+  y = h - 24;
+  ctx.font = 'normal 10px serif';
   ctx.fillStyle = INK_FAINT;
-  ctx.fillText('survival_mam', PAD, y);
-  ctx.fillStyle = GOLD;
-  ctx.globalAlpha = 0.85;
-  const dateW = ctx.measureText(dateStr).width;
-  ctx.fillText(dateStr, W - PAD - dateW, y);
+  ctx.globalAlpha = 0.5;
+  ctx.fillText(dateStr, W - PAD - ctx.measureText(dateStr).width, y);
   ctx.globalAlpha = 1;
 
-  return canvas;
+  return cv;
 }
 
 function showToast(msg) {
@@ -1193,22 +1007,5 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
-</script>
-
-<!-- SHARE CARD (rendered off-screen) -->
-<div id="share-card">
-  <div class="share-card-inner">
-    <div class="share-card-margin"></div>
-    <div class="share-card-logo">SURVIVAL_MAM ✦ 私の人生、予約します。</div>
-    <div class="share-card-title" id="sc-title">伝え方スクリプト</div>
-    <div class="share-card-wish" id="sc-wish"></div>
-    <div id="sc-sections"></div>
-    <div class="share-card-footer">
-      <div class="share-card-footer-brand">survival_mam</div>
-      <div class="share-card-footer-date" id="sc-date"></div>
-    </div>
-  </div>
-</div>
-
-</body>
+</script></body>
 </html>
