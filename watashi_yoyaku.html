@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>私の人生、予約します。</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --cream-dark: #ede7d9;
+    --ink: #2c2416;
+    --ink-light: #5c4f3a;
+    --ink-faint: #9c8e78;
+    --rust: #b85c38;
+    --rust-light: #d4845f;
+    --sage: #6b7c5e;
+    --gold: #c9a84c;
+    --paper: #faf7f2;
+    --shadow: rgba(44, 36, 22, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream-dark);
+    font-family: 'Noto Serif JP', serif;
+    color: var(--ink);
+    min-height: 100vh;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    text-align: center;
+    padding: 48px 24px 32px;
+    position: relative;
+  }
+  .header::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto 0;
+  }
+  .header-label {
+    font-family: 'Klee One', cursive;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--rust);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.8;
+  }
+  .header-title {
+    font-family: 'Zen Old Mincho', serif;
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--ink-faint);
+    margin-top: 10px;
+    font-weight: 300;
+    letter-spacing: 0.03em;
+  }
+
+  /* ===== JOURNAL BOOK ===== */
+  .journal {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 16px 80px;
+  }
+
+  .page {
+    background: var(--paper);
+    border-radius: 2px 12px 12px 2px;
+    box-shadow: 
+      -4px 0 0 #d4c9b0,
+      -8px 0 0 #c9bda4,
+      4px 4px 20px var(--shadow),
+      8px 8px 40px rgba(44,36,22,0.06);
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* lined paper effect */
+  .page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(180, 160, 120, 0.15) 31px,
+      rgba(180, 160, 120, 0.15) 32px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* red margin line */
+  .page::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 56px; bottom: 0;
+    width: 1px;
+    background: rgba(184, 92, 56, 0.2);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-inner {
+    position: relative;
+    z-index: 1;
+    padding: 32px 32px 32px 72px;
+  }
+
+  .page-date {
+    font-family: 'Klee One', cursive;
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Zen Old Mincho', serif;
+    font-size: 16px;
+    color: var(--rust);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--rust);
+    opacity: 0.6;
+  }
+
+  /* ===== STEP INDICATOR ===== */
+  .steps {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    padding: 0 16px;
+    justify-content: center;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .step-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--cream-dark);
+    background: var(--cream-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Klee One', cursive;
+    font-size: 12px;
+    color: var(--ink-faint);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .step-dot.active {
+    border-color: var(--rust);
+    background: var(--rust);
+    color: white;
+  }
+  .step-dot.done {
+    border-color: var(--sage);
+    background: var(--sage);
+    color: white;
+  }
+  .step-line {
+    width: 40px; height: 1px;
+    background: var(--cream-dark);
+    transition: background 0.3s;
+  }
+  .step-line.done { background: var(--sage); }
+
+  /* ===== FORM ELEMENTS ===== */
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid rgba(92, 79, 58, 0.3);
+    padding: 8px 4px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.3s;
+    resize: none;
+    line-height: 1.8;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-bottom-color: var(--rust);
+  }
+  select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239c8e78' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 28px;
+  }
+
+  .field { margin-bottom: 28px; }
+
+  .tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .tag {
+    padding: 6px 14px;
+    border: 1.5px solid rgba(92, 79, 58, 0.25);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Noto Serif JP', serif;
+    background: transparent;
+  }
+  .tag:hover { border-color: var(--rust-light); color: var(--rust); }
+  .tag.selected { 
+    background: var(--rust); 
+    border-color: var(--rust); 
+    color: white; 
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 4px;
+    font-family: 'Zen Old Mincho', serif;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--rust);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary:disabled::after { display: none; }
+
+  .btn-secondary {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1.5px solid rgba(92, 79, 58, 0.4);
+    color: var(--ink-light);
+    border-radius: 4px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--rust); color: var(--rust); }
+
+  /* ===== LOADING ===== */
+  .loading {
+    text-align: center;
+    padding: 40px 20px;
+    display: none;
+  }
+  .loading.visible { display: block; }
+  .ink-drop {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--rust);
+    border-radius: 50%;
+    margin: 0 4px;
+    animation: inkDrop 1.2s ease-in-out infinite;
+  }
+  .ink-drop:nth-child(2) { animation-delay: 0.2s; }
+  .ink-drop:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes inkDrop {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.4; }
+    40% { transform: scale(1.2); opacity: 1; }
+  }
+  .loading-text {
+    font-family: 'Klee One', cursive;
+    font-size: 13px;
+    color: var(--ink-faint);
+    margin-top: 16px;
+    letter-spacing: 2px;
+  }
+
+  /* ===== SCRIPT OUTPUT ===== */
+  .script-box {
+    display: none;
+  }
+  .script-box.visible { display: block; }
+
+  .script-section {
+    margin-bottom: 28px;
+    padding: 20px;
+    background: rgba(201, 168, 76, 0.06);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+  }
+  .script-section-title {
+    font-family: 'Klee One', cursive;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--rust);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .script-text {
+    font-size: 14px;
+    line-height: 2;
+    color: var(--ink);
+    white-space: pre-wrap;
+  }
+
+  /* ===== HISTORY ===== */
+  .history-item {
+    border-bottom: 1px dashed rgba(92, 79, 58, 0.2);
+    padding: 16px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .history-item:hover { padding-left: 8px; }
+  .history-item:last-child { border-bottom: none; }
+  .history-date {
+    font-family: 'Klee One', cursive;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .history-preview {
+    font-size: 13px;
+    color: var(--ink-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .empty-history {
+    text-align: center;
+    padding: 32px;
+    color: var(--ink-faint);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1.5px solid rgba(92,79,58,0.15);
+  }
+  .tab {
+    padding: 12px 20px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink-faint);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1.5px;
+    transition: all 0.2s;
+  }
+  .tab.active { color: var(--rust); border-bottom-color: var(--rust); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== COPY BUTTON ===== */
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid rgba(92,79,58,0.3);
+    border-radius: 4px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+  }
+  .copy-btn:hover { background: var(--sage); color: white; border-color: var(--sage); }
+
+  .actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* ===== DECORATIVE ===== */
+  .page-number {
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+    font-family: 'Klee One', cursive;
+    font-size: 11px;
+    color: var(--ink-faint);
+    opacity: 0.5;
+  }
+
+  .divider {
+    text-align: center;
+    color: var(--gold);
+    opacity: 0.5;
+    font-size: 14px;
+    margin: 24px 0;
+    letter-spacing: 8px;
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: var(--cream);
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'Klee One', cursive;
+    letter-spacing: 1px;
+    transition: transform 0.3s;
+    z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .page-inner { padding: 24px 20px 24px 28px; }
+    .page::after { left: 20px; }
+    .step-line { width: 24px; }
+  }
+
+  /* ===== SHARE CARD (off-screen render target) ===== */
+  #share-card {
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 640px;
+    background: #faf7f2;
+    font-family: 'Noto Serif JP', serif;
+    color: #2c2416;
+  }
+  .share-card-inner {
+    padding: 48px 52px 40px 52px;
+    position: relative;
+    background-image: repeating-linear-gradient(
+      transparent, transparent 31px,
+      rgba(180,160,120,0.18) 31px, rgba(180,160,120,0.18) 32px
+    );
+  }
+  .share-card-margin {
+    position: absolute;
+    top: 0; left: 44px; bottom: 0;
+    width: 1px;
+    background: rgba(184,92,56,0.22);
+  }
+  .share-card-logo {
+    font-family: 'Klee One', cursive;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #b85c38;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  .share-card-title {
+    font-family: 'Zen Old Mincho', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c2416;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .share-card-wish {
+    font-size: 13px;
+    color: #9c8e78;
+    margin-bottom: 28px;
+    font-style: italic;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+  }
+  .share-card-section {
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    background: rgba(201,168,76,0.07);
+    border-left: 3px solid #c9a84c;
+  }
+  .share-card-section-label {
+    font-family: 'Klee One', cursive;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #b85c38;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .share-card-section-text {
+    font-size: 13.5px;
+    line-height: 2;
+    color: #2c2416;
+    white-space: pre-wrap;
+  }
+  .share-card-footer {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed rgba(156,142,120,0.4);
+    padding-top: 14px;
+  }
+  .share-card-footer-brand {
+    font-family: 'Klee One', cursive;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #9c8e78;
+  }
+  .share-card-footer-date {
+    font-family: 'Klee One', cursive;
+    font-size: 10px;
+    color: #c9a84c;
+    opacity: 0.8;
+  }
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #b85c38;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .share-btn:hover { background: #d4845f; }
+  .share-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">survival_mam × 私の時間</div>
+  <h1 class="header-title">私の人生、予約します。</h1>
+  <p class="header-sub">家族への伝え方を、あなたの言葉で。</p>
+</div>
+
+<div class="journal">
+
+  <!-- TABS -->
+  <div style="padding: 0 0 0 0;">
+    <div class="tabs" style="background:var(--paper); border-radius:2px 12px 0 0; padding: 0 24px;">
+      <div class="tab active" onclick="switchTab('create')">✏️ スクリプトを作る</div>
+      <div class="tab" onclick="switchTab('history')">📖 保存した記録</div>
+    </div>
+  </div>
+
+  <!-- CREATE TAB -->
+  <div id="tab-create" class="tab-content active">
+
+    <!-- Step indicator -->
+    <div class="steps" style="padding-top:24px;">
+      <div class="step">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-line" id="line1"></div>
+      </div>
+      <div class="step">
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-line" id="line2"></div>
+      </div>
+      <div class="step">
+        <div class="step-dot" id="dot3">3</div>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="page" id="step1-page">
+      <div class="page-inner">
+        <div class="page-date" id="today-date"></div>
+        <div class="section-title">「私の時間」に、何を予約する？</div>
+
+        <div class="field">
+          <label>ずっとしたかったこと、行きたかった場所は？</label>
+          <div class="hint">例：ずっと行けてなかった美容院に、やっと ／ 友達と、久しぶりにゆっくりランチ</div>
+          <input type="text" id="wish" placeholder="ずっと行けてなかった美容院に、やっと" />
+        </div>
+
+        <div class="field">
+          <label>どのくらいの時間がほしいですか？</label>
+          <div class="tag-group">
+            <button class="tag" onclick="selectTag(this, 'duration')">2時間だけ</button>
+            <button class="tag" onclick="selectTag(this, 'duration')">半日、もらえたら</button>
+            <button class="tag" onclick="selectTag(this, 'duration')">1日、ください</button>
+            <button class="tag" onclick="selectTag(this, 'duration')">週1回、定期的に</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>いつ頃の予定ですか？</label>
+          <div class="tag-group">
+            <button class="tag" onclick="selectTag(this, 'timing')">今週末</button>
+            <button class="tag" onclick="selectTag(this, 'timing')">来週以降</button>
+            <button class="tag" onclick="selectTag(this, 'timing')">今月中に</button>
+            <button class="tag" onclick="selectTag(this, 'timing')">定期的に（月1回など）</button>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="goStep(2)"><span>次へ →</span></button>
+      </div>
+      <div class="page-number">p.1</div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="page" id="step2-page" style="display:none;">
+      <div class="page-inner">
+        <div class="section-title">誰に、どう伝える？</div>
+
+        <div class="field">
+          <label>誰に伝えますか？</label>
+          <div class="tag-group">
+            <button class="tag" onclick="selectTag(this, 'target')">夫・パートナー</button>
+            <button class="tag" onclick="selectTag(this, 'target')">両親・義両親</button>
+            <button class="tag" onclick="selectTag(this, 'target')">夫＋両親</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>パートナーのタイプは？（スクリプトの言葉が変わります）</label>
+          <div class="tag-group">
+            <button class="tag" onclick="selectTag(this, 'partner')">協力的だけど忙しい</button>
+            <button class="tag" onclick="selectTag(this, 'partner')">頼みにくい雰囲気がある</button>
+            <button class="tag" onclick="selectTag(this, 'partner')">育児への意識が低め</button>
+            <button class="tag" onclick="selectTag(this, 'partner')">基本的に協力的</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>伝えるとき、何が一番こわい？</label>
+          <div class="tag-group">
+            <button class="tag" onclick="selectTag(this, 'worry')">「また私だけわがまま」と思われそう</button>
+            <button class="tag" onclick="selectTag(this, 'worry')">「なんで今さら」と言われそう</button>
+            <button class="tag" onclick="selectTag(this, 'worry')">子どもが不安がりそう</button>
+            <button class="tag" onclick="selectTag(this, 'worry')">そもそも、言葉が出てこない</button>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:8px;">
+          <button class="btn-secondary" onclick="goStep(1)">← 戻る</button>
+          <button class="btn-primary" onclick="goStep(3)" style="flex:1;"><span>あなたの言葉で、伝えよう →</span></button>
+        </div>
+      </div>
+      <div class="page-number">p.2</div>
+    </div>
+
+    <!-- STEP 3: OUTPUT -->
+    <div class="page" id="step3-page" style="display:none;">
+      <div class="page-inner">
+        <div class="section-title">さあ、伝えよう。あなたの言葉で。</div>
+
+        <div class="loading" id="loading">
+          <div>
+            <span class="ink-drop"></span>
+            <span class="ink-drop"></span>
+            <span class="ink-drop"></span>
+          </div>
+          <div class="loading-text">あなたの本音を、言葉にしています…</div>
+        </div>
+
+        <div class="script-box" id="script-output">
+          <div id="script-content"></div>
+
+          <div class="divider">✦ ✦ ✦</div>
+
+          <div class="actions-row">
+            <button class="copy-btn" onclick="copyScript()">
+              📋 このまま使う
+            </button>
+            <button class="share-btn" id="share-btn" onclick="shareAsImage()">
+              📤 画像でシェア
+            </button>
+          </div>
+          <div class="actions-row" style="margin-top:0;">
+            <button class="btn-secondary" onclick="saveScript()">📖 手帳に残す</button>
+            <button class="btn-secondary" onclick="goStep(1)">別の予約を入れる</button>
+          </div>
+        </div>
+      </div>
+      <div class="page-number">p.3</div>
+    </div>
+
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div id="tab-history" class="tab-content">
+    <div class="page">
+      <div class="page-inner">
+        <div class="section-title">保存した記録</div>
+        <div id="history-list"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /journal -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const state = {
+  duration: '',
+  timing: '',
+  target: '',
+  partner: '',
+  worry: '',
+  lastScript: ''
+};
+
+// Set today's date
+const d = new Date();
+document.getElementById('today-date').textContent =
+  `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+
+function selectTag(el, group) {
+  // deselect others in group
+  el.closest('.tag-group').querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+  state[group] = el.textContent.trim();
+}
+
+function goStep(n) {
+  // Validate step 1
+  if (n === 2) {
+    const wish = document.getElementById('wish').value.trim();
+    if (!wish) { showToast('したいことを入力してください'); return; }
+  }
+
+  document.getElementById('step1-page').style.display = n === 1 ? 'block' : 'none';
+  document.getElementById('step2-page').style.display = n === 2 ? 'block' : 'none';
+  document.getElementById('step3-page').style.display = n === 3 ? 'block' : 'none';
+
+  // Update dots
+  ['dot1','dot2','dot3'].forEach((id, i) => {
+    const dot = document.getElementById(id);
+    dot.className = 'step-dot';
+    if (i + 1 < n) dot.classList.add('done');
+    if (i + 1 === n) dot.classList.add('active');
+  });
+  ['line1','line2'].forEach((id, i) => {
+    const line = document.getElementById(id);
+    line.className = 'step-line';
+    if (i + 1 < n) line.classList.add('done');
+  });
+
+  if (n === 3) generateScript();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function generateScript() {
+  const wish = document.getElementById('wish').value.trim();
+  document.getElementById('loading').classList.add('visible');
+  document.getElementById('script-output').classList.remove('visible');
+
+  const prompt = `あなたは、子育て中のママが「ずっと言えなかった本音」を、家族（パートナー・両親）に温かく・正直に・罪悪感ゼロで伝えるためのスクリプトを書く、共感力の高いライターです。
+
+このママは、毎日子どものことを最優先にしてきた。
+自分のことは後回しにし続けてきた。
+「また私だけわがまま言ってる」と思いながら、何度も言葉を飲み込んできた。
+
+そんな彼女が、はじめて「私の時間がほしい」と口にしようとしている。
+
+以下の情報をもとに、実際に声に出せる、温かくリアルな日本語スクリプトを書いてください。
+
+【したいこと・行きたい場所】${wish}
+【必要な時間】${state.duration || '未指定'}
+【希望の時期】${state.timing || '未指定'}
+【伝える相手】${state.target || 'パートナー'}
+【パートナーの傾向】${state.partner || '未指定'}
+【一番の不安・心配】${state.worry || '未指定'}
+
+───────────────────────
+出力は必ず以下の3パートで。ラベルはそのまま使ってください。
+
+【切り出し方】
+最初の一言。「ねえ、ちょっといい？」より一歩踏み込んだ、感情の入り口になる言葉。「実はずっと言えなかったことがあって」のように、相手が「聞いてあげたい」と思う入り方。（30〜50字）
+
+【本題の伝え方】
+・したいことと必要な時間・時期を具体的に
+・「なぜそれをしたいか」＝自分がどんな状態でいたいか、どんなママでいたいかを正直に
+・「あなた（家族）のためでもある」という視点を感情で伝える
+・お願いではなく"宣言に近い依頼"のトーンで（100〜160字）
+
+【相手への感謝・安心のひとこと】
+反論や不安を先に受け止め、「大丈夫、あなたならできる」という信頼を伝える。謝罪ではなく、感謝と信頼で締める。（50〜80字）
+
+───────────────────────
+文体の注意：
+・会話口調、やわらかく、でも芯がある
+・「〜してもいいですか？」より「〜したいと思ってる」
+・"正論"ではなく"本音"が伝わる温度感
+・survival_mamらしい：静かに強く、自分を諦めない女性の言葉
+・ラベル（【切り出し方】など）はそのまま使用してください`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(c => c.text || '').join('');
+    state.lastScript = text;
+    renderScript(text);
+  } catch (e) {
+    renderScript('【切り出し方】\nねえ、ちょっといい？少し相談があるんだけど。\n\n【本題の伝え方】\n最近ずっと自分のことを後回しにしてきたんだけど、${wish}に行きたいなって。正直、すごく楽しみにしてる。その間、子どものことお願いできる？私がリフレッシュできると、家族にも笑顔でいられる気がして。\n\n【相手への配慮・感謝のひとこと】\n無理なお願いで申し訳ないんだけど、あなたなら大丈夫って信じてる。ありがとう、いつも支えてくれて。'.replace('${wish}', wish));
+  }
+}
+
+function renderScript(text) {
+  document.getElementById('loading').classList.remove('visible');
+
+  // Parse sections
+  const sections = [
+    { key: '切り出し方', emoji: '🌸', label: '切り出し方' },
+    { key: '本題の伝え方', emoji: '💬', label: '本題の伝え方' },
+    { key: '相手への感謝・安心のひとこと', emoji: '🤝', label: '感謝・安心のひとこと' }
+  ];
+
+  let html = '';
+  sections.forEach(s => {
+    const regex = new RegExp(`【${s.key}】([\\s\\S]*?)(?=【|$)`);
+    const match = text.match(regex);
+    const content = match ? match[1].trim() : '';
+    if (content) {
+      html += `
+        <div class="script-section">
+          <div class="script-section-title">${s.emoji} ${s.label}</div>
+          <div class="script-text">${content}</div>
+        </div>`;
+    }
+  });
+
+  // Fallback: show full text if parsing fails
+  if (!html) {
+    html = `<div class="script-section"><div class="script-text">${text}</div></div>`;
+  }
+
+  document.getElementById('script-content').innerHTML = html;
+  document.getElementById('script-output').classList.add('visible');
+  state.lastScript = text;
+}
+
+function copyScript() {
+  const plain = document.getElementById('script-content').innerText;
+  navigator.clipboard.writeText(plain).then(() => showToast('コピーしました ✓'));
+}
+
+function saveScript() {
+  if (!state.lastScript) return;
+  const wish = document.getElementById('wish').value.trim();
+  const saves = JSON.parse(localStorage.getItem('yoyaku_history') || '[]');
+  saves.unshift({
+    date: new Date().toLocaleDateString('ja-JP'),
+    wish,
+    script: state.lastScript
+  });
+  // keep max 20
+  if (saves.length > 20) saves.splice(20);
+  localStorage.setItem('yoyaku_history', JSON.stringify(saves));
+  showToast('保存しました 📖');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'history') renderHistory();
+}
+
+function renderHistory() {
+  const saves = JSON.parse(localStorage.getItem('yoyaku_history') || '[]');
+  const container = document.getElementById('history-list');
+  if (saves.length === 0) {
+    container.innerHTML = '<div class="empty-history">まだ保存された記録がありません。<br>スクリプトを生成して保存してみましょう。</div>';
+    return;
+  }
+  container.innerHTML = saves.map((s, i) => `
+    <div class="history-item" onclick="viewHistory(${i})">
+      <div class="history-date">${s.date}</div>
+      <div class="history-preview">「${s.wish}」のスクリプト</div>
+    </div>
+  `).join('');
+}
+
+function viewHistory(i) {
+  const saves = JSON.parse(localStorage.getItem('yoyaku_history') || '[]');
+  const s = saves[i];
+  if (!s) return;
+  // Switch to create tab, show result
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-create').classList.add('active');
+  document.querySelector('.tab').classList.add('active');
+  document.getElementById('wish').value = s.wish;
+  goStep(3);
+  // override with saved
+  setTimeout(() => {
+    document.getElementById('loading').classList.remove('visible');
+    renderScript(s.script);
+  }, 100);
+}
+
+
+async function shareAsImage() {
+  const btn = document.getElementById('share-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ 画像を生成中…';
+
+  // Populate share card
+  const wish = document.getElementById('wish').value.trim();
+  const d = new Date();
+  document.getElementById('sc-wish').textContent = '「' + wish + '」の伝え方';
+  document.getElementById('sc-date').textContent = d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日';
+
+  // Copy sections
+  const sections = document.querySelectorAll('.script-section');
+  const scSections = document.getElementById('sc-sections');
+  scSections.innerHTML = '';
+  sections.forEach(sec => {
+    const label = sec.querySelector('.script-section-title')?.textContent || '';
+    const text = sec.querySelector('.script-text')?.textContent || '';
+    const div = document.createElement('div');
+    div.className = 'share-card-section';
+    div.innerHTML = '<div class="share-card-section-label">' + label + '</div><div class="share-card-section-text">' + text + '</div>';
+    scSections.appendChild(div);
+  });
+
+  try {
+    const card = document.getElementById('share-card');
+    // Temporarily make visible for capture
+    card.style.left = '0';
+    card.style.position = 'absolute';
+    card.style.zIndex = '-1';
+    card.style.opacity = '0';
+
+    await new Promise(r => setTimeout(r, 100)); // let fonts settle
+
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#faf7f2',
+      logging: false
+    });
+
+    card.style.left = '-9999px';
+    card.style.position = 'fixed';
+    card.style.opacity = '1';
+
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], 'watashi_script.png', { type: 'image/png' });
+
+      // Try Web Share API first
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: '私の人生、予約します。',
+            text: '「' + wish + '」の伝え方スクリプト',
+            files: [file]
+          });
+          showToast('シェアしました ✓');
+        } catch(e) {
+          if (e.name !== 'AbortError') fallbackDownload(canvas);
+        }
+      } else {
+        // Fallback: download
+        fallbackDownload(canvas);
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '📤 画像でシェア';
+    }, 'image/png');
+
+  } catch(e) {
+    console.error(e);
+    showToast('画像の生成に失敗しました');
+    btn.disabled = false;
+    btn.innerHTML = '📤 画像でシェア';
+  }
+}
+
+function fallbackDownload(canvas) {
+  const link = document.createElement('a');
+  link.download = 'watashi_script.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('画像を保存しました。LINEやメールに添付してください。');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+
+<!-- SHARE CARD (rendered off-screen) -->
+<div id="share-card">
+  <div class="share-card-inner">
+    <div class="share-card-margin"></div>
+    <div class="share-card-logo">SURVIVAL_MAM ✦ 私の人生、予約します。</div>
+    <div class="share-card-title" id="sc-title">伝え方スクリプト</div>
+    <div class="share-card-wish" id="sc-wish"></div>
+    <div id="sc-sections"></div>
+    <div class="share-card-footer">
+      <div class="share-card-footer-brand">survival_mam</div>
+      <div class="share-card-footer-date" id="sc-date"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
