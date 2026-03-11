@@ -241,6 +241,8 @@
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 4px;
+    position: relative;
+    z-index: 2;
   }
   .tag {
     padding: 6px 14px;
@@ -251,7 +253,9 @@
     cursor: pointer;
     transition: all 0.2s;
     font-family: 'Noto Serif JP', serif;
-    background: transparent;
+    background: var(--paper);
+    position: relative;
+    z-index: 2;
   }
   .tag:hover { border-color: var(--rust-light); color: var(--rust); }
   .tag.selected { 
