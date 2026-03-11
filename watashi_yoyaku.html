@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>私の人生、予約します。</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Zen+Old+Mincho:wght@400;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --cream: #f5f0e8;
@@ -975,55 +974,15 @@ async function shareAsImage() {
   btn.disabled = true;
   btn.textContent = '⏳ 画像を生成中…';
 
-  // Populate share card
-  const wish = document.getElementById('wish').value.trim();
-  const d = new Date();
-  document.getElementById('sc-wish').textContent = '「' + wish + '」の伝え方';
-  document.getElementById('sc-date').textContent = d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日';
-
-  // Copy sections
-  const sections = document.querySelectorAll('.script-section');
-  const scSections = document.getElementById('sc-sections');
-  scSections.innerHTML = '';
-  sections.forEach(sec => {
-    const label = sec.querySelector('.script-section-title')?.textContent || '';
-    const text = sec.querySelector('.script-text')?.textContent || '';
-    const div = document.createElement('div');
-    div.className = 'share-card-section';
-    div.innerHTML = '<div class="share-card-section-label">' + label + '</div><div class="share-card-section-text">' + text + '</div>';
-    scSections.appendChild(div);
-  });
-
   try {
-    const card = document.getElementById('share-card');
-    // Temporarily make visible for capture
-    card.style.left = '0';
-    card.style.position = 'absolute';
-    card.style.zIndex = '-1';
-    card.style.opacity = '0';
-
-    await new Promise(r => setTimeout(r, 100)); // let fonts settle
-
-    const canvas = await html2canvas(card, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#faf7f2',
-      logging: false
-    });
-
-    card.style.left = '-9999px';
-    card.style.position = 'fixed';
-    card.style.opacity = '1';
-
+    const canvas = await buildShareCanvas();
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'watashi_script.png', { type: 'image/png' });
-
-      // Try Web Share API first
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
           await navigator.share({
             title: '私の人生、予約します。',
-            text: '「' + wish + '」の伝え方スクリプト',
+            text: '伝え方スクリプト — survival_mam',
             files: [file]
           });
           showToast('シェアしました ✓');
@@ -1031,14 +990,11 @@ async function shareAsImage() {
           if (e.name !== 'AbortError') fallbackDownload(canvas);
         }
       } else {
-        // Fallback: download
         fallbackDownload(canvas);
       }
-
       btn.disabled = false;
       btn.innerHTML = '📤 画像でシェア';
     }, 'image/png');
-
   } catch(e) {
     console.error(e);
     showToast('画像の生成に失敗しました');
@@ -1052,7 +1008,179 @@ function fallbackDownload(canvas) {
   link.download = 'watashi_script.png';
   link.href = canvas.toDataURL('image/png');
   link.click();
-  showToast('画像を保存しました。LINEやメールに添付してください。');
+  showToast('画像を保存しました 📷');
+}
+
+async function buildShareCanvas() {
+  // Collect script data from DOM
+  const wish = document.getElementById('wish').value.trim();
+  const d = new Date();
+  const dateStr = d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日';
+
+  const sections = [];
+  document.querySelectorAll('.script-section').forEach(sec => {
+    sections.push({
+      label: (sec.querySelector('.script-section-title')?.textContent || '').trim(),
+      text:  (sec.querySelector('.script-text')?.textContent || '').trim()
+    });
+  });
+
+  // ── Canvas setup (scale x2 for retina)
+  const SCALE = 2;
+  const W = 640, PAD = 52, MARGIN_X = 44;
+  const CREAM = '#faf7f2', INK = '#2c2416', RUST = '#b85c38',
+        GOLD = '#c9a84c', INK_FAINT = '#9c8e78', GOLD_BG = 'rgba(201,168,76,0.07)';
+
+  // ── Measure total height first
+  const tmpC = document.createElement('canvas');
+  tmpC.width = W * SCALE;
+  const tmpCtx = tmpC.getContext('2d');
+  tmpCtx.scale(SCALE, SCALE);
+
+  function setFont(ctx, size, weight, family) {
+    ctx.font = (weight||'normal') + ' ' + size + 'px ' + (family||'serif');
+  }
+
+  function measureWrappedLines(ctx, text, maxW, size, weight, family) {
+    setFont(ctx, size, weight, family);
+    const lines = [];
+    text.split('
+').forEach(para => {
+      const words = para.split('');
+      let line = '';
+      for (const ch of words) {
+        const test = line + ch;
+        if (ctx.measureText(test).width > maxW && line) {
+          lines.push(line); line = ch;
+        } else { line = test; }
+      }
+      if (line) lines.push(line);
+      if (para === '' ) lines.push('');
+    });
+    return lines;
+  }
+
+  function calcSectionHeight(ctx, sec, contentW) {
+    const labelLines = 1;
+    const textLines = measureWrappedLines(ctx, sec.text, contentW - 36, 13.5, 'normal', 'serif');
+    return 16 + labelLines * 16 + 10 + textLines.length * 13.5 * 2 + 16 + 20; // pad+label+gap+text+pad+margin
+  }
+
+  const contentW = W - PAD * 2;
+  let totalH = 48; // top pad
+  totalH += 16 + 12; // logo
+  totalH += 24 + 8;  // title
+  totalH += 18 + 28; // wish + border gap
+  sections.forEach(sec => { totalH += calcSectionHeight(tmpCtx, sec, contentW); });
+  totalH += 24 + 14 + 16 + 40; // divider line + footer + bottom pad
+
+  // ── Real canvas
+  const canvas = document.createElement('canvas');
+  canvas.width = W * SCALE;
+  canvas.height = totalH * SCALE;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+
+  // Background
+  ctx.fillStyle = CREAM;
+  ctx.fillRect(0, 0, W, totalH);
+
+  // Ruled lines
+  ctx.strokeStyle = 'rgba(180,160,120,0.18)';
+  ctx.lineWidth = 1;
+  for (let y = 32; y < totalH; y += 32) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Left margin line (rust)
+  ctx.strokeStyle = 'rgba(184,92,56,0.22)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(MARGIN_X, 0); ctx.lineTo(MARGIN_X, totalH); ctx.stroke();
+
+  let y = 48;
+
+  // Logo
+  setFont(ctx, 10, 'normal', 'serif');
+  ctx.fillStyle = RUST;
+  ctx.globalAlpha = 0.7;
+  ctx.fillText('SURVIVAL_MAM  ✦  私の人生、予約します。', PAD, y);
+  ctx.globalAlpha = 1;
+  y += 16 + 12;
+
+  // Title
+  setFont(ctx, 20, 'bold', 'serif');
+  ctx.fillStyle = INK;
+  ctx.fillText('伝え方スクリプト', PAD, y);
+  y += 24 + 8;
+
+  // Wish subtitle
+  setFont(ctx, 13, 'normal', 'serif');
+  ctx.fillStyle = INK_FAINT;
+  ctx.fillText('「' + wish + '」の伝え方', PAD, y);
+  y += 18;
+
+  // Separator line (gold)
+  ctx.strokeStyle = 'rgba(201,168,76,0.35)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
+  y += 28;
+
+  // Sections
+  sections.forEach(sec => {
+    const secX = PAD;
+    const secW = contentW;
+    const innerPad = 18;
+    const innerW = secW - innerPad * 2;
+
+    // measure text lines
+    const textLines = measureWrappedLines(ctx, sec.text, innerW, 13.5, 'normal', 'serif');
+    const secH = 16 + 16 + 10 + textLines.length * 13.5 * 2 + 16;
+
+    // Section background
+    ctx.fillStyle = GOLD_BG;
+    ctx.fillRect(secX, y, secW, secH);
+
+    // Gold left border
+    ctx.fillStyle = GOLD;
+    ctx.fillRect(secX, y, 3, secH);
+
+    // Section label
+    setFont(ctx, 10, 'normal', 'serif');
+    ctx.fillStyle = RUST;
+    ctx.fillText(sec.label.toUpperCase(), secX + innerPad, y + 16 + 10);
+
+    // Section text
+    setFont(ctx, 13.5, 'normal', 'serif');
+    ctx.fillStyle = INK;
+    let ty = y + 16 + 10 + 16;
+    textLines.forEach(line => {
+      ctx.fillText(line, secX + innerPad, ty);
+      ty += 13.5 * 2;
+    });
+
+    y += secH + 20;
+  });
+
+  // Footer separator (dashed)
+  y += 4;
+  ctx.strokeStyle = 'rgba(156,142,120,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
+  ctx.setLineDash([]);
+  y += 14;
+
+  // Footer brand + date
+  setFont(ctx, 10, 'normal', 'serif');
+  ctx.fillStyle = INK_FAINT;
+  ctx.fillText('survival_mam', PAD, y);
+  ctx.fillStyle = GOLD;
+  ctx.globalAlpha = 0.85;
+  const dateW = ctx.measureText(dateStr).width;
+  ctx.fillText(dateStr, W - PAD - dateW, y);
+  ctx.globalAlpha = 1;
+
+  return canvas;
 }
 
 function showToast(msg) {
