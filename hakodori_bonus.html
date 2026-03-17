@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ハコどり 特典セット | survival_mam</title>
+<style>
+:root{
+  --bg:#F7F5F0;--surface:#FFFFFF;--surface2:#F2EFE8;--surface3:#E8E5DE;
+  --text:#1A1A18;--text2:#5C5B57;--text3:#9A9890;
+  --border:rgba(26,26,24,0.10);--border2:rgba(26,26,24,0.20);
+  --green:#1A9070;--green-bg:#E0F4EE;--green-text:#0A5C47;
+  --amber:#B87010;--amber-bg:#FDF0D8;--amber-text:#7A4800;
+  --red:#C04040;--red-bg:#FCEAEA;--red-text:#7A1010;
+  --blue:#2060B0;--blue-bg:#E8F0FC;--blue-text:#103070;
+  --r:12px;--r-sm:8px;
+  --nav-h:60px;--header-h:50px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#181816;--surface:#222220;--surface2:#2A2A28;--surface3:#323230;
+    --text:#F2F0E8;--text2:#A8A69E;--text3:#6A6860;
+    --border:rgba(242,240,232,0.08);--border2:rgba(242,240,232,0.18);
+    --green:#1FAA80;--green-bg:#083028;--green-text:#60D8B0;
+    --amber:#D09030;--amber-bg:#382800;--amber-text:#F0C060;
+    --red:#E05050;--red-bg:#3A1010;--red-text:#F08080;
+    --blue:#4080D0;--blue-bg:#0A1A38;--blue-text:#90C0F0;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;min-height:100vh;}
+
+.header{height:var(--header-h);background:var(--surface);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:100;}
+.logo{font-size:15px;font-weight:500;color:var(--text);}
+.logo em{font-style:normal;color:var(--green);}
+.logo sub{font-size:11px;color:var(--text3);font-weight:400;margin-left:6px;}
+
+.nav-wrap{background:var(--surface);border-bottom:0.5px solid var(--border);position:sticky;top:var(--header-h);z-index:90;overflow-x:auto;scrollbar-width:none;}
+.nav-wrap::-webkit-scrollbar{display:none;}
+.nav{display:flex;min-width:max-content;}
+.nav-btn{flex:none;padding:11px 16px;font-size:12px;font-weight:500;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;font-family:inherit;letter-spacing:0.03em;transition:color 0.15s,border-color 0.15s;}
+.nav-btn.active{color:var(--green);border-bottom-color:var(--green);}
+
+.main{padding:16px;max-width:680px;margin:0 auto;padding-bottom:40px;}
+.sec{display:none;}.sec.active{display:block;}
+
+/* Cards */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;}
+.card-label{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.08em;margin-bottom:10px;}
+.card-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:6px;}
+.card-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;}
+
+/* Badges */
+.badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:10px;font-weight:500;}
+.bg-green{background:var(--green-bg);color:var(--green-text);}
+.bg-amber{background:var(--amber-bg);color:var(--amber-text);}
+.bg-red{background:var(--red-bg);color:var(--red-text);}
+.bg-blue{background:var(--blue-bg);color:var(--blue-text);}
+
+/* Info boxes */
+.info{background:var(--green-bg);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;color:var(--green-text);margin-bottom:12px;line-height:1.65;}
+.warn{background:var(--amber-bg);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;color:var(--amber-text);margin-bottom:12px;line-height:1.65;}
+
+/* Day program */
+.day-grid{display:grid;gap:6px;}
+.day-card{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;cursor:pointer;transition:border-color 0.15s;}
+.day-card:hover{border-color:var(--border2);}
+.day-card.done{opacity:0.55;}
+.day-header{display:flex;align-items:center;gap:10px;margin-bottom:0;}
+.day-num{font-size:11px;font-weight:500;color:var(--text3);min-width:32px;}
+.day-title{font-size:14px;font-weight:500;color:var(--text);flex:1;}
+.day-time{font-size:11px;color:var(--text3);white-space:nowrap;}
+.day-check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;flex-shrink:0;transition:all 0.15s;}
+.day-check.done{background:var(--green);border-color:var(--green);color:#fff;}
+.day-body{font-size:13px;color:var(--text2);margin-top:10px;display:none;line-height:1.7;}
+.day-body.open{display:block;}
+.day-steps{margin-top:8px;padding-left:14px;}
+.day-steps li{margin-bottom:4px;font-size:13px;color:var(--text2);}
+
+/* Template */
+.tmpl-toggle{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.tmpl-pill{padding:7px 16px;border-radius:20px;border:0.5px solid var(--border2);background:var(--surface2);font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.tmpl-pill.active{background:var(--green-bg);border-color:var(--green);color:var(--green-text);font-weight:500;}
+.tmpl-rows{display:grid;grid-template-columns:auto 1fr auto;gap:5px 12px;align-items:center;}
+.t-time{font-size:12px;color:var(--text3);white-space:nowrap;}
+.t-label{font-size:14px;color:var(--text);}
+.t-type{font-size:11px;padding:2px 8px;border-radius:8px;white-space:nowrap;font-weight:500;}
+.t-fixed{background:var(--green-bg);color:var(--green-text);}
+.t-buffer{background:var(--amber-bg);color:var(--amber-text);}
+.t-gap{background:var(--surface3);color:var(--text3);}
+.t-guard{background:var(--blue-bg);color:var(--blue-text);}
+.t-section{grid-column:1/-1;font-size:11px;color:var(--text3);letter-spacing:0.06em;padding-top:6px;}
+.t-divider{grid-column:1/-1;height:0.5px;background:var(--border);}
+
+/* Type diagnosis */
+.q-block{margin-bottom:16px;}
+.q-text{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;}
+.q-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.q-opt{padding:10px 12px;border:0.5px solid var(--border2);border-radius:var(--r-sm);background:var(--surface2);font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;text-align:center;transition:all 0.15s;}
+.q-opt.selected{background:var(--green-bg);border-color:var(--green);color:var(--green-text);font-weight:500;}
+.result-box{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r);padding:16px 18px;display:none;}
+.result-box.show{display:block;}
+.result-type{font-size:18px;font-weight:500;color:var(--green);margin-bottom:6px;}
+.result-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:10px;}
+.result-route{font-size:13px;color:var(--text2);line-height:1.7;}
+.route-title{font-weight:500;color:var(--text);margin-top:8px;margin-bottom:4px;}
+
+/* Protocol */
+.proto-step{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:0.5px solid var(--border);}
+.proto-step:last-child{border-bottom:none;}
+.proto-num{width:24px;height:24px;border-radius:50%;background:var(--green-bg);color:var(--green-text);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.proto-body{flex:1;}
+.proto-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.proto-detail{font-size:13px;color:var(--text2);line-height:1.65;}
+
+/* Copy cards */
+.copy-card{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:8px;position:relative;cursor:pointer;padding-right:72px;transition:border-color 0.15s;}
+.copy-card:hover{border-color:var(--green);}
+.copy-text{font-size:14px;color:var(--text);line-height:1.55;}
+.copy-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+.copy-tag{position:absolute;top:11px;right:11px;font-size:11px;color:var(--text3);background:var(--surface);border:0.5px solid var(--border2);border-radius:6px;padding:3px 9px;transition:all 0.15s;}
+.copy-card:hover .copy-tag{color:var(--green);border-color:var(--green);}
+.copy-card.copied .copy-tag{color:var(--green);border-color:var(--green);background:var(--green-bg);}
+.group-title{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:0.05em;margin:16px 0 8px;}
+.group-title:first-child{margin-top:0;}
+
+/* Checklist */
+.cl-row{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:0.5px solid var(--border);}
+.cl-row:last-child{border-bottom:none;}
+.cl-row input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--green);cursor:pointer;flex-shrink:0;}
+.cl-row label{font-size:14px;color:var(--text);cursor:pointer;flex:1;line-height:1.5;}
+.cl-row.done label{text-decoration:line-through;color:var(--text3);}
+.cl-selector{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.cl-pill{padding:6px 14px;border-radius:20px;border:0.5px solid var(--border2);background:var(--surface2);font-size:12px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.cl-pill.active{background:var(--green-bg);border-color:var(--green);color:var(--green-text);font-weight:500;}
+
+/* Weekly review */
+.review-q{margin-bottom:14px;}
+.review-label{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px;}
+textarea{width:100%;background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r-sm);padding:9px 13px;font-size:14px;color:var(--text);font-family:inherit;outline:none;resize:vertical;min-height:56px;transition:border-color 0.15s;-webkit-appearance:none;}
+textarea:focus{border-color:var(--green);}
+.input-sm{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r-sm);padding:8px 12px;font-size:14px;color:var(--text);font-family:inherit;outline:none;width:100%;transition:border-color 0.15s;-webkit-appearance:none;}
+.input-sm:focus{border-color:var(--green);}
+
+/* Procrastination */
+.proc-q{margin-bottom:12px;}
+.proc-opts{display:flex;flex-direction:column;gap:6px;}
+.proc-opt{padding:10px 14px;border:0.5px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;text-align:left;transition:all 0.15s;}
+.proc-opt.selected{background:var(--amber-bg);border-color:var(--amber);color:var(--amber-text);}
+.proc-result{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;display:none;margin-top:8px;}
+.proc-result.show{display:block;}
+.proc-action{font-size:15px;font-weight:500;color:var(--green);margin-bottom:6px;}
+.proc-steps{margin-top:8px;padding-left:16px;}
+.proc-steps li{margin-bottom:4px;font-size:13px;color:var(--text2);line-height:1.6;}
+
+/* Buttons */
+.btn{padding:9px 20px;border-radius:var(--r-sm);font-size:14px;font-family:inherit;cursor:pointer;border:0.5px solid var(--border2);background:none;color:var(--text);transition:all 0.15s;}
+.btn:hover{background:var(--surface2);}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff;}
+.btn.primary:hover{opacity:0.88;}
+.btn.sm{padding:6px 14px;font-size:12px;}
+.reset-link{font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;padding:8px 0 0;display:block;}
+
+/* Status bar for Day program */
+.prog-bar-wrap{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.prog-bar{height:100%;background:var(--green);border-radius:2px;transition:width 0.4s ease;}
+.prog-label{font-size:12px;color:var(--text3);margin-bottom:14px;}
+
+/* Situation select */
+.sit-toggle{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.sit-pill{padding:9px 6px;border-radius:var(--r-sm);border:0.5px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;text-align:center;transition:all 0.15s;}
+.sit-pill.active{background:var(--green-bg);border-color:var(--green);color:var(--green-text);font-weight:500;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo"><em>ハコどり</em><sub>特典セット by survival_mam</sub></div>
+</div>
+
+<div class="nav-wrap">
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSec('day',this)">14日プログラム</button>
+    <button class="nav-btn" onclick="showSec('template',this)">1日テンプレ</button>
+    <button class="nav-btn" onclick="showSec('situation',this)">状況別カスタム</button>
+    <button class="nav-btn" onclick="showSec('protocol',this)">割り込み対処</button>
+    <button class="nav-btn" onclick="showSec('refuse',this)">断り文句集</button>
+    <button class="nav-btn" onclick="showSec('proc',this)">先延ばし対処</button>
+    <button class="nav-btn" onclick="showSec('review',this)">週次レビュー</button>
+    <button class="nav-btn" onclick="showSec('checklist',this)">復帰チェックリスト</button>
+    <button class="nav-btn" onclick="showSec('type',this)">タイプ診断</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ① 14日プログラム -->
+<div class="sec active" id="sec-day">
+  <div class="card">
+    <div class="card-label">進捗</div>
+    <div class="prog-bar-wrap"><div class="prog-bar" id="dayBar" style="width:0%"></div></div>
+    <div class="prog-label" id="dayLabel">0 / 14 完了</div>
+    <div class="info" style="margin:0;">各Dayをタップして手順を確認。終わったらチェックを入れる。</div>
+  </div>
+  <div class="day-grid" id="dayGrid"></div>
+  <button class="reset-link" onclick="resetDays()">進捗をリセット</button>
+</div>
+
+<!-- ② 1日テンプレート -->
+<div class="sec" id="sec-template">
+  <div class="card">
+    <div class="card-label">テンプレートを選ぶ</div>
+    <div class="tmpl-toggle">
+      <button class="tmpl-pill active" onclick="showTmpl('normal',this)">通常日</button>
+      <button class="tmpl-pill" onclick="showTmpl('busy',this)">多忙日</button>
+      <button class="tmpl-pill" onclick="showTmpl('holiday',this)">休日</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label" id="tmplTitle">通常日テンプレート</div>
+    <div class="tmpl-rows" id="tmplRows"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">凡例</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--text2);">
+      <span><span class="t-type t-fixed">固定枠</span> 毎日同じ時間にやること</span>
+      <span><span class="t-type t-buffer">バッファ</span> 余白・割り込み吸収</span>
+      <span><span class="t-type t-gap">隙間</span> 5分タスク用</span>
+      <span><span class="t-type t-guard">守り</span> メール・連絡処理</span>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 状況別カスタム -->
+<div class="sec" id="sec-situation">
+  <div class="card">
+    <div class="card-label">状況を選ぶ</div>
+    <div class="sit-toggle">
+      <button class="sit-pill active" onclick="showSit('worker',this)">会社員</button>
+      <button class="sit-pill" onclick="showSit('育児中',this)">育児中</button>
+      <button class="sit-pill" onclick="showSit('remote',this)">在宅ワーク</button>
+    </div>
+  </div>
+  <div id="sitContent"></div>
+</div>
+
+<!-- ④ 割り込み対処プロトコル -->
+<div class="sec" id="sec-protocol">
+  <div class="card">
+    <div class="card-label">割り込み処理プロトコル</div>
+    <div class="warn">割り込みが来たら、この手順を5秒で実行する。</div>
+    <div id="protoSteps"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">If-Thenルール（事前に決めておく）</div>
+    <div id="ifThenList"></div>
+  </div>
+</div>
+
+<!-- ⑤ 断り文句集 -->
+<div class="sec" id="sec-refuse">
+  <div class="info">タップしてコピー。「できません」ではなく「◯◯ならできます」。</div>
+  <div id="refuseContent"></div>
+</div>
+
+<!-- ⑥ 先延ばし対処 -->
+<div class="sec" id="sec-proc">
+  <div class="card">
+    <div class="card-label">なぜ先延ばしているか選ぶ</div>
+    <div class="proc-opts" id="procOpts"></div>
+    <div class="proc-result" id="procResult"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">開始コストを下げる5つの方法</div>
+    <div id="procMethods"></div>
+  </div>
+</div>
+
+<!-- ⑦ 週次レビュー -->
+<div class="sec" id="sec-review">
+  <div class="info">金曜17時、5分だけ。これだけ書けばOK。</div>
+  <div class="card">
+    <div class="card-label">今週できたこと（3つ）</div>
+    <div id="reviewDone"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">今週できなかったこと（1つ）と理由</div>
+    <div class="review-q"><textarea id="reviewMiss" placeholder="例：固定枠を守れなかった日が2日あった"></textarea></div>
+    <div class="review-q">
+      <div class="review-label">理由</div>
+      <textarea id="reviewReason" placeholder="例：会議が予定より長引いた"></textarea>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">来週の改善策</div>
+    <textarea id="reviewImprove" placeholder="例：会議の後にバッファ枠を入れる"></textarea>
+  </div>
+  <div class="card">
+    <div class="card-label">来週の3つ</div>
+    <div id="reviewNext"></div>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:4px;">
+    <button class="btn primary" onclick="saveReview()">保存</button>
+    <button class="btn" onclick="clearReview()">クリア</button>
+  </div>
+  <div id="reviewHistory" style="margin-top:16px;"></div>
+</div>
+
+<!-- ⑧ 復帰チェックリスト -->
+<div class="sec" id="sec-checklist">
+  <div class="card">
+    <div class="card-label">状況を選ぶ</div>
+    <div class="cl-selector" id="clSelector"></div>
+  </div>
+  <div class="card">
+    <div class="card-label" id="clTitle"></div>
+    <div class="warn" id="clDesc"></div>
+    <div id="clItems"></div>
+    <button class="reset-link" onclick="resetCL()">チェックをリセット</button>
+  </div>
+</div>
+
+<!-- ⑨ タイプ診断 -->
+<div class="sec" id="sec-type">
+  <div class="info">10問に答えると、あなたのタイプと最短ルートが分かります。</div>
+  <div id="typeQuiz"></div>
+  <div id="typeResult" class="result-box" style="margin-top:12px;"></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const SK='hkbonus_v1';
+function load(){try{return JSON.parse(localStorage.getItem(SK))||{};}catch(e){return {};}}
+function save(d){localStorage.setItem(SK,JSON.stringify(d));}
+let S=load();
+if(!S.days)S.days=[];
+if(!S.clState)S.clState={};
+if(!S.reviews)S.reviews=[];
+if(!S.reviewDraft)S.reviewDraft={done:['','',''],next:['','',''],miss:'',reason:'',improve:''};
+if(!S.typeAns)S.typeAns={};
+
+/* Nav */
+function showSec(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ===== ① 14日プログラム ===== */
+const DAYS=[
+  {title:'現状を知る',time:'5分',desc:'昨日の時間の使い方を可視化する。',
+   steps:['「昨日、何に時間を使ったか」を3つメモする（例：会議2時間、メール1時間、資料30分）','「毎日やっていること」を2つメモする（例：朝のメール確認、夜の準備）','「毎日同じ時間にできそうなこと」を1つ決める（例：朝9時にメール確認）']},
+  {title:'固定枠を作る',time:'5分',desc:'固定枠を1つ、実際にカレンダーに入れて今日やる。',
+   steps:['Day1で決めた「同じ時間にできそうなこと」を今日実際にやる','もう1つ、固定枠を決める（例：昼12:15に集中タスク15分）','明日、その時間に何をやるか1つだけ決める']},
+  {title:'バッファを入れる',time:'5分',desc:'「何も入れない余白時間＝バッファ」を1つ確保する。',
+   steps:['固定枠2つを今日守る','明日のスケジュールを見る','「何も入れない30分」を1つ確保してカレンダーに「バッファ」と書く','割り込みが来たらそこに入れると決める']},
+  {title:'割り込みルールを決める',time:'10分',desc:'割り込みへの対応を事前に型化する。',
+   steps:['昨日の割り込みを数える','緊急／重要だが緊急でない／どちらでもない の3つに分類する','対応ルールを決める：緊急→今すぐ、重要だが緊急でない→バッファ枠に、その他→断る','ルールを紙に書いてデスクに貼る']},
+  {title:'隙間リストを作る',time:'10分',desc:'隙間時間に即使えるタスクリストを用意する。',
+   steps:['昨日の隙間時間を思い出す（通勤・会議の合間・ランチ後など）','5分以内で終わるタスクを10個リストアップする','紙に書いてデスクに置く','明日の隙間時間ができたらリストから1つ選んでやる']},
+  {title:'断り方を準備する',time:'10分',desc:'角を立てずに守る断り文句を3つ用意する。',
+   steps:['最近断れなかった依頼を思い出す','「今◯◯中なので△△時以降なら対応できます」パターンで文を作る','断り文句を3つ紙に書く','デスクに貼って、次の割り込みで使ってみる']},
+  {title:'1週間の振り返り',time:'10分',desc:'設計を修正して来週に活かす。',
+   steps:['この1週間でできたことを3つ書く','できなかったことを1つ書いて理由を考える','来週の改善策を1つ決める','来週の「今週の3つ」を決める']},
+  {title:'多忙日モードを作る',time:'10分',desc:'疲れた日でも回る最小設計を用意する。',
+   steps:['最近つらかった日を思い出す','そんな日でも「これだけでOK」という最小基準を決める（例：固定枠1つ＋明日の準備3分）','多忙日モードのテンプレートを紙に書く','デスクに貼る']},
+  {title:'15分集中を試す',time:'10分',desc:'15分だけ集中する型を体験する。',
+   steps:['集中タスクを1つ決める（15分で終わる小さなもの）','環境を整える：スマホ機内モード、PCの通知OFF、デスク片付け','タイマーを15分にセットしてスタート','終わったら何をやったか1行メモする']},
+  {title:'1枚タスク管理を始める',time:'5分',desc:'紙1枚でタスク管理を完結させる。',
+   steps:['A4の紙を1枚用意する','3つのエリアに分ける：今日の3つ／隙間リスト／バッファ','「今日の3つ」を書いてデスクの真ん中に置く','「今日の3つ」から1つ選んで今日やる']},
+  {title:'守りの時間を作る',time:'10分',desc:'メール返信・連絡対応を固定枠にまとめる。',
+   steps:['昨日メール返信に何分使ったか思い出す','その時間を「守りの時間」として固定枠にする（例：9:00-9:15と17:00-17:15）','カレンダーに繰り返し予定として登録する','それ以外の時間はメールを見ないと決める']},
+  {title:'週次設計を作る',time:'10分',desc:'1週間の全体像を紙1枚で把握する。',
+   steps:['A4の紙を横に置く','月〜金の5エリアに分ける','今週やることを5〜10個書き出す','週のどこでやるか配置して壁に貼る']},
+  {title:'崩れた時の復帰訓練',time:'5分',desc:'わざと崩してみて復帰を練習する。',
+   steps:['今日、固定枠を1つわざとスキップする','夜に復帰手順を実行する：固定枠確認（1分）→1つ選ぶ（1分）→カレンダーに入れる（1分）→バッファ追加（1分）→明日の最小基準を決める（1分）','明日、復帰した固定枠を守る']},
+  {title:'最終振り返りと継続設計',time:'10分',desc:'14日間を振り返り、これからの設計を決める。',
+   steps:['この14日間でできたことを5つ書く','変わったことを3つ書く','できなかったことを1つ書く','来週から続けることを決める','「3ヶ月後の自分」を紙に書く']},
+];
+
+function renderDays(){
+  const el=document.getElementById('dayGrid');
+  el.innerHTML=DAYS.map((d,i)=>{
+    const done=S.days.includes(i);
+    return`<div class="day-card${done?' done':''}" id="dc${i}">
+      <div class="day-header" onclick="toggleDayBody(${i})">
+        <div class="day-num">Day ${i+1}</div>
+        <div class="day-title">${d.title}</div>
+        <div class="day-time">${d.time}</div>
+        <div class="day-check${done?' done':''}" onclick="event.stopPropagation();toggleDay(${i})">✓</div>
+      </div>
+      <div class="day-body" id="db${i}">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">${d.desc}</div>
+        <ul class="day-steps">${d.steps.map(s=>`<li>${s}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+  }).join('');
+  updateDayProg();
+}
+function toggleDayBody(i){
+  const el=document.getElementById('db'+i);
+  el.classList.toggle('open');
+}
+function toggleDay(i){
+  if(S.days.includes(i))S.days=S.days.filter(x=>x!==i);
+  else S.days.push(i);
+  save(S);renderDays();
+}
+function updateDayProg(){
+  const n=S.days.length;
+  document.getElementById('dayBar').style.width=Math.round(n/14*100)+'%';
+  document.getElementById('dayLabel').textContent=`${n} / 14 完了`;
+}
+function resetDays(){if(!confirm('進捗をリセットしますか？'))return;S.days=[];save(S);renderDays();}
+
+/* ===== ② テンプレート ===== */
+const TMPLS={
+  normal:{title:'通常日テンプレート',slots:[
+    {s:'朝'},{t:'7:00–7:15',l:'メール確認・今日の3つ確認',c:'fixed'},
+    {s:'午前'},{t:'9:00–9:15',l:'集中タスク 1本目',c:'fixed'},{t:'9:15–9:30',l:'守りの時間（連絡・返信）',c:'guard'},{t:'10:30–11:00',l:'バッファ枠 1（余白・割り込み吸収）',c:'buffer'},
+    {s:'昼'},{t:'12:00–12:15',l:'ランチ',c:'gap'},{t:'12:15–12:30',l:'隙間タスク（5分以内）',c:'gap'},
+    {s:'午後'},{t:'15:00–15:15',l:'集中タスク 2本目',c:'fixed'},{t:'16:00–16:30',l:'バッファ枠 2',c:'buffer'},{t:'17:30–17:45',l:'守りの時間（返信・明日の準備）',c:'guard'},
+    {s:'夜'},{t:'21:30–21:35',l:'明日の準備（5分）',c:'fixed'},
+  ]},
+  busy:{title:'多忙日テンプレート（生き延びる日）',slots:[
+    {s:'朝'},{t:'6:00–6:05',l:'今日の3つ確認（短縮）',c:'fixed'},
+    {s:'午前'},{t:'9:00–12:00',l:'会議・割り込み対応',c:'buffer'},
+    {s:'昼'},{t:'12:00–12:10',l:'ランチ（短縮）',c:'gap'},{t:'12:10–12:15',l:'隙間タスク 1つだけ',c:'gap'},
+    {s:'午後'},{t:'15:00–15:10',l:'集中タスク（10分・短縮）',c:'fixed'},{t:'16:00–18:00',l:'会議・割り込み対応',c:'buffer'},
+    {s:'夜'},{t:'21:30–21:33',l:'明日の準備（3分のみ）',c:'fixed'},
+  ]},
+  holiday:{title:'休日テンプレート',slots:[
+    {s:'朝'},{t:'8:00–9:00',l:'起床・朝の準備（ゆっくり）',c:'gap'},{t:'9:00–9:15',l:'週次レビュー または 趣味の時間',c:'fixed'},
+    {s:'午前'},{t:'10:00–11:30',l:'自由時間',c:'gap'},
+    {s:'昼'},{t:'12:00–13:00',l:'ランチ',c:'gap'},{t:'13:00–13:15',l:'来週の準備・軽いタスク',c:'gap'},
+    {s:'午後'},{t:'15:00–17:00',l:'自由時間',c:'gap'},
+    {s:'夜'},{t:'21:00–21:10',l:'来週の準備（10分）',c:'fixed'},
+  ]},
+};
+function showTmpl(type,btn){
+  document.querySelectorAll('.tmpl-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const T=TMPLS[type];
+  document.getElementById('tmplTitle').textContent=T.title;
+  const el=document.getElementById('tmplRows');
+  el.innerHTML='';
+  T.slots.forEach(slot=>{
+    if(slot.s!==undefined){
+      const d=document.createElement('div');
+      d.className='t-section';d.textContent=`〔${slot.s}〕`;el.appendChild(d);
+    }else{
+      const typeMap={fixed:'t-fixed',buffer:'t-buffer',gap:'t-gap',guard:'t-guard'};
+      const labelMap={fixed:'固定枠',buffer:'バッファ',gap:'隙間',guard:'守り'};
+      ['<div class="t-time">'+slot.t+'</div>',
+       '<div class="t-label">'+slot.l+'</div>',
+       '<div class="t-type '+typeMap[slot.c]+'">'+labelMap[slot.c]+'</div>',
+       '<div class="t-divider"></div>'
+      ].forEach(h=>{const d=document.createElement('div');d.outerHTML;el.insertAdjacentHTML('beforeend',h);});
+    }
+  });
+}
+
+/* ===== ③ 状況別カスタム ===== */
+const SITS={
+  worker:{
+    title:'会社員向けカスタム',
+    desc:'会議と割り込みが多い環境。まとまった時間を守るための設計。',
+    points:[
+      {t:'会議の後にバッファを入れる',d:'会議は必ず延びます。会議の後30分を必ずバッファ枠にする。例：10:00〜11:00会議 → 11:00〜11:30バッファ'},
+      {t:'守りの時間を朝と夕方に固定する',d:'メール返信・連絡対応を9:00-9:15と17:30-17:45に固定。それ以外はメールを見ない。'},
+      {t:'集中タスクを朝イチに入れる',d:'8:45〜9:00の15分が最も意志力が高い時間帯。ここに重要タスクを入れる。'},
+      {t:'残業しない日を週1日作る',d:'「今週は水曜だけ定時退社」と決める。まず1日だけ。それが増えていく。'},
+    ]},
+  育児中:{
+    title:'育児中向けカスタム',
+    desc:'中断前提・睡眠不足・予測不能な環境。最小基準を極限まで下げる設計。',
+    points:[
+      {t:'固定枠を5〜10分に短縮する',d:'15分は長すぎる。5分の固定枠でOK。終わらなくても「やった」が積み上がる。'},
+      {t:'バッファを広く取る',d:'中断を前提にバッファを1日2〜3時間確保する。崩れても「想定内」になる。'},
+      {t:'最小基準を極限まで下げる',d:'「今日はこれだけでOK」＝固定枠1つ守る（5分）＋明日の準備3分。それ以外は諦める。'},
+      {t:'パートナーに具体的な時間を伝える',d:'「朝9時から10分だけ集中させて」と具体的な時間を言う。漠然とした依頼より協力しやすい。'},
+    ]},
+  remote:{
+    title:'在宅ワーク向けカスタム',
+    desc:'境界線が曖昧・ダラダラ・孤独な環境。儀式と強制力で仕事モードに入る設計。',
+    points:[
+      {t:'仕事の開始と終了の儀式を作る',d:'開始：デスク片付け→コーヒー→「今日の3つ」確認→タイマーセット。終了：デスク片付け→明日の準備→PCシャットダウン。'},
+      {t:'誰かに宣言して強制力を作る',d:'「9時から15分集中します」とSNSに投稿する。見られている意識が集中力を上げる。'},
+      {t:'ポモドーロで強制的に区切る',d:'25分集中＋5分休憩を繰り返す。タイマーが時間を管理してくれる。'},
+      {t:'誘惑を視界から消す',d:'スマホを別の部屋に置く。テレビの電源を抜く。お菓子を引き出しにしまう。視界にないものは気にならない。'},
+    ]},
+};
+function showSit(type,btn){
+  document.querySelectorAll('.sit-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const sit=SITS[type];
+  document.getElementById('sitContent').innerHTML=`
+    <div class="card">
+      <div class="card-label">${sit.title}</div>
+      <div class="card-desc">${sit.desc}</div>
+      ${sit.points.map((p,i)=>`
+        <div class="proto-step">
+          <div class="proto-num">${i+1}</div>
+          <div class="proto-body">
+            <div class="proto-title">${p.t}</div>
+            <div class="proto-detail">${p.d}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ===== ④ 割り込み対処プロトコル ===== */
+const PROTO=[
+  {t:'緊急度を5秒で判断する',d:'「今すぐやらないとマズいか？」→Yes：今すぐやる / No→「今日中か？」→Yes：バッファ枠に入れる / No：断るか明日以降に回す'},
+  {t:'バッファ枠に入れる',d:'「重要だが緊急でない」割り込みはバッファ枠のメモに書く。すぐ対応しない。バッファ枠の時間に処理する。'},
+  {t:'今やっていることを中断しない',d:'集中タスク中は「15分後に対応します」と伝える。固定枠中は絶対に中断しない。固定枠を守ることが最優先。'},
+  {t:'即答しない',d:'「今すぐやって」と言われても5秒考える。「確認して、すぐ返します」と伝える。即答すると「この人はすぐやってくれる」と学習されて割り込みが増える。'},
+];
+const IF_THEN=[
+  {cond:'急な依頼が来たら',action:'バッファ枠に入れる。今はやらない。'},
+  {cond:'集中できない日なら',action:'多忙日モードに切り替える。'},
+  {cond:'疲れたら',action:'最小基準だけやって終わる。'},
+  {cond:'固定枠の時間に割り込みが来たら',action:'「15分後に対応します」と伝えて続ける。'},
+  {cond:'バッファ枠が割り込みで埋まったら',action:'翌日のバッファ枠に入れ直す。'},
+];
+function renderProto(){
+  document.getElementById('protoSteps').innerHTML=PROTO.map((p,i)=>`
+    <div class="proto-step">
+      <div class="proto-num">${i+1}</div>
+      <div class="proto-body">
+        <div class="proto-title">${p.t}</div>
+        <div class="proto-detail">${p.d}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('ifThenList').innerHTML=IF_THEN.map(it=>`
+    <div class="proto-step" style="padding:10px 0;">
+      <div class="proto-body">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:2px;">もし…</div>
+        <div class="proto-title">${it.cond}</div>
+        <div style="font-size:12px;color:var(--text3);margin:4px 0 2px;">→ そうしたら…</div>
+        <div class="proto-detail">${it.action}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ===== ⑤ 断り文句集 ===== */
+const REFUSE=[
+  {g:'パターン1 ― 時間を指定して断る',items:[
+    {t:'今、集中タスク中なので、15分後に対応します。',s:'固定枠中に使う'},
+    {t:'今日は予定が詰まっているので、明日の午前中でも大丈夫ですか？',s:'今日中が難しい時'},
+    {t:'今、会議の準備中なので、15時以降なら対応できます。',s:'会議前に使う'},
+  ]},
+  {g:'パターン2 ― 代替案を出す',items:[
+    {t:'この件は○○さんの方が詳しいので、○○さんに聞いていただけますか？',s:'他の人に回す'},
+    {t:'今週は厳しいですが、来週なら対応できます。',s:'週をまたぐ時'},
+    {t:'私は手が離せないので、△△さんに相談していただけますか？',s:'チームで動く時'},
+  ]},
+  {g:'パターン3 ― 理由を添えて断る',items:[
+    {t:'今、締め切り前の資料作成中なので、今日は難しいです。',s:'締め切りがある時'},
+    {t:'今週は会議が多くて時間が取れないので、来週でも大丈夫ですか？',s:'繁忙期に使う'},
+    {t:'緊急案件を抱えているので、優先順位を変えられないです。',s:'優先度が明確な時'},
+  ]},
+  {g:'パターン4 ― 相手に優先順位を決めてもらう',items:[
+    {t:'今、A案件とB案件を抱えています。どちらを優先しますか？',s:'複数案件を持つ時'},
+    {t:'この依頼を受けると、○○の締め切りが遅れますが、大丈夫ですか？',s:'影響を示す時'},
+    {t:'今日中に終わらせるには、他のタスクを明日に回す必要がありますが、よろしいですか？',s:'トレードオフを示す'},
+  ]},
+  {g:'パターン5 ― 一部だけ受ける',items:[
+    {t:'資料全体の作成は難しいですが、見出しだけなら今日中に作れます。',s:'部分的に対応'},
+    {t:'全部の確認は時間がかかりますが、重要な部分だけなら今日中に見られます。',s:'重点だけ対応'},
+    {t:'詳細な分析は難しいですが、概要だけなら今日中に出せます。',s:'スコープを絞る'},
+  ]},
+];
+function renderRefuse(){
+  document.getElementById('refuseContent').innerHTML=REFUSE.map(g=>`
+    <div class="group-title">${g.g}</div>
+    ${g.items.map(item=>`
+      <div class="copy-card" onclick="copyText('${esc(item.t)}',this)">
+        <div class="copy-text">${esc(item.t)}</div>
+        <div class="copy-sub">${item.s}</div>
+        <div class="copy-tag">コピー</div>
+      </div>`).join('')}`).join('');
+}
+
+/* ===== ⑥ 先延ばし対処 ===== */
+const PROC_REASONS=[
+  {label:'何から始めればいいか分からない',
+   action:'「最初の1分だけ」を決める',
+   steps:['タイトルだけ書く','ファイルを開くだけ','宛先だけ入力する','ウェアに着替えるだけ'],
+   detail:'「全部やる」ではなく「最初の1分だけ」と思うと開始コストが下がる。始まると続けたくなる（作業興奮）。'},
+  {label:'完璧にやろうとして動けない',
+   action:'最小基準を決める',
+   steps:['見出しだけでOKにする','60%で出すと決める','「下書き」として送ると決める','まず骨子だけ書く'],
+   detail:'完璧を目指すほど開始コストが上がる。「今日は60%でOK」と決めると動き出せる。'},
+  {label:'なんとなく面倒くさい',
+   action:'15分だけタイマーをかける',
+   steps:['タイマーを15分にセット','「15分だけやって止めてもOK」と自分に言う','スマホを機内モードにする','タイマーがスタートしたらひたすらやる'],
+   detail:'「終わりが見える」と始めやすい。15分経っても、たいてい続けたくなる。'},
+  {label:'失敗するのが不安',
+   action:'誰かに5分だけ相談する',
+   steps:['「5分だけ聞いていいですか」と声をかける','「こう進めようと思うけど、どう思う？」と聞く','フィードバックをもらったらまず小さく試す','完璧な計画より小さな実行を優先する'],
+   detail:'不安は「分からない」から来る。誰かに話すだけで整理されて動ける。'},
+  {label:'タスクが大きすぎて終わりが見えない',
+   action:'小さく分割する',
+   steps:['タスクを15分で終わる単位に分ける','例：「資料作成」→「見出し」「導入部」「本文1節」','今日やるのは最初の1つだけにする','終わったら次の1つを選ぶ'],
+   detail:'「終わりが見えない」から動けない。15分単位に分割すると「これならできる」に変わる。'},
+];
+const PROC_METHODS=[
+  {t:'最初の1分だけを決める',d:'「全部やる」ではなく「タイトルだけ書く」「ファイルを開くだけ」という最初の1分だけを決める。始まると続く。'},
+  {t:'環境を整える',d:'前日にファイルを開いておく。ウェアを枕元に置く。本を開いたままテーブルに置く。環境が整っていると開始コストが下がる。'},
+  {t:'タイマーをセットする',d:'「15分だけやる」と決めてタイマーをセット。終わったら止めてもOK。終わりが見えると始めやすい。'},
+  {t:'通知を切る',d:'スマホ・PC・Slack・メールの通知をすべてOFFにする。通知が1回来ると集中が途切れ、戻るのに平均23分かかる。'},
+  {t:'儀式を作る',d:'「コーヒーを1杯淹れる→デスクを片付ける→タイマーをセット」この順番を毎回繰り返す。脳が「今から集中する」と認識する。'},
+];
+let selectedProc=null;
+function renderProc(){
+  document.getElementById('procOpts').innerHTML=PROC_REASONS.map((r,i)=>`
+    <button class="proc-opt" onclick="selectProc(${i},this)">${r.label}</button>`).join('');
+  document.getElementById('procMethods').innerHTML=PROC_METHODS.map((m,i)=>`
+    <div class="proto-step">
+      <div class="proto-num">${i+1}</div>
+      <div class="proto-body">
+        <div class="proto-title">${m.t}</div>
+        <div class="proto-detail">${m.d}</div>
+      </div>
+    </div>`).join('');
+}
+function selectProc(i,btn){
+  document.querySelectorAll('.proc-opt').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const r=PROC_REASONS[i];
+  const el=document.getElementById('procResult');
+  el.innerHTML=`
+    <div class="proc-action">${r.action}</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:8px;line-height:1.65;">${r.detail}</div>
+    <ul class="proc-steps">${r.steps.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+  el.classList.add('show');
+}
+
+/* ===== ⑦ 週次レビュー ===== */
+function renderReview(){
+  const d=S.reviewDraft;
+  ['done','next'].forEach(key=>{
+    const el=document.getElementById(`review${key==='done'?'Done':'Next'}`);
+    el.innerHTML=[0,1,2].map(i=>`
+      <div class="review-q">
+        <input class="input-sm" type="text" value="${esc(d[key][i]||'')}"
+          placeholder="${key==='done'?'例：固定枠を3つ習慣化した':'例：バッファ枠を2つに増やす'}"
+          oninput="S.reviewDraft.${key}[${i}]=this.value;save(S);">
+      </div>`).join('');
+  });
+  document.getElementById('reviewMiss').value=d.miss||'';
+  document.getElementById('reviewReason').value=d.reason||'';
+  document.getElementById('reviewImprove').value=d.improve||'';
+  renderReviewHistory();
+}
+function saveReview(){
+  S.reviewDraft.miss=document.getElementById('reviewMiss').value;
+  S.reviewDraft.reason=document.getElementById('reviewReason').value;
+  S.reviewDraft.improve=document.getElementById('reviewImprove').value;
+  const now=new Date();
+  S.reviews.unshift({
+    date:`${now.getMonth()+1}/${now.getDate()}`,
+    done:[...S.reviewDraft.done],
+    next:[...S.reviewDraft.next],
+    miss:S.reviewDraft.miss,
+    improve:S.reviewDraft.improve,
+    ts:now.getTime()
+  });
+  if(S.reviews.length>8)S.reviews=S.reviews.slice(0,8);
+  S.reviewDraft={done:['','',''],next:['','',''],miss:'',reason:'',improve:''};
+  save(S);renderReview();
+}
+function clearReview(){
+  S.reviewDraft={done:['','',''],next:['','',''],miss:'',reason:'',improve:''};
+  save(S);renderReview();
+}
+function renderReviewHistory(){
+  const el=document.getElementById('reviewHistory');
+  if(!S.reviews.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="card-label" style="margin-bottom:8px;">過去の記録</div>`+
+    S.reviews.map(r=>`
+      <div class="card" style="margin-bottom:8px;">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">${r.date}</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:4px;">できたこと：${r.done.filter(Boolean).join('、')||'—'}</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:4px;">来週の3つ：${r.next.filter(Boolean).join('、')||'—'}</div>
+        ${r.improve?`<div style="font-size:13px;color:var(--text2);">改善策：${esc(r.improve)}</div>`:''}
+      </div>`).join('');
+}
+
+/* ===== ⑧ 復帰チェックリスト ===== */
+const CLS=[
+  {label:'崩れた',title:'復帰手順（5分）',
+   desc:'崩れても5分で戻れます。今日の設計が合っていなかっただけ。',
+   items:['今日の固定枠を1つだけ確認した','その固定枠をカレンダーに入れた','アラームをセットした','バッファ枠を1つ確保した（30分）','今日の最小基準を決めた（固定枠1つだけでOK）']},
+  {label:'3日坊主',title:'3日坊主からの復帰',
+   desc:'完璧を目指しすぎたのが原因。固定枠を1つに絞り直す。',
+   items:['Day1を読み直した','固定枠を1つだけに減らした','カレンダーにアラームをセットした','最小基準を「週3回守る」に下げた','「完璧じゃなくてOK」と紙に書いてデスクに貼った']},
+  {label:'完璧主義',title:'完璧主義からの復帰',
+   desc:'疲れているのは設計が厳しすぎるから。60%でいい。',
+   items:['「60%でOK」と紙に書いた','最小基準を極限まで下げた（週3回だけ）','それ以外は全部諦めると決めた','明日、固定枠を1つだけ守ると決めた','守れなくても「明後日やればいい」と思うことにした']},
+  {label:'多忙期',title:'多忙期の最小設計',
+   desc:'今は生き延びるだけでOK。繁忙期が終わったら戻る。',
+   items:['「今は多忙期」と認識した','多忙日モードに切り替えた','最小基準を「明日の準備3分だけ」にした','繁忙期が終わる日をカレンダーに入れた','その日にDay1から再開すると決めた']},
+  {label:'飽きた',title:'飽きからの復帰',
+   desc:'変化が見えないと飽きる。記録を見返して前進を確認する。',
+   items:['この2週間で変わったことを3つ書いた','週次レビューを5分でやった','来週の目標を1つだけ決めた','固定枠を1つ変えてみた（変化をつけた）','明日、新しい固定枠をやると決めた']},
+];
+let currentCL=0;
+function renderCLSelector(){
+  document.getElementById('clSelector').innerHTML=CLS.map((c,i)=>`
+    <button class="cl-pill${i===0?' active':''}" onclick="selectCL(${i},this)">${c.label}</button>`).join('');
+  renderCLItems();
+}
+function selectCL(i,btn){
+  currentCL=i;
+  document.querySelectorAll('.cl-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCLItems();
+}
+function renderCLItems(){
+  const cl=CLS[currentCL];
+  const key='cl'+currentCL;
+  if(!S.clState[key])S.clState[key]=[];
+  document.getElementById('clTitle').textContent=cl.title;
+  document.getElementById('clDesc').textContent=cl.desc;
+  document.getElementById('clItems').innerHTML=cl.items.map((item,i)=>{
+    const c=S.clState[key].includes(i);
+    return`<div class="cl-row${c?' done':''}">
+      <input type="checkbox" id="cl${currentCL}_${i}" ${c?'checked':''} onchange="toggleCL(${i})">
+      <label for="cl${currentCL}_${i}">${item}</label>
+    </div>`;
+  }).join('');
+}
+function toggleCL(i){
+  const key='cl'+currentCL;
+  if(!S.clState[key])S.clState[key]=[];
+  S.clState[key]=S.clState[key].includes(i)?S.clState[key].filter(x=>x!==i):[...S.clState[key],i];
+  save(S);renderCLItems();
+}
+function resetCL(){S.clState['cl'+currentCL]=[];save(S);renderCLItems();}
+
+/* ===== ⑨ タイプ診断 ===== */
+const TYPE_QS=[
+  '予定を立てても、割り込みで崩れることが多い',
+  'やることが多すぎて、優先順位を考えるだけで疲れる',
+  '1日の終わりに「結局なにしたっけ？」となりがち',
+  'タスク管理アプリを入れても、3日で開かなくなる',
+  '集中したいのに、開始までに時間がかかる',
+  '小さい用事が積もって、重要なことが後回しになる',
+  '会議・連絡・家事などで、まとまった時間が取れない',
+  '夜に取り返そうとして、さらにしんどくなる',
+  '完璧にやろうとして、逆に止まる',
+  '時間管理の本を読んでも、続かなかった',
+];
+const TYPES=[
+  {range:[1,3],type:'タイプA「仕組み不足」',
+   desc:'型を入れれば一気に伸びるタイプ。今は「何をどう管理するか」の枠組みがない状態。迷いを消す設計を入れるだけで大きく変わります。',
+   route:[
+     {t:'最優先：第2章「1日テンプレ」',d:'固定枠2つとバッファ1つを今日中に設定する'},
+     {t:'次：Day1〜Day3',d:'現状把握→固定枠作成→バッファ追加の3日間'},
+     {t:'14日後の目標',d:'朝の迷いゼロ、1日が自動的に回り始める'},
+   ]},
+  {range:[4,6],type:'タイプB「割り込み地獄」',
+   desc:'外からの侵入で設計が崩れるタイプ。仕組みはある程度分かっているが、割り込みのたびに全体が崩れてしまう。バッファと断り方が最優先。',
+   route:[
+     {t:'最優先：割り込み処理プロトコル',d:'5秒判断ルールとバッファ枠の位置を今日決める'},
+     {t:'次：Day4〜Day6',d:'割り込みルール→隙間リスト→断り文句の3日間'},
+     {t:'14日後の目標',d:'崩れても「想定内」、ストレス激減'},
+   ]},
+  {range:[7,10],type:'タイプC「燃料切れ」',
+   desc:'多忙で余力がない状態。何かを変えたいが、変えるエネルギー自体がない。最小基準を極限まで下げて、3分単位の前進から始める。',
+   route:[
+     {t:'最優先：多忙日モードの設計',d:'「今日はこれだけでOK」の最小基準を今すぐ決める'},
+     {t:'次：Day1・Day8',d:'現状把握と多忙日モード設計を優先'},
+     {t:'14日後の目標',d:'疲れていても前に進める、自己嫌悪がなくなる'},
+   ]},
+];
+function renderTypeQuiz(){
+  document.getElementById('typeQuiz').innerHTML=TYPE_QS.map((q,i)=>`
+    <div class="q-block">
+      <div class="q-text">Q${i+1}. ${q}</div>
+      <div class="q-opts">
+        <button class="q-opt${S.typeAns[i]==='yes'?' selected':''}" onclick="ansType(${i},'yes',this)">はい</button>
+        <button class="q-opt${S.typeAns[i]==='no'?' selected':''}" onclick="ansType(${i},'no',this)">いいえ</button>
+      </div>
+    </div>`).join('')+
+    `<button class="btn primary" style="width:100%;margin-top:4px;" onclick="calcType()">診断する</button>`;
+}
+function ansType(i,val,btn){
+  S.typeAns[i]=val;save(S);
+  const parent=btn.closest('.q-opts');
+  parent.querySelectorAll('.q-opt').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function calcType(){
+  const yes=Object.values(S.typeAns).filter(v=>v==='yes').length;
+  const T=TYPES.find(t=>yes>=t.range[0]&&yes<=t.range[1])||TYPES[2];
+  const el=document.getElementById('typeResult');
+  el.innerHTML=`
+    <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">あなたの結果（該当：${yes}/10）</div>
+    <div class="result-type">${T.type}</div>
+    <div class="result-desc">${T.desc}</div>
+    <div class="route-title">最短ルート</div>
+    ${T.route.map((r,i)=>`
+      <div class="proto-step" style="padding:8px 0;">
+        <div class="proto-num">${i+1}</div>
+        <div class="proto-body">
+          <div class="proto-title">${r.t}</div>
+          <div class="proto-detail">${r.d}</div>
+        </div>
+      </div>`).join('')}`;
+  el.classList.add('show');
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* Utility */
+function copyText(text,card){
+  navigator.clipboard.writeText(text).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.style.cssText='position:fixed;opacity:0;';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+  const tag=card.querySelector('.copy-tag');
+  if(tag){tag.textContent='コピー済み';card.classList.add('copied');
+    setTimeout(()=>{tag.textContent='コピー';card.classList.remove('copied');},1500);}
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+/* Init */
+renderDays();
+showTmpl('normal',document.querySelector('.tmpl-pill'));
+showSit('worker',document.querySelector('.sit-pill'));
+renderProto();
+renderRefuse();
+renderProc();
+renderReview();
+renderCLSelector();
+renderTypeQuiz();
+</script>
+</body>
+</html>
