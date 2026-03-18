@@ -552,7 +552,120 @@
       letter-spacing: 0.05em;
     }
 
-    /* ══════════ ANIMATION ══════════ */
+    /* ── FV get list ── */
+    .fv-get-list {
+      list-style: none;
+      background: rgba(196,113,74,0.06);
+      border: 1.5px solid rgba(196,113,74,0.2);
+      border-left: 4px solid var(--terra);
+      border-radius: var(--r-md);
+      padding: 16px 22px;
+      margin: 0 auto 28px;
+      max-width: 480px;
+      text-align: left;
+      display: flex; flex-direction: column; gap: 8px;
+      animation: rise 0.7s 0.28s both;
+    }
+    .fv-get-list li {
+      font-size: 0.87rem; color: var(--ink2); line-height: 1.6;
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .fv-get-list li::before {
+      content: '▶︎';
+      color: var(--terra); font-size: 0.6rem; flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* ── FV CTA group ── */
+    .fv-cta-group {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      justify-content: center; margin-bottom: 4px;
+      animation: rise 0.7s 0.34s both;
+    }
+    .fv-cta-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--terra), var(--terra2));
+      color: #fff; font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 0.95rem; font-weight: 900;
+      padding: 14px 28px; border-radius: var(--r-md);
+      text-decoration: none;
+      box-shadow: 0 6px 22px rgba(196,113,74,0.35);
+      transition: all 0.18s cubic-bezier(.34,1.4,.64,1);
+    }
+    .fv-cta-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(196,113,74,0.45); }
+    .fv-cta-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--ink2);
+      font-size: 0.88rem; font-weight: 700;
+      padding: 13px 22px; border-radius: var(--r-md);
+      text-decoration: none; border: 1.5px solid var(--border);
+      transition: border-color 0.18s, color 0.18s;
+    }
+    .fv-cta-secondary:hover { border-color: var(--terra); color: var(--terra); }
+
+    /* ── Story section ── */
+    .story-section {
+      background: var(--parch);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 40px 32px;
+      margin-bottom: 36px;
+      position: relative; overflow: hidden;
+    }
+    .story-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--terra), var(--terra2));
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+    .story-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--terra);
+      margin-bottom: 20px;
+    }
+    .story-quote {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.15rem, 3.5vw, 1.45rem);
+      font-weight: 700; line-height: 1.65; color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .story-quote em {
+      font-style: normal; color: var(--terra);
+    }
+    .story-body {
+      font-size: 0.85rem; color: var(--ink2); line-height: 1.95;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+
+    /* ── Closing section ── */
+    .closing-section {
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 52px 32px 44px;
+      text-align: center;
+      margin-top: 40px;
+      position: relative; overflow: hidden;
+    }
+    .closing-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--terra), var(--terra2));
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+    }
+    .closing-quote {
+      font-family: 'Kaisei Decol', serif;
+      font-size: clamp(1.15rem, 3.5vw, 1.5rem);
+      font-weight: 700; line-height: 1.75; color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .closing-quote em { font-style: normal; color: var(--terra); }
+    .closing-sub {
+      font-size: 0.82rem; color: var(--ink3);
+      margin-bottom: 32px; line-height: 1.8;
+    }
+    .closing-cta-group {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    }
     @keyframes rise {
       from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -800,45 +913,70 @@
       <div class="brand-name"><strong>survival</strong>_mam</div>
     </div>
 
-    <p class="fv-eyebrow">実用支援ツール集</p>
+    <p class="fv-eyebrow">発達グレーゾーン・不登校・お受験　実用支援ツール集</p>
 
     <h1 class="fv-h1">
-      子どもの「困った」を<br>
-      <span class="hl">毎日の中で解決する</span>
+      もう壊れないための設計を<br>
+      <span class="hl">ここに置いておきます</span>
     </h1>
 
     <p class="fv-sub">
-      発達グレーゾーン・不登校・お受験。<br>
-      プロの療育・教育ノウハウを家庭サイズにダウンサイジングした<br>
-      5つのWebツールを安全な決済ページからご購入いただけます。
+      不登校・受験・仕事を同時に抱えても、<br>
+      家庭が崩壊しなかった「生存戦略」。<br>
+      プロの療育・教育ノウハウを家庭サイズに落とし込んだ5つのWebツールです。
     </p>
 
-    <div class="seg-btns">
+    <ul class="fv-get-list">
+      <li>子どもが自走する「仕組み」が手に入る</li>
+      <li>感情が爆発しない声かけ設計（100フレーズ収録）</li>
+      <li>「困った行動」の背景を見える化する観察ノート</li>
+      <li>毎朝10分で回るタスク＆習慣トラッカー</li>
+    </ul>
+
+    <div class="fv-cta-group">
+      <a class="fv-cta-primary" href="#sec-trial">今すぐ無料で中身を見る →</a>
+      <a class="fv-cta-secondary" href="#sec-packages">セット商品を確認する</a>
+    </div>
+
+    <div class="seg-btns" style="margin-top:28px;">
       <a class="seg-btn s-gray" href="#sec-packages">🌀 発達グレーゾーン向け</a>
       <a class="seg-btn s-home" href="#sec-packages">🏠 不登校・在宅向け</a>
       <a class="seg-btn s-exam" href="#sec-packages">✏️ お受験準備向け</a>
     </div>
 
-    <div class="scroll-hint">
-      <span>↓</span>
-      <small>セット商品を見る</small>
-    </div>
+  </section>
 
+  <!-- ══════════ ★ STORY ══════════ -->
+  <section class="story-section reveal">
+    <div class="story-eyebrow">Story</div>
+    <div class="story-quote">
+      あの時、私は壊れかけた。<br>
+      でも、<em>壊れなかった</em>。<br><br>
+      理由はシンプルです——<br>
+      「仕組みに逃げたから」
+    </div>
+    <p class="story-body">
+      深夜2時、子どもが眠れずに泣いている横で、私は462日分の記録を見返していた。<br>
+      発達グレーゾーンの診断、不登校、そして受験——同時にやってきた嵐の中で、
+      感情で動く限り必ず崩れる、と気づいた。<br><br>
+      だから仕組みを作った。声かけを変えた。観察を記録にした。<br>
+      その設計を、すべてここに公開します。
+    </p>
   </section>
 
   <!-- ══════════ ★ TRIAL ══════════ -->
   <section class="trial-section reveal" id="sec-trial">
 
-    <div class="trial-eyebrow">迷っている方へ</div>
+    <div class="trial-eyebrow">まず、触れてから決めてください</div>
 
     <div class="trial-lead">
-      このツールが自分に合うか<br>
-      不安な方のために——
+      「これ、自分に合うかな？」<br>
+      という不安のために——
     </div>
 
     <p class="trial-sub">
-      一部機能を開放した<strong>体験版</strong>を用意しました。<br>
-      まず触れてから、決めてください。
+      5つすべての<strong>体験版</strong>を無料で開放しています。<br>
+      読むだけでは意味がありません——触れて初めて、変化が始まります。
     </p>
 
     <!-- 体験版カード一覧 -->
@@ -975,7 +1113,7 @@
                font-weight:bold;
                box-shadow:0 4px 10px rgba(0,0,0,0.1);
              ">
-            "できる"を育てるサポートツールセットを購入する
+            "できる"を育てるセットを受け取る →
           </a>
         </div>
         <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
@@ -1017,7 +1155,7 @@
                font-weight:bold;
                box-shadow:0 4px 10px rgba(0,0,0,0.1);
              ">
-            不登校・在宅セットを購入する
+            今すぐ崩壊しない設計を受け取る →
           </a>
         </div>
         <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
@@ -1045,7 +1183,7 @@
         </div>
         <p class="price-guarantee">※一度のご購入で永久利用可能　※追加課金なし</p>
         <a class="pkg-btn" href="https://buy.stripe.com/9B63cxebs8CCgz81lJ73G03" target="_blank">
-          購入する <span class="pkg-btn-arrow">→</span>
+          受験準備セットを受け取る <span class="pkg-btn-arrow">→</span>
         </a>
         <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
       </div>
@@ -1170,7 +1308,7 @@
       <span class="pro-app-chip">💬 対話プロンプト</span>
     </div>
     <a class="pro-pack-btn" href="https://buy.stripe.com/8x28wR9Vc4mmaaKe8v73G01" target="_blank">
-      5アプリまとめパックを購入する →
+      5アプリ全部まとめて受け取る →
     </a>
     <p class="after-purchase-note" style="color:rgba(255,255,255,0.45); margin-top:16px;">※Stripe決済後、専用ページに自動遷移します。アプリURL＋起動パスワードをその場で確認できます。メールにも同内容をお送りします。</p>
   </section>
@@ -1213,6 +1351,20 @@
       <span class="flow-badge">✔ スマホ・PC対応</span>
       <span class="flow-badge">✔ 永久利用可</span>
       <span class="flow-badge">✔ 追加課金なし</span>
+    </div>
+  </section>
+
+  <!-- ══════════ CLOSING ══════════ -->
+  <section class="closing-section reveal">
+    <div class="closing-quote">
+      あなたが悪いんじゃない。<br>
+      <em>設計がなかっただけです。</em><br>
+      ここからやり直せます。
+    </div>
+    <p class="closing-sub">読者は"共感"では買わない。"解決の確信"で買う。</p>
+    <div class="closing-cta-group">
+      <a class="fv-cta-primary" href="#sec-trial">今すぐ無料で中身を見る →</a>
+      <a class="fv-cta-secondary" href="#sec-packages">セット商品を確認する</a>
     </div>
   </section>
 
