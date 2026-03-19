@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>つたえる | survival_mam</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #faf7f2;
+  --warm: #f5efe6;
+  --warm2: #ede4d6;
+  --accent: #c4814a;
+  --accent-light: #e8c9a8;
+  --muted: #8a7968;
+  --border: #ddd5c5;
+  --success: #6a9e7a;
+  --info: #4a7ac4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ヘッダー */
+.app-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 18px 20px 14px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-header h1 {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 18px;
+  letter-spacing: .2em;
+  font-weight: 600;
+}
+.app-header p {
+  font-size: 10px;
+  color: var(--accent-light);
+  letter-spacing: .15em;
+  margin-top: 3px;
+}
+
+/* タブ */
+.tab-nav {
+  display: flex;
+  overflow-x: auto;
+  background: var(--ink);
+  border-top: 1px solid #2d2820;
+  scrollbar-width: none;
+  position: sticky;
+  top: 68px;
+  z-index: 99;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Noto Sans JP', sans-serif;
+  letter-spacing: .05em;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.tab-btn.active {
+  color: var(--accent-light);
+  border-bottom-color: var(--accent);
+}
+
+/* パネル */
+.tab-panel { display: none; padding: 20px 16px 80px; max-width: 600px; margin: 0 auto; }
+.tab-panel.active { display: block; }
+
+.section-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.section-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  letter-spacing: .05em;
+}
+
+/* カード */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: .1em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+/* ボタン */
+.btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Noto Sans JP', sans-serif;
+  cursor: pointer;
+  letter-spacing: .05em;
+  transition: all .15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #b5703a; }
+.btn-secondary { background: var(--warm); color: var(--ink); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--warm2); }
+.btn-dark { background: var(--ink); color: var(--paper); }
+.btn-dark:hover { background: #2d2820; }
+.btn-full { width: 100%; text-align: center; padding: 12px; }
+
+.action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.action-row .btn { flex: 1; min-width: 100px; }
+
+/* バッジ */
+.save-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity .3s;
+  margin-top: 8px;
+}
+.save-badge.show { opacity: 1; }
+
+/* トースト */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  transition: all .3s;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══════════════════════════════
+   タブ1：当番シート
+══════════════════════════════ */
+.toban-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 320px;
+}
+.toban-table th {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 6px;
+  text-align: center;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: .08em;
+}
+.toban-table th:first-child { text-align: left; padding-left: 10px; }
+.toban-table td {
+  padding: 5px 3px;
+  border-bottom: 1px solid var(--warm);
+  vertical-align: middle;
+}
+.toban-table td:first-child { padding-left: 10px; color: var(--muted); font-size: 11px; }
+.toban-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--ink);
+  padding: 4px 2px;
+  border-radius: 4px;
+  transition: background .15s;
+}
+.toban-input:focus { outline: none; background: var(--accent-light); }
+.toban-input.wife { color: var(--accent); font-weight: 500; }
+.toban-input.husband { color: var(--info); font-weight: 500; }
+.toban-input.role { text-align: left; color: var(--ink); }
+
+#toban-preview { margin-top: 14px; display: none; }
+#toban-preview img { width: 100%; border-radius: 8px; border: 1px solid var(--border); }
+#toban-preview a {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  padding: 10px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+/* 画像化用（非表示） */
+#toban-for-img {
+  position: fixed; left: -9999px; top: 0;
+  background: #fff; padding: 24px; width: 460px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+#toban-for-img .img-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 15px; margin-bottom: 3px; color: #1a1410;
+}
+#toban-for-img .img-sub { font-size: 10px; color: #8a7968; margin-bottom: 12px; }
+#toban-for-img table { width: 100%; border-collapse: collapse; font-size: 12px; }
+#toban-for-img th {
+  background: #1a1410; color: #faf7f2;
+  padding: 7px 8px; text-align: center; font-weight: 400;
+}
+#toban-for-img th:first-child { text-align: left; }
+#toban-for-img td {
+  padding: 7px 8px; border-bottom: 1px solid #f0ebe0;
+  text-align: center; font-size: 12px;
+}
+#toban-for-img td:first-child { text-align: left; color: #8a7968; }
+#toban-for-img .img-footer { margin-top: 10px; font-size: 9px; color: #8a7968; text-align: right; }
+
+/* ══════════════════════════════
+   タブ2：動詞→名詞変換
+══════════════════════════════ */
+.henkan-row {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.henkan-input {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 10px;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--warm);
+  color: var(--ink);
+  width: 100%;
+}
+.henkan-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+.henkan-arrow {
+  text-align: center;
+  font-size: 16px;
+  color: var(--accent);
+}
+.hint-list {
+  margin-top: 6px;
+  border-top: 1px solid var(--warm2);
+  padding-top: 10px;
+}
+.hint-item {
+  display: grid;
+  grid-template-columns: 1fr 20px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--warm);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background .1s;
+}
+.hint-item:hover { background: var(--warm); }
+.hint-item:last-child { border-bottom: none; }
+.hint-before { color: var(--muted); }
+.hint-after { color: var(--accent); font-weight: 500; }
+.hint-arr { text-align: center; color: var(--border); font-size: 12px; }
+.hint-label {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  letter-spacing: .08em;
+}
+
+/* ══════════════════════════════
+   タブ3：家事カード
+══════════════════════════════ */
+.kaji-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.kaji-header {
+  background: var(--warm);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.kaji-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+.kaji-toggle { color: var(--muted); font-size: 12px; }
+.kaji-body { display: none; padding: 12px 14px; }
+.kaji-body.open { display: block; }
+.kaji-section { margin-bottom: 10px; }
+.kaji-section-title {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .1em;
+  margin-bottom: 6px;
+}
+.kaji-task-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--warm);
+}
+.kaji-task-row:last-child { border-bottom: none; }
+.kaji-task-name { flex: 1; font-size: 12px; }
+.kaji-assign {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 11px;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--warm);
+  color: var(--ink);
+  width: 64px;
+  text-align: center;
+}
+.kaji-assign:focus { outline: none; border-color: var(--accent); }
+
+/* ══════════════════════════════
+   タブ4：前夜メモ
+══════════════════════════════ */
+.memo-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.memo-textarea {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--warm);
+  color: var(--ink);
+  resize: none;
+  min-height: 44px;
+}
+.memo-textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+.memo-del {
+  background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  font-size: 18px; padding: 6px; line-height: 1;
+}
+.add-btn {
+  background: none;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all .15s;
+  width: 100%;
+  margin-top: 4px;
+}
+.add-btn:hover { background: var(--warm); border-color: var(--accent); color: var(--accent); }
+
+/* 画像化用メモ */
+#memo-for-img {
+  position: fixed; left: -9999px; top: 0;
+  background: #fff; padding: 24px; width: 420px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+#memo-for-img .img-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 15px; margin-bottom: 12px; color: #1a1410;
+}
+#memo-for-img .memo-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0ebe0;
+  font-size: 13px;
+  color: #1a1410;
+  line-height: 1.6;
+}
+#memo-for-img .memo-item:last-child { border-bottom: none; }
+#memo-for-img .img-footer { margin-top: 12px; font-size: 9px; color: #8a7968; text-align: right; }
+
+/* ══════════════════════════════
+   タブ5：感情テンプレ
+══════════════════════════════ */
+.template-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  transition: border-color .15s;
+}
+.template-card:hover { border-color: var(--accent); }
+.template-label {
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: .1em;
+  margin-bottom: 8px;
+}
+.template-fields { display: flex; flex-direction: column; gap: 8px; }
+.template-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.template-prefix {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  font-family: 'Shippori Mincho', serif;
+}
+.template-fill {
+  flex: 1;
+  min-width: 80px;
+  border: none;
+  border-bottom: 1.5px solid var(--border);
+  background: transparent;
+  padding: 4px 6px;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--ink);
+}
+.template-fill:focus { outline: none; border-bottom-color: var(--accent); }
+.template-result {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--warm);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ink);
+  font-family: 'Shippori Mincho', serif;
+  line-height: 1.7;
+  min-height: 40px;
+  border-left: 3px solid var(--accent);
+}
+.template-actions { display: flex; gap: 8px; margin-top: 8px; }
+.template-actions .btn { flex: 1; padding: 8px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>つたえる</h1>
+  <p>survival_mam × 夫婦の伝え方ツール</p>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab(0)">当番シート</button>
+  <button class="tab-btn" onclick="switchTab(1)">名詞に変換</button>
+  <button class="tab-btn" onclick="switchTab(2)">家事カード</button>
+  <button class="tab-btn" onclick="switchTab(3)">前夜メモ</button>
+  <button class="tab-btn" onclick="switchTab(4)">気持ちを伝える</button>
+</nav>
+
+<!-- ══ 当番シート ══ -->
+<div class="tab-panel active" id="panel-0">
+  <p class="section-title">週次当番シート</p>
+  <p class="section-sub">「誰が」「何を」「いつ」——名指しで決める</p>
+
+  <div class="card">
+    <p class="card-title">今週の当番</p>
+    <div style="overflow-x:auto;">
+      <table class="toban-table" id="toban-table">
+        <thead>
+          <tr>
+            <th>役割</th>
+            <th>月</th><th>火</th><th>水</th><th>木</th><th>金</th>
+          </tr>
+        </thead>
+        <tbody id="toban-body"></tbody>
+      </table>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-secondary" onclick="addRow()">＋ 行追加</button>
+      <button class="btn btn-secondary" onclick="removeRow()">− 行削除</button>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="saveToban()">💾 保存</button>
+      <button class="btn btn-dark" onclick="genTobanImg()">📷 画像化</button>
+    </div>
+    <span class="save-badge" id="toban-badge">✓ 保存しました</span>
+    <div id="toban-preview"></div>
+  </div>
+</div>
+
+<!-- 画像化用テーブル -->
+<div id="toban-for-img">
+  <div class="img-title">週次当番シート</div>
+  <div class="img-sub">つたえる ／ survival_mam</div>
+  <table><thead><tr><th>役割</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th></tr></thead>
+  <tbody id="toban-img-body"></tbody></table>
+  <div class="img-footer">作成日：<span id="toban-img-date"></span></div>
+</div>
+
+<!-- ══ 名詞に変換 ══ -->
+<div class="tab-panel" id="panel-1">
+  <p class="section-title">動詞→名詞に変換</p>
+  <p class="section-sub">曖昧な「お願い」を、伝わる言葉に変える</p>
+
+  <div class="card">
+    <p class="card-title">自分で変換する</p>
+    <div class="henkan-row">
+      <div>
+        <div class="hint-label">動詞ベース（曖昧）</div>
+        <input class="henkan-input" id="henkan-before" placeholder="例：お風呂お願い" oninput="saveHenkan()">
+      </div>
+      <div class="henkan-arrow">→</div>
+      <div>
+        <div class="hint-label">名詞ベース（明確）</div>
+        <input class="henkan-input" id="henkan-after" placeholder="例：掃除・湯はり・着替え" oninput="saveHenkan()">
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="copyHenkan()">コピー</button>
+      <button class="btn btn-secondary" onclick="saveHenkanItem()">保存して追加</button>
+    </div>
+    <span class="save-badge" id="henkan-badge">✓ 追加しました</span>
+  </div>
+
+  <div class="card">
+    <p class="card-title">変換ヒント集（タップでコピー）</p>
+    <div class="hint-list" id="hint-list">
+      <!-- ヒントはJSで生成 -->
+    </div>
+  </div>
+
+  <div class="card" id="henkan-saved-card" style="display:none;">
+    <p class="card-title">保存した変換</p>
+    <div id="henkan-saved-list"></div>
+  </div>
+</div>
+
+<!-- ══ 家事カード ══ -->
+<div class="tab-panel" id="panel-2">
+  <p class="section-title">家事カード</p>
+  <p class="section-sub">タスクを細かく切り出して、誰が担当か書く</p>
+
+  <div id="kaji-list"></div>
+
+  <button class="add-btn" onclick="addKajiCard()">＋ 家事カードを追加</button>
+
+  <div class="action-row" style="margin-top:16px;">
+    <button class="btn btn-primary btn-full" onclick="saveKaji()">💾 すべて保存</button>
+  </div>
+  <span class="save-badge" id="kaji-badge">✓ 保存しました</span>
+</div>
+
+<!-- ══ 前夜メモ ══ -->
+<div class="tab-panel" id="panel-3">
+  <p class="section-title">前夜の1行メモ</p>
+  <p class="section-sub">翌朝の変更点を前夜に共有する。朝の「聞いてない」をなくす</p>
+
+  <div class="card">
+    <p class="card-title">明日の注意点（1人1行）</p>
+    <div id="memo-list"></div>
+    <button class="add-btn" onclick="addMemo()">＋ 1行追加</button>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="saveMemos()">💾 保存</button>
+      <button class="btn btn-dark" onclick="genMemoImg()">📷 画像化（LINE用）</button>
+    </div>
+    <span class="save-badge" id="memo-badge">✓ 保存しました</span>
+    <div id="memo-preview" style="margin-top:14px; display:none;"></div>
+  </div>
+</div>
+
+<!-- 画像化用メモ -->
+<div id="memo-for-img">
+  <div class="img-title">前夜の1行メモ</div>
+  <div id="memo-img-items"></div>
+  <div class="img-footer">つたえる ／ survival_mam ／ <span id="memo-img-date"></span></div>
+</div>
+
+<!-- ══ 気持ちを伝える ══ -->
+<div class="tab-panel" id="panel-4">
+  <p class="section-title">気持ちを伝える</p>
+  <p class="section-sub">「察して」を手放して、言葉で渡す</p>
+
+  <div id="template-list"></div>
+</div>
+
+<div class="toast" id="toast">コピーしました</div>
+
+<script>
+// ─── タブ ───
+function switchTab(i) {
+  document.querySelectorAll('.tab-panel').forEach((p,j) => p.classList.toggle('active', i===j));
+  document.querySelectorAll('.tab-btn').forEach((b,j) => b.classList.toggle('active', i===j));
+}
+
+// ─── ユーティリティ ───
+function showBadge(id) {
+  const el = document.getElementById(id);
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+function showToast(msg='コピーしました') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1800);
+}
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast());
+}
+
+// ════════════════════════════════
+//  当番シート
+// ════════════════════════════════
+const DEFAULT_TOBAN = [
+  { role: '子どもの朝食準備', days: ['妻','夫','妻','夫','妻'] },
+  { role: '着替えの介助',     days: ['夫','妻','夫','妻','夫'] },
+  { role: '保育園の荷物確認', days: ['妻','妻','夫','妻','夫'] },
+  { role: 'ゴミ出し',         days: ['—','夫','—','—','夫']  },
+  { role: '子どもの送り',     days: ['夫','妻','夫','妻','夫'] },
+];
+
+function buildToban(data) {
+  const tbody = document.getElementById('toban-body');
+  tbody.innerHTML = '';
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    const td0 = document.createElement('td');
+    const ri = document.createElement('input');
+    ri.className = 'toban-input role'; ri.value = row.role; ri.placeholder = '役割名';
+    td0.appendChild(ri); tr.appendChild(td0);
+    row.days.forEach(d => {
+      const td = document.createElement('td');
+      const inp = document.createElement('input');
+      inp.className = 'toban-input'; inp.value = d; inp.maxLength = 4;
+      inp.addEventListener('input', function(){ colorCell(this); });
+      colorCell(inp);
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+function colorCell(inp) {
+  inp.classList.remove('wife','husband');
+  if (inp.value === '妻') inp.classList.add('wife');
+  else if (inp.value === '夫') inp.classList.add('husband');
+}
+function getTobanData() {
+  return Array.from(document.querySelectorAll('#toban-body tr')).map(tr => {
+    const ins = tr.querySelectorAll('input');
+    return { role: ins[0].value, days: [ins[1].value,ins[2].value,ins[3].value,ins[4].value,ins[5].value] };
+  });
+}
+function addRow() { const d = getTobanData(); d.push({role:'',days:['','','','','']}); buildToban(d); }
+function removeRow() { const d = getTobanData(); if (d.length > 1) { d.pop(); buildToban(d); } }
+function saveToban() { localStorage.setItem('toban', JSON.stringify(getTobanData())); showBadge('toban-badge'); }
+function loadToban() {
+  const s = localStorage.getItem('toban');
+  buildToban(s ? JSON.parse(s) : DEFAULT_TOBAN);
+}
+function genTobanImg() {
+  const data = getTobanData();
+  const tbody = document.getElementById('toban-img-body');
+  tbody.innerHTML = '';
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td'); td.textContent = row.role; tr.appendChild(td);
+    row.days.forEach(d => { const td2=document.createElement('td'); td2.textContent=d||'—'; tr.appendChild(td2); });
+    tbody.appendChild(tr);
+  });
+  document.getElementById('toban-img-date').textContent = new Date().toLocaleDateString('ja-JP');
+  const el = document.getElementById('toban-for-img');
+  el.style.cssText = 'position:absolute;left:0;top:0;z-index:-1;';
+  html2canvas(el, {scale:2, backgroundColor:'#ffffff'}).then(canvas => {
+    el.style.cssText = 'position:fixed;left:-9999px;top:0;';
+    const prev = document.getElementById('toban-preview');
+    prev.style.display = 'block';
+    prev.innerHTML = '';
+    const img = document.createElement('img'); img.src = canvas.toDataURL('image/png');
+    prev.appendChild(img);
+    const a = document.createElement('a'); a.href = canvas.toDataURL('image/png');
+    a.download = '当番シート.png'; a.className = ''; a.textContent = '📥 ダウンロード（LINE送信用）';
+    a.style.cssText = 'display:block;text-align:center;margin-top:8px;padding:10px;background:#6a9e7a;color:#fff;border-radius:8px;font-size:12px;text-decoration:none;';
+    prev.appendChild(a);
+  });
+}
+
+// ════════════════════════════════
+//  動詞→名詞変換
+// ════════════════════════════════
+const HINTS = [
+  { before: 'お風呂お願い', after: '掃除・湯はり・着替えお願い' },
+  { before: '朝よろしく', after: '連絡帳と朝食お願い' },
+  { before: '片づけて', after: 'おもちゃをかごに入れて' },
+  { before: '準備して（子ども）', after: '靴下と帽子、持ってきて' },
+  { before: 'ごはんよろしく', after: '夕飯の用意お願い' },
+  { before: '洗濯やっといて', after: '洗濯・乾燥・取り込みお願い' },
+  { before: '送りお願い', after: '8時に保育園への送りお願い' },
+];
+
+function buildHints() {
+  const saved = JSON.parse(localStorage.getItem('henkan_saved') || '[]');
+  const all = [...HINTS, ...saved];
+  const list = document.getElementById('hint-list');
+  list.innerHTML = '';
+  all.forEach(h => {
+    const div = document.createElement('div');
+    div.className = 'hint-item';
+    div.innerHTML = `<span class="hint-before">${h.before}</span><span class="hint-arr">→</span><span class="hint-after">${h.after}</span>`;
+    div.onclick = () => { copyText(`${h.after}`); };
+    list.appendChild(div);
+  });
+  renderSavedHenkan(saved);
+}
+function renderSavedHenkan(saved) {
+  const card = document.getElementById('henkan-saved-card');
+  const list = document.getElementById('henkan-saved-list');
+  if (!saved.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  list.innerHTML = '';
+  saved.forEach((h, i) => {
+    const div = document.createElement('div');
+    div.className = 'hint-item';
+    div.innerHTML = `<span class="hint-before">${h.before}</span><span class="hint-arr">→</span><span class="hint-after">${h.after}</span>`;
+    list.appendChild(div);
+  });
+}
+function copyHenkan() {
+  const a = document.getElementById('henkan-before').value;
+  const b = document.getElementById('henkan-after').value;
+  if (b) copyText(b); else copyText(a);
+}
+function saveHenkan() { /* リアルタイム保存不要 */ }
+function saveHenkanItem() {
+  const before = document.getElementById('henkan-before').value.trim();
+  const after = document.getElementById('henkan-after').value.trim();
+  if (!before && !after) return;
+  const saved = JSON.parse(localStorage.getItem('henkan_saved') || '[]');
+  saved.push({ before, after });
+  localStorage.setItem('henkan_saved', JSON.stringify(saved));
+  document.getElementById('henkan-before').value = '';
+  document.getElementById('henkan-after').value = '';
+  showBadge('henkan-badge');
+  buildHints();
+}
+
+// ════════════════════════════════
+//  家事カード
+// ════════════════════════════════
+const DEFAULT_KAJI = [
+  {
+    name: 'お風呂',
+    sections: [
+      { title: '入浴前', tasks: ['お風呂掃除','お湯はり'] },
+      { title: '入浴後', tasks: ['着替えセット準備','保湿＆パジャマ着替え'] },
+    ]
+  },
+  {
+    name: '朝の準備',
+    sections: [
+      { title: '子ども', tasks: ['着替えの介助','朝食の用意','保育園荷物確認'] },
+      { title: '連絡・確認', tasks: ['連絡帳の記入','体温チェック'] },
+    ]
+  },
+];
+
+function buildKaji(data) {
+  const list = document.getElementById('kaji-list');
+  list.innerHTML = '';
+  data.forEach((card, ci) => {
+    const div = document.createElement('div');
+    div.className = 'kaji-card';
+    let sectionsHTML = '';
+    card.sections.forEach((sec, si) => {
+      let tasksHTML = sec.tasks.map((task, ti) => `
+        <div class="kaji-task-row">
+          <span class="kaji-task-name">${task}</span>
+          <input class="kaji-assign" data-ci="${ci}" data-si="${si}" data-ti="${ti}"
+            value="${sec.assigns?.[ti]||''}" placeholder="担当" maxlength="4" oninput="saveKajiInline(this)">
+        </div>
+      `).join('');
+      sectionsHTML += `
+        <div class="kaji-section">
+          <div class="kaji-section-title">${sec.title}</div>
+          ${tasksHTML}
+        </div>`;
+    });
+    div.innerHTML = `
+      <div class="kaji-header" onclick="toggleKaji(this)">
+        <span class="kaji-name">${card.name}</span>
+        <span class="kaji-toggle">▼</span>
+      </div>
+      <div class="kaji-body open">${sectionsHTML}</div>`;
+    list.appendChild(div);
+  });
+}
+function toggleKaji(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+  header.querySelector('.kaji-toggle').textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+function saveKajiInline(inp) {
+  const data = JSON.parse(localStorage.getItem('kaji') || JSON.stringify(DEFAULT_KAJI));
+  const ci = +inp.dataset.ci, si = +inp.dataset.si, ti = +inp.dataset.ti;
+  if (!data[ci].sections[si].assigns) data[ci].sections[si].assigns = [];
+  data[ci].sections[si].assigns[ti] = inp.value;
+  localStorage.setItem('kaji', JSON.stringify(data));
+}
+function saveKaji() { showBadge('kaji-badge'); }
+function addKajiCard() {
+  const data = JSON.parse(localStorage.getItem('kaji') || JSON.stringify(DEFAULT_KAJI));
+  const name = prompt('家事カードの名前を入力してください');
+  if (!name) return;
+  data.push({ name, sections: [{ title: '手順', tasks: ['タスク1','タスク2'] }] });
+  localStorage.setItem('kaji', JSON.stringify(data));
+  buildKaji(data);
+}
+function loadKaji() {
+  const s = localStorage.getItem('kaji');
+  buildKaji(s ? JSON.parse(s) : DEFAULT_KAJI);
+}
+
+// ════════════════════════════════
+//  前夜メモ
+// ════════════════════════════════
+function addMemo(text='') {
+  const list = document.getElementById('memo-list');
+  const row = document.createElement('div');
+  row.className = 'memo-row';
+  row.innerHTML = `<textarea class="memo-textarea" rows="1" placeholder="例：明日は8時出発。娘の歯科検診あり">${text}</textarea><button class="memo-del" onclick="this.parentElement.remove();saveMemos()">×</button>`;
+  list.appendChild(row);
+}
+function saveMemos() {
+  const vals = Array.from(document.querySelectorAll('#memo-list .memo-textarea')).map(t => t.value);
+  localStorage.setItem('memos', JSON.stringify(vals));
+  showBadge('memo-badge');
+}
+function loadMemos() {
+  const s = localStorage.getItem('memos');
+  const vals = s ? JSON.parse(s) : [];
+  if (!vals.length) { addMemo(); return; }
+  vals.forEach(v => addMemo(v));
+}
+function genMemoImg() {
+  const items = Array.from(document.querySelectorAll('#memo-list .memo-textarea')).map(t => t.value).filter(Boolean);
+  const container = document.getElementById('memo-img-items');
+  container.innerHTML = '';
+  items.forEach(text => {
+    const div = document.createElement('div');
+    div.className = 'memo-item';
+    div.textContent = text;
+    container.appendChild(div);
+  });
+  document.getElementById('memo-img-date').textContent = new Date().toLocaleDateString('ja-JP');
+  const el = document.getElementById('memo-for-img');
+  el.style.cssText = 'position:absolute;left:0;top:0;z-index:-1;';
+  html2canvas(el, {scale:2, backgroundColor:'#ffffff'}).then(canvas => {
+    el.style.cssText = 'position:fixed;left:-9999px;top:0;';
+    const prev = document.getElementById('memo-preview');
+    prev.style.display = 'block';
+    prev.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.style.cssText = 'width:100%;border-radius:8px;border:1px solid #ddd5c5;';
+    prev.appendChild(img);
+    const a = document.createElement('a'); a.href = canvas.toDataURL('image/png');
+    a.download = '前夜メモ.png'; a.textContent = '📥 ダウンロード（LINE送信用）';
+    a.style.cssText = 'display:block;text-align:center;margin-top:8px;padding:10px;background:#6a9e7a;color:#fff;border-radius:8px;font-size:12px;text-decoration:none;';
+    prev.appendChild(a);
+  });
+}
+
+// ════════════════════════════════
+//  感情テンプレ
+// ════════════════════════════════
+const TEMPLATES = [
+  {
+    label: '依頼テンプレ',
+    pattern: '今日は{状況}だから、{お願いしたいこと}お願いできる？',
+    fields: ['状況', 'お願いしたいこと'],
+    example: '今日は限界ギリギリだから、寝かしつけお願いできる？'
+  },
+  {
+    label: '気持ち共有テンプレ',
+    pattern: '今日{出来事}でしんどかったから、少しだけ{ほしいもの}がほしい',
+    fields: ['出来事', 'ほしいもの'],
+    example: '今日子どもの機嫌が悪くてしんどかったから、少しだけひとりの時間がほしい'
+  },
+  {
+    label: '感謝テンプレ',
+    pattern: '今日{相手がしてくれたこと}してくれたの、本当に助かった。ありがとう',
+    fields: ['相手がしてくれたこと'],
+    example: '今日ゴミ出ししてくれたの、本当に助かった。ありがとう'
+  },
+  {
+    label: 'タスク明示テンプレ',
+    pattern: '{タスク名}お願い。{具体的な範囲}まで含めてもらえると助かる',
+    fields: ['タスク名', '具体的な範囲'],
+    example: 'お風呂お願い。掃除・湯はり・着替えまで含めてもらえると助かる'
+  },
+];
+
+function buildTemplates() {
+  const list = document.getElementById('template-list');
+  list.innerHTML = '';
+  TEMPLATES.forEach((tmpl, ti) => {
+    const saved = JSON.parse(localStorage.getItem(`tmpl_${ti}`) || '{}');
+    const div = document.createElement('div');
+    div.className = 'template-card';
+    const fieldsHTML = tmpl.fields.map((f, fi) => `
+      <div class="template-row">
+        <span class="template-prefix">${getPrefix(tmpl.pattern, fi)}</span>
+        <input class="template-fill" id="tf-${ti}-${fi}" placeholder="${f}"
+          value="${saved[fi]||''}" oninput="updateResult(${ti})">
+      </div>
+    `).join('');
+    div.innerHTML = `
+      <div class="template-label">${tmpl.label}</div>
+      <div class="template-fields">${fieldsHTML}</div>
+      <div class="template-result" id="tr-${ti}">${tmpl.example}</div>
+      <div class="template-actions">
+        <button class="btn btn-primary" onclick="copyTemplate(${ti})">コピー</button>
+        <button class="btn btn-secondary" onclick="clearTemplate(${ti})">クリア</button>
+      </div>`;
+    list.appendChild(div);
+    updateResult(ti);
+  });
+}
+
+function getPrefix(pattern, fieldIndex) {
+  const parts = pattern.split(/\{[^}]+\}/);
+  return parts[fieldIndex] || '';
+}
+
+function updateResult(ti) {
+  const tmpl = TEMPLATES[ti];
+  let result = tmpl.pattern;
+  const vals = {};
+  tmpl.fields.forEach((f, fi) => {
+    const inp = document.getElementById(`tf-${ti}-${fi}`);
+    const val = inp ? inp.value.trim() : '';
+    vals[fi] = val;
+    result = result.replace(`{${f}}`, val || `＿＿`);
+  });
+  const el = document.getElementById(`tr-${ti}`);
+  if (el) el.textContent = result;
+  localStorage.setItem(`tmpl_${ti}`, JSON.stringify(vals));
+}
+
+function copyTemplate(ti) {
+  const el = document.getElementById(`tr-${ti}`);
+  if (el) copyText(el.textContent);
+}
+
+function clearTemplate(ti) {
+  TEMPLATES[ti].fields.forEach((f, fi) => {
+    const inp = document.getElementById(`tf-${ti}-${fi}`);
+    if (inp) inp.value = '';
+  });
+  localStorage.removeItem(`tmpl_${ti}`);
+  updateResult(ti);
+}
+
+// ════════════════════════════════
+//  初期化
+// ════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  loadToban();
+  buildHints();
+  loadKaji();
+  loadMemos();
+  buildTemplates();
+});
+</script>
+</body>
+</html>
