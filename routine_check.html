@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>朝の10分ルーティン チェック表</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fff9f3;
+    --sand: #e8ddd0;
+    --clay: #c9a882;
+    --terra: #a07050;
+    --forest: #5a7a5e;
+    --forest-light: #7a9a7e;
+    --ink: #2d2520;
+    --ink-light: #5a4e46;
+    --accent: #d4876a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    padding: 32px 0 24px;
+    border-bottom: 1px solid var(--sand);
+    margin-bottom: 28px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--clay);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .header h1 span {
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink-light);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  /* 週設定 */
+  .week-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--warm-white);
+    border: 1px solid var(--sand);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: var(--ink-light);
+  }
+
+  .week-bar input[type="date"] {
+    border: none;
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    color: var(--ink);
+    outline: none;
+    flex: 1;
+  }
+
+  .week-bar .sep {
+    color: var(--sand);
+  }
+
+  /* セクション */
+  .section {
+    background: var(--warm-white);
+    border: 1px solid var(--sand);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--clay);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+  }
+
+  /* ステップ入力 */
+  .step-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .step-label {
+    width: 52px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--clay);
+    flex-shrink: 0;
+  }
+
+  .step-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .step-input:focus {
+    border-bottom-color: var(--clay);
+  }
+
+  .step-input::placeholder {
+    color: var(--sand);
+    font-size: 11px;
+  }
+
+  /* チェック表 */
+  .check-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .check-table th {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--clay);
+    font-weight: 400;
+    padding: 0 0 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--sand);
+  }
+
+  .check-table th:first-child {
+    text-align: left;
+    width: 32px;
+  }
+
+  .check-table td {
+    padding: 8px 2px;
+    text-align: center;
+    border-bottom: 1px solid var(--cream);
+    vertical-align: middle;
+  }
+
+  .check-table td:first-child {
+    font-size: 11px;
+    color: var(--ink-light);
+    text-align: left;
+    letter-spacing: 0.05em;
+  }
+
+  .check-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* カスタムチェックボックス */
+  .cb-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cb-wrap input[type="checkbox"] {
+    display: none;
+  }
+
+  .cb-box {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--sand);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+  }
+
+  .cb-wrap input:checked + .cb-box {
+    background: var(--forest);
+    border-color: var(--forest);
+  }
+
+  .cb-wrap input:checked + .cb-box::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  /* 今日のひと言 */
+  .day-word {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 10px;
+    color: var(--ink);
+    padding: 2px 0;
+    outline: none;
+    text-align: center;
+  }
+
+  .day-word:focus {
+    border-bottom-color: var(--clay);
+  }
+
+  /* ふりかえり */
+  .review-row {
+    margin-bottom: 12px;
+  }
+
+  .review-label {
+    font-size: 10px;
+    color: var(--clay);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .review-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .review-input:focus {
+    border-bottom-color: var(--clay);
+  }
+
+  .review-input::placeholder {
+    color: var(--sand);
+    font-size: 11px;
+  }
+
+  /* 保存ボタン */
+  .save-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: background 0.2s;
+  }
+
+  .save-btn:active { background: var(--terra); }
+
+  .reset-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--clay);
+    border: 1px solid var(--sand);
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:active { background: var(--sand); }
+
+  .saved-msg {
+    text-align: center;
+    font-size: 11px;
+    color: var(--forest);
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    letter-spacing: 0.1em;
+  }
+
+  .saved-msg.show { opacity: 1; }
+
+  /* 出発前チェック */
+  .depart-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .depart-num {
+    font-size: 10px;
+    color: var(--clay);
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  .depart-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .depart-input:focus { border-bottom-color: var(--clay); }
+
+  /* 曜日ごとの出発チェック列 */
+  .depart-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+  }
+
+  .mini-cb {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--sand);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+  }
+
+  .mini-cb.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .mini-cb.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 9px;
+    line-height: 1;
+  }
+
+  .th-depart { font-size: 8px !important; }
+
+  /* フッター */
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--clay);
+    letter-spacing: 0.1em;
+    margin-top: 32px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-sub">survival_mom_notes</div>
+    <h1>10 min Routine
+      <span>朝の10分ルーティン　1週間チェック表</span>
+    </h1>
+  </div>
+
+  <!-- 週設定 -->
+  <div class="week-bar">
+    <span>週：</span>
+    <input type="date" id="weekStart">
+    <span class="sep">〜</span>
+    <input type="date" id="weekEnd">
+  </div>
+
+  <!-- 基本3ステップ -->
+  <div class="section">
+    <div class="section-title">基本の3ステップ</div>
+    <div class="step-row">
+      <span class="step-label">STEP 1</span>
+      <input class="step-input" id="step1" type="text" placeholder="例）起きたら水→朝食セット">
+    </div>
+    <div class="step-row">
+      <span class="step-label">STEP 2</span>
+      <input class="step-input" id="step2" type="text" placeholder="例）子どもの身支度（かご1人1つ）">
+    </div>
+    <div class="step-row">
+      <span class="step-label">STEP 3</span>
+      <input class="step-input" id="step3" type="text" placeholder="例）出発前チェック（3項目）">
+    </div>
+  </div>
+
+  <!-- 出発前チェック -->
+  <div class="section">
+    <div class="section-title">出発前チェック（3つまで）</div>
+    <div class="depart-row">
+      <span class="depart-num">①</span>
+      <input class="depart-input" id="dep1" type="text" placeholder="例）ランドセル">
+    </div>
+    <div class="depart-row">
+      <span class="depart-num">②</span>
+      <input class="depart-input" id="dep2" type="text" placeholder="例）水筒">
+    </div>
+    <div class="depart-row">
+      <span class="depart-num">③</span>
+      <input class="depart-input" id="dep3" type="text" placeholder="例）ハンカチ・マスク">
+    </div>
+  </div>
+
+  <!-- 1週間チェック表 -->
+  <div class="section">
+    <div class="section-title">1週間チェック</div>
+    <table class="check-table" id="weekTable">
+      <thead>
+        <tr>
+          <th></th>
+          <th>S1</th>
+          <th>S2</th>
+          <th>S3</th>
+          <th class="th-depart">出発</th>
+          <th>ひと言</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- 週のふりかえり -->
+  <div class="section">
+    <div class="section-title">週のふりかえり</div>
+    <div class="review-row">
+      <div class="review-label">よかったこと（1つ）</div>
+      <input class="review-input" id="rev1" type="text" placeholder="小さくてもOK">
+    </div>
+    <div class="review-row">
+      <div class="review-label">しんどかった場面</div>
+      <input class="review-input" id="rev2" type="text" placeholder="正直に書く">
+    </div>
+    <div class="review-row">
+      <div class="review-label">来週ためしてみたい小さな工夫</div>
+      <input class="review-input" id="rev3" type="text" placeholder="1つだけ">
+    </div>
+  </div>
+
+  <button class="save-btn" onclick="saveAll()">保存する</button>
+  <button class="reset-btn" onclick="resetWeek()">今週のチェックをリセット</button>
+  <div class="saved-msg" id="savedMsg">保存しました ✓</div>
+
+  <div class="footer">survival_mom_notes</div>
+</div>
+
+<script>
+const DAYS = ['月','火','水','木','金','土','日'];
+const KEY = 'routine_v1';
+
+function buildTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  DAYS.forEach((day, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${day}</td>
+      <td><div class="cb-wrap"><input type="checkbox" id="s1_${i}"><label class="cb-box" for="s1_${i}"></label></div></td>
+      <td><div class="cb-wrap"><input type="checkbox" id="s2_${i}"><label class="cb-box" for="s2_${i}"></label></div></td>
+      <td><div class="cb-wrap"><input type="checkbox" id="s3_${i}"><label class="cb-box" for="s3_${i}"></label></div></td>
+      <td>
+        <div class="depart-cell">
+          <div class="mini-cb" id="dc1_${i}" onclick="toggleMini(this)"></div>
+          <div class="mini-cb" id="dc2_${i}" onclick="toggleMini(this)"></div>
+          <div class="mini-cb" id="dc3_${i}" onclick="toggleMini(this)"></div>
+        </div>
+      </td>
+      <td><input class="day-word" id="word_${i}" type="text" maxlength="12" placeholder="10秒で"></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleMini(el) {
+  el.classList.toggle('checked');
+  autoSave();
+}
+
+function getData() {
+  const checks = [];
+  const minis = [];
+  const words = [];
+  for (let i = 0; i < 7; i++) {
+    checks.push([
+      document.getElementById(`s1_${i}`)?.checked || false,
+      document.getElementById(`s2_${i}`)?.checked || false,
+      document.getElementById(`s3_${i}`)?.checked || false,
+    ]);
+    minis.push([
+      document.getElementById(`dc1_${i}`)?.classList.contains('checked') || false,
+      document.getElementById(`dc2_${i}`)?.classList.contains('checked') || false,
+      document.getElementById(`dc3_${i}`)?.classList.contains('checked') || false,
+    ]);
+    words.push(document.getElementById(`word_${i}`)?.value || '');
+  }
+  return {
+    weekStart: document.getElementById('weekStart').value,
+    weekEnd: document.getElementById('weekEnd').value,
+    step1: document.getElementById('step1').value,
+    step2: document.getElementById('step2').value,
+    step3: document.getElementById('step3').value,
+    dep1: document.getElementById('dep1').value,
+    dep2: document.getElementById('dep2').value,
+    dep3: document.getElementById('dep3').value,
+    rev1: document.getElementById('rev1').value,
+    rev2: document.getElementById('rev2').value,
+    rev3: document.getElementById('rev3').value,
+    checks, minis, words
+  };
+}
+
+function setData(d) {
+  if (!d) return;
+  document.getElementById('weekStart').value = d.weekStart || '';
+  document.getElementById('weekEnd').value = d.weekEnd || '';
+  document.getElementById('step1').value = d.step1 || '';
+  document.getElementById('step2').value = d.step2 || '';
+  document.getElementById('step3').value = d.step3 || '';
+  document.getElementById('dep1').value = d.dep1 || '';
+  document.getElementById('dep2').value = d.dep2 || '';
+  document.getElementById('dep3').value = d.dep3 || '';
+  document.getElementById('rev1').value = d.rev1 || '';
+  document.getElementById('rev2').value = d.rev2 || '';
+  document.getElementById('rev3').value = d.rev3 || '';
+  for (let i = 0; i < 7; i++) {
+    if (d.checks?.[i]) {
+      ['s1','s2','s3'].forEach((s, j) => {
+        const el = document.getElementById(`${s}_${i}`);
+        if (el) el.checked = d.checks[i][j];
+      });
+    }
+    if (d.minis?.[i]) {
+      [1,2,3].forEach((n, j) => {
+        const el = document.getElementById(`dc${n}_${i}`);
+        if (el) el.classList.toggle('checked', d.minis[i][j]);
+      });
+    }
+    if (d.words?.[i] !== undefined) {
+      const el = document.getElementById(`word_${i}`);
+      if (el) el.value = d.words[i];
+    }
+  }
+}
+
+function saveAll() {
+  localStorage.setItem(KEY, JSON.stringify(getData()));
+  const msg = document.getElementById('savedMsg');
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 2000);
+}
+
+function autoSave() {
+  localStorage.setItem(KEY, JSON.stringify(getData()));
+}
+
+function resetWeek() {
+  if (!confirm('今週のチェックをリセットしますか？\nステップ・チェック項目・ふりかえりは残ります。')) return;
+  const d = getData();
+  d.weekStart = ''; d.weekEnd = '';
+  d.checks = Array(7).fill([false,false,false]);
+  d.minis = Array(7).fill([false,false,false]);
+  d.words = Array(7).fill('');
+  d.rev1 = ''; d.rev2 = ''; d.rev3 = '';
+  setData(d);
+  autoSave();
+}
+
+// 入力変更時に自動保存
+document.addEventListener('change', autoSave);
+document.addEventListener('input', autoSave);
+
+// 初期化
+buildTable();
+const saved = localStorage.getItem(KEY);
+if (saved) {
+  try { setData(JSON.parse(saved)); } catch(e) {}
+}
+</script>
+</body>
+</html>

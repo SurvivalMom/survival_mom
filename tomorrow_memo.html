@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>明日の当番 1行メモ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fff9f3;
+    --sand: #e8ddd0;
+    --clay: #c9a882;
+    --terra: #a07050;
+    --forest: #5a7a5e;
+    --ink: #2d2520;
+    --ink-light: #5a4e46;
+    --accent: #d4876a;
+    --accent-soft: #f0e0d6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .wrapper {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--sand);
+    margin-bottom: 24px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--clay);
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .header h1 span {
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink-light);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  /* 入力フォーム */
+  .section {
+    background: var(--warm-white);
+    border: 1px solid var(--sand);
+    border-radius: 16px;
+    padding: 18px 18px;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--clay);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+  }
+
+  .date-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--ink-light);
+  }
+
+  .date-row input[type="date"] {
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 2px 2px;
+    outline: none;
+  }
+
+  .youbi-row {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink-light);
+  }
+
+  .youbi-sel {
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    padding: 2px 0;
+  }
+
+  /* タスク行 */
+  .task-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .task-num {
+    font-size: 10px;
+    color: var(--clay);
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  .task-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .task-input:focus { border-bottom-color: var(--clay); }
+  .task-input::placeholder { color: var(--sand); font-size: 11px; }
+
+  /* 担当欄 */
+  .assign-block {
+    margin-bottom: 12px;
+  }
+
+  .assign-who {
+    font-size: 11px;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .assign-name {
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    color: var(--ink);
+    padding: 1px 2px;
+    outline: none;
+    width: 80px;
+  }
+
+  .assign-content {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-left: 4px;
+  }
+
+  .assign-content:focus { border-bottom-color: var(--clay); }
+  .assign-content::placeholder { color: var(--sand); font-size: 11px; }
+
+  .divider {
+    height: 1px;
+    background: var(--sand);
+    margin: 12px 0;
+  }
+
+  /* 子ども欄 */
+  .child-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .child-label {
+    font-size: 11px;
+    color: var(--clay);
+    white-space: nowrap;
+    padding-top: 5px;
+    min-width: 60px;
+  }
+
+  .child-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .child-input:focus { border-bottom-color: var(--clay); }
+  .child-input::placeholder { color: var(--sand); font-size: 11px; }
+
+  /* ヒント */
+  .hint {
+    font-size: 10px;
+    color: var(--clay);
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    border-left: 2px solid var(--sand);
+    padding-left: 10px;
+    margin-top: 4px;
+  }
+
+  /* ボタン群 */
+  .btn-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .primary-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .primary-btn:active { background: var(--terra); }
+
+  .secondary-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .secondary-btn:active { background: var(--sand); }
+
+  /* プレビューモーダル */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45,37,32,0.7);
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .modal-overlay.show { display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; }
+
+  .modal-inner {
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .modal-title {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  /* カード（画像になる部分） */
+  #card {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 16px;
+    padding: 24px 22px;
+    margin-bottom: 16px;
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--sand);
+  }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .card-date {
+    font-size: 11px;
+    color: var(--clay);
+    letter-spacing: 0.05em;
+  }
+
+  .card-section-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    margin-bottom: 8px;
+    margin-top: 14px;
+  }
+
+  .card-task-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card-task-list li {
+    font-size: 13px;
+    color: var(--ink);
+    padding: 3px 0;
+    padding-left: 12px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .card-task-list li::before {
+    content: '・';
+    position: absolute;
+    left: 0;
+    color: var(--clay);
+  }
+
+  .card-task-list li.empty { display: none; }
+
+  .card-assign-box {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 6px;
+  }
+
+  .card-assign-row {
+    display: flex;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ink);
+    padding: 3px 0;
+    line-height: 1.5;
+  }
+
+  .card-assign-who {
+    color: var(--clay);
+    font-size: 11px;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+
+  .card-child-box {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+
+  .card-footer {
+    text-align: right;
+    font-size: 9px;
+    color: var(--clay);
+    margin-top: 14px;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+
+  .modal-hint {
+    font-size: 11px;
+    color: var(--clay);
+    text-align: center;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .close-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+  }
+
+  /* 保存通知 */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--forest);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--clay);
+    letter-spacing: 0.1em;
+    margin-top: 32px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-sub">survival_mom_notes</div>
+    <h1>Tomorrow's Memo
+      <span>明日の当番　1行メモ</span>
+    </h1>
+  </div>
+
+  <!-- 日付 -->
+  <div class="section">
+    <div class="section-title">日付</div>
+    <div class="date-row">
+      <span>明日：</span>
+      <input type="date" id="memoDate">
+    </div>
+    <div class="youbi-row">
+      <span>曜日：</span>
+      <select class="youbi-sel" id="memoYoubi">
+        <option value="">選択</option>
+        <option>月曜日</option><option>火曜日</option><option>水曜日</option>
+        <option>木曜日</option><option>金曜日</option><option>土曜日</option><option>日曜日</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- メインタスク -->
+  <div class="section">
+    <div class="section-title">明日のメインタスク（1〜3個）</div>
+    <div class="task-row">
+      <span class="task-num">①</span>
+      <input class="task-input" id="task1" type="text" placeholder="例）保育園送り">
+    </div>
+    <div class="task-row">
+      <span class="task-num">②</span>
+      <input class="task-input" id="task2" type="text" placeholder="例）ゴミ出し">
+    </div>
+    <div class="task-row">
+      <span class="task-num">③</span>
+      <input class="task-input" id="task3" type="text" placeholder="（任意）">
+    </div>
+  </div>
+
+  <!-- 担当 -->
+  <div class="section">
+    <div class="section-title">担当をはっきりさせる</div>
+
+    <div class="assign-block">
+      <div class="assign-who">
+        私（<input class="assign-name" id="myName" type="text" placeholder="名前">）がやること
+      </div>
+      <input class="assign-content" id="myTask" type="text" placeholder="例）子ども2人の身支度と送迎">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="assign-block">
+      <div class="assign-who">
+        あなた（<input class="assign-name" id="partnerName" type="text" placeholder="名前">）にお願いしたいこと
+      </div>
+      <input class="assign-content" id="partnerTask" type="text" placeholder="例）ゴミを出してから出勤してほしい">
+    </div>
+
+    <div class="hint">
+      「私は◯◯をするので、あなたは△△をお願いしたいです」の形にするとスムーズ。
+    </div>
+  </div>
+
+  <!-- 子ども -->
+  <div class="section">
+    <div class="section-title">子どもの予定・持ち物メモ</div>
+    <div class="child-row">
+      <span class="child-label">子どもの予定</span>
+      <input class="child-input" id="childSchedule" type="text" placeholder="例）体操着持参、お弁当の日">
+    </div>
+    <div class="child-row">
+      <span class="child-label">特記事項</span>
+      <input class="child-input" id="childNote" type="text" placeholder="例）昨夜寝るのが遅かった、熱が出そう">
+    </div>
+  </div>
+
+  <div class="btn-area">
+    <button class="primary-btn" onclick="showPreview()">📸　画像でプレビュー → 保存</button>
+    <button class="secondary-btn" onclick="clearAll()">クリア</button>
+  </div>
+
+  <div class="footer">survival_mom_notes</div>
+</div>
+
+<!-- プレビューモーダル -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-title">PREVIEW</div>
+
+    <!-- この部分が画像になる -->
+    <div id="card">
+      <div class="card-header">
+        <div class="card-title">明日の当番メモ</div>
+        <div class="card-date" id="cDate"></div>
+      </div>
+
+      <div class="card-section-label">MAIN TASKS</div>
+      <ul class="card-task-list">
+        <li id="ct1"></li>
+        <li id="ct2"></li>
+        <li id="ct3"></li>
+      </ul>
+
+      <div class="card-section-label">ASSIGNMENT</div>
+      <div class="card-assign-box">
+        <div class="card-assign-row">
+          <span class="card-assign-who" id="cMyWho">私：</span>
+          <span id="cMyTask"></span>
+        </div>
+        <div class="card-assign-row">
+          <span class="card-assign-who" id="cPartnerWho">パートナー：</span>
+          <span id="cPartnerTask"></span>
+        </div>
+      </div>
+
+      <div class="card-section-label">KIDS</div>
+      <div class="card-child-box">
+        <div id="cChildSchedule"></div>
+        <div id="cChildNote"></div>
+      </div>
+
+      <div class="card-footer">survival_mom_notes</div>
+    </div>
+    <!-- /card -->
+
+    <div class="modal-hint">長押し（またはダウンロード）で画像を保存してLINEへ📱</div>
+    <button class="primary-btn" style="margin-bottom:10px;" onclick="downloadImage()">⬇️　画像を保存する</button>
+    <button class="close-btn" onclick="closeModal()">とじる</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">保存しました ✓</div>
+
+<script>
+function v(id) { return document.getElementById(id)?.value?.trim() || ''; }
+
+function showPreview() {
+  const date = v('memoDate');
+  const youbi = v('memoYoubi') || document.getElementById('memoYoubi').options[document.getElementById('memoYoubi').selectedIndex]?.text || '';
+  
+  // 日付表示
+  let dateStr = '';
+  if (date) {
+    const d = new Date(date);
+    dateStr = `${d.getMonth()+1}月${d.getDate()}日`;
+  }
+  const youbiSel = document.getElementById('memoYoubi');
+  const youbiText = youbiSel.options[youbiSel.selectedIndex]?.text;
+  if (youbiText && youbiText !== '選択') dateStr += `（${youbiText}）`;
+  document.getElementById('cDate').textContent = dateStr;
+
+  // タスク
+  ['ct1','ct2','ct3'].forEach((id, i) => {
+    const val = v(`task${i+1}`);
+    const el = document.getElementById(id);
+    el.textContent = val;
+    el.className = val ? '' : 'empty';
+  });
+
+  // 担当
+  const myName = v('myName') || '私';
+  const partnerName = v('partnerName') || 'パートナー';
+  document.getElementById('cMyWho').textContent = `${myName}：`;
+  document.getElementById('cPartnerWho').textContent = `${partnerName}：`;
+  document.getElementById('cMyTask').textContent = v('myTask') || '—';
+  document.getElementById('cPartnerTask').textContent = v('partnerTask') || '—';
+
+  // 子ども
+  const cs = v('childSchedule');
+  const cn = v('childNote');
+  document.getElementById('cChildSchedule').textContent = cs ? `予定：${cs}` : '';
+  document.getElementById('cChildNote').textContent = cn ? `特記：${cn}` : '';
+
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function downloadImage() {
+  const card = document.getElementById('card');
+  html2canvas(card, {
+    scale: 2,
+    backgroundColor: '#fff9f3',
+    useCORS: true,
+    logging: false
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = '明日の当番メモ.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('保存しました ✓');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function clearAll() {
+  if (!confirm('入力内容をクリアしますか？')) return;
+  ['memoDate','task1','task2','task3','myName','myTask','partnerName','partnerTask','childSchedule','childNote'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('memoYoubi').selectedIndex = 0;
+}
+
+// 日付を自動で明日にセット
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const yyyy = tomorrow.getFullYear();
+const mm = String(tomorrow.getMonth()+1).padStart(2,'0');
+const dd = String(tomorrow.getDate()).padStart(2,'0');
+document.getElementById('memoDate').value = `${yyyy}-${mm}-${dd}`;
+
+// 曜日も自動セット
+const days = ['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'];
+const youbiSel = document.getElementById('memoYoubi');
+const tomorrowDay = days[tomorrow.getDay()];
+for (let i=0; i<youbiSel.options.length; i++) {
+  if (youbiSel.options[i].text === tomorrowDay) {
+    youbiSel.selectedIndex = i;
+    break;
+  }
+}
+</script>
+</body>
+</html>
