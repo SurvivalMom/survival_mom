@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ととのえ | survival_mam</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #faf7f2;
+  --warm: #f5efe6;
+  --accent: #c4814a;
+  --accent-light: #e8c9a8;
+  --muted: #8a7968;
+  --border: #ddd5c5;
+  --success: #6a9e7a;
+  --danger: #c46a4a;
+  --tab-h: 52px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ── ヘッダー ── */
+.app-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 18px 20px 14px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-header h1 {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 17px;
+  letter-spacing: .12em;
+  font-weight: 600;
+}
+.app-header p {
+  font-size: 10px;
+  color: var(--accent-light);
+  letter-spacing: .15em;
+  margin-top: 3px;
+}
+
+/* ── タブナビ ── */
+.tab-nav {
+  display: flex;
+  overflow-x: auto;
+  background: var(--ink);
+  border-top: 1px solid #333;
+  scrollbar-width: none;
+  position: sticky;
+  top: 72px;
+  z-index: 99;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Noto Sans JP', sans-serif;
+  letter-spacing: .05em;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.tab-btn.active {
+  color: var(--accent-light);
+  border-bottom-color: var(--accent);
+}
+.tab-btn .tab-num {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  color: var(--paper);
+  border-radius: 50%;
+  font-size: 9px;
+  line-height: 16px;
+  text-align: center;
+  margin-right: 4px;
+  opacity: .5;
+}
+.tab-btn.active .tab-num { opacity: 1; }
+
+/* ── タブパネル ── */
+.tab-panel { display: none; padding: 20px 16px 80px; max-width: 600px; margin: 0 auto; }
+.tab-panel.active { display: block; }
+
+/* ── セクションタイトル ── */
+.section-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: .05em;
+}
+.section-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  letter-spacing: .05em;
+}
+
+/* ── カード ── */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: .1em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+/* ── チェックリスト（第1層・第5層） ── */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--warm);
+  cursor: pointer;
+  user-select: none;
+}
+.checklist li:last-child { border-bottom: none; }
+.check-box {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+.checklist li.checked .check-box {
+  background: var(--success);
+  border-color: var(--success);
+}
+.checklist li.checked .check-box::after { content: '✓'; color: #fff; font-size: 11px; }
+.checklist li.checked .check-label { text-decoration: line-through; color: var(--muted); }
+.check-label { font-size: 13px; flex: 1; }
+.check-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.reset-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-top: 12px;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all .15s;
+}
+.reset-btn:hover { background: var(--warm); }
+
+/* ── 第2層：当番シート ── */
+.tbl-container { overflow-x: auto; }
+.toban-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 340px;
+}
+.toban-table th {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 6px;
+  text-align: center;
+  font-weight: 400;
+  letter-spacing: .08em;
+  font-size: 11px;
+}
+.toban-table th:first-child { text-align: left; padding-left: 10px; }
+.toban-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--warm);
+  vertical-align: middle;
+}
+.toban-table td:first-child {
+  font-size: 12px;
+  color: var(--muted);
+  padding-left: 10px;
+  white-space: nowrap;
+}
+.toban-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--ink);
+  padding: 4px 2px;
+  border-radius: 4px;
+  transition: background .15s;
+}
+.toban-input:focus {
+  outline: none;
+  background: var(--accent-light);
+}
+.toban-input.wife { color: #c4814a; font-weight: 500; }
+.toban-input.husband { color: #4a7ac4; font-weight: 500; }
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Noto Sans JP', sans-serif;
+  cursor: pointer;
+  letter-spacing: .05em;
+  transition: all .15s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: #b5703a; }
+.btn-secondary {
+  background: var(--warm);
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--accent-light); }
+.btn-dark {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn-dark:hover { background: #2d2820; }
+
+/* 画像プレビュー */
+#toban-preview {
+  margin-top: 16px;
+  display: none;
+}
+#toban-preview img {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+#toban-preview .dl-btn {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  padding: 10px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* 画像化用の非表示テーブル */
+#toban-for-img {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  background: #fff;
+  padding: 24px;
+  width: 480px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+#toban-for-img .img-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: #1a1410;
+}
+#toban-for-img .img-sub {
+  font-size: 10px;
+  color: #8a7968;
+  margin-bottom: 14px;
+}
+#toban-for-img table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+#toban-for-img th {
+  background: #1a1410;
+  color: #faf7f2;
+  padding: 8px 10px;
+  text-align: center;
+  font-weight: 400;
+}
+#toban-for-img th:first-child { text-align: left; }
+#toban-for-img td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0ebe0;
+  text-align: center;
+  font-size: 13px;
+}
+#toban-for-img td:first-child { text-align: left; color: #8a7968; }
+#toban-for-img .img-footer {
+  margin-top: 12px;
+  font-size: 9px;
+  color: #8a7968;
+  text-align: right;
+}
+
+/* ── 第3層：声かけ台本 ── */
+.koe-pattern {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.koe-pattern:hover { border-color: var(--accent); background: var(--warm); }
+.koe-pattern.selected { border-color: var(--accent); background: #fff8f0; }
+.koe-type {
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+.koe-situation {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.koe-text {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.koe-custom-area { margin-top: 8px; display: none; }
+.koe-custom-area.open { display: block; }
+.koe-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  resize: none;
+  background: var(--warm);
+  color: var(--ink);
+  margin-top: 6px;
+}
+.koe-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+
+.copy-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  transition: all .3s;
+  pointer-events: none;
+  z-index: 999;
+}
+.copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── 第4層：週次レビュー ── */
+.review-week {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.review-week-header {
+  background: var(--warm);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.review-week-date {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.review-week-score {
+  font-size: 11px;
+  color: var(--muted);
+}
+.review-week-body {
+  padding: 14px;
+  display: none;
+}
+.review-week-body.open { display: block; }
+.review-field {
+  margin-bottom: 12px;
+}
+.review-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  letter-spacing: .05em;
+}
+.review-textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  resize: vertical;
+  min-height: 64px;
+  background: var(--warm);
+  color: var(--ink);
+}
+.review-textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+
+.score-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.score-btn {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: none;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all .15s;
+  color: var(--ink);
+}
+.score-btn.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.add-review-btn {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all .15s;
+  letter-spacing: .05em;
+}
+.add-review-btn:hover { background: var(--warm); border-color: var(--accent); color: var(--accent); }
+
+/* ── 保存バッジ ── */
+.save-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--success);
+  color: #fff;
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.save-badge.show { opacity: 1; }
+
+/* ── 非常時モード（第5層）バナー ── */
+.emergency-banner {
+  background: linear-gradient(135deg, #c46a4a 0%, #a85030 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.emergency-banner h3 {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+.emergency-banner p {
+  font-size: 12px;
+  opacity: .85;
+  line-height: 1.6;
+}
+
+/* ── 1行メモ ── */
+.memo-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.memo-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--warm);
+  color: var(--ink);
+  resize: none;
+}
+.memo-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+.memo-del {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px;
+  line-height: 1;
+}
+.add-memo-btn {
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'Noto Sans JP', sans-serif;
+  transition: all .15s;
+  margin-top: 4px;
+}
+.add-memo-btn:hover { background: var(--warm); color: var(--accent); }
+
+/* 当番シートの1行メモエリア */
+.ichigyo-area {
+  margin-top: 20px;
+}
+.ichigyo-title {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  letter-spacing: .05em;
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>ととのえ</h1>
+  <p>survival_mam × 朝の余白をつくるツール</p>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab(0)"><span class="tab-num">1</span>判断の整理</button>
+  <button class="tab-btn" onclick="switchTab(1)"><span class="tab-num">2</span>当番シート</button>
+  <button class="tab-btn" onclick="switchTab(2)"><span class="tab-num">3</span>声かけ台本</button>
+  <button class="tab-btn" onclick="switchTab(3)"><span class="tab-num">4</span>週次レビュー</button>
+  <button class="tab-btn" onclick="switchTab(4)"><span class="tab-num">5</span>非常時モード</button>
+</nav>
+
+<!-- ═══════════════════════════════════
+     第1層：判断の事前処理チェックリスト
+═══════════════════════════════════ -->
+<div class="tab-panel active" id="panel-0">
+  <p class="section-title">判断の事前処理</p>
+  <p class="section-sub">前夜までに済ませておく「決断」をチェックする</p>
+
+  <div class="card">
+    <p class="card-title">夕食後〜就寝前にやること</p>
+    <ul class="checklist" id="checklist-1">
+      <li onclick="toggleCheck(this)" data-key="c1-0">
+        <div class="check-box"></div>
+        <div><div class="check-label">翌日の子どもの服を「かご」に入れた</div><div class="check-sub">上下セットで丸めて1かご＝1択に</div></div>
+      </li>
+      <li onclick="toggleCheck(this)" data-key="c1-1">
+        <div class="check-box"></div>
+        <div><div class="check-label">翌日の朝食メニューを決めた</div><div class="check-sub">曜日固定 or 前夜に冷蔵庫へセット済み</div></div>
+      </li>
+      <li onclick="toggleCheck(this)" data-key="c1-2">
+        <div class="check-box"></div>
+        <div><div class="check-label">夫への翌朝の変更点を1行伝えた</div><div class="check-sub">LINEかホワイトボードに1文だけ</div></div>
+      </li>
+      <li onclick="toggleCheck(this)" data-key="c1-3">
+        <div class="check-box"></div>
+        <div><div class="check-label">保育園・学校の持ち物を玄関に置いた</div><div class="check-sub">「朝に確認」ではなく「前夜に完了」</div></div>
+      </li>
+      <li onclick="toggleCheck(this)" data-key="c1-4">
+        <div class="check-box"></div>
+        <div><div class="check-label">今日使う声かけパターンを1つ決めた</div><div class="check-sub">「明日は②並走型でいこう」だけでいい</div></div>
+      </li>
+    </ul>
+    <button class="reset-btn" onclick="resetChecklist('checklist-1', ['c1-0','c1-1','c1-2','c1-3','c1-4'])">リセット</button>
+  </div>
+
+  <div class="card">
+    <p class="card-title">朝・出発前チェック</p>
+    <ul class="checklist" id="checklist-2">
+      <li onclick="toggleCheck(this)" data-key="c2-0">
+        <div class="check-box"></div>
+        <div><div class="check-label">7:50（またはリミット時間）を確認した</div></div>
+      </li>
+      <li onclick="toggleCheck(this)" data-key="c2-1">
+        <div class="check-box"></div>
+        <div><div class="check-label">今日の当番確認（自分の担当だけ見る）</div></div>
+      </li>
+      <li onclick="toggleCheck(this)" data-key="c2-2">
+        <div class="check-box"></div>
+        <div><div class="check-label">子どもに今日の声かけパターンを使えた</div></div>
+      </li>
+    </ul>
+    <button class="reset-btn" onclick="resetChecklist('checklist-2', ['c2-0','c2-1','c2-2'])">リセット</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     第2層：週次当番シート
+═══════════════════════════════════ -->
+<div class="tab-panel" id="panel-1">
+  <p class="section-title">週次当番シート</p>
+  <p class="section-sub">「誰が」「何を」「いつ」——名指しで決める</p>
+
+  <div class="card">
+    <p class="card-title">今週の当番（入力して保存・画像化）</p>
+    <div class="tbl-container">
+      <table class="toban-table" id="toban-table">
+        <thead>
+          <tr>
+            <th>役割</th>
+            <th>月</th><th>火</th><th>水</th><th>木</th><th>金</th>
+          </tr>
+        </thead>
+        <tbody id="toban-body">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="action-row" style="margin-top:10px;">
+      <button class="btn btn-secondary" onclick="addTobanRow()">＋ 行を追加</button>
+      <button class="btn btn-secondary" onclick="removeTobanRow()">− 行を削除</button>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="saveToban()">💾 保存する</button>
+      <button class="btn btn-dark" onclick="generateTobanImage()">📷 画像化（LINE用）</button>
+    </div>
+    <span class="save-badge" id="toban-badge">✓ 保存しました</span>
+
+    <div id="toban-preview"></div>
+  </div>
+
+  <!-- 前夜1行メモ -->
+  <div class="card">
+    <div class="ichigyo-area">
+      <p class="card-title">前夜の1行メモ</p>
+      <p class="ichigyo-title">翌朝の変更点を1人1行だけ書く</p>
+      <div id="memo-list"></div>
+      <button class="add-memo-btn" onclick="addMemo()">＋ 1行追加</button>
+      <div class="action-row" style="margin-top:12px;">
+        <button class="btn btn-primary" onclick="saveMemos()">💾 保存する</button>
+      </div>
+      <span class="save-badge" id="memo-badge">✓ 保存しました</span>
+    </div>
+  </div>
+</div>
+
+<!-- 画像化用テーブル（非表示） -->
+<div id="toban-for-img">
+  <div class="img-title">週次当番シート</div>
+  <div class="img-sub">survival_mam ／ ととのえ</div>
+  <table id="toban-img-table">
+    <thead><tr><th>役割</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th></tr></thead>
+    <tbody id="toban-img-body"></tbody>
+  </table>
+  <div class="img-footer">作成日：<span id="img-date"></span></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     第3層：声かけ台本
+═══════════════════════════════════ -->
+<div class="tab-panel" id="panel-2">
+  <p class="section-title">声かけ台本</p>
+  <p class="section-sub">選んでコピー。疲れた朝でも使える言葉を持つ</p>
+
+  <div id="koe-list"></div>
+
+  <div class="card" style="margin-top:8px;">
+    <p class="card-title">今日の使うパターンメモ</p>
+    <textarea class="review-textarea" id="koe-today-memo" placeholder="例：今日は②並走型と④外注型で行く" rows="2" oninput="saveKoeMemo()"></textarea>
+    <span class="save-badge" id="koe-badge" style="margin-top:6px; display:inline-flex;">✓ 保存しました</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     第4層：週次レビュー
+═══════════════════════════════════ -->
+<div class="tab-panel" id="panel-3">
+  <p class="section-title">週次レビュー</p>
+  <p class="section-sub">週1回・10分だけ。詰まりを設計の問題として記録する</p>
+
+  <div id="review-list"></div>
+  <button class="add-review-btn" onclick="addReview()">＋ 今週のレビューを追加する</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     第5層：非常時の短縮モード
+═══════════════════════════════════ -->
+<div class="tab-panel" id="panel-4">
+  <p class="section-title">非常時の短縮モード</p>
+  <p class="section-sub">完璧じゃない朝を、想定内にする</p>
+
+  <div class="emergency-banner">
+    <h3>今日は短縮モードでいく</h3>
+    <p>詰め込もうとしない。まず「リミット時間」だけ決めて、2タスクに絞る。それだけでいい。</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Step 1：今日のリミット時間</p>
+    <input type="time" id="limit-time" style="border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:15px; font-family:'Noto Sans JP',sans-serif; background:var(--warm); color:var(--ink); width:100%;" oninput="saveLimitTime()">
+    <p style="font-size:11px; color:var(--muted); margin-top:6px;">「この時刻に玄関に立てればOK」の時間を入れる</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Step 2：今日残す2タスクだけ選ぶ</p>
+    <ul class="checklist" id="checklist-em">
+      <li onclick="toggleCheck(this)" data-key="em-0"><div class="check-box"></div><div><div class="check-label">安全に登園・登校させる</div></div></li>
+      <li onclick="toggleCheck(this)" data-key="em-1"><div class="check-box"></div><div><div class="check-label">自分が職場に到着する</div></div></li>
+      <li onclick="toggleCheck(this)" data-key="em-2"><div class="check-box"></div><div><div class="check-label">子どもに「今日は特別ルール」と伝えた</div></div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Step 3：今日カットするもの（タップで確認）</p>
+    <ul class="checklist" id="checklist-cut">
+      <li onclick="toggleCheck(this)" data-key="cut-0"><div class="check-box"></div><div><div class="check-label">朝食の品数を減らす</div><div class="check-sub">パン1枚＋飲み物だけでいい</div></div></li>
+      <li onclick="toggleCheck(this)" data-key="cut-1"><div class="check-box"></div><div><div class="check-label">着替えの美観を諦める</div><div class="check-sub">本人が着たいものを着せる</div></div></li>
+      <li onclick="toggleCheck(this)" data-key="cut-2"><div class="check-box"></div><div><div class="check-label">連絡帳の記述を最低限にする</div><div class="check-sub">一言だけでいい</div></div></li>
+      <li onclick="toggleCheck(this)" data-key="cut-3"><div class="check-box"></div><div><div class="check-label">自分のメイクを最小化する</div><div class="check-sub">日焼け止め＋眉だけでいい日もある</div></div></li>
+    </ul>
+    <button class="reset-btn" onclick="resetAllEmergency()">リセット</button>
+  </div>
+</div>
+
+<!-- コピー完了トースト -->
+<div class="copy-toast" id="copy-toast">コピーしました</div>
+
+<script>
+// ─────────────────────────────────────────
+//  タブ切り替え
+// ─────────────────────────────────────────
+function switchTab(idx) {
+  document.querySelectorAll('.tab-panel').forEach((p,i) => {
+    p.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', i === idx);
+  });
+}
+
+// ─────────────────────────────────────────
+//  チェックリスト
+// ─────────────────────────────────────────
+function toggleCheck(li) {
+  li.classList.toggle('checked');
+  const key = li.dataset.key;
+  const state = JSON.parse(localStorage.getItem('checks') || '{}');
+  state[key] = li.classList.contains('checked');
+  localStorage.setItem('checks', JSON.stringify(state));
+}
+
+function resetChecklist(id, keys) {
+  const state = JSON.parse(localStorage.getItem('checks') || '{}');
+  keys.forEach(k => { state[k] = false; });
+  localStorage.setItem('checks', JSON.stringify(state));
+  document.querySelectorAll(`#${id} li`).forEach(li => li.classList.remove('checked'));
+}
+
+function resetAllEmergency() {
+  const keys = ['em-0','em-1','em-2','cut-0','cut-1','cut-2','cut-3'];
+  resetChecklist('checklist-em', ['em-0','em-1','em-2']);
+  resetChecklist('checklist-cut', ['cut-0','cut-1','cut-2','cut-3']);
+  const state = JSON.parse(localStorage.getItem('checks') || '{}');
+  keys.forEach(k => { state[k] = false; });
+  localStorage.setItem('checks', JSON.stringify(state));
+}
+
+function loadChecks() {
+  const state = JSON.parse(localStorage.getItem('checks') || '{}');
+  document.querySelectorAll('.checklist li[data-key]').forEach(li => {
+    if (state[li.dataset.key]) li.classList.add('checked');
+  });
+}
+
+// ─────────────────────────────────────────
+//  当番シート
+// ─────────────────────────────────────────
+const DEFAULT_ROLES = ['子どもの朝食準備','着替えの介助','保育園の荷物確認','ゴミ出し','子どもの送り'];
+const DEFAULT_VALS = [
+  ['妻','夫','妻','夫','妻'],
+  ['夫','妻','夫','妻','夫'],
+  ['妻','妻','夫','妻','夫'],
+  ['—','夫','—','—','夫'],
+  ['夫','妻','夫','妻','夫'],
+];
+
+function buildTobanTable(data) {
+  const tbody = document.getElementById('toban-body');
+  tbody.innerHTML = '';
+  data.forEach((row, ri) => {
+    const tr = document.createElement('tr');
+    const tdRole = document.createElement('td');
+    const roleInput = document.createElement('input');
+    roleInput.className = 'toban-input';
+    roleInput.value = row.role;
+    roleInput.placeholder = '役割名';
+    roleInput.style.textAlign = 'left';
+    tdRole.appendChild(roleInput);
+    tr.appendChild(tdRole);
+    ['mon','tue','wed','thu','fri'].forEach((d, di) => {
+      const td = document.createElement('td');
+      const inp = document.createElement('input');
+      inp.className = 'toban-input';
+      inp.value = row.days[di];
+      inp.maxLength = 4;
+      inp.addEventListener('input', colorInput);
+      colorInput.call(inp);
+      td.appendChild(inp);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function colorInput() {
+  this.classList.remove('wife','husband');
+  if (this.value === '妻') this.classList.add('wife');
+  else if (this.value === '夫') this.classList.add('husband');
+}
+
+function getTobanData() {
+  const rows = [];
+  document.querySelectorAll('#toban-body tr').forEach(tr => {
+    const inputs = tr.querySelectorAll('input');
+    rows.push({
+      role: inputs[0].value,
+      days: [inputs[1].value, inputs[2].value, inputs[3].value, inputs[4].value, inputs[5].value]
+    });
+  });
+  return rows;
+}
+
+function addTobanRow() {
+  const data = getTobanData();
+  data.push({ role: '', days: ['','','','',''] });
+  buildTobanTable(data);
+}
+
+function removeTobanRow() {
+  const data = getTobanData();
+  if (data.length > 1) {
+    data.pop();
+    buildTobanTable(data);
+  }
+}
+
+function saveToban() {
+  const data = getTobanData();
+  localStorage.setItem('toban', JSON.stringify(data));
+  showBadge('toban-badge');
+}
+
+function loadToban() {
+  const saved = localStorage.getItem('toban');
+  if (saved) {
+    buildTobanTable(JSON.parse(saved));
+  } else {
+    const data = DEFAULT_ROLES.map((role, ri) => ({ role, days: DEFAULT_VALS[ri] }));
+    buildTobanTable(data);
+  }
+}
+
+function generateTobanImage() {
+  const data = getTobanData();
+  const imgBody = document.getElementById('toban-img-body');
+  imgBody.innerHTML = '';
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    const tdR = document.createElement('td');
+    tdR.textContent = row.role;
+    tr.appendChild(tdR);
+    row.days.forEach(d => {
+      const td = document.createElement('td');
+      td.textContent = d || '—';
+      tr.appendChild(td);
+    });
+    imgBody.appendChild(tr);
+  });
+  document.getElementById('img-date').textContent = new Date().toLocaleDateString('ja-JP');
+
+  const target = document.getElementById('toban-for-img');
+  target.style.left = '0';
+  target.style.top = '0';
+  target.style.position = 'absolute';
+  target.style.zIndex = '-1';
+
+  html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+    target.style.position = 'fixed';
+    target.style.left = '-9999px';
+    const preview = document.getElementById('toban-preview');
+    preview.style.display = 'block';
+    preview.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    preview.appendChild(img);
+    const dl = document.createElement('a');
+    dl.href = canvas.toDataURL('image/png');
+    dl.download = '当番シート.png';
+    dl.className = 'dl-btn';
+    dl.textContent = '📥 画像をダウンロード（LINE送信用）';
+    preview.appendChild(dl);
+  });
+}
+
+// ─────────────────────────────────────────
+//  前夜メモ
+// ─────────────────────────────────────────
+function addMemo(text='') {
+  const list = document.getElementById('memo-list');
+  const row = document.createElement('div');
+  row.className = 'memo-row';
+  row.innerHTML = `<textarea class="memo-input" rows="1" placeholder="例：明日は8時出発。娘の歯科検診あり">${text}</textarea><button class="memo-del" onclick="this.parentElement.remove(); saveMemos()">×</button>`;
+  list.appendChild(row);
+}
+
+function saveMemos() {
+  const memos = [];
+  document.querySelectorAll('#memo-list .memo-input').forEach(el => memos.push(el.value));
+  localStorage.setItem('memos', JSON.stringify(memos));
+  showBadge('memo-badge');
+}
+
+function loadMemos() {
+  const saved = localStorage.getItem('memos');
+  if (saved) {
+    const memos = JSON.parse(saved);
+    if (memos.length === 0) { addMemo(); return; }
+    memos.forEach(m => addMemo(m));
+  } else {
+    addMemo();
+  }
+}
+
+// ─────────────────────────────────────────
+//  声かけ台本
+// ─────────────────────────────────────────
+const KOE_PATTERNS = [
+  { type: '①自立型', situation: '動き出せる余裕があるとき', text: '「靴、どっちにする？」' },
+  { type: '②並走型', situation: '子どもが固まっているとき', text: '「ママも顔洗うね、一緒にやろ」' },
+  { type: '③ごほうび型', situation: 'どうしても動かないとき', text: '「着替えできたら絵本1冊読もう」' },
+  { type: '④外注型', situation: '自分の言葉が通りにくいとき', text: '「先生、帽子いるって言ってたよ」' },
+  { type: '⑤宣言型', situation: '時間が押しているとき', text: '「3分後に出発するよ、今日は早い日」' },
+];
+
+function buildKoeList() {
+  const saved = JSON.parse(localStorage.getItem('koe_custom') || '{}');
+  const list = document.getElementById('koe-list');
+  list.innerHTML = '';
+  KOE_PATTERNS.forEach((p, i) => {
+    const custom = saved[i] || '';
+    const div = document.createElement('div');
+    div.className = 'card koe-pattern';
+    div.innerHTML = `
+      <div class="koe-type">${p.type}</div>
+      <div class="koe-situation">${p.situation}</div>
+      <div class="koe-text" id="koe-text-${i}">${custom || p.text}</div>
+      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" style="flex:1; min-width:80px; padding:8px;" onclick="copyKoe(${i})">コピー</button>
+        <button class="btn btn-secondary" style="flex:1; min-width:80px; padding:8px;" onclick="toggleCustom(${i})">カスタム編集</button>
+      </div>
+      <div class="koe-custom-area" id="koe-custom-${i}">
+        <textarea class="koe-input" rows="2" placeholder="自分の言葉に書き換える（保存されます）" oninput="saveKoeCustom(${i}, this.value)">${custom}</textarea>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function copyKoe(i) {
+  const el = document.getElementById(`koe-text-${i}`);
+  const text = el.textContent;
+  navigator.clipboard.writeText(text).then(() => showToast());
+}
+
+function toggleCustom(i) {
+  const area = document.getElementById(`koe-custom-${i}`);
+  area.classList.toggle('open');
+}
+
+function saveKoeCustom(i, val) {
+  const saved = JSON.parse(localStorage.getItem('koe_custom') || '{}');
+  saved[i] = val;
+  localStorage.setItem('koe_custom', JSON.stringify(saved));
+  const textEl = document.getElementById(`koe-text-${i}`);
+  textEl.textContent = val || KOE_PATTERNS[i].text;
+}
+
+function saveKoeMemo() {
+  localStorage.setItem('koe_today', document.getElementById('koe-today-memo').value);
+  showBadge('koe-badge');
+}
+
+function loadKoeMemo() {
+  const v = localStorage.getItem('koe_today');
+  if (v) document.getElementById('koe-today-memo').value = v;
+}
+
+// ─────────────────────────────────────────
+//  週次レビュー
+// ─────────────────────────────────────────
+function addReview() {
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（週次レビュー）`;
+  const newReview = { date: dateStr, tsumari: '', reason: '', next: '', score: 0 };
+  reviews.unshift(newReview);
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+  renderReviews();
+}
+
+function renderReviews() {
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  reviews.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'review-week';
+    div.innerHTML = `
+      <div class="review-week-header" onclick="toggleReview(${i})">
+        <span class="review-week-date">${r.date}</span>
+        <span class="review-week-score">${r.score ? '朝の快適度：' + r.score + '/5' : '記録中…'}</span>
+      </div>
+      <div class="review-week-body ${i===0?'open':''}" id="review-body-${i}">
+        <div class="review-field">
+          <div class="review-label">今週の「詰まり」（どの曜日・どの場面）</div>
+          <textarea class="review-textarea" placeholder="例：木曜の朝、夫が動けていなかった" oninput="updateReview(${i},'tsumari',this.value)">${r.tsumari}</textarea>
+        </div>
+        <div class="review-field">
+          <div class="review-label">設計のどこが足りなかったか</div>
+          <textarea class="review-textarea" placeholder="例：木曜の当番が夫に負荷が集中していた" oninput="updateReview(${i},'reason',this.value)">${r.reason}</textarea>
+        </div>
+        <div class="review-field">
+          <div class="review-label">来週1つだけ変えること</div>
+          <textarea class="review-textarea" placeholder="例：木曜の子どもの送りを妻に変更する" oninput="updateReview(${i},'next',this.value)">${r.next}</textarea>
+        </div>
+        <div class="review-field">
+          <div class="review-label">今週の朝の快適度（1〜5）</div>
+          <div class="score-row">
+            ${[1,2,3,4,5].map(n => `<button class="score-btn ${r.score===n?'selected':''}" onclick="setScore(${i},${n})">${n}</button>`).join('')}
+          </div>
+        </div>
+        <button class="reset-btn" style="color:var(--danger); border-color:var(--danger);" onclick="deleteReview(${i})">このレビューを削除</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function toggleReview(i) {
+  const body = document.getElementById(`review-body-${i}`);
+  body.classList.toggle('open');
+}
+
+function updateReview(i, field, val) {
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+  reviews[i][field] = val;
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+}
+
+function setScore(i, score) {
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+  reviews[i].score = score;
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+  renderReviews();
+  document.getElementById(`review-body-${i}`).classList.add('open');
+}
+
+function deleteReview(i) {
+  if (!confirm('このレビューを削除しますか？')) return;
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+  reviews.splice(i, 1);
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+  renderReviews();
+}
+
+// ─────────────────────────────────────────
+//  非常時：リミット時間
+// ─────────────────────────────────────────
+function saveLimitTime() {
+  localStorage.setItem('limit_time', document.getElementById('limit-time').value);
+}
+function loadLimitTime() {
+  const v = localStorage.getItem('limit_time');
+  if (v) document.getElementById('limit-time').value = v;
+}
+
+// ─────────────────────────────────────────
+//  UI ユーティリティ
+// ─────────────────────────────────────────
+function showBadge(id) {
+  const el = document.getElementById(id);
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function showToast() {
+  const el = document.getElementById('copy-toast');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ─────────────────────────────────────────
+//  初期化
+// ─────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadChecks();
+  loadToban();
+  loadMemos();
+  buildKoeList();
+  loadKoeMemo();
+  renderReviews();
+  loadLimitTime();
+});
+</script>
+</body>
+</html>
