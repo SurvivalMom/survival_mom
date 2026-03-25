@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>まごころ翻訳機</title>
+    <style>
+        :root {
+            --main-color: #7fb685; /* 落ち着いた緑 */
+            --sub-color: #fdfaf5;  /* 柔らかなベージュ */
+            --accent-color: #e9a1a1; /* 優しい赤 */
+            --text-color: #4a4a4a;
+        }
+
+        body {
+            font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+            background-color: #eee;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            line-height: 1.8;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--sub-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        header {
+            background-color: var(--main-color);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 2px; }
+        header p { margin: 10px 0 0; font-size: 1rem; opacity: 0.9; }
+
+        .container { padding: 30px 20px; flex-grow: 1; }
+
+        .instruction {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--main-color);
+            margin-bottom: 25px;
+            text-align: center;
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 10px;
+        }
+
+        /* シニア向け特大ボタン */
+        .phrase-btn {
+            display: block;
+            width: 100%;
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            border: 3px solid var(--main-color);
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-color);
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #6a9b6f;
+            transition: all 0.1s;
+        }
+
+        .phrase-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* 結果表示エリア */
+        #result-display { display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .result-card {
+            background-color: white;
+            border-radius: 25px;
+            padding: 30px 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .voice-section {
+            background-color: #fff0f0;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 8px solid var(--accent-color);
+        }
+
+        .voice-section span { font-size: 0.9rem; color: var(--accent-color); font-weight: bold; }
+        .voice-section p { font-size: 1.5rem; font-weight: bold; margin: 10px 0 0; color: #333; }
+
+        .hint-section {
+            padding: 20px;
+            background-color: #f0f7f1;
+            border-radius: 15px;
+            border-left: 8px solid var(--main-color);
+        }
+
+        .hint-section strong { color: var(--main-color); font-size: 1.2rem; display: block; margin-bottom: 10px; }
+        .hint-section p { font-size: 1.1rem; margin: 0; color: #555; }
+
+        .back-nav {
+            margin-top: 40px;
+            width: 100%;
+            padding: 20px;
+            background-color: #888;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        footer {
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #999;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <header>
+        <h1>まごころ翻訳機</h1>
+        <p>〜 大切な孫の心、通訳します 〜</p>
+    </header>
+
+    <div class="container">
+        <div id="select-screen">
+            <div class="instruction">孫に贈る「言葉」を選んでください</div>
+            
+            <button class="phrase-btn" onclick="showResult('school')">「いつ学校に行くの？」</button>
+            <button class="phrase-btn" onclick="showResult('effort')">「昔はみんな頑張ったわよ」</button>
+            <button class="phrase-btn" onclick="showResult('lazy')">「だらだらしてはダメよ」</button>
+            <button class="phrase-btn" onclick="showResult('snack')" style="border-color: #7fb685; background: #f0f7f1;">「美味しいものでも食べようか」</button>
+            <button class="phrase-btn" onclick="showResult('stay')" style="border-color: #7fb685; background: #f0f7f1;">（何も言わずに見守る）</button>
+        </div>
+
+        <div id="result-display">
+            <div class="result-card">
+                <div class="voice-section">
+                    <span>孫の心の声：</span>
+                    <p id="voice-txt"></p>
+                </div>
+                
+                <div class="hint-section">
+                    <strong id="hint-title">まごころヒント：</strong>
+                    <p id="hint-txt"></p>
+                </div>
+
+                <button class="back-nav" onclick="goBack()">他の言葉も見る</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 survivalMom Project<br>
+        このガイドは文部科学省の最新指針に基づき、<br>
+        今の子供たちの心理を専門家が分析したものです。
+    </footer>
+</div>
+
+<script>
+    const database = {
+        school: {
+            voice: "「おばあちゃんにまで責められたら、もう居場所がないよ…」",
+            hint: "本人が一番『行かなきゃ』と焦っています。今は学校を忘れて、おばあちゃんと笑える時間が、心のエネルギーを溜める一番の近道です。"
+        },
+        effort: {
+            voice: "「今の時代はもっと複雑なんだよ。僕が弱いのかな…」",
+            hint: "おばあちゃんの時代は立派でしたが、今はSNSや競争が激しく、子供の脳はヘトヘトです。『大変な時代に頑張ってるね』と労ってあげてください。"
+        },
+        lazy: {
+            voice: "「だらだらしてるんじゃなくて、動けないんだよ…」",
+            hint: "スマホやゲームは、現実の辛さを忘れるための『心の避難所』かもしれません。否定せず、まずはゆっくり休ませてあげることが大切です。"
+        },
+        snack: {
+            voice: "「おばあちゃんの優しさが、心に染みるなあ。」",
+            hint: "【大正解です！】美味しいものは生きる力になります。難しい話は抜きにして、温かい食事や笑顔を届けること。それが今、おばあちゃんにしかできない最高の応援です。"
+        },
+        stay: {
+            voice: "「おばあちゃんがいてくれるだけで、ホッとするよ。」",
+            hint: "【素晴らしい応援です！】沈黙は、深い信頼の証。何も言わずにそばにいてくれるおばあちゃんの存在が、孫にとっては何よりの『心の安全基地』になります。"
+        }
+    };
+
+    function showResult(key) {
+        const item = database[key];
+        document.getElementById('select-screen').style.display = 'none';
+        document.getElementById('result-display').style.display = 'block';
+        
+        document.getElementById('voice-txt').innerText = item.voice;
+        document.getElementById('hint-txt').innerText = item.hint;
+        
+        window.scrollTo(0, 0);
+    }
+
+    function goBack() {
+        document.getElementById('select-screen').style.display = 'block';
+        document.getElementById('result-display').style.display = 'none';
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
