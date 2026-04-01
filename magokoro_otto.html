@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>まごころ翻訳機・夫版 | survival_mom</title>
+    <style>
+        :root {
+            --main-color: #c4814a;
+            --sub-color: #faf7f2;
+            --accent-color: #1a1410;
+            --text-color: #2e2520;
+            --muted: #8c7b6e;
+            --border: #e0d5c8;
+        }
+        body {
+            font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+            background-color: #e8e0d8;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            line-height: 1.8;
+        }
+        .app-shell {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--sub-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0,0,0,0.12);
+        }
+        header {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 32px 20px 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: -40px; left: -40px;
+            width: 160px; height: 160px;
+            border-radius: 50%;
+            background: rgba(196,129,74,0.10);
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px; right: -20px;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: rgba(196,129,74,0.07);
+        }
+        .brand {
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            color: var(--main-color);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.7rem;
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 1;
+            font-weight: bold;
+        }
+        header h1 span { color: #e8a876; }
+        header p {
+            margin: 10px 0 0;
+            font-size: 0.85rem;
+            opacity: 0.55;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.06em;
+            line-height: 1.7;
+        }
+        .container { padding: 28px 20px; flex-grow: 1; }
+        .intro-box {
+            background: white;
+            border-radius: 14px;
+            padding: 18px 18px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.9;
+        }
+        .intro-box strong { color: var(--text-color); font-weight: bold; display: block; margin-bottom: 6px; font-size: 0.95rem; }
+        .instruction {
+            font-size: 1.0rem;
+            font-weight: bold;
+            color: var(--main-color);
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+        }
+        .instruction small {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: normal;
+            margin-top: 6px;
+        }
+        .phrase-btn {
+            display: block;
+            width: 100%;
+            padding: 20px 18px;
+            margin-bottom: 14px;
+            background-color: white;
+            border: 2.5px solid var(--border);
+            border-radius: 16px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--text-color);
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #d5c8bb;
+            transition: all 0.1s;
+            line-height: 1.6;
+        }
+        .phrase-btn .btn-sub {
+            display: block;
+            font-size: 0.73rem;
+            font-weight: normal;
+            color: var(--muted);
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+        .phrase-btn:active { transform: translateY(3px); box-shadow: none; }
+        #result-display { display: none; animation: fadeIn 0.4s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-card {
+            background-color: white;
+            border-radius: 20px;
+            padding: 26px 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 24px rgba(26,20,16,0.07);
+        }
+        .voice-section {
+            background-color: #fff5ee;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            border-left: 6px solid var(--main-color);
+        }
+        .voice-section .label {
+            font-size: 0.78rem;
+            color: var(--main-color);
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+        }
+        .voice-section p {
+            font-size: 1.15rem;
+            font-weight: bold;
+            margin: 0;
+            color: #3a2e28;
+            line-height: 1.9;
+            white-space: pre-wrap;
+        }
+        .hint-section {
+            padding: 20px;
+            background-color: #f5f0ea;
+            border-radius: 14px;
+            border-left: 6px solid var(--accent-color);
+            margin-bottom: 16px;
+        }
+        .hint-section .label {
+            font-size: 0.78rem;
+            color: var(--accent-color);
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .hint-section p { font-size: 0.97rem; margin: 0; color: var(--text-color); line-height: 2.0; }
+        .example-section {
+            background: white;
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            padding: 18px 18px;
+            margin-bottom: 22px;
+        }
+        .example-section .label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .example-section p { font-size: 1.0rem; color: var(--text-color); margin: 0; line-height: 2.0; }
+        .back-nav {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.0rem;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 0.08em;
+            transition: opacity 0.2s;
+        }
+        .back-nav:active { opacity: 0.75; }
+        .related-box {
+            margin-top: 24px;
+            background: #fdf5ed;
+            border: 1.5px solid var(--main-color);
+            border-radius: 14px;
+            padding: 18px 18px;
+            text-align: center;
+        }
+        .related-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--main-color);
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+        }
+        .related-text {
+            font-size: 0.88rem;
+            color: var(--text-color);
+            line-height: 1.9;
+            margin: 0 0 14px;
+        }
+        .related-link {
+            display: inline-block;
+            padding: 10px 24px;
+            background: var(--main-color);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.88rem;
+            font-weight: bold;
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            transition: opacity 0.2s;
+        }
+        .related-link:active { opacity: 0.75; }
+        .free-section {
+            margin-top: 24px;
+            border-top: 2px dashed var(--border);
+            padding-top: 22px;
+        }
+        .free-label {
+            font-size: 0.78rem;
+            font-weight: bold;
+            color: var(--muted);
+            letter-spacing: 0.12em;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .free-label span {
+            color: var(--main-color);
+        }
+        .free-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+            font-size: 1.0rem;
+            color: var(--text-color);
+            background: white;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+            line-height: 1.7;
+            resize: none;
+            min-height: 80px;
+        }
+        .free-input:focus { border-color: var(--main-color); }
+        .free-input::placeholder { color: #c5b8ae; font-size: 0.88rem; }
+        .free-btn {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 16px;
+            background: var(--main-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+            font-size: 1.0rem;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 0.08em;
+            transition: opacity 0.2s;
+        }
+        .free-btn:active { opacity: 0.75; }
+        .free-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .ai-loading {
+            display: none;
+            text-align: center;
+            padding: 20px 0 8px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            letter-spacing: 0.06em;
+        }
+        .ai-loading.visible { display: block; }
+        .ai-dots {
+            display: inline-flex;
+            gap: 5px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .ai-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--main-color);
+            animation: bounce 1.1s ease-in-out infinite;
+        }
+        .ai-dot:nth-child(2) { animation-delay: 0.18s; }
+        .ai-dot:nth-child(3) { animation-delay: 0.36s; }
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+            30% { transform: translateY(-7px); opacity: 1; }
+        }
+        footer {
+            padding: 36px 20px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #bbb;
+            background-color: #f5f2ee;
+            line-height: 2.0;
+        }
+    </style>
+</head>
+<body>
+<div class="app-shell">
+    <header>
+        <div class="brand">survival_mom</div>
+        <h1>まごころ翻訳機<br><span>・夫版・</span></h1>
+        <p>〜 妻の言葉の裏にあるものを、<br>一緒に読み解くためのアプリです 〜</p>
+    </header>
+
+    <div class="container">
+
+        <div id="select-screen">
+            <div class="intro-box">
+                <strong>このアプリについて</strong>
+                普通級か支援級か。妻がひとりで悩み続けています。あなたが何気なく言った言葉が、妻にどう届いているか。このアプリで確かめてみてください。
+            </div>
+
+            <div class="instruction">
+                あなたが言ったことのある言葉を選んでください
+                <small>妻の心の声と、一緒に考えるヒントが出てきます</small>
+            </div>
+
+            <button class="phrase-btn" onclick="showResult('normal')">
+                「普通級でいいんじゃない？」
+                <span class="btn-sub">支援級の話が出たとき、こう言ったことがある</span>
+            </button>
+
+            <button class="phrase-btn" onclick="showResult('wait')">
+                「もう少し様子を見ようよ」
+                <span class="btn-sub">就学相談や専門家への相談をためらったとき</span>
+            </button>
+
+            <button class="phrase-btn" onclick="showResult('over')">
+                「考えすぎじゃないの？」
+                <span class="btn-sub">妻が深刻な顔で話してきたとき、こう返した</span>
+            </button>
+
+            <button class="phrase-btn" onclick="showResult('alone')">
+                「（特に何も言わなかった）」
+                <span class="btn-sub">妻が一人で調べているのを、黙って見ていた</span>
+            </button>
+
+            <button class="phrase-btn" onclick="showResult('together')">
+                「一緒に考えたい」
+                <span class="btn-sub">どう関わればいいか、わからないままでいる</span>
+            </button>
+
+        <!-- フリーワード入力 -->
+        <div class="free-section">
+            <div class="free-label">上にない言葉は<span>自由に入力</span>できます</div>
+            <textarea class="free-input" id="free-input" placeholder="例：「そんなに気にしなくていいよ」&#10;「どこの学校でも同じじゃないの？」&#10;など、あなたが言ったことのある言葉を入れてください"></textarea>
+            <button class="free-btn" id="free-btn" onclick="translateFree()">翻訳する</button>
+            <div class="ai-loading" id="ai-loading" style="display:none" style="display:none">
+                <span class="ai-dots">
+                    <span class="ai-dot"></span>
+                    <span class="ai-dot"></span>
+                    <span class="ai-dot"></span>
+                </span>妻の心の声を読み解いています…
+            </div>
+        </div>
+
+        </div>
+
+        <div id="result-display">
+            <div class="result-card">
+                <div class="voice-section">
+                    <div class="label">💬 そのとき、妻の心の中にあった言葉</div>
+                    <p id="voice-txt"></p>
+                </div>
+                <div class="hint-section">
+                    <span class="label">📌 まごころヒント</span>
+                    <p id="hint-txt"></p>
+                </div>
+                <div class="example-section">
+                    <div class="label">🗣 今夜、こんな一言から始めてみる</div>
+                    <p id="example-txt"></p>
+                </div>
+                <button class="back-nav" onclick="goBack()">他の言葉も見る</button>
+
+                <div class="related-box">
+                    <div class="related-label">義母の言葉が気になる方へ</div>
+                    <p class="related-text">「甘やかしすぎ」「昔はみんな頑張った」——義母に言われた言葉の裏にある気持ちを読み解く<strong>まごころ翻訳機・義母版</strong>もあります。</p>
+                    <a class="related-link" href="https://note.com/survival_mom_lab/n/nb865aa001d3a" target="_blank">義母版を見てみる →</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        &copy; 2026 survival_mom Project<br>
+        不登校・発達グレーゾーンに向き合う親たちの声をもとに制作しました。<br>
+        就学先は、二人で決めていいものです。
+    </footer>
+</div>
+
+<script>
+    const database = {
+        normal: {
+            voice: "「また私だけで調べてる。\nなんで一緒に考えてくれないんだろう。\nもう、ひとりで決めるしかないのかな…」",
+            hint: "「普通級でいい」という言葉は、悪意から出ていないことは妻もわかっています。ただ、妻がその言葉を聞くたびに「この人は本気で考えていない」と感じています。支援級＝劣っているというイメージを持ったまま話しているだけで、実態を知らないだけかもしれません。一度、一緒に見学に行くことが、何より雄弁です。",
+            example: "「一回だけ、支援級を見てから決めようか。見た上で普通級にしてもいい。とにかく一緒に行ってみたい」"
+        },
+        wait: {
+            voice: "「様子を見るのは、あなたじゃない。\n私が毎朝、この子を見ている。\nもう限界なのに、伝わっていないんだな…」",
+            hint: "「様子を見よう」と言うとき、あなたは慎重でいようとしています。でも妻にとって「様子を見る」時間は、ひとりで消耗し続ける時間です。動くことへの不安があるなら、「就学相談に行くだけ。決めなくていい」という小さな一歩から提案してみてください。",
+            example: "「相談だけ行ってみようか。決めなくていいから。俺も一緒に行く」"
+        },
+        over: {
+            voice: "「考えすぎじゃない。\n考えなきゃいけない立場に、\nひとりで立たされているだけなんだよ…」",
+            hint: "「考えすぎ」という言葉は、安心させたくて出た言葉だとしても、妻の悩みを「存在しないもの」にしてしまいます。解決策はいりません。妻が今必要としているのは、「その悩みは本物だ」と認めてもらうことだけです。",
+            example: "「考えすぎって言ったこと、ごめん。ちゃんと聞かせてほしい。今夜、話してくれる？」"
+        },
+        alone: {
+            voice: "「見てるだけなんだ、と思った。\n味方でいてくれなくていいから、\nせめて、隣にいてほしかった…」",
+            hint: "何も言わないことは、「どうでもいい」に見えることがあります。関心がないわけではなくても、黙っていると伝わりません。妻が一人で抱えている資料の山を、今夜、一緒に見てみてください。それだけで、妻の孤独が少し変わります。",
+            example: "「資料、俺にも見せてくれる？ 一緒に読みたい」"
+        },
+        together: {
+            voice: "「一緒に考えたいって、思ってくれてるんだ。\nそれだけで、少し息ができる気がした…」",
+            hint: "その気持ちは、本物です。どう関わればいいかわからなくて当然です。「全部わかろうとしなくていい」「一緒にいようとすること」が、今の妻には一番届きます。まず今夜、妻に「どこから一緒に考えればいい？」と聞いてみてください。",
+            example: "「どこから一緒に考えればいい？ 教えてくれたら、俺もちゃんとやる」"
+        }
+    };
+
+    function showResult(key) {
+        const item = database[key];
+        document.getElementById('select-screen').style.display = 'none';
+        document.getElementById('result-display').style.display = 'block';
+        document.getElementById('voice-txt').innerText = item.voice;
+        document.getElementById('hint-txt').innerText = item.hint;
+        document.getElementById('example-txt').innerText = item.example;
+        window.scrollTo(0, 0);
+    }
+
+
+    // フリーワード用データベース（キーワードマッチ）
+    const freeDatabase = [
+        {
+            keywords: ['甘やかし', '甘い', '甘やか'],
+            voice: "「甘やかしてるんじゃない。\nこの子に合わせているだけなのに。\nあなたにも、そう見えてるんだ…」",
+            hint: "「甘やかし」という言葉は、妻が一番傷つく言葉のひとつです。妻は毎日この子を観察して、試して、失敗して、またやり直している。それを「甘やかし」と見えるのは、その日々が見えていないからかもしれません。「どうしてそうしてるの？」と聞いてみるだけで、妻の受け取り方がまったく変わります。",
+            example: "「甘やかしって言ったこと、撤回する。ちゃんと話を聞かせてほしい」"
+        },
+        {
+            keywords: ['大げさ', 'おおげさ', '大袈裟'],
+            voice: "「大げさじゃない。\nこれだけ悩んでいるのに、\n大げさって言われたら、もう話せない…」",
+            hint: "「大げさ」という言葉は、「あなたの悩みは存在しない」と伝えることになります。妻が大げさに見えるのは、それだけ真剣に向き合っているからです。悩みの大きさを測ろうとするより、「そんなに悩んでたんだね」と受け取るだけで十分です。",
+            example: "「大げさって言ってごめん。それだけ真剣に考えてたんだね」"
+        },
+        {
+            keywords: ['みんな', 'ふつう', '普通', '普通の子'],
+            voice: "「みんなと比べないでほしい。\nこの子はこの子なのに。\nそれがわかってほしくて、ずっと話してきたのに…」",
+            hint: "「みんな普通にやってる」という言葉は、この子の個性を消してしまいます。妻がここまで悩んでいるのは、この子が「みんなと同じ」ではないからです。それを認めることが、一緒に考える出発点になります。",
+            example: "「みんなと比べるのは違ったね。この子のことだけ、一緒に考えよう」"
+        },
+        {
+            keywords: ['学校', '行かせ', 'ちゃんと', 'しっかり'],
+            voice: "「ちゃんとさせたいのは、私も同じ。\nでも今は、それより先にやることがある。\nわかってもらえないのが、一番つらい…」",
+            hint: "「ちゃんと学校に行かせるべき」という気持ちは正しい。ただ、今の妻に必要なのは正論より「何から始めればいいか」の一歩です。「どうすればいいと思う？」と妻に聞くことが、一緒に動く入り口になります。",
+            example: "「どうすればいいか、俺にも教えてくれる？一緒に考えたい」"
+        },
+        {
+            keywords: ['疲れ', 'めんどう', '面倒', 'そんなに'],
+            voice: "「疲れてるのは、私も同じなんだよ。\nでも、疲れたって言える場所が、\n私にはどこにもないんだよ…」",
+            hint: "妻も疲れています。ただ妻には「疲れた」と言える場所がない。夫が疲れを見せると、妻はひとりで全部抱えなければと感じます。「俺も一緒に疲れよう」という姿勢が、妻の孤独を和らげます。",
+            example: "「俺も一緒に考えるから、全部ひとりで抱えなくていい」"
+        }
+    ];
+
+    function translateFree() {
+        const input = document.getElementById('free-input').value.trim();
+        if (!input) {
+            alert('言葉を入力してください');
+            return;
+        }
+
+        // キーワードマッチ
+        let matched = null;
+        for (const item of freeDatabase) {
+            if (item.keywords.some(kw => input.includes(kw))) {
+                matched = item;
+                break;
+            }
+        }
+
+        // マッチしない場合はデフォルト
+        if (!matched) {
+            matched = {
+                voice: "「その言葉が、胸に刺さった。\n悪気がないのはわかってる。\nでも、わかってほしかっただけなんだよ…」",
+                hint: "その言葉が妻の心にどう届いたか、想像してみてください。悪意はなくても、妻が傷ついていることはあります。「あのとき、どう感じた？」と聞いてみるだけで、夫婦の間に小さな橋がかかります。",
+                example: "「さっきの言葉、傷つけてたなら謝りたい。ちゃんと話聞かせてくれる？」"
+            };
+        }
+
+        document.getElementById('select-screen').style.display = 'none';
+        document.getElementById('result-display').style.display = 'block';
+        document.getElementById('voice-txt').innerText = matched.voice;
+        document.getElementById('hint-txt').innerText = matched.hint;
+        document.getElementById('example-txt').innerText = matched.example;
+        window.scrollTo(0, 0);
+    }
+
+    function goBack() {
+        document.getElementById('select-screen').style.display = 'block';
+        document.getElementById('result-display').style.display = 'none';
+        window.scrollTo(0, 0);
+    }
+</script>
+</body>
+</html>
