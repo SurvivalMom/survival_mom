@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>友達作り応援チェックシート | survival_mam</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+  :root {
+    --cream: #faf7f2;
+    --cream-dark: #f0ebe1;
+    --terracotta: #c4814a;
+    --terracotta-light: #d9a07a;
+    --terracotta-pale: #f5e8dc;
+    --navy: #1a1410;
+    --navy-mid: #3a2e26;
+    --navy-light: #6b5a4e;
+    --sage: #7a8c6e;
+    --sage-light: #b8c9a8;
+    --gold: #b8963e;
+    --shadow: rgba(26,20,16,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* ヘッダー */
+  .header {
+    background: var(--navy);
+    padding: 20px 24px 18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-inner {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cream);
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+  }
+  .header-brand {
+    font-size: 10px;
+    color: var(--terracotta-light);
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+  }
+  .date-display {
+    font-size: 11px;
+    color: var(--navy-light);
+    background: var(--navy-mid);
+    padding: 5px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* 日付ナビ */
+  .date-nav {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .date-btn {
+    background: none;
+    border: 1.5px solid var(--terracotta-light);
+    color: var(--terracotta);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .date-btn:hover { background: var(--terracotta); color: white; }
+  .date-label {
+    flex: 1;
+    text-align: center;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.05em;
+  }
+  .today-btn {
+    background: none;
+    border: 1.5px solid var(--terracotta-light);
+    color: var(--terracotta);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .today-btn:hover { background: var(--terracotta); color: white; }
+
+  /* メインコンテンツ */
+  .main {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px;
+  }
+
+  /* セクション */
+  .section {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+  .section-header {
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  .section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+  .icon-child { background: var(--terracotta-pale); }
+  .icon-parent { background: #e8f0e4; }
+
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.4;
+  }
+  .section-sub {
+    font-size: 10px;
+    color: var(--navy-light);
+    margin-top: 1px;
+    font-weight: 300;
+  }
+
+  /* チェックアイテム */
+  .check-list { padding: 8px 0; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 13px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--cream);
+    position: relative;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item:active { background: var(--cream); }
+
+  .check-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    border: 2px solid var(--terracotta-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+    background: white;
+  }
+  .check-box.parent-box {
+    border-color: var(--sage);
+  }
+  .check-item.checked .check-box {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+  }
+  .check-item.checked .check-box.parent-box {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+  .check-mark {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  .check-item.checked .check-mark {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .check-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--navy);
+    transition: color 0.2s;
+    font-weight: 400;
+  }
+  .check-item.checked .check-text {
+    color: var(--navy-light);
+  }
+  .check-note {
+    font-size: 10.5px;
+    color: var(--navy-light);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  /* 進捗バー */
+  .progress-wrap {
+    padding: 14px 20px 16px;
+    background: var(--cream);
+    border-top: 1px solid var(--cream-dark);
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-label {
+    font-size: 11px;
+    color: var(--navy-light);
+    letter-spacing: 0.03em;
+  }
+  .progress-count {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--terracotta);
+  }
+  .progress-count.parent { color: var(--sage); }
+  .progress-bar-bg {
+    height: 6px;
+    background: var(--cream-dark);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--terracotta);
+    transition: width 0.4s ease;
+  }
+  .progress-bar-fill.parent { background: var(--sage); }
+
+  /* メッセージカード */
+  .message-card {
+    background: var(--navy);
+    border-radius: 16px;
+    padding: 22px 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(26,20,16,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .message-card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background: var(--terracotta);
+    opacity: 0.12;
+    border-radius: 50%;
+  }
+  .message-label {
+    font-size: 10px;
+    color: var(--terracotta-light);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .message-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.7;
+  }
+  .message-text.hidden { display: none; }
+
+  /* 総合スコア */
+  .score-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 16px var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .score-circle {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .score-circle svg { transform: rotate(-90deg); }
+  .score-circle-bg { fill: none; stroke: var(--cream-dark); stroke-width: 6; }
+  .score-circle-fill {
+    fill: none;
+    stroke: var(--terracotta);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 201;
+    stroke-dashoffset: 201;
+    transition: stroke-dashoffset 0.6s ease;
+  }
+  .score-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .score-info { flex: 1; }
+  .score-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .score-desc {
+    font-size: 12px;
+    color: var(--navy-light);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* 履歴セクション */
+  .history-section {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+  .history-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--cream-dark);
+    cursor: pointer;
+  }
+  .history-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .history-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .history-toggle {
+    font-size: 12px;
+    color: var(--navy-light);
+    transition: transform 0.3s;
+  }
+  .history-toggle.open { transform: rotate(180deg); }
+  .history-body { display: none; }
+  .history-body.open { display: block; }
+  .history-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 20px;
+    border-bottom: 1px solid var(--cream);
+    gap: 12px;
+  }
+  .history-row:last-child { border-bottom: none; }
+  .history-date {
+    font-size: 12px;
+    color: var(--navy-light);
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .history-bars {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .history-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .history-bar-label {
+    font-size: 9px;
+    color: var(--navy-light);
+    width: 24px;
+    flex-shrink: 0;
+  }
+  .history-bar-bg {
+    flex: 1;
+    height: 5px;
+    background: var(--cream-dark);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .history-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--terracotta);
+    transition: width 0.4s;
+  }
+  .history-bar-fill.p { background: var(--sage); }
+  .history-score {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--navy-light);
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* フッターリンク */
+  .footer-note {
+    text-align: center;
+    padding: 8px 20px 0;
+  }
+  .footer-note a {
+    font-size: 11px;
+    color: var(--terracotta);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+
+  /* アニメーション */
+  @keyframes checkPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+  .check-item.just-checked {
+    animation: checkPop 0.25s ease;
+  }
+
+  /* ひとことメモ */
+  .memo-section {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+  .memo-header {
+    padding: 14px 20px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  .memo-body { padding: 14px 16px 16px; }
+  .memo-textarea {
+    width: 100%;
+    min-height: 72px;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13.5px;
+    color: var(--navy);
+    background: var(--cream);
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+    transition: border-color 0.2s;
+  }
+  .memo-textarea:focus { border-color: var(--terracotta-light); }
+  .memo-textarea::placeholder { color: var(--navy-light); font-size: 12.5px; }
+  .memo-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .memo-hint { font-size: 11px; color: var(--navy-light); }
+  .memo-save-btn {
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .memo-save-btn:hover { background: var(--terracotta-light); }
+  .memo-saved {
+    font-size: 11px;
+    color: var(--sage);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .memo-saved.show { opacity: 1; }
+
+  /* 週ふりかえり */
+  .week-section {
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+  .week-header {
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--cream-dark);
+    cursor: pointer;
+  }
+  .week-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .week-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .week-toggle { font-size: 12px; color: var(--navy-light); transition: transform 0.3s; }
+  .week-toggle.open { transform: rotate(180deg); }
+  .week-body { display: none; padding: 16px 20px 20px; }
+  .week-body.open { display: block; }
+  .week-comment {
+    background: var(--terracotta-pale);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--navy);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .week-graph { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin-bottom: 8px; }
+  .week-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .week-bar-wrap { flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; }
+  .week-bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+    transition: height 0.4s ease;
+  }
+  .week-bar.child { background: var(--terracotta); opacity: 0.85; }
+  .week-bar.parent { background: var(--sage); opacity: 0.85; }
+  .week-day-label { font-size: 10px; color: var(--navy-light); margin-top: 2px; }
+  .week-legend {
+    display: flex;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .week-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    color: var(--navy-light);
+  }
+  .week-legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+  }
+
+  /* マイルストーンバナー */
+  .milestone-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(26,20,16,0.18);
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .milestone-banner.visible { display: block; }
+  .milestone-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -24px; right: -24px;
+    width: 90px; height: 90px;
+    background: var(--gold);
+    opacity: 0.15;
+    border-radius: 50%;
+  }
+  .milestone-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .milestone-badge {
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    font-weight: 700;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .milestone-badge-unit {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-top: 1px;
+  }
+  .milestone-info { flex: 1; }
+  .milestone-label {
+    font-size: 9px;
+    color: var(--terracotta-light);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+  }
+  .milestone-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.5;
+  }
+  .milestone-msg {
+    font-size: 12px;
+    color: #c8b89a;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* празднование */
+  .celebration {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .celebration-msg {
+    background: var(--navy);
+    color: var(--cream);
+    padding: 18px 30px;
+    border-radius: 50px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  }
+  .celebration.show .celebration-msg {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">友達作り応援チェックシート</div>
+      <div class="header-brand">survival_mam</div>
+    </div>
+    <div class="date-display" id="todayBadge"></div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- 日付ナビ -->
+  <div class="date-nav">
+    <button class="date-btn" id="prevDay">&#8249;</button>
+    <div class="date-label" id="currentDateLabel"></div>
+    <button class="today-btn" id="toToday">今日</button>
+    <button class="date-btn" id="nextDay">&#8250;</button>
+  </div>
+
+  <div style="height:20px"></div>
+
+  <!-- メッセージカード -->
+  <div class="message-card">
+    <div class="message-label">TODAY'S MESSAGE</div>
+    <div class="message-text" id="dailyMessage">今日も一緒に確認してみましょう。</div>
+  </div>
+
+  <!-- 総合スコア -->
+  <div class="score-card">
+    <div class="score-circle">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle class="score-circle-bg" cx="36" cy="36" r="32"/>
+        <circle class="score-circle-fill" id="scoreCircle" cx="36" cy="36" r="32"/>
+      </svg>
+      <div class="score-number" id="scoreNumber">0%</div>
+    </div>
+    <div class="score-info">
+      <div class="score-title">今日の達成度</div>
+      <div class="score-desc" id="scoreDesc">チェックをつけると<br>スコアが更新されます</div>
+    </div>
+  </div>
+
+  <!-- 子どもチェック -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-child">🌱</div>
+      <div>
+        <div class="section-title">子どもチェック</div>
+        <div class="section-sub">今日の行動をふりかえろう</div>
+      </div>
+    </div>
+    <div class="check-list" id="childChecks">
+      <div class="check-item" data-id="c1" data-type="child" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">誰かの名前を覚えた・呼んだ</div>
+        </div>
+      </div>
+      <div class="check-item" data-id="c2" data-type="child" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">誰かに話しかけてみた</div>
+          <div class="check-note">うまくいかなくてもOK！</div>
+        </div>
+      </div>
+      <div class="check-item" data-id="c3" data-type="child" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">誰かと一緒にいた時間があった</div>
+        </div>
+      </div>
+      <div class="check-item" data-id="c4" data-type="child" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">「入れて」「一緒にやろう」と言えた</div>
+        </div>
+      </div>
+      <div class="check-item" data-id="c5" data-type="child" onclick="toggleCheck(this)">
+        <div class="check-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">今日、安心できた瞬間があった</div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <div class="progress-label">子どもスコア</div>
+        <div class="progress-count" id="childCount">0 / 5</div>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="childBar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 親チェック -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon icon-parent">🍃</div>
+      <div>
+        <div class="section-title">親チェック</div>
+        <div class="section-sub">今日の声かけをふりかえろう</div>
+      </div>
+    </div>
+    <div class="check-list" id="parentChecks">
+      <div class="check-item" data-id="p1" data-type="parent" onclick="toggleCheck(this)">
+        <div class="check-box parent-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">子どもの話を最後まで聞いた</div>
+        </div>
+      </div>
+      <div class="check-item" data-id="p2" data-type="parent" onclick="toggleCheck(this)">
+        <div class="check-box parent-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">「すごい」「がんばったね」と伝えた</div>
+        </div>
+      </div>
+      <div class="check-item" data-id="p3" data-type="parent" onclick="toggleCheck(this)">
+        <div class="check-box parent-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">失敗しても責めなかった</div>
+        </div>
+      </div>
+      <div class="check-item" data-id="p4" data-type="parent" onclick="toggleCheck(this)">
+        <div class="check-box parent-box"><span class="check-mark">✓</span></div>
+        <div>
+          <div class="check-text">明日の小さな目標を一緒に決めた</div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <div class="progress-label">親スコア</div>
+        <div class="progress-count parent" id="parentCount">0 / 4</div>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill parent" id="parentBar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ひとことメモ -->
+  <div class="memo-section">
+    <div class="memo-header">
+      <div class="section-icon icon-child">📝</div>
+      <div>
+        <div class="section-title">今日のひとこと</div>
+        <div class="section-sub">子どもの様子を一言だけ書き残そう</div>
+      </div>
+    </div>
+    <div class="memo-body">
+      <textarea class="memo-textarea" id="memoText" placeholder="例：給食のとき隣の子と少し話せたみたい。帰りに笑顔だった。"></textarea>
+      <div class="memo-footer">
+        <span class="memo-saved" id="memoSaved">保存しました ✓</span>
+        <span class="memo-hint">後から読み返すと成長が見えます</span>
+        <button class="memo-save-btn" onclick="saveMemo()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 週ごとのふりかえり -->
+  <div class="week-section">
+    <div class="week-header" onclick="toggleWeek()">
+      <div class="week-header-left">
+        <div class="section-icon icon-parent" style="width:30px;height:30px;font-size:14px;">📊</div>
+        <div class="week-title">今週のふりかえり</div>
+      </div>
+      <div class="week-toggle" id="weekToggle">▼</div>
+    </div>
+    <div class="week-body" id="weekBody">
+      <div class="week-comment" id="weekComment">データを読み込んでいます…</div>
+      <div class="week-graph" id="weekGraph"></div>
+      <div class="week-legend">
+        <div class="week-legend-item"><div class="week-legend-dot" style="background:var(--terracotta)"></div>子どもチェック</div>
+        <div class="week-legend-item"><div class="week-legend-dot" style="background:var(--sage)"></div>親チェック</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- マイルストーンバナー -->
+  <div class="milestone-banner" id="milestoneBanner">
+    <div class="milestone-top">
+      <div class="milestone-badge">
+        <span id="milestoneDays">10</span>
+        <span class="milestone-badge-unit">日間</span>
+      </div>
+      <div class="milestone-info">
+        <div class="milestone-label">MILESTONE</div>
+        <div class="milestone-title" id="milestoneTitle">10日間、続いています！</div>
+      </div>
+    </div>
+    <div class="milestone-msg" id="milestoneMsg">毎日の積み重ねが、子どもの自信になっています。</div>
+  </div>
+
+  <!-- 履歴 -->
+  <div class="history-section">
+    <div class="history-header" onclick="toggleHistory()">
+      <div class="history-header-left">
+        <div class="section-icon icon-child" style="width:30px;height:30px;font-size:14px;">📅</div>
+        <div class="history-title">これまでの記録</div>
+      </div>
+      <div class="history-toggle" id="historyToggle">▼</div>
+    </div>
+    <div class="history-body" id="historyBody">
+      <div id="historyList" style="padding: 4px 0;"></div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <a href="https://note.com/survival_mom_lab" target="_blank">survival_mam の記事はこちら →</a>
+  </div>
+
+</div>
+
+<!-- お祝いメッセージ -->
+<div class="celebration" id="celebration">
+  <div class="celebration-msg" id="celebrationMsg"></div>
+</div>
+
+<script>
+  // ===== 状態管理 =====
+  const STORAGE_KEY = 'tomodachi_check_v1';
+  let currentDate = getTodayStr();
+
+  const MESSAGES = [
+    '今日も一緒に確認してみましょう。小さな一歩が積み重なります。',
+    '子どもの「やってみた」を、まず認めてあげましょう。',
+    '「うまくいかなかった」も、立派なチャレンジです。',
+    '親が隣にいるだけで、子どもは安心できます。',
+    '焦らなくて大丈夫。ゆっくり、確実に進んでいます。',
+    '今日もお疲れさまです。一緒にふりかえりましょう。',
+    '小さな変化に気づいてあげることが、一番の応援になります。',
+  ];
+
+  const CELEBRATE_MESSAGES = {
+    child_all: '子どもスコア満点！今日もよくがんばりました ✨',
+    parent_all: '親スコア満点！素晴らしいサポートです 🌿',
+    both_all: '全項目達成！今日は最高の一日でした 🎉',
+  };
+
+  const MILESTONE_DATA = {
+    10:  { title: '10日間、続いています！',   msg: '毎日の積み重ねが、子どもの自信になっています。' },
+    20:  { title: '20日間！もう習慣になってきた頃',  msg: '続けることそのものが、子どもへの最大の応援です。' },
+    30:  { title: '1か月達成！すごいです。',   msg: '一日一日の積み上げが、確実に景色を変えています。' },
+    40:  { title: '40日間。本当によく続きました', msg: '親子の会話が増えている頃ではないでしょうか。' },
+    50:  { title: '50日間！折り返しを過ぎました', msg: '子どもの変化が、少しずつ見えてきている頃です。' },
+    60:  { title: '60日間、2か月続きました',   msg: 'ここまで来たら、自信を持ってください。確実に前進しています。' },
+    70:  { title: '70日間！すごい継続力です',  msg: '親子で積み上げたこの時間は、一生の財産になります。' },
+    80:  { title: '80日間。あと少しで3か月',   msg: '子どもが「学校って楽しい」と言える日が近づいています。' },
+    90:  { title: '3か月達成！大きな節目です', msg: '3か月続いた親子には、きっと友達との物語があります。' },
+    100: { title: '100日間！友達100人できるかな♪', msg: '100日間、本当にお疲れさまでした。親子の絆がここにあります。' },
+  };
+
+  // ===== データ操作 =====
+  function getTodayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function loadData() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  }
+
+  function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function getDateData(dateStr) {
+    const all = loadData();
+    return all[dateStr] || { child: [], parent: [] };
+  }
+
+  function setDateData(dateStr, dayData) {
+    const all = loadData();
+    all[dateStr] = dayData;
+    saveData(all);
+  }
+
+  // ===== 日付表示 =====
+  function formatDateLabel(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m-1, d);
+    const days = ['日','月','火','水','木','金','土'];
+    const today = getTodayStr();
+    const prefix = dateStr === today ? '今日・' : '';
+    return `${prefix}${m}月${d}日（${days[date.getDay()]}）`;
+  }
+
+  function shiftDate(dateStr, days) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m-1, d);
+    date.setDate(date.getDate() + days);
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  }
+
+  // ===== UI更新 =====
+  function renderAll() {
+    const today = getTodayStr();
+    const [y,m,d] = today.split('-').map(Number);
+    document.getElementById('todayBadge').textContent = `${m}/${d}`;
+
+    renderDateNav();
+    renderChecks();
+    renderScore();
+    renderMessage();
+    renderMilestone();
+    renderMemo();
+    renderWeekSummary();
+    renderHistory();
+  }
+
+  function renderDateNav() {
+    document.getElementById('currentDateLabel').textContent = formatDateLabel(currentDate);
+    const today = getTodayStr();
+    document.getElementById('nextDay').style.opacity = currentDate >= today ? '0.3' : '1';
+    document.getElementById('nextDay').style.pointerEvents = currentDate >= today ? 'none' : 'auto';
+  }
+
+  function renderChecks() {
+    const dayData = getDateData(currentDate);
+    document.querySelectorAll('.check-item').forEach(item => {
+      const id = item.dataset.id;
+      const type = item.dataset.type;
+      const arr = type === 'child' ? dayData.child : dayData.parent;
+      if (arr.includes(id)) {
+        item.classList.add('checked');
+      } else {
+        item.classList.remove('checked');
+      }
+    });
+  }
+
+  function renderScore() {
+    const dayData = getDateData(currentDate);
+    const cc = dayData.child.length;
+    const pc = dayData.parent.length;
+    const total = cc + pc;
+    const max = 9;
+    const pct = Math.round(total / max * 100);
+
+    document.getElementById('childCount').textContent = `${cc} / 5`;
+    document.getElementById('parentCount').textContent = `${pc} / 4`;
+    document.getElementById('childBar').style.width = `${cc/5*100}%`;
+    document.getElementById('parentBar').style.width = `${pc/4*100}%`;
+
+    document.getElementById('scoreNumber').textContent = `${pct}%`;
+    const circle = document.getElementById('scoreCircle');
+    const circumference = 201;
+    circle.style.strokeDashoffset = circumference - (circumference * pct / 100);
+
+    const desc = pct === 0
+      ? 'チェックをつけると\nスコアが更新されます'
+      : pct < 50 ? `${total}項目達成！\n少しずつ前進しています`
+      : pct < 100 ? `${total}項目達成！\nとても良い調子です`
+      : '全項目達成！\n素晴らしい一日でした 🎉';
+    document.getElementById('scoreDesc').innerHTML = desc.replace('\n','<br>');
+  }
+
+  function renderMessage() {
+    const [y,m,d] = currentDate.split('-').map(Number);
+    const idx = (d + m) % MESSAGES.length;
+    document.getElementById('dailyMessage').textContent = MESSAGES[idx];
+  }
+
+  function renderMilestone() {
+    const all = loadData();
+    const totalDays = Object.keys(all).length;
+    const banner = document.getElementById('milestoneBanner');
+
+    // 10の倍数で最大のものを探す
+    let milestone = null;
+    for (let n = 100; n >= 10; n -= 10) {
+      if (totalDays >= n) { milestone = n; break; }
+    }
+
+    if (!milestone) { banner.classList.remove('visible'); return; }
+
+    const data = MILESTONE_DATA[milestone];
+    document.getElementById('milestoneDays').textContent = milestone;
+    document.getElementById('milestoneTitle').textContent = data.title;
+    document.getElementById('milestoneMsg').textContent = data.msg;
+    banner.classList.add('visible');
+  }
+
+  function renderMemo() {
+    const dayData = getDateData(currentDate);
+    const ta = document.getElementById('memoText');
+    ta.value = dayData.memo || '';
+    document.getElementById('memoSaved').classList.remove('show');
+  }
+
+  function saveMemo() {
+    const dayData = getDateData(currentDate);
+    dayData.memo = document.getElementById('memoText').value;
+    setDateData(currentDate, dayData);
+    const saved = document.getElementById('memoSaved');
+    saved.classList.add('show');
+    setTimeout(() => saved.classList.remove('show'), 2000);
+    renderHistory();
+  }
+
+  function toggleWeek() {
+    const body = document.getElementById('weekBody');
+    const toggle = document.getElementById('weekToggle');
+    body.classList.toggle('open');
+    toggle.classList.toggle('open');
+    if (body.classList.contains('open')) renderWeekSummary();
+  }
+
+  function getWeekDates(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m-1, d);
+    const dow = date.getDay(); // 0=日
+    const mon = new Date(date); mon.setDate(d - (dow === 0 ? 6 : dow - 1));
+    return Array.from({length: 7}, (_, i) => {
+      const dd = new Date(mon); dd.setDate(mon.getDate() + i);
+      return `${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')}`;
+    });
+  }
+
+  function renderWeekSummary() {
+    const all = loadData();
+    const weekDates = getWeekDates(currentDate);
+    const dayLabels = ['月','火','水','木','金','土','日'];
+    const today = getTodayStr();
+
+    let totalChild = 0, totalParent = 0, recordedDays = 0;
+    const cols = weekDates.map((dateStr, i) => {
+      const data = all[dateStr] || null;
+      const cc = data ? (data.child || []).length : 0;
+      const pc = data ? (data.parent || []).length : 0;
+      if (data) { totalChild += cc; totalParent += pc; recordedDays++; }
+      const isFuture = dateStr > today;
+      const isToday = dateStr === today;
+      return { dateStr, cc, pc, label: dayLabels[i], isFuture, isToday, hasData: !!data };
+    });
+
+    // グラフ描画
+    const maxH = 60;
+    document.getElementById('weekGraph').innerHTML = cols.map(col => {
+      const childH = col.isFuture ? 0 : Math.round(col.cc / 5 * maxH);
+      const parentH = col.isFuture ? 0 : Math.round(col.pc / 4 * (maxH * 0.6));
+      const opacity = col.isFuture ? '0.2' : col.isToday ? '1' : '0.75';
+      const todayDot = col.isToday ? `<div style="width:5px;height:5px;border-radius:50%;background:var(--terracotta);margin:0 auto 2px;"></div>` : '';
+      return `<div class="week-col" style="opacity:${opacity}">
+        <div class="week-bar-wrap" style="height:${maxH}px">
+          ${col.hasData || col.isToday ? `<div class="week-bar parent" style="height:${parentH}px"></div><div class="week-bar child" style="height:${childH}px"></div>` : `<div style="height:2px;background:var(--cream-dark);border-radius:2px;"></div>`}
+        </div>
+        ${todayDot}
+        <div class="week-day-label">${col.label}</div>
+      </div>`;
+    }).join('');
+
+    // 自動コメント生成
+    const avgTotal = recordedDays > 0 ? (totalChild + totalParent) / recordedDays : 0;
+    const avgPct = Math.round(avgTotal / 9 * 100);
+    const childAvg = recordedDays > 0 ? totalChild / recordedDays : 0;
+    const parentAvg = recordedDays > 0 ? totalParent / recordedDays : 0;
+
+    let comment = '';
+    if (recordedDays === 0) {
+      comment = 'まだ今週の記録がありません。今日から始めましょう。';
+    } else if (recordedDays === 1) {
+      comment = '今週の記録が始まりました。明日も一緒に確認しましょう。';
+    } else if (avgPct >= 90) {
+      comment = `今週は平均${avgPct}%達成！とても充実した一週間でした。この調子で来週も一緒に続けましょう。`;
+    } else if (avgPct >= 70) {
+      comment = `今週は平均${avgPct}%達成。良い一週間でした。${childAvg >= parentAvg ? '子どもの行動チェックが特に好調でした。' : '親の声かけチェックが特に丁寧でした。'}`;
+    } else if (avgPct >= 50) {
+      comment = `今週は平均${avgPct}%達成。できた日もあれば難しい日もあった一週間。それでも続けていることが何より大切です。`;
+    } else if (avgPct > 0) {
+      comment = `今週は平均${avgPct}%。忙しい日もあったかもしれません。できた日の積み重ねを、大切にしてください。`;
+    } else {
+      comment = `記録が${recordedDays}日ぶんあります。来週はもう少し一緒に続けてみましょう。`;
+    }
+
+    document.getElementById('weekComment').textContent = comment;
+  }
+
+  function renderHistory() {
+    const all = loadData();
+    const keys = Object.keys(all).sort().reverse().slice(0, 10);
+    const list = document.getElementById('historyList');
+    if (keys.length === 0) {
+      list.innerHTML = '<div style="padding:16px 20px;font-size:12px;color:#6b5a4e;">記録はまだありません</div>';
+      return;
+    }
+    list.innerHTML = keys.map(dateStr => {
+      const data = all[dateStr];
+      const cc = data.child ? data.child.length : 0;
+      const pc = data.parent ? data.parent.length : 0;
+      const [y,m,d] = dateStr.split('-').map(Number);
+      const date = new Date(y,m-1,d);
+      const days = ['日','月','火','水','木','金','土'];
+      return `
+        <div class="history-row" onclick="jumpToDate('${dateStr}')" style="cursor:pointer">
+          <div class="history-date">${m}/${d}（${days[date.getDay()]}）</div>
+          <div class="history-bars">
+            <div class="history-bar-row">
+              <div class="history-bar-label">子</div>
+              <div class="history-bar-bg"><div class="history-bar-fill" style="width:${cc/5*100}%"></div></div>
+              <div class="history-score">${cc}/5</div>
+            </div>
+            <div class="history-bar-row">
+              <div class="history-bar-label">親</div>
+              <div class="history-bar-bg"><div class="history-bar-fill p" style="width:${pc/4*100}%"></div></div>
+              <div class="history-score">${pc}/4</div>
+            </div>
+            ${data.memo ? `<div style="font-size:10.5px;color:#6b5a4e;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">📝 ${data.memo}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ===== インタラクション =====
+  function toggleCheck(item) {
+    const id = item.dataset.id;
+    const type = item.dataset.type;
+    const dayData = getDateData(currentDate);
+    const arr = type === 'child' ? dayData.child : dayData.parent;
+
+    const idx = arr.indexOf(id);
+    if (idx === -1) {
+      arr.push(id);
+      item.classList.add('checked', 'just-checked');
+      setTimeout(() => item.classList.remove('just-checked'), 300);
+    } else {
+      arr.splice(idx, 1);
+      item.classList.remove('checked');
+    }
+
+    setDateData(currentDate, dayData);
+    renderScore();
+    renderMilestone();
+    renderHistory();
+    checkCelebration(dayData);
+    checkMilestoneCelebration();
+  }
+
+  function checkMilestoneCelebration() {
+    const all = loadData();
+    const totalDays = Object.keys(all).length;
+    // ちょうど10の倍数になった瞬間だけ祝う
+    if (totalDays > 0 && totalDays % 10 === 0 && MILESTONE_DATA[totalDays]) {
+      const title = totalDays === 100
+        ? '🎵 友達100人できるかな♪ 100日達成！'
+        : `🎉 ${totalDays}日間達成！よく続きました`;
+      showCelebration(title);
+    }
+  }
+
+  function checkCelebration(dayData) {
+    const cc = dayData.child.length;
+    const pc = dayData.parent.length;
+    if (cc === 5 && pc === 4) {
+      showCelebration(CELEBRATE_MESSAGES.both_all);
+    } else if (cc === 5) {
+      showCelebration(CELEBRATE_MESSAGES.child_all);
+    } else if (pc === 4) {
+      showCelebration(CELEBRATE_MESSAGES.parent_all);
+    }
+  }
+
+  function showCelebration(msg) {
+    const el = document.getElementById('celebration');
+    const msgEl = document.getElementById('celebrationMsg');
+    msgEl.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2800);
+  }
+
+  function toggleHistory() {
+    const body = document.getElementById('historyBody');
+    const toggle = document.getElementById('historyToggle');
+    body.classList.toggle('open');
+    toggle.classList.toggle('open');
+  }
+
+  function jumpToDate(dateStr) {
+    currentDate = dateStr;
+    renderAll();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ===== イベント =====
+  document.getElementById('prevDay').onclick = () => {
+    currentDate = shiftDate(currentDate, -1);
+    renderAll();
+  };
+  document.getElementById('nextDay').onclick = () => {
+    const today = getTodayStr();
+    if (currentDate < today) {
+      currentDate = shiftDate(currentDate, 1);
+      renderAll();
+    }
+  };
+  document.getElementById('toToday').onclick = () => {
+    currentDate = getTodayStr();
+    renderAll();
+  };
+
+  // ===== 初期化 =====
+  renderAll();
+</script>
+</body>
+</html>
