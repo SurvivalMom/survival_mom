@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>こころチェック｜今日の状態を記録する</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --cream2: #f3ede3;
+    --terra: #c4814a;
+    --terra-light: #e8a87c;
+    --terra-deep: #9c5e30;
+    --navy: #1a1410;
+    --navy-mid: #3d2e22;
+    --muted: #8a7060;
+    --muted-light: #b8a090;
+    --green-ok: #6a9e6a;
+    --amber-mid: #d4943a;
+    --red-stop: #c45a4a;
+    --border: rgba(196,129,74,0.18);
+    --shadow: 0 2px 20px rgba(26,20,16,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--navy);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--terra-deep);
+    letter-spacing: 0.08em;
+  }
+  .logo span { font-size: 10px; display: block; color: var(--muted); letter-spacing: 0.12em; margin-top: 1px; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    background: var(--cream2);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: 'Noto Sans JP', sans-serif;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  .tab.active {
+    color: var(--terra-deep);
+    border-bottom-color: var(--terra);
+    font-weight: 500;
+    background: var(--cream);
+  }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 20px 16px 80px; max-width: 480px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* ── DATE DISPLAY ── */
+  .date-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .date-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--navy-mid);
+  }
+  .date-text small { display: block; font-size: 11px; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; margin-top: 2px; }
+
+  /* ── STATUS BADGE ── */
+  .status-badge {
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+  .status-go   { background: rgba(106,158,106,0.15); color: #3d6e3d; }
+  .status-hold { background: rgba(212,148,58,0.15);  color: #8a5c10; }
+  .status-stop { background: rgba(196,90,74,0.15);   color: #8a2a1c; }
+
+  /* ── CHECKLIST CARDS ── */
+  .check-intro {
+    background: linear-gradient(135deg, #f7ede0 0%, var(--cream2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .check-intro strong { color: var(--terra-deep); font-weight: 500; }
+
+  .check-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .check-item:active { transform: scale(0.99); }
+  .check-item.checked {
+    background: linear-gradient(135deg, #f7ede0 0%, #fdf5ec 100%);
+    border-color: rgba(196,129,74,0.35);
+  }
+
+  .check-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--muted-light);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    margin-top: 1px;
+  }
+  .check-item.checked .check-circle {
+    background: var(--terra);
+    border-color: var(--terra);
+  }
+  .check-circle svg { opacity: 0; transition: opacity 0.2s; }
+  .check-item.checked .check-circle svg { opacity: 1; }
+
+  .check-label { flex: 1; }
+  .check-label strong { display: block; font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 2px; }
+  .check-label span { font-size: 11px; color: var(--muted); }
+
+  /* ── SCORE DISPLAY ── */
+  .score-box {
+    background: var(--cream2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .score-num {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--terra);
+    line-height: 1;
+  }
+  .score-denom { font-size: 20px; color: var(--muted-light); }
+  .score-label { font-size: 12px; color: var(--muted); margin-top: 8px; letter-spacing: 0.08em; }
+  .score-judge {
+    margin-top: 14px;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-block;
+  }
+
+  /* ── MEMO ── */
+  .memo-wrap { margin-top: 4px; }
+  .memo-wrap label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 6px; letter-spacing: 0.04em; }
+  .memo-wrap textarea {
+    width: 100%;
+    min-height: 72px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--navy);
+    background: #fff;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.7;
+  }
+  .memo-wrap textarea:focus { border-color: var(--terra-light); }
+  .memo-wrap textarea::placeholder { color: var(--muted-light); }
+
+  /* ── SAVE BUTTON ── */
+  .save-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--terra);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    margin-top: 16px;
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .save-btn:hover { background: var(--terra-deep); }
+  .save-btn:active { transform: scale(0.99); }
+  .save-btn.saved { background: var(--green-ok); }
+
+  /* ── LOG LIST ── */
+  .log-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 2;
+  }
+  .log-empty .icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
+
+  .log-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .log-item:hover { border-color: var(--terra-light); }
+  .log-date-col { min-width: 52px; text-align: center; }
+  .log-date-col .day { font-family: 'Noto Serif JP', serif; font-size: 22px; color: var(--terra); line-height: 1; }
+  .log-date-col .month { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; margin-top: 2px; }
+  .log-divider { width: 1px; height: 36px; background: var(--border); }
+  .log-content { flex: 1; }
+  .log-score-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+  .log-score { font-family: 'Noto Serif JP', serif; font-size: 18px; color: var(--terra); }
+  .log-memo-preview { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+  .log-del {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: none; background: none; cursor: pointer;
+    color: var(--muted-light); font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .log-del:hover { background: rgba(196,90,74,0.1); color: var(--red-stop); }
+
+  /* ── GRAPH SECTION ── */
+  .period-btns {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .period-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    background: #fff;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.15s;
+  }
+  .period-btn.active { background: var(--terra); color: #fff; border-color: var(--terra); }
+
+  .graph-wrap {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px 14px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .graph-title { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 14px; }
+  canvas { width: 100%; display: block; }
+
+  /* ── STATS CARDS ── */
+  .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-val { font-family: 'Noto Serif JP', serif; font-size: 24px; color: var(--terra); line-height: 1; }
+  .stat-label { font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.06em; }
+
+  /* ── TREND CARD ── */
+  .trend-card {
+    background: linear-gradient(135deg, #f7ede0 0%, var(--cream2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 12px;
+    color: var(--navy-mid);
+    line-height: 1.8;
+  }
+  .trend-card .trend-title { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 8px; }
+
+  /* ── DETAIL MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,20,16,0.45);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--cream);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-date { font-family: 'Noto Serif JP', serif; font-size: 18px; color: var(--navy-mid); margin-bottom: 16px; }
+  .modal-checks { margin-bottom: 16px; }
+  .modal-check-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .modal-check-row:last-child { border: none; }
+  .modal-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-on { background: var(--terra); }
+  .dot-off { background: var(--muted-light); }
+  .modal-memo-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.06em; }
+  .modal-memo-text { font-size: 13px; color: var(--navy-mid); line-height: 1.8; }
+  .modal-close {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    background: var(--cream2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--navy);
+    color: var(--cream);
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    z-index: 300;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── UTILITY ── */
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--terra-deep);
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .already-today {
+    background: linear-gradient(135deg, #f7ede0 0%, #fdf5ec 100%);
+    border: 1px solid rgba(196,129,74,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--terra-deep);
+    text-align: center;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    こころチェック
+    <span>survival_mam｜状態記録ノート</span>
+  </div>
+  <div id="todayBadge" class="status-badge"></div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('record')">今日の記録</button>
+  <button class="tab" onclick="switchTab('log')">きろく帳</button>
+  <button class="tab" onclick="switchTab('graph')">グラフ</button>
+</div>
+
+<!-- ── TAB: 記録 ── -->
+<div id="tab-record" class="section active">
+  <div class="date-bar">
+    <div class="date-text">
+      <span id="todayDateStr"></span>
+      <small>今日の状態チェック</small>
+    </div>
+  </div>
+
+  <div id="alreadyToday" class="already-today" style="display:none">
+    ✓ 今日の記録はすでに保存されています。<br>
+    <span style="font-size:11px;color:var(--muted)">上書きして再保存することもできます。</span>
+  </div>
+
+  <div class="check-intro">
+    <strong>6つの項目</strong>を毎朝チェックしてください。<br>
+    当てはまるものをタップするだけでOKです。
+  </div>
+
+  <div id="checkList"></div>
+
+  <div class="score-box">
+    <div>
+      <span class="score-num" id="scoreNum">0</span>
+      <span class="score-denom"> / 6</span>
+    </div>
+    <div class="score-label">今日のスコア</div>
+    <div id="judgeLabel" class="score-judge"></div>
+  </div>
+
+  <div class="memo-wrap">
+    <label>今日のひとこと（任意）</label>
+    <textarea id="memoInput" placeholder="気になったこと、様子のメモなど…"></textarea>
+  </div>
+
+  <button class="save-btn" id="saveBtn" onclick="saveRecord()">今日の記録を保存する</button>
+</div>
+
+<!-- ── TAB: ログ ── -->
+<div id="tab-log" class="section">
+  <div class="section-title">きろく帳</div>
+  <div id="logList"></div>
+</div>
+
+<!-- ── TAB: グラフ ── -->
+<div id="tab-graph" class="section">
+  <div class="section-title">ふりかえり</div>
+  <div class="period-btns">
+    <button class="period-btn active" onclick="setPeriod(7,this)">7日間</button>
+    <button class="period-btn" onclick="setPeriod(14,this)">14日間</button>
+    <button class="period-btn" onclick="setPeriod(30,this)">30日間</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" id="statDays">0</div><div class="stat-label">記録日数</div></div>
+    <div class="stat-card"><div class="stat-val" id="statAvg">-</div><div class="stat-label">平均スコア</div></div>
+    <div class="stat-card"><div class="stat-val" id="statGo">0</div><div class="stat-label">進める日</div></div>
+  </div>
+  <div class="graph-wrap">
+    <div class="graph-title">スコアの推移</div>
+    <canvas id="graphCanvas" height="140"></canvas>
+  </div>
+  <div class="graph-wrap">
+    <div class="graph-title">項目別チェック率</div>
+    <canvas id="barCanvas" height="140"></canvas>
+  </div>
+  <div class="trend-card" id="trendMsg">
+    <div class="trend-title">AIコメント</div>
+    <div id="trendText">記録が増えると傾向が見えてきます。</div>
+  </div>
+</div>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-date" id="modalDate"></div>
+    <div class="modal-checks" id="modalChecks"></div>
+    <div class="modal-memo-label">ひとこと</div>
+    <div class="modal-memo-text" id="modalMemo"></div>
+    <button class="modal-close" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const CHECKS = [
+  { key:'wake',   label:'起床',     hint:'声かけ後10分以内に起きられる' },
+  { key:'eat',    label:'食欲',     hint:'朝食を半分以上食べられる' },
+  { key:'refuse', label:'拒否の強さ',hint:'強い拒否や癇癪がない' },
+  { key:'energy', label:'帰宅後の余力',hint:'帰宅後30分以内に会話できる' },
+  { key:'face',   label:'表情',     hint:'笑顔や自然な反応がある' },
+  { key:'compare',label:'前日比',   hint:'昨日より明らかに落ちていない' },
+];
+
+const STORAGE_KEY = 'kokocheck_v1';
+
+function loadAll() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveAll(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ── STATE ──
+let checked = new Set();
+let currentPeriod = 7;
+
+// ── INIT ──
+function init() {
+  renderDateStr();
+  renderChecklist();
+  checkAlreadyToday();
+  updateBadge();
+}
+
+function renderDateStr() {
+  const d = new Date();
+  const days = ['日','月','火','水','木','金','土'];
+  document.getElementById('todayDateStr').textContent =
+    `${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+}
+
+function renderChecklist() {
+  const el = document.getElementById('checkList');
+  el.innerHTML = CHECKS.map((c,i) => `
+    <div class="check-item" id="ci-${c.key}" onclick="toggle('${c.key}')">
+      <div class="check-circle" id="cc-${c.key}">
+        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+          <path d="M1 5L4.5 8.5L11 1.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="check-label">
+        <strong>${c.label}</strong>
+        <span>${c.hint}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggle(key) {
+  if (checked.has(key)) { checked.delete(key); }
+  else { checked.add(key); }
+  document.getElementById(`ci-${key}`).classList.toggle('checked', checked.has(key));
+  document.getElementById(`cc-${key}`).querySelector('svg').style.opacity = checked.has(key) ? '1' : '0';
+  updateScore();
+}
+
+function updateScore() {
+  const n = checked.size;
+  document.getElementById('scoreNum').textContent = n;
+  const jl = document.getElementById('judgeLabel');
+  if (n >= 5) {
+    jl.textContent = '✦ 進める'; jl.className = 'score-judge status-go';
+  } else if (n >= 3) {
+    jl.textContent = '◎ 維持'; jl.className = 'score-judge status-hold';
+  } else {
+    jl.textContent = '◇ 止まる'; jl.className = 'score-judge status-stop';
+  }
+}
+
+function checkAlreadyToday() {
+  const data = loadAll();
+  const key = todayKey();
+  if (data[key]) {
+    document.getElementById('alreadyToday').style.display = 'block';
+    // restore checks
+    const rec = data[key];
+    checked = new Set(rec.checks);
+    CHECKS.forEach(c => {
+      if (checked.has(c.key)) {
+        document.getElementById(`ci-${c.key}`).classList.add('checked');
+      }
+    });
+    document.getElementById('memoInput').value = rec.memo || '';
+    updateScore();
+  }
+}
+
+function updateBadge() {
+  const data = loadAll();
+  const key = todayKey();
+  const badge = document.getElementById('todayBadge');
+  if (!data[key]) { badge.textContent = '未記録'; badge.className = 'status-badge status-hold'; return; }
+  const n = data[key].score;
+  if (n >= 5) { badge.textContent = '進める'; badge.className = 'status-badge status-go'; }
+  else if (n >= 3) { badge.textContent = '維持'; badge.className = 'status-badge status-hold'; }
+  else { badge.textContent = '止まる'; badge.className = 'status-badge status-stop'; }
+}
+
+function saveRecord() {
+  const data = loadAll();
+  const key = todayKey();
+  data[key] = {
+    date: key,
+    checks: [...checked],
+    score: checked.size,
+    memo: document.getElementById('memoInput').value
+  };
+  saveAll(data);
+
+  const btn = document.getElementById('saveBtn');
+  btn.classList.add('saved');
+  btn.textContent = '保存しました ✓';
+  setTimeout(() => { btn.classList.remove('saved'); btn.textContent = '今日の記録を保存する'; }, 2000);
+
+  document.getElementById('alreadyToday').style.display = 'block';
+  updateBadge();
+  showToast('記録を保存しました');
+}
+
+// ── LOG ──
+function renderLog() {
+  const data = loadAll();
+  const keys = Object.keys(data).sort((a,b) => b.localeCompare(a));
+  const el = document.getElementById('logList');
+  if (!keys.length) {
+    el.innerHTML = '<div class="log-empty"><div class="icon">📓</div>まだ記録がありません。<br>「今日の記録」タブから始めましょう。</div>';
+    return;
+  }
+  el.innerHTML = keys.map(k => {
+    const r = data[k];
+    const d = new Date(k);
+    const mon = `${d.getMonth()+1}月`;
+    const day = d.getDate();
+    const score = r.score;
+    let cls = score>=5 ? 'status-go' : score>=3 ? 'status-hold' : 'status-stop';
+    let judge = score>=5 ? '進める' : score>=3 ? '維持' : '止まる';
+    return `
+      <div class="log-item" onclick="openModal('${k}')">
+        <div class="log-date-col">
+          <div class="day">${day}</div>
+          <div class="month">${mon}</div>
+        </div>
+        <div class="log-divider"></div>
+        <div class="log-content">
+          <div class="log-score-row">
+            <span class="log-score">${score}/6</span>
+            <span class="status-badge ${cls}" style="font-size:10px;padding:2px 10px">${judge}</span>
+          </div>
+          ${r.memo ? `<div class="log-memo-preview">${r.memo}</div>` : ''}
+        </div>
+        <button class="log-del" onclick="deleteRecord(event,'${k}')">×</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function deleteRecord(e, key) {
+  e.stopPropagation();
+  if (!confirm('この記録を削除しますか？')) return;
+  const data = loadAll();
+  delete data[key];
+  saveAll(data);
+  renderLog();
+  updateBadge();
+  showToast('削除しました');
+}
+
+// ── MODAL ──
+function openModal(key) {
+  const data = loadAll();
+  const r = data[key];
+  if (!r) return;
+  const d = new Date(key);
+  const days = ['日','月','火','水','木','金','土'];
+  document.getElementById('modalDate').textContent =
+    `${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+  const checksSet = new Set(r.checks);
+  document.getElementById('modalChecks').innerHTML = CHECKS.map(c => `
+    <div class="modal-check-row">
+      <div class="modal-dot ${checksSet.has(c.key)?'dot-on':'dot-off'}"></div>
+      <span style="color:${checksSet.has(c.key)?'var(--navy)':'var(--muted-light)'}">${c.label}</span>
+      <span style="font-size:11px;color:var(--muted);margin-left:auto">${c.hint}</span>
+    </div>
+  `).join('');
+  document.getElementById('modalMemo').textContent = r.memo || '（メモなし）';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+// ── GRAPH ──
+function setPeriod(n, btn) {
+  currentPeriod = n;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGraph();
+}
+
+function renderGraph() {
+  const data = loadAll();
+  const today = new Date();
+  const days = [];
+  for (let i = currentPeriod-1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate()-i);
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    days.push({ key:k, date:d, rec:data[k]||null });
+  }
+
+  // stats
+  const recorded = days.filter(d=>d.rec);
+  const avg = recorded.length ? (recorded.reduce((s,d)=>s+d.rec.score,0)/recorded.length).toFixed(1) : '-';
+  const goCount = recorded.filter(d=>d.rec.score>=5).length;
+  document.getElementById('statDays').textContent = recorded.length;
+  document.getElementById('statAvg').textContent = avg;
+  document.getElementById('statGo').textContent = goCount;
+
+  // line chart
+  drawLineChart(days);
+  drawBarChart(days);
+  renderTrend(recorded);
+}
+
+function drawLineChart(days) {
+  const canvas = document.getElementById('graphCanvas');
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.parentElement.clientWidth - 32;
+  const H = 140;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W+'px';
+  canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0,0,W,H);
+
+  const pad = { l:28, r:8, t:10, b:28 };
+  const gW = W - pad.l - pad.r;
+  const gH = H - pad.t - pad.b;
+
+  // grid
+  ctx.strokeStyle = 'rgba(196,129,74,0.12)';
+  ctx.lineWidth = 0.5;
+  [0,2,4,6].forEach(v => {
+    const y = pad.t + gH - (v/6)*gH;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+gW, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(138,112,96,0.7)';
+    ctx.font = '9px Noto Sans JP, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v, pad.l-4, y+3);
+  });
+
+  const n = days.length;
+  const xOf = i => pad.l + (i/(n-1))*gW;
+  const yOf = v => pad.t + gH - (v/6)*gH;
+
+  // fill under line
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t+gH);
+  grad.addColorStop(0, 'rgba(196,129,74,0.18)');
+  grad.addColorStop(1, 'rgba(196,129,74,0)');
+  ctx.beginPath();
+  let started = false;
+  days.forEach((d,i) => {
+    if (!d.rec) return;
+    const x = xOf(i), y = yOf(d.rec.score);
+    if (!started) { ctx.moveTo(x, yOf(0)); ctx.lineTo(x, y); started=true; }
+    else ctx.lineTo(x, y);
+  });
+  if (started) {
+    const lastRec = [...days].reverse().find(d=>d.rec);
+    if (lastRec) ctx.lineTo(xOf(days.indexOf(lastRec)), yOf(0));
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  // line
+  ctx.beginPath();
+  ctx.strokeStyle = '#c4814a';
+  ctx.lineWidth = 1.8;
+  ctx.lineJoin = 'round';
+  started = false;
+  days.forEach((d,i) => {
+    if (!d.rec) return;
+    const x = xOf(i), y = yOf(d.rec.score);
+    if (!started) { ctx.moveTo(x,y); started=true; }
+    else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // dots
+  days.forEach((d,i) => {
+    if (!d.rec) return;
+    const x = xOf(i), y = yOf(d.rec.score);
+    const score = d.rec.score;
+    const color = score>=5 ? '#6a9e6a' : score>=3 ? '#d4943a' : '#c45a4a';
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  });
+
+  // x labels
+  ctx.fillStyle = 'rgba(138,112,96,0.8)';
+  ctx.font = '9px Noto Sans JP, sans-serif';
+  ctx.textAlign = 'center';
+  const step = Math.ceil(n/7);
+  days.forEach((d,i) => {
+    if (i % step !== 0 && i !== n-1) return;
+    ctx.fillText(`${d.date.getMonth()+1}/${d.date.getDate()}`, xOf(i), H-6);
+  });
+}
+
+function drawBarChart(days) {
+  const canvas = document.getElementById('barCanvas');
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.parentElement.clientWidth - 32;
+  const H = 140;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W+'px';
+  canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+
+  const recorded = days.filter(d=>d.rec);
+  if (!recorded.length) return;
+
+  const rates = CHECKS.map(c => {
+    const count = recorded.filter(d=>d.rec.checks.includes(c.key)).length;
+    return { label:c.label, rate: count/recorded.length };
+  });
+
+  const pad = { l:50, r:8, t:8, b:8 };
+  const gW = W - pad.l - pad.r;
+  const barH = 14;
+  const gap = 8;
+
+  rates.forEach((r,i) => {
+    const y = pad.t + i*(barH+gap);
+    // bg
+    ctx.fillStyle = 'rgba(196,129,74,0.08)';
+    ctx.beginPath();
+    roundRect(ctx, pad.l, y, gW, barH, 4);
+    ctx.fill();
+    // fill
+    const fillW = gW * r.rate;
+    const color = r.rate>=0.7 ? '#6a9e6a' : r.rate>=0.4 ? '#d4943a' : '#c45a4a';
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    roundRect(ctx, pad.l, y, Math.max(fillW,2), barH, 4);
+    ctx.fill();
+    // label
+    ctx.fillStyle = 'rgba(61,46,34,0.8)';
+    ctx.font = '10px Noto Sans JP, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(r.label, pad.l-6, y+barH-3);
+    // pct
+    ctx.fillStyle = 'rgba(138,112,96,0.8)';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${Math.round(r.rate*100)}%`, pad.l+gW+4, y+barH-3);
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+}
+
+function renderTrend(recorded) {
+  const el = document.getElementById('trendText');
+  if (recorded.length < 3) { el.textContent = '記録が増えると傾向コメントが表示されます（3日以上）。'; return; }
+  const avg = recorded.reduce((s,d)=>s+d.rec.score,0)/recorded.length;
+  const recent3 = recorded.slice(-3).map(d=>d.rec.score);
+  const trend = recent3[2]-recent3[0];
+  const goRate = recorded.filter(d=>d.rec.score>=5).length/recorded.length;
+
+  let msg = '';
+  if (trend > 0) msg = `直近3日間でスコアが上がっています（${recent3[0]}→${recent3[2]}）。良い流れです。`;
+  else if (trend < 0) msg = `直近3日間でスコアが下がっています（${recent3[0]}→${recent3[2]}）。今日は無理をしない判断も大切です。`;
+  else msg = `スコアが安定しています。このリズムを維持しましょう。`;
+  msg += avg>=4.5 ? ` 平均${avg}点と高めで安定しています。` : avg>=3 ? ` 平均${avg}点。維持モードが続いています。` : ` 平均${avg}点。設計を少し見直す時期かもしれません。`;
+  el.textContent = msg;
+}
+
+// ── TAB ──
+function switchTab(name) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  event.target.classList.add('active');
+  if (name==='log') renderLog();
+  if (name==='graph') renderGraph();
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ── START ──
+updateScore();
+init();
+</script>
+</body>
+</html>
