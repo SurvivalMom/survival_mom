@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登園渋り 5つの道具 | survival_mam</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Shippori+Mincho:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf7f2;
+  --cream-dark: #f0ebe1;
+  --cream-mid: #e8e0d4;
+  --terra: #c4814a;
+  --terra-light: #d9a07a;
+  --terra-pale: #f0dece;
+  --terra-deep: #a0612a;
+  --navy: #1a1410;
+  --navy-mid: #2e2218;
+  --navy-soft: #4a3828;
+  --sage: #7a9468;
+  --sage-pale: #d0dcca;
+  --rose: #c4706a;
+  --rose-pale: #f0d4d0;
+  --sky: #6a8aaa;
+  --sky-pale: #d0dce8;
+  --amber: #c4a048;
+  --amber-pale: #f0e4c0;
+  --font-d: 'Shippori Mincho', serif;
+  --font-b: 'Zen Kaku Gothic New', sans-serif;
+  --r: 12px;
+  --r-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--font-b);
+  font-size: 14px;
+  line-height: 1.8;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* HEADER */
+.hd {
+  background: var(--navy);
+  padding: 16px 20px 12px;
+  display: flex; align-items: center; gap: 10px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 3px 24px rgba(26,20,16,.4);
+}
+.hd-brand { font-family: var(--font-d); font-size: 10px; color: var(--terra-light); letter-spacing:.18em; }
+.hd-title { font-family: var(--font-d); font-size: 16px; font-weight:800; color: var(--cream); letter-spacing:.04em; }
+.hd-sub { margin-left:auto; font-size:10px; color:var(--terra-light); border:1px solid var(--terra); padding:3px 8px; border-radius:20px; }
+
+/* TABS */
+.tabs {
+  display: flex; overflow-x: auto;
+  background: var(--navy-mid);
+  border-bottom: 2px solid var(--terra-pale);
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink:0; padding: 13px 16px;
+  font-family: var(--font-b); font-size: 12px; font-weight:700;
+  color: #8a7060; cursor: pointer; border: none; background: transparent;
+  border-bottom: 3px solid transparent; white-space: nowrap;
+  transition: all .2s;
+}
+.tab:hover { color: var(--terra-light); }
+.tab.active { color: var(--terra-light); border-bottom-color: var(--terra); background: rgba(196,129,74,.1); }
+
+/* PANELS */
+.panel { display: none; padding: 20px; animation: fadeIn .3s ease; }
+.panel.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
+
+/* SECTION TITLE */
+.sec-title {
+  font-family: var(--font-d); font-size: 20px; font-weight:800;
+  color: var(--navy); margin-bottom: 4px; line-height:1.4;
+}
+.sec-sub { font-size: 12px; color: var(--terra); margin-bottom: 20px; }
+
+/* CARDS */
+.card {
+  background: white; border-radius: var(--r); padding: 18px;
+  margin-bottom: 16px; border: 1px solid var(--cream-mid);
+  box-shadow: 0 2px 12px rgba(26,20,16,.06);
+}
+.card-label {
+  font-size: 10px; font-weight:700; letter-spacing:.12em;
+  color: var(--terra); margin-bottom: 10px; text-transform: uppercase;
+}
+
+/* ============================================================
+   TOOL 1 – LOG
+   ============================================================ */
+.log-form { display: flex; flex-direction: column; gap: 12px; }
+
+.log-field label {
+  display: block; font-size: 12px; font-weight:700;
+  color: var(--navy-soft); margin-bottom: 6px;
+}
+.log-field label span { font-weight:400; color: var(--warm-gray, #b0a090); font-size:11px; }
+
+textarea, select, input[type=range] {
+  width: 100%; font-family: var(--font-b); font-size: 14px;
+  border: 1.5px solid var(--cream-mid); border-radius: var(--r-sm);
+  background: var(--cream); color: var(--navy);
+  padding: 10px 12px; resize: vertical; transition: border .2s;
+}
+textarea:focus, select:focus { outline: none; border-color: var(--terra); }
+textarea { min-height: 70px; }
+select { height: 42px; }
+
+.score-row { display: flex; align-items: center; gap: 10px; }
+input[type=range] { flex: 1; height: 6px; padding: 0; accent-color: var(--terra); }
+.score-val {
+  font-family: var(--font-d); font-size: 22px; font-weight:800;
+  color: var(--terra); min-width: 32px; text-align: center;
+}
+
+.btn-save {
+  background: var(--terra); color: white; border: none; border-radius: var(--r-sm);
+  padding: 14px; font-family: var(--font-b); font-weight:700; font-size: 14px;
+  cursor: pointer; width: 100%; letter-spacing:.05em; transition: background .2s;
+}
+.btn-save:hover { background: var(--terra-deep); }
+.btn-save:active { transform: scale(.98); }
+
+/* log list */
+.log-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.log-item {
+  background: var(--cream); border-radius: var(--r-sm);
+  padding: 12px 14px; border-left: 3px solid var(--terra-pale);
+  position: relative;
+}
+.log-item-date { font-size: 10px; color: var(--terra); margin-bottom: 4px; }
+.log-item-type {
+  display: inline-block; font-size: 10px; font-weight:700;
+  background: var(--terra-pale); color: var(--terra-deep);
+  padding: 2px 8px; border-radius: 20px; margin-bottom: 6px;
+}
+.log-item-text { font-size: 13px; color: var(--navy-soft); line-height:1.6; }
+.log-item-score {
+  position:absolute; top:10px; right:12px;
+  font-family: var(--font-d); font-size: 18px; font-weight:800; color: var(--terra);
+}
+.log-del {
+  position:absolute; bottom:8px; right:10px;
+  font-size:10px; color:var(--warm-gray,#b0a090); cursor:pointer; border:none; background:none;
+  padding:2px 6px;
+}
+.log-del:hover { color: var(--rose); }
+
+/* empty state */
+.empty {
+  text-align:center; padding: 30px 20px;
+  font-size: 13px; color: var(--warm-gray,#b0a090);
+}
+.empty .e-icon { font-size: 32px; margin-bottom: 8px; }
+
+/* ============================================================
+   ANALYTICS
+   ============================================================ */
+.analytics-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.analytics-count {
+  font-family: var(--font-d); font-size: 28px; font-weight:800; color: var(--terra);
+}
+.analytics-count span { font-size: 12px; font-weight:400; color: var(--navy-soft); }
+
+/* bar chart */
+.bar-chart { display: flex; flex-direction: column; gap: 8px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label { font-size: 12px; color: var(--navy-soft); min-width: 90px; text-align:right; }
+.bar-track { flex:1; height: 22px; background: var(--cream-dark); border-radius: 4px; overflow:hidden; }
+.bar-fill {
+  height: 100%; border-radius: 4px;
+  display: flex; align-items: center; padding-left: 8px;
+  font-size: 11px; font-weight:700; color: white;
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+  min-width: 28px;
+}
+.bar-count { font-size: 11px; color: var(--navy-soft); min-width: 24px; }
+
+/* donut chart */
+.donut-wrap {
+  display: flex; align-items: center; gap: 20px;
+  justify-content: center; padding: 10px 0;
+}
+.donut-legend { display: flex; flex-direction: column; gap: 6px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.legend-dot { width: 10px; height:10px; border-radius: 50%; flex-shrink:0; }
+
+/* heatmap */
+.heatmap { display: flex; flex-wrap: wrap; gap: 3px; }
+.hm-day {
+  width: 28px; height: 28px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight:700; color: white;
+  cursor: default;
+}
+.hm-label { font-size: 10px; color: var(--navy-soft); margin-bottom: 6px; }
+
+/* pattern card */
+.pattern-card {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: var(--cream); border-radius: var(--r); padding: 20px;
+  margin-bottom: 16px;
+}
+.pattern-card .pt-label { font-size: 10px; color: var(--terra-light); letter-spacing:.12em; margin-bottom: 8px; }
+.pattern-card .pt-type { font-family: var(--font-d); font-size: 22px; font-weight:800; margin-bottom: 10px; }
+.pattern-card .pt-desc { font-size: 13px; color: #c0b0a0; line-height:1.7; }
+.pattern-card .pt-advice { margin-top:12px; padding-top:12px; border-top:1px solid rgba(196,129,74,.3); font-size:12px; color: var(--terra-light); }
+
+/* insight chips */
+.insight-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.insight-chip {
+  background: var(--terra-pale); color: var(--terra-deep);
+  font-size: 11px; font-weight:700; padding: 5px 12px;
+  border-radius: 20px; border: 1px solid rgba(196,129,74,.3);
+}
+
+/* score trend */
+.trend-wrap { position: relative; height: 80px; }
+canvas { width: 100% !important; }
+
+/* ============================================================
+   TOOL 2 – LINE template
+   ============================================================ */
+.template-box {
+  background: #e8f4e8; border-radius: var(--r-sm);
+  padding: 14px; font-size: 13px; line-height: 1.9;
+  border: 1px solid #c0d8c0; margin-bottom: 12px;
+  white-space: pre-wrap; color: #2a3a2a;
+}
+.btn-copy {
+  background: var(--sage); color: white; border: none;
+  border-radius: var(--r-sm); padding: 10px 16px;
+  font-family: var(--font-b); font-size: 13px; font-weight:700;
+  cursor: pointer; transition: background .2s; margin-right: 8px;
+}
+.btn-copy:hover { background: var(--sage); filter: brightness(.9); }
+.copy-ok { display: none; font-size: 12px; color: var(--sage); margin-top: 6px; }
+.copy-ok.show { display: block; }
+
+.auto-template { background: var(--cream-dark); border-radius: var(--r-sm); padding: 14px; margin-bottom: 14px; }
+.auto-template .at-label { font-size: 11px; color: var(--terra); font-weight:700; margin-bottom: 8px; }
+.auto-template-text { font-size: 13px; line-height:1.8; color: var(--navy-soft); white-space:pre-wrap; }
+
+/* ============================================================
+   TOOL 3 – 1cm log
+   ============================================================ */
+.small-log-form { display: flex; gap: 8px; margin-bottom: 12px; }
+.small-log-form input[type=text] {
+  flex:1; padding: 10px 12px; border: 1.5px solid var(--cream-mid);
+  border-radius: var(--r-sm); font-family: var(--font-b); font-size: 14px;
+  background: var(--cream); color: var(--navy);
+}
+.small-log-form input:focus { outline: none; border-color: var(--terra); }
+.btn-add {
+  background: var(--terra); color: white; border: none; border-radius: var(--r-sm);
+  padding: 10px 16px; font-weight:700; font-size: 14px; cursor: pointer;
+}
+
+.cm-list { display: flex; flex-direction: column; gap: 8px; }
+.cm-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--cream); border-radius: var(--r-sm); padding: 10px 12px;
+  border-left: 3px solid var(--sage);
+}
+.cm-date { font-size: 10px; color: var(--sage); min-width: 50px; margin-top:2px; }
+.cm-text { font-size: 13px; color: var(--navy-soft); flex:1; }
+.cm-del { border:none; background:none; color:var(--warm-gray,#b0a090); cursor:pointer; font-size:12px; }
+
+.streak-bar {
+  background: var(--navy); color: var(--cream); border-radius: var(--r);
+  padding: 16px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
+}
+.streak-num { font-family: var(--font-d); font-size: 36px; font-weight:800; color: var(--terra-light); }
+.streak-label { font-size: 12px; color: #a0907e; }
+
+/* ============================================================
+   TOOL 4 – teacher share
+   ============================================================ */
+.info-fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.info-fields input[type=text] {
+  width: 100%; padding: 10px 12px; border: 1.5px solid var(--cream-mid);
+  border-radius: var(--r-sm); font-family: var(--font-b); font-size: 14px;
+  background: var(--cream); color: var(--navy);
+}
+.info-fields input:focus { outline:none; border-color: var(--terra); }
+
+/* ============================================================
+   TOOL 5 – minimum line
+   ============================================================ */
+.min-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.min-input-row input[type=text] {
+  flex:1; padding: 10px 12px; border: 1.5px solid var(--cream-mid);
+  border-radius: var(--r-sm); font-family: var(--font-b); font-size: 14px;
+  background: var(--cream); color: var(--navy);
+}
+.min-input-row input:focus { outline:none; border-color: var(--terra); }
+
+.declaration-card {
+  background: linear-gradient(145deg, #fdf4ec, #f5e8d8);
+  border: 2px solid var(--terra-pale); border-radius: var(--r);
+  padding: 20px; text-align:center; margin-bottom: 16px;
+}
+.declaration-card .dc-title { font-family: var(--font-d); font-size: 13px; color: var(--terra); margin-bottom: 10px; }
+.declaration-card .dc-text { font-family: var(--font-d); font-size: 16px; font-weight:800; line-height:1.9; color: var(--navy); }
+.declaration-card .dc-fill { color: var(--terra-deep); font-size:18px; }
+
+.min-history { display: flex; flex-direction: column; gap: 8px; }
+.min-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--cream); border-radius: var(--r-sm); padding: 10px 12px;
+  border-left: 3px solid var(--amber);
+}
+.min-date { font-size: 10px; color: var(--amber); min-width: 50px; }
+.min-text { font-size: 13px; color: var(--navy-soft); flex:1; }
+.min-check { font-size: 16px; cursor: pointer; }
+.min-done .min-text { text-decoration: line-through; color: var(--warm-gray,#b0a090); }
+
+/* ============================================================
+   GLOBAL UTILS
+   ============================================================ */
+.divider { height: 1px; background: var(--cream-mid); margin: 20px 0; }
+.notice {
+  background: var(--terra-pale); border-left: 3px solid var(--terra);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 10px 14px; font-size: 12px; color: var(--terra-deep); margin-bottom: 14px;
+}
+.tab-nav-hint { font-size: 11px; color: var(--terra); margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hd">
+  <div>
+    <div class="hd-brand">survival_mam</div>
+    <div class="hd-title">登園渋り 5つの道具</div>
+  </div>
+  <div class="hd-sub">購入者専用</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab(0)">① 夜ログ＋分析</button>
+  <button class="tab" onclick="showTab(1)">② 夫へのLINE</button>
+  <button class="tab" onclick="showTab(2)">③ 1センチ記録</button>
+  <button class="tab" onclick="showTab(3)">④ 先生と共有</button>
+  <button class="tab" onclick="showTab(4)">⑤ 最低ライン</button>
+</div>
+
+<!-- =========================================================
+     PANEL 0: 夜ログ + 分析
+     ========================================================= -->
+<div class="panel active" id="panel-0">
+
+  <!-- LOG FORM -->
+  <div class="card">
+    <div class="card-label">今夜のログを残す</div>
+    <div class="log-form">
+
+      <div class="log-field">
+        <label>今日一番きつかった瞬間の<b>種類</b></label>
+        <select id="log-type">
+          <option value="">── 選んでください ──</option>
+          <option value="怒鳴ってしまった">😤 怒鳴ってしまった</option>
+          <option value="泣いてしまった">😢 泣いてしまった</option>
+          <option value="無力感">😔 無力感・どうしようもない</option>
+          <option value="自己否定">💔 「私は最低だ」と思った</option>
+          <option value="孤独感">🌑 誰にも言えない・孤独だった</option>
+          <option value="子どもへの罪悪感">😖 子どもへの罪悪感</option>
+          <option value="将来への不安">😰 「ずっと続くかも」という恐怖</option>
+          <option value="体の疲れ">💤 体がとにかくしんどかった</option>
+          <option value="夫婦のすれ違い">👫 夫（パートナー）とのすれ違い</option>
+          <option value="その他">📝 その他</option>
+        </select>
+      </div>
+
+      <div class="log-field">
+        <label>今日一番きつかった瞬間 <span>（できるだけ具体的に）</span></label>
+        <textarea id="log-hard" placeholder="例：靴を持った瞬間に泣き崩れて、私も一緒に怒鳴ってしまった"></textarea>
+      </div>
+
+      <div class="log-field">
+        <label>自分を責めた言葉 <span>（なければ空白OK）</span></label>
+        <textarea id="log-blame" placeholder="例：「なんでこんなことも対応できないんだろう」" style="min-height:55px;"></textarea>
+      </div>
+
+      <div class="log-field">
+        <label>子どもが笑った瞬間 <span>（なくてもOK）</span></label>
+        <textarea id="log-smile" placeholder="例：帰宅後に「ただいま！」と走ってきた" style="min-height:55px;"></textarea>
+      </div>
+
+      <div class="log-field">
+        <label>今日のきつさレベル</label>
+        <div class="score-row">
+          <input type="range" id="log-score" min="1" max="10" value="5" oninput="document.getElementById('score-disp').textContent=this.value">
+          <div class="score-val" id="score-disp">5</div>
+        </div>
+      </div>
+
+      <button class="btn-save" onclick="saveLog()">📝 今夜のログを保存する</button>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div id="analytics-section">
+    <div class="sec-title" style="margin-bottom:4px;">あなたのつらさの型</div>
+    <div class="sec-sub">ログが3件以上たまると分析が表示されます</div>
+    <div id="analytics-body"></div>
+  </div>
+
+  <!-- LOG HISTORY -->
+  <div class="card" style="margin-top:16px;">
+    <div class="card-label">保存されたログ</div>
+    <div id="log-list"></div>
+  </div>
+
+</div>
+
+<!-- =========================================================
+     PANEL 1: 夫へのLINE
+     ========================================================= -->
+<div class="panel" id="panel-1">
+  <div class="sec-title">夫へのLINEテンプレ</div>
+  <div class="sec-sub">感情を消して、事実だけ渡す</div>
+
+  <div class="notice">
+    💡 「わかってほしい」という感情を乗せると相手は黙る。事実だけを渡すと、受け取ってもらいやすい。
+  </div>
+
+  <!-- Auto-generated from latest log -->
+  <div class="card">
+    <div class="card-label">① ログから自動生成</div>
+    <div id="auto-template-wrap">
+      <div class="notice" style="margin-bottom:0;">道具①でログを保存すると、最新の記録からテンプレが自動生成されます。</div>
+    </div>
+  </div>
+
+  <!-- Manual template -->
+  <div class="card">
+    <div class="card-label">② 手入力で作る</div>
+    <div class="info-fields">
+      <input type="text" id="line-time" placeholder="泣いた時間（例：10分）">
+      <input type="text" id="line-trigger" placeholder="引き金（例：靴を持った瞬間）">
+      <input type="text" id="line-result" placeholder="結果（例：先生に引き渡せた）">
+    </div>
+    <div class="template-box" id="line-preview">（上の欄を入力するとここに反映されます）</div>
+    <button class="btn-copy" onclick="copyLine()">📋 LINEにコピー</button>
+    <div class="copy-ok" id="copy-ok-line">✅ コピーしました！</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">送り方のコツ</div>
+    <p style="font-size:13px;line-height:1.9;color:var(--navy-soft);">
+      すぐに反応がなくてもOKです。「共有されている状態」が生まれるだけで、朝の孤立感は薄まります。<br><br>
+      もし「どうすればよかったの？」と返ってきたら、<br>
+      <span style="color:var(--terra);font-weight:700;">「今は聞いてもらうだけで十分。ありがとう」</span><br>
+      と返してみてください。
+    </p>
+  </div>
+</div>
+
+<!-- =========================================================
+     PANEL 2: 1センチ記録
+     ========================================================= -->
+<div class="panel" id="panel-2">
+  <div class="sec-title">1センチ記録</div>
+  <div class="sec-sub">「変化」じゃなく「事実」を残す</div>
+
+  <div id="streak-display"></div>
+
+  <div class="notice">
+    💡 靴を持った。玄関まで来た。泣いたけど立てた。どんなに小さくてもOK。
+  </div>
+
+  <div class="card">
+    <div class="card-label">今日の1センチを記録する</div>
+    <div class="small-log-form">
+      <input type="text" id="cm-input" placeholder="例：靴を自分で持てた">
+      <button class="btn-add" onclick="saveCm()">追加</button>
+    </div>
+    <div class="card-label" style="margin-top:4px;">記録一覧</div>
+    <div id="cm-list"></div>
+  </div>
+</div>
+
+<!-- =========================================================
+     PANEL 3: 先生との情報共有
+     ========================================================= -->
+<div class="panel" id="panel-3">
+  <div class="sec-title">先生との情報共有</div>
+  <div class="sec-sub">戦わない。情報だけ渡す。</div>
+
+  <div class="notice">
+    💡 「伝えた」という事実が、自分を支えます。変わらなくても大丈夫。
+  </div>
+
+  <div class="card">
+    <div class="card-label">情報メモを作る</div>
+    <div class="info-fields">
+      <label style="font-size:12px;font-weight:700;color:var(--navy-soft);">朝の様子</label>
+      <input type="text" id="t-morning" placeholder="例：靴を見た瞬間から泣き始める">
+      <label style="font-size:12px;font-weight:700;color:var(--navy-soft);">反応するポイント</label>
+      <input type="text" id="t-trigger" placeholder="例：「幼稚園」という言葉、お友達の名前">
+      <label style="font-size:12px;font-weight:700;color:var(--navy-soft);">落ち着く条件</label>
+      <input type="text" id="t-calm" placeholder="例：好きなキャラクターの話をすると少し落ち着く">
+    </div>
+    <div class="template-box" id="teacher-preview">（入力するとここに反映されます）</div>
+    <button class="btn-copy" onclick="copyTeacher()">📋 コピーする</button>
+    <div class="copy-ok" id="copy-ok-teacher">✅ コピーしました！</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">週1報告リクエスト文</div>
+    <div class="template-box">お世話になっております。
+朝の様子を共有させてください。
+
+[朝の様子を記入]
+
+お忙しいところ恐縮ですが、週1回だけでいいので、
+園での様子を一言教えていただけると助かります。
+
+よろしくお願いいたします。</div>
+    <button class="btn-copy" onclick="copyWeekly()">📋 コピーする</button>
+    <div class="copy-ok" id="copy-ok-weekly">✅ コピーしました！</div>
+  </div>
+</div>
+
+<!-- =========================================================
+     PANEL 4: 最低ライン
+     ========================================================= -->
+<div class="panel" id="panel-4">
+  <div class="sec-title">今日の最低ラインを決める</div>
+  <div class="sec-sub">ゴールを「小さく」設定する</div>
+
+  <div class="notice">
+    💡 「完璧な母親をやめよう」と思っても、ゴールが消えるだけで不安は消えない。小さなラインを言葉で決めることが大切。
+  </div>
+
+  <div class="card">
+    <div class="card-label">今日のラインを決める</div>
+    <div class="min-input-row">
+      <input type="text" id="min-input" placeholder="例：怒鳴わなかったらOK">
+      <button class="btn-add" onclick="saveMin()">設定</button>
+    </div>
+    <div class="card-label">例から選ぶ</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+      <button class="insight-chip" style="cursor:pointer;" onclick="setMinPreset('怒鳴わなかったらOK')">怒鳴わなかったらOK</button>
+      <button class="insight-chip" style="cursor:pointer;" onclick="setMinPreset('玄関まで笑顔でいられたらOK')">玄関まで笑顔でいられたらOK</button>
+      <button class="insight-chip" style="cursor:pointer;" onclick="setMinPreset('園に着いたらOK')">園に着いたらOK</button>
+      <button class="insight-chip" style="cursor:pointer;" onclick="setMinPreset('今日一日続けられたらOK')">今日一日続けられたらOK</button>
+      <button class="insight-chip" style="cursor:pointer;" onclick="setMinPreset('泣いても立てたらOK')">泣いても立てたらOK</button>
+    </div>
+  </div>
+
+  <div id="declaration-display"></div>
+
+  <div class="card">
+    <div class="card-label">ライン記録</div>
+    <div id="min-history"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA LAYER
+// ============================================================
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } },
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
+};
+const KEY_LOGS = 'smam_logs';
+const KEY_CM   = 'smam_cm';
+const KEY_MIN  = 'smam_min';
+
+// ============================================================
+// TAB
+// ============================================================
+function showTab(i) {
+  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', i===j));
+  document.querySelectorAll('.panel').forEach((p,j) => p.classList.toggle('active', i===j));
+  if (i===1) renderLineAuto();
+}
+
+// ============================================================
+// TOOL 1 – LOG
+// ============================================================
+function saveLog() {
+  const type  = document.getElementById('log-type').value;
+  const hard  = document.getElementById('log-hard').value.trim();
+  const blame = document.getElementById('log-blame').value.trim();
+  const smile = document.getElementById('log-smile').value.trim();
+  const score = parseInt(document.getElementById('log-score').value);
+  if (!type || !hard) { alert('「種類」と「きつかった瞬間」は入力してください'); return; }
+
+  const logs = LS.get(KEY_LOGS);
+  logs.unshift({ id: Date.now(), date: todayStr(), type, hard, blame, smile, score });
+  LS.set(KEY_LOGS, logs);
+
+  // reset
+  document.getElementById('log-type').value = '';
+  document.getElementById('log-hard').value = '';
+  document.getElementById('log-blame').value = '';
+  document.getElementById('log-smile').value = '';
+  document.getElementById('log-score').value = 5;
+  document.getElementById('score-disp').textContent = '5';
+
+  renderLogList();
+  renderAnalytics();
+}
+
+function deleteLog(id) {
+  if (!confirm('このログを削除しますか？')) return;
+  LS.set(KEY_LOGS, LS.get(KEY_LOGS).filter(l => l.id !== id));
+  renderLogList();
+  renderAnalytics();
+}
+
+function renderLogList() {
+  const logs = LS.get(KEY_LOGS);
+  const el = document.getElementById('log-list');
+  if (!logs.length) {
+    el.innerHTML = '<div class="empty"><div class="e-icon">📓</div>まだログがありません</div>';
+    return;
+  }
+  el.innerHTML = logs.slice(0,20).map(l => `
+    <div class="log-item">
+      <div class="log-item-date">${l.date}</div>
+      <span class="log-item-type">${l.type}</span>
+      <div class="log-item-text">${esc(l.hard)}</div>
+      ${l.blame ? `<div class="log-item-text" style="font-size:11px;color:#b0a090;margin-top:4px;">自責：${esc(l.blame)}</div>` : ''}
+      <div class="log-item-score">${l.score}</div>
+      <button class="log-del" onclick="deleteLog(${l.id})">削除</button>
+    </div>`).join('');
+}
+
+// ============================================================
+// ANALYTICS
+// ============================================================
+const TYPE_COLOR = {
+  '怒鳴ってしまった':   '#c4814a',
+  '泣いてしまった':     '#6a8aaa',
+  '無力感':             '#8a7a9a',
+  '自己否定':           '#c4706a',
+  '孤独感':             '#4a7a8a',
+  '子どもへの罪悪感':   '#a08060',
+  '将来への不安':       '#8a9448',
+  '体の疲れ':           '#6a8a6a',
+  '夫婦のすれ違い':     '#a47860',
+  'その他':             '#a0a090',
+};
+
+const TYPE_ADVICE = {
+  '怒鳴ってしまった':   '怒りは「疲れの末端症状」です。道具①のログで前夜の積み上がりを降ろすことが、朝の余白を作ります。',
+  '泣いてしまった':     '涙は限界のサインではなく、放出のサインです。泣けている分、まだ感じられている。道具③で小さな前進を記録して。',
+  '無力感':             '「何をやってもダメ」という感覚は、変化が見えないから起きます。道具③で1センチの事実を積み上げると、流れが変わり始めます。',
+  '自己否定':           '「私は最低だ」という言葉は、本当はそれだけ頑張っている証拠です。道具⑤で今日のラインを小さく設定し直してみて。',
+  '孤独感':             '一人で抱えすぎています。道具②で事実だけをパートナーに渡す。それだけで「共有されている状態」が生まれます。',
+  '子どもへの罪悪感':   '罪悪感を持てること自体が、大切にしている証です。道具③に「今日子どもが笑った瞬間」を1行残してみて。',
+  '将来への不安':       '「ずっと続くかも」という想像は、今日の事実が見えていないときに強くなります。道具③で今日だけを記録して。',
+  '体の疲れ':           '体が悲鳴を上げています。今夜だけは道具①のログを3行書いて、早く寝てください。それが一番の「道具」です。',
+  '夫婦のすれ違い':     '情報の非対称がすれ違いを生みます。道具②で感情を外して事実だけを渡してみる。変化は小さくても確実に起きます。',
+  'その他':             'うまく言語化できない重さがあるようです。道具①のログを続けて、パターンが見えてくるのを待ちましょう。',
+};
+
+function renderAnalytics() {
+  const logs = LS.get(KEY_LOGS);
+  const el = document.getElementById('analytics-body');
+
+  if (logs.length < 3) {
+    el.innerHTML = `<div class="card"><div class="empty"><div class="e-icon">📊</div>あと${3 - logs.length}件ログを保存すると分析が表示されます</div></div>`;
+    return;
+  }
+
+  // count by type
+  const counts = {};
+  logs.forEach(l => { counts[l.type] = (counts[l.type]||0) + 1; });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const top = sorted[0];
+  const total = logs.length;
+
+  // score avg
+  const avgScore = (logs.reduce((s,l)=>s+l.score,0)/total).toFixed(1);
+  const recentAvg = logs.slice(0,5).length
+    ? (logs.slice(0,5).reduce((s,l)=>s+l.score,0)/Math.min(5,logs.length)).toFixed(1)
+    : avgScore;
+
+  // heatmap data (last 28 days)
+  const heatData = buildHeatmap(logs);
+
+  let html = '';
+
+  // ── Pattern card ──
+  const topColor = TYPE_COLOR[top[0]] || '#c4814a';
+  html += `
+  <div class="pattern-card">
+    <div class="pt-label">あなたが最も陥りやすいつらさの型</div>
+    <div class="pt-type">${top[0]}</div>
+    <div class="pt-desc">${esc(TYPE_ADVICE[top[0]] || '')}</div>
+    <div class="pt-advice">全${total}件中 ${top[1]}件（${Math.round(top[1]/total*100)}%）をこの型が占めています</div>
+  </div>`;
+
+  // ── Bar chart ──
+  html += `<div class="card">
+    <div class="card-label">つらさの種類 分布</div>
+    <div class="bar-chart">`;
+  const maxCount = sorted[0][1];
+  sorted.forEach(([type, cnt]) => {
+    const pct = Math.round(cnt/maxCount*100);
+    const col = TYPE_COLOR[type] || '#a0a090';
+    html += `
+      <div class="bar-row">
+        <div class="bar-label">${type}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;background:${col};">${cnt}</div>
+        </div>
+        <div class="bar-count">${cnt}件</div>
+      </div>`;
+  });
+  html += `</div></div>`;
+
+  // ── Score trend ──
+  const recentLogs = [...logs].reverse().slice(-14);
+  html += `<div class="card">
+    <div class="card-label">きつさレベルの推移（直近${recentLogs.length}件）</div>
+    <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:10px;">
+      <span style="font-family:var(--font-d);font-size:28px;font-weight:800;color:var(--terra);">${recentAvg}</span>
+      <span style="font-size:11px;color:var(--navy-soft);">/ 10　直近5件の平均</span>
+    </div>
+    <div class="trend-wrap"><canvas id="trend-canvas" height="80"></canvas></div>
+  </div>`;
+
+  // ── Heatmap ──
+  html += `<div class="card">
+    <div class="card-label">記録カレンダー（直近28日）</div>
+    <div class="hm-label">色が濃いほどきつさレベルが高い日</div>
+    <div class="heatmap">`;
+  heatData.forEach(d => {
+    const bg = d.score > 0
+      ? scoreToColor(d.score)
+      : '#e8e0d4';
+    const txt = d.score > 0 ? d.day : d.day;
+    const opacity = d.score > 0 ? 1 : 0.5;
+    html += `<div class="hm-day" style="background:${bg};opacity:${opacity}" title="${d.dateStr}${d.score>0?' きつさ:'+d.score:''}">${txt}</div>`;
+  });
+  html += `</div></div>`;
+
+  // ── Insights ──
+  const insights = buildInsights(logs, sorted, avgScore);
+  if (insights.length) {
+    html += `<div class="card">
+      <div class="card-label">気づきのまとめ</div>
+      <div class="insight-row">
+        ${insights.map(i=>`<div class="insight-chip">${i}</div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+
+  // draw trend line
+  requestAnimationFrame(() => drawTrend(recentLogs));
+}
+
+function buildHeatmap(logs) {
+  const map = {};
+  logs.forEach(l => { if (!map[l.date] || map[l.date] < l.score) map[l.date] = l.score; });
+  const result = [];
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = fmtDate(d);
+    result.push({ dateStr: ds, day: d.getDate(), score: map[ds] || 0 });
+  }
+  return result;
+}
+
+function scoreToColor(s) {
+  // 1-3: sage, 4-6: amber, 7-8: terra, 9-10: rose
+  if (s <= 3) return '#7a9468';
+  if (s <= 6) return '#c4a048';
+  if (s <= 8) return '#c4814a';
+  return '#c4706a';
+}
+
+function buildInsights(logs, sorted, avgScore) {
+  const insights = [];
+  if (sorted[0][1]/logs.length > 0.4) insights.push(`「${sorted[0][0]}」が突出して多い`);
+  if (parseFloat(avgScore) >= 7) insights.push('全体的にきつさレベルが高め');
+  if (parseFloat(avgScore) <= 4) insights.push('きつさレベルが落ち着いてきている');
+  const streak = calcStreak(logs);
+  if (streak >= 3) insights.push(`${streak}日連続で記録中 🔥`);
+  const smileCnt = logs.filter(l=>l.smile).length;
+  if (smileCnt > 0) insights.push(`「笑った瞬間」を${smileCnt}回記録`);
+  return insights;
+}
+
+function drawTrend(logs) {
+  const canvas = document.getElementById('trend-canvas');
+  if (!canvas) return;
+  const W = canvas.offsetWidth;
+  const H = 80;
+  canvas.width = W * window.devicePixelRatio;
+  canvas.height = H * window.devicePixelRatio;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  if (logs.length < 2) return;
+
+  const pad = 16;
+  const w = W - pad*2;
+  const h = H - pad*2;
+  const pts = logs.map((l,i) => ({
+    x: pad + (i/(logs.length-1))*w,
+    y: pad + h - ((l.score-1)/9)*h
+  }));
+
+  // grid lines
+  ctx.strokeStyle = 'rgba(196,129,74,0.1)';
+  ctx.lineWidth = 1;
+  [3,5,7].forEach(v => {
+    const y = pad + h - ((v-1)/9)*h;
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(pad+w,y); ctx.stroke();
+  });
+
+  // area fill
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pad+h);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length-1].x, pad+h);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(196,129,74,0.12)';
+  ctx.fill();
+
+  // line
+  ctx.beginPath();
+  pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle = '#c4814a';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // dots
+  pts.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#c4814a';
+    ctx.fill();
+    ctx.fillStyle = '#faf7f2';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+    ctx.fill();
+  });
+}
+
+// ============================================================
+// TOOL 2 – LINE
+// ============================================================
+function renderLineAuto() {
+  const logs = LS.get(KEY_LOGS);
+  const el = document.getElementById('auto-template-wrap');
+  if (!logs.length) {
+    el.innerHTML = '<div class="notice" style="margin-bottom:0;">道具①でログを保存すると、最新の記録からテンプレが自動生成されます。</div>';
+    return;
+  }
+  const l = logs[0];
+  const text = `今日の朝の記録です\n\nきつかった瞬間：${l.hard}\nきつさレベル：${l.score}/10\n\n今すぐ何かしてほしいわけじゃなくて、\n知っておいてほしいだけです`;
+  el.innerHTML = `
+    <div class="auto-template">
+      <div class="at-label">📅 ${l.date} のログから生成</div>
+      <div class="auto-template-text">${esc(text)}</div>
+    </div>
+    <button class="btn-copy" onclick="copyAutoLine(${JSON.stringify(text).replace(/</g,'&lt;')})">📋 LINEにコピー</button>
+    <div class="copy-ok" id="copy-ok-auto">✅ コピーしました！</div>`;
+}
+
+function copyAutoLine(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copy-ok-auto');
+    if (el) { el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000); }
+  });
+}
+
+// live preview for manual LINE template
+['line-time','line-trigger','line-result'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateLinePreview);
+});
+function updateLinePreview() {
+  const t = document.getElementById('line-time').value || '○分';
+  const r = document.getElementById('line-trigger').value || '○○';
+  const rs = document.getElementById('line-result').value || '○○';
+  document.getElementById('line-preview').textContent =
+    `今日の朝の記録です\n\n泣いた時間：${t}\n引き金：${r}\n結果：${rs}\n\n今すぐ何かしてほしいわけじゃなくて、\n知っておいてほしいだけです`;
+}
+
+function copyLine() {
+  const text = document.getElementById('line-preview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copy-ok-line');
+    el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000);
+  });
+}
+
+// ============================================================
+// TOOL 3 – 1センチ記録
+// ============================================================
+function saveCm() {
+  const val = document.getElementById('cm-input').value.trim();
+  if (!val) return;
+  const list = LS.get(KEY_CM);
+  list.unshift({ id: Date.now(), date: todayStr(), text: val });
+  LS.set(KEY_CM, list);
+  document.getElementById('cm-input').value = '';
+  renderCm();
+}
+
+function deleteCm(id) {
+  LS.set(KEY_CM, LS.get(KEY_CM).filter(c=>c.id!==id));
+  renderCm();
+}
+
+function renderCm() {
+  const list = LS.get(KEY_CM);
+  const el = document.getElementById('cm-list');
+  const streak = calcStreak(LS.get(KEY_LOGS)); // use log dates for streak
+
+  // streak
+  const sd = document.getElementById('streak-display');
+  const logs = LS.get(KEY_LOGS);
+  const logStreak = calcLogStreak(logs);
+  sd.innerHTML = logStreak > 0 ? `
+    <div class="streak-bar">
+      <div>
+        <div class="streak-num">${logStreak}</div>
+        <div class="streak-label">日連続記録中</div>
+      </div>
+      <div style="font-size:24px;">🔥</div>
+      <div style="font-size:12px;color:#a0907e;margin-left:auto;">ログを毎日続けると<br>流れが変わり始める</div>
+    </div>` : '';
+
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><div class="e-icon">🌱</div>今日の1センチを記録しましょう</div>';
+    return;
+  }
+  el.innerHTML = '<div class="cm-list">' + list.slice(0,30).map(c=>`
+    <div class="cm-item">
+      <div class="cm-date">${c.date}</div>
+      <div class="cm-text">${esc(c.text)}</div>
+      <button class="cm-del" onclick="deleteCm(${c.id})">✕</button>
+    </div>`).join('') + '</div>';
+}
+
+// ============================================================
+// TOOL 4 – Teacher
+// ============================================================
+['t-morning','t-trigger','t-calm'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateTeacherPreview);
+});
+function updateTeacherPreview() {
+  const m = document.getElementById('t-morning').value || '（記入してください）';
+  const t = document.getElementById('t-trigger').value || '（記入してください）';
+  const c = document.getElementById('t-calm').value || '（記入してください）';
+  document.getElementById('teacher-preview').textContent =
+    `【朝の様子の共有】\n\n朝の様子：${m}\n反応するポイント：${t}\n落ち着く条件：${c}\n\nお忙しいところ恐縮ですが、週1回だけでいいので、園での様子を一言教えていただけると助かります。よろしくお願いいたします。`;
+}
+
+function copyTeacher() {
+  const text = document.getElementById('teacher-preview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copy-ok-teacher');
+    el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000);
+  });
+}
+
+function copyWeekly() {
+  const text = `お世話になっております。\n朝の様子を共有させてください。\n\n[朝の様子を記入]\n\nお忙しいところ恐縮ですが、週1回だけでいいので、\n園での様子を一言教えていただけると助かります。\n\nよろしくお願いいたします。`;
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copy-ok-weekly');
+    el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000);
+  });
+}
+
+// ============================================================
+// TOOL 5 – Min line
+// ============================================================
+function setMinPreset(val) {
+  document.getElementById('min-input').value = val;
+}
+
+function saveMin() {
+  const val = document.getElementById('min-input').value.trim();
+  if (!val) return;
+  const list = LS.get(KEY_MIN);
+  list.unshift({ id: Date.now(), date: todayStr(), text: val, done: false });
+  LS.set(KEY_MIN, list);
+  document.getElementById('min-input').value = '';
+  renderMin();
+}
+
+function toggleMin(id) {
+  const list = LS.get(KEY_MIN);
+  const item = list.find(m=>m.id===id);
+  if (item) item.done = !item.done;
+  LS.set(KEY_MIN, list);
+  renderMin();
+}
+
+function renderMin() {
+  const list = LS.get(KEY_MIN);
+  const latest = list[0];
+  const dd = document.getElementById('declaration-display');
+  if (latest) {
+    dd.innerHTML = `
+      <div class="declaration-card">
+        <div class="dc-title">📅 ${latest.date}　今日のライン</div>
+        <div class="dc-text">
+          私は今日、<br>
+          <span class="dc-fill">「${esc(latest.text)}」</span><br>
+          それだけで十分。<br><br>
+          朝ごはんが簡単でもいい。泣いてしまってもいい。<br>
+          それでも私は、今日この子の隣に立った。<br>
+          それだけで十分。
+        </div>
+      </div>`;
+  } else {
+    dd.innerHTML = '';
+  }
+
+  const el = document.getElementById('min-history');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><div class="e-icon">🌸</div>ラインをまだ設定していません</div>';
+    return;
+  }
+  el.innerHTML = '<div class="min-history">' + list.slice(0,20).map(m=>`
+    <div class="min-item ${m.done?'min-done':''}">
+      <div class="min-date">${m.date}</div>
+      <div class="min-text">${esc(m.text)}</div>
+      <div class="min-check" onclick="toggleMin(${m.id})" title="クリアしたらタップ">${m.done?'✅':'⭕'}</div>
+    </div>`).join('') + '</div>';
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function todayStr() {
+  const d = new Date();
+  return fmtDate(d);
+}
+function fmtDate(d) {
+  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function calcStreak(logs) {
+  const dates = [...new Set(logs.map(l=>l.date))].sort().reverse();
+  if (!dates.length) return 0;
+  let streak = 0;
+  const today = todayStr();
+  for (let i = 0; i < dates.length; i++) {
+    const expected = new Date();
+    expected.setDate(expected.getDate() - i);
+    if (fmtDate(expected) === dates[i]) streak++;
+    else break;
+  }
+  return streak;
+}
+function calcLogStreak(logs) { return calcStreak(logs); }
+
+// ============================================================
+// INIT
+// ============================================================
+renderLogList();
+renderAnalytics();
+renderCm();
+renderMin();
+updateLinePreview();
+updateTeacherPreview();
+</script>
+</body>
+</html>
