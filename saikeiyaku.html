@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>再契約ツールキット｜survival_mam</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+  :root {
+    --cream: #faf7f2;
+    --cream-dark: #f0ebe0;
+    --terracotta: #c4814a;
+    --terracotta-light: #d9a07a;
+    --terracotta-dark: #a0623a;
+    --navy: #1a1410;
+    --navy-light: #2e2420;
+    --text: #2a2018;
+    --text-muted: #7a6a58;
+    --border: #ddd5c4;
+    --shadow: rgba(26,20,16,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; line-height: 1.7; }
+
+  header { background: var(--navy); padding: 20px 24px 16px; display: flex; align-items: baseline; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .brand { font-family: 'Noto Serif JP', serif; font-size: 11px; letter-spacing: 0.2em; color: var(--terracotta-light); text-transform: uppercase; }
+  .header-title { font-family: 'Noto Serif JP', serif; font-size: 15px; color: var(--cream); font-weight: 300; letter-spacing: 0.05em; }
+
+  .intro { padding: 32px 24px 24px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #f5ede0 0%, var(--cream) 100%); }
+  .intro p { font-size: 13px; color: var(--text-muted); line-height: 1.9; max-width: 480px; }
+
+  .tabs-wrap { overflow-x: auto; background: var(--navy-light); scrollbar-width: none; }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tabs { display: flex; min-width: max-content; padding: 0 12px; }
+  .tab { padding: 14px 16px 12px; font-size: 11px; color: #9a8a78; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; letter-spacing: 0.05em; transition: all 0.2s; font-family: 'Noto Sans JP', sans-serif; background: none; border-top: none; border-left: none; border-right: none; font-weight: 400; }
+  .tab.active { color: var(--terracotta-light); border-bottom-color: var(--terracotta); }
+  .tab:hover:not(.active) { color: var(--cream); }
+
+  .section { display: none; padding: 28px 24px 80px; max-width: 560px; margin: 0 auto; animation: fadeUp 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-label { font-size: 10px; letter-spacing: 0.25em; color: var(--terracotta); text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+  .section-title { font-family: 'Noto Serif JP', serif; font-size: 18px; font-weight: 400; color: var(--navy); line-height: 1.5; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px var(--shadow); }
+  .card-title { font-size: 12px; font-weight: 500; color: var(--terracotta-dark); letter-spacing: 0.08em; margin-bottom: 10px; }
+
+  label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; font-weight: 400; }
+  input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; color: var(--text); background: var(--cream); margin-bottom: 12px; transition: border-color 0.2s; -webkit-appearance: none; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--terracotta); background: #fff; }
+  textarea { resize: vertical; min-height: 72px; }
+
+  .btn-primary { background: var(--terracotta); color: #fff; border: none; border-radius: 6px; padding: 12px 20px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; width: 100%; font-weight: 500; letter-spacing: 0.05em; transition: background 0.2s, transform 0.1s; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:hover { background: var(--terracotta-dark); }
+
+  .btn-secondary { background: transparent; color: var(--terracotta); border: 1px solid var(--terracotta); border-radius: 6px; padding: 10px 16px; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; letter-spacing: 0.05em; transition: all 0.2s; }
+  .btn-secondary:hover { background: var(--terracotta); color: #fff; }
+
+  .btn-line { background: #06C755; color: #fff; border: none; border-radius: 6px; padding: 12px 20px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; width: 100%; font-weight: 500; letter-spacing: 0.05em; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-line:active { transform: scale(0.98); }
+  .btn-line:hover { background: #05a847; }
+
+  .btn-export { background: var(--navy); color: var(--cream); border: none; border-radius: 6px; padding: 12px 20px; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; width: 100%; font-weight: 500; letter-spacing: 0.05em; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-export:active { transform: scale(0.98); }
+  .btn-export:hover { background: #2e2420; }
+
+  .share-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .share-label { font-size: 10px; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 6px; margin-top: 16px; }
+
+  /* ━━━ 共通エクスポートカード（画面外レンダリング） ━━━ */
+  #shareCard {
+    position: fixed; left: -9999px; top: 0;
+    width: 640px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: #faf7f2;
+    background: #1a1410;
+  }
+  .sc-wrap { padding: 44px 44px 40px; }
+  .sc-brand { font-family: 'Noto Serif JP', serif; font-size: 10px; letter-spacing: 0.3em; color: #d9a07a; text-transform: uppercase; margin-bottom: 5px; }
+  .sc-tag { display: inline-block; background: #c4814a; color: #fff; font-size: 10px; letter-spacing: 0.12em; padding: 3px 10px; border-radius: 2px; margin-bottom: 10px; }
+  .sc-title { font-family: 'Noto Serif JP', serif; font-size: 22px; font-weight: 400; color: #fff; line-height: 1.45; margin-bottom: 4px; }
+  .sc-date { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; margin-bottom: 24px; }
+  .sc-accent { height: 2px; background: linear-gradient(90deg, #c4814a, rgba(196,129,74,0.08)); border-radius: 1px; margin-bottom: 26px; }
+
+  /* GDP */
+  .sc-col-head { display: grid; grid-template-columns: 1fr 130px 110px; gap: 8px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sc-col-head span { font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.32); }
+  .sc-col-head span:not(:first-child) { text-align: right; }
+  .sc-gdp-row { display: grid; grid-template-columns: 1fr 130px 110px; gap: 8px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; line-height: 1.5; }
+  .sc-cost { color: #d9a07a; text-align: right; font-weight: 500; }
+  .sc-detail { font-size: 11px; color: rgba(255,255,255,0.35); text-align: right; }
+  .sc-total { margin-top: 16px; padding-top: 14px; border-top: 1px solid #c4814a; display: flex; justify-content: space-between; align-items: baseline; }
+  .sc-total-label { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; }
+  .sc-total-value { font-family: 'Noto Serif JP', serif; font-size: 28px; font-weight: 600; color: #fff; }
+  .sc-total-value small { font-size: 13px; color: #d9a07a; margin-left: 3px; }
+
+  /* generic blocks */
+  .sc-block { margin-bottom: 18px; }
+  .sc-block-label { font-size: 10px; letter-spacing: 0.18em; color: #d9a07a; margin-bottom: 7px; padding-left: 8px; border-left: 2px solid #c4814a; }
+  .sc-block-body { font-size: 13px; line-height: 1.9; color: rgba(255,255,255,0.85); white-space: pre-wrap; word-break: break-all; }
+
+  /* delegate two-col */
+  .sc-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 6px; }
+  .sc-col-title { font-size: 10px; letter-spacing: 0.12em; padding: 4px 10px; border-radius: 3px; margin-bottom: 8px; font-weight: 500; }
+  .sc-col-mama { background: rgba(192,64,64,0.2); color: #f08080; }
+  .sc-col-papa { background: rgba(58,106,224,0.2); color: #90aef5; }
+  .sc-chip { background: rgba(255,255,255,0.07); border-radius: 4px; padding: 7px 10px; font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 5px; }
+  .sc-chip-papa { background: rgba(58,106,224,0.15); color: #b0c4ff; }
+
+  .sc-note { margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: rgba(255,255,255,0.28); line-height: 1.8; white-space: pre-wrap; }
+  .sc-footer { margin-top: 22px; font-size: 10px; letter-spacing: 0.2em; color: rgba(255,255,255,0.18); text-transform: uppercase; }
+
+  /* ━━━ inline result elements ━━━ */
+  .result-box { background: var(--navy); color: var(--cream); border-radius: 8px; padding: 18px; margin-top: 16px; }
+  .result-box h4 { font-family: 'Noto Serif JP', serif; font-size: 13px; color: var(--terracotta-light); margin-bottom: 12px; font-weight: 400; }
+  .result-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); line-height: 1.5; }
+  .result-total { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--terracotta); display: flex; justify-content: space-between; font-size: 15px; font-weight: 500; color: var(--terracotta-light); }
+
+  .script-box { background: linear-gradient(135deg, #f7f0e6 0%, var(--cream) 100%); border-left: 3px solid var(--terracotta); padding: 16px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 13px; line-height: 1.9; color: var(--text); white-space: pre-wrap; word-break: break-all; }
+  .script-meta { font-size: 10px; color: var(--text-muted); margin-bottom: 6px; letter-spacing: 0.05em; }
+  .copy-wrap { position: relative; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; background: var(--terracotta); color: #fff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; cursor: pointer; letter-spacing: 0.05em; font-family: 'Noto Sans JP', sans-serif; }
+
+  /* task table */
+  .task-rows { margin-bottom: 12px; }
+  .task-row { display: grid; grid-template-columns: 1fr 70px 70px 80px; gap: 6px; align-items: start; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--cream-dark); }
+  .task-row input { margin-bottom: 0; }
+  .col-head { display: grid; grid-template-columns: 1fr 70px 70px 80px; gap: 6px; margin-bottom: 4px; }
+  .col-head span { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; }
+
+  /* mission */
+  .mission-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .mission-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .mission-card:hover, .mission-card.selected { border-color: var(--terracotta); background: #fdf4ed; }
+  .mission-card.selected { box-shadow: 0 0 0 2px var(--terracotta-light); }
+  .mission-icon { font-size: 24px; margin-bottom: 6px; }
+  .mission-name { font-size: 11px; color: var(--text); font-weight: 500; }
+
+  /* meeting */
+  .agenda-item { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-bottom: 8px; }
+  .agenda-num { display: inline-block; background: var(--terracotta); color: #fff; width: 20px; height: 20px; border-radius: 50%; text-align: center; line-height: 20px; font-size: 11px; margin-right: 8px; flex-shrink: 0; }
+  .agenda-header { display: flex; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+  .role-tag { display: inline-block; background: var(--cream-dark); color: var(--text-muted); font-size: 10px; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
+  .role-tag.papa { background: #e8f0fe; color: #3a6ae0; }
+  .role-tag.both { background: #e8f5e9; color: #388e3c; }
+
+  /* delegate */
+  .task-transfer { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: start; margin-bottom: 12px; }
+  .transfer-label { font-size: 10px; letter-spacing: 0.1em; text-align: center; padding: 6px; border-radius: 4px; margin-bottom: 6px; font-weight: 500; }
+  .transfer-mama { background: #fde8e8; color: #c04040; }
+  .transfer-papa { background: #e8f0fe; color: #3a6ae0; }
+  .transfer-arrow { color: var(--terracotta); font-size: 20px; padding-top: 28px; text-align: center; }
+  .task-chip { background: var(--cream-dark); border: 1px solid var(--border); border-radius: 4px; padding: 7px 10px; font-size: 12px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+  .task-chip:hover { border-color: var(--terracotta-light); background: #fff; }
+  .chip-btn { background: none; border: none; color: var(--terracotta); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 0 0 6px; }
+
+  /* progress */
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: flex; justify-content: space-between; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--terracotta); border-radius: 2px; transition: width 0.5s ease; }
+
+  /* spinner */
+  .spinner-overlay { display: none; position: fixed; inset: 0; background: rgba(26,20,16,0.62); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
+  .spinner-overlay.show { display: flex; }
+  .spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.15); border-top-color: #d9a07a; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  .spinner-text { color: #faf7f2; font-size: 13px; letter-spacing: 0.08em; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .tip { font-size: 11px; color: var(--text-muted); background: var(--cream-dark); padding: 10px 12px; border-radius: 6px; margin: 10px 0; line-height: 1.7; }
+  .tip::before { content: "💡 "; }
+  .mt8 { margin-top: 8px; }
+  .mt16 { margin-top: 16px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--navy); color: var(--cream); padding: 12px 20px; border-radius: 8px; font-size: 13px; z-index: 99999; transition: transform 0.3s ease; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.35); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* SVG icon inline */
+  .icon-dl { width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; }
+  .icon-line { width:18px; height:18px; fill:currentColor; }
+</style>
+</head>
+<body>
+
+<div class="spinner-overlay" id="spinnerOverlay">
+  <div class="spinner"></div>
+  <div class="spinner-text">画像を生成中…</div>
+</div>
+
+<!-- 画面外レンダリング用カード -->
+<div id="shareCard"><div class="sc-wrap" id="scInner"></div></div>
+
+<header>
+  <span class="brand">survival_mam</span>
+  <span class="header-title">夫との再契約ツールキット</span>
+</header>
+
+<div class="intro">
+  <p>5つの視点を、今日使える道具に変えました。<br>一人で戦うのを、今日で終わりにしましょう。</p>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('gdp')">視点1<br><span style="font-size:9px;color:inherit">家庭内GDP</span></button>
+    <button class="tab" onclick="switchTab('authority')">視点2<br><span style="font-size:9px;color:inherit">外部権威</span></button>
+    <button class="tab" onclick="switchTab('mission')">視点3<br><span style="font-size:9px;color:inherit">弟ミッション</span></button>
+    <button class="tab" onclick="switchTab('meeting')">視点4<br><span style="font-size:9px;color:inherit">家族会議</span></button>
+    <button class="tab" onclick="switchTab('delegate')">視点5<br><span style="font-size:9px;color:inherit">権限委譲</span></button>
+  </div>
+</div>
+
+<!-- ━━━ TAB 1: 家庭内GDP ━━━ -->
+<div id="tab-gdp" class="section active">
+  <div class="section-label">視点 01</div>
+  <div class="section-title">家庭内GDP<br>可視化シート</div>
+  <div class="card">
+    <div class="card-title">📋 業務棚卸し — あなたのタスクを登録</div>
+    <div class="col-head">
+      <span>業務内容</span><span>所要時間(分)</span><span>週の回数</span><span>市場単価/h円</span>
+    </div>
+    <div class="task-rows" id="gdpRows"></div>
+    <button class="btn-secondary" onclick="addGdpRow()" style="width:100%;margin-bottom:12px;">＋ 業務を追加</button>
+    <button class="btn-primary" onclick="calcGdp()">月間コストを試算する</button>
+  </div>
+  <div id="gdpResult" style="display:none">
+    <div class="result-box" id="gdpResultBox"></div>
+    <div class="share-label">📤 夫と共有する</div>
+    <div class="share-actions">
+      <button class="btn-export" onclick="exportImage('gdp')">
+        <svg class="icon-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        画像を保存
+      </button>
+      <button class="btn-line" onclick="shareImage('gdp')">
+        <svg class="icon-line" viewBox="0 0 24 24"><path d="M19.365 9.89c.5 0 .906.406.906.906s-.406.905-.906.905H17.87v1.047h1.495c.5 0 .906.406.906.906s-.406.905-.906.905h-2.4c-.5 0-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906h2.4zm-4.817 0c.5 0 .905.406.905.906v3.764c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.516 0c.347 0 .664.19.832.497l1.493 2.71V9.89c0-.5.406-.906.906-.906s.906.406.906.906v3.764c0 .5-.406.905-.906.905-.347 0-.664-.19-.832-.497l-1.494-2.71v2.302c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.957 0c.5 0 .906.406.906.906s-.406.905-.906.905H7.58v.59h1.495c.5 0 .905.405.905.905s-.405.905-.905.905H7.58v.059h1.495c.5 0 .906.405.906.905s-.406.906-.906.906h-2.4c-.5 0-.906-.406-.906-.906V9.89c0-.5.406-.906.906-.906h2.4zM12 2C6.477 2 2 6.226 2 11.4c0 3.11 1.558 5.877 3.983 7.664.175.128.194.377.04.526l-.694.664a.454.454 0 0 0 .307.783h.049c2.043-.232 3.72-.97 4.88-1.654.457.063.924.097 1.435.097C17.523 19.48 22 15.254 22 10.08 22 4.905 17.523.68 12 .68L12 2z"/></svg>
+        LINEで送る
+      </button>
+    </div>
+    <div class="tip">「画像を保存」後、LINEで夫に送ると視覚的に伝わります。</div>
+    <div class="mt16 copy-wrap">
+      <div class="script-meta">📄 夫に送るLINEメッセージ</div>
+      <div class="script-box" id="gdpScript"></div>
+      <button class="copy-btn" onclick="copyText('gdpScript')">コピー</button>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ TAB 2: 外部権威 ━━━ -->
+<div id="tab-authority" class="section">
+  <div class="section-label">視点 02</div>
+  <div class="section-title">外部の権威を<br>戦略的に使う</div>
+  <div class="card">
+    <div class="card-title">🏫 面談・連絡の根回しプラン</div>
+    <label>先生・担当者の名前</label>
+    <input type="text" id="sensei" placeholder="例：田中先生">
+    <label>機関名</label>
+    <input type="text" id="kikan" placeholder="例：○○小学校 / ○○療育センター">
+    <label>夫に経験させたいこと</label>
+    <select id="experience">
+      <option value="call">学校からの電話を受けさせる</option>
+      <option value="meeting">面談に同席させる</option>
+      <option value="report">当日の報告を夫に一任する</option>
+      <option value="pickup">お迎えを担当させる</option>
+    </select>
+    <label>夫の性格タイプ</label>
+    <select id="husbandType">
+      <option value="logic">論理型（データで動く）</option>
+      <option value="pride">自尊心型（「パパじゃないとダメ」に弱い）</option>
+      <option value="avoid">回避型（話を逃げる）</option>
+    </select>
+    <button class="btn-primary mt8" onclick="genAuthorityScript()">根回しスクリプトを生成</button>
+  </div>
+  <div id="authorityResult" style="display:none">
+    <div class="mt16">
+      <div class="script-meta">📞 先生への根回しトーク</div>
+      <div class="copy-wrap">
+        <div class="script-box" id="senseiScript"></div>
+        <button class="copy-btn" onclick="copyText('senseiScript')">コピー</button>
+      </div>
+    </div>
+    <div class="mt16">
+      <div class="script-meta">🏠 夫への誘導セリフ</div>
+      <div class="copy-wrap">
+        <div class="script-box" id="husbandScript"></div>
+        <button class="copy-btn" onclick="copyText('husbandScript')">コピー</button>
+      </div>
+    </div>
+    <div class="tip">完了を承認するだけで、次回から自分で動くようになります。</div>
+  </div>
+</div>
+
+<!-- ━━━ TAB 3: 弟ミッション ━━━ -->
+<div id="tab-mission" class="section">
+  <div class="section-label">視点 03</div>
+  <div class="section-title">パパへの<br>弟専用ミッション発注</div>
+  <div class="card">
+    <div class="card-title">🎯 ミッションを選んで発注書を作成</div>
+    <div class="mission-wrap">
+      <div class="mission-card" onclick="selectMission(this,'外に連れ出す（公園・コンビニ）')"><div class="mission-icon">🌳</div><div class="mission-name">外に連れ出す</div></div>
+      <div class="mission-card" onclick="selectMission(this,'別室で二人だけの時間を作る')"><div class="mission-icon">🏠</div><div class="mission-name">二人だけの時間</div></div>
+      <div class="mission-card" onclick="selectMission(this,'一緒に風呂に入って話を聞く')"><div class="mission-icon">🛁</div><div class="mission-name">お風呂タイム</div></div>
+      <div class="mission-card" onclick="selectMission(this,'レゴや積み木で一緒に遊ぶ')"><div class="mission-icon">🧩</div><div class="mission-name">一緒に遊ぶ</div></div>
+      <div class="mission-card" onclick="selectMission(this,'寝かしつけをする')"><div class="mission-icon">🌙</div><div class="mission-name">寝かしつけ</div></div>
+      <div class="mission-card" onclick="selectMission(this,'絵本の読み聞かせをする')"><div class="mission-icon">📖</div><div class="mission-name">読み聞かせ</div></div>
+    </div>
+    <label>時間の目安</label>
+    <select id="missionTime"><option value="15分">15分でいい</option><option value="30分" selected>30分だけ</option><option value="1時間">1時間</option></select>
+    <label>弟の状況メモ（任意）</label>
+    <input type="text" id="otoutoMemo" placeholder="例：最近ひとりで遊んでいることが多い">
+    <button class="btn-primary mt8" onclick="genMissionOrder()">発注書をつくる</button>
+  </div>
+  <div id="missionResult" style="display:none">
+    <div class="copy-wrap">
+      <div class="script-meta">📋 パパへの発注書</div>
+      <div class="script-box" id="missionScript"></div>
+      <button class="copy-btn" onclick="copyText('missionScript')">コピー</button>
+    </div>
+    <div class="share-label">📤 パパに送る</div>
+    <div class="share-actions">
+      <button class="btn-export" onclick="exportImage('mission')">
+        <svg class="icon-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>画像を保存
+      </button>
+      <button class="btn-line" onclick="shareImage('mission')">
+        <svg class="icon-line" viewBox="0 0 24 24"><path d="M19.365 9.89c.5 0 .906.406.906.906s-.406.905-.906.905H17.87v1.047h1.495c.5 0 .906.406.906.906s-.406.905-.906.905h-2.4c-.5 0-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906h2.4zm-4.817 0c.5 0 .905.406.905.906v3.764c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.516 0c.347 0 .664.19.832.497l1.493 2.71V9.89c0-.5.406-.906.906-.906s.906.406.906.906v3.764c0 .5-.406.905-.906.905-.347 0-.664-.19-.832-.497l-1.494-2.71v2.302c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.957 0c.5 0 .906.406.906.906s-.406.905-.906.905H7.58v.59h1.495c.5 0 .905.405.905.905s-.405.905-.905.905H7.58v.059h1.495c.5 0 .906.405.906.905s-.406.906-.906.906h-2.4c-.5 0-.906-.406-.906-.906V9.89c0-.5.406-.906.906-.906h2.4zM12 2C6.477 2 2 6.226 2 11.4c0 3.11 1.558 5.877 3.983 7.664.175.128.194.377.04.526l-.694.664a.454.454 0 0 0 .307.783h.049c2.043-.232 3.72-.97 4.88-1.654.457.063.924.097 1.435.097C17.523 19.48 22 15.254 22 10.08 22 4.905 17.523.68 12 .68L12 2z"/></svg>LINEで送る
+      </button>
+    </div>
+    <div class="tip">「手伝って」ではなく「あなたにしかできない」という言葉が男性の動機を刺激します。</div>
+  </div>
+</div>
+
+<!-- ━━━ TAB 4: 家族会議 ━━━ -->
+<div id="tab-meeting" class="section">
+  <div class="section-label">視点 04</div>
+  <div class="section-title">週1回15分<br>家族レジリエンス会議</div>
+  <div class="card">
+    <div class="card-title">📅 今週の会議アジェンダを記入</div>
+    <div class="agenda-item">
+      <div class="agenda-header"><span class="agenda-num">1</span>娘のパニック傾向<span class="role-tag both">共有</span></div>
+      <input type="text" id="agenda1" placeholder="例：月曜の朝、登校準備中に叫び声。引き金は弟の声か。">
+    </div>
+    <div class="agenda-item">
+      <div class="agenda-header"><span class="agenda-num">2</span>弟の「寂しいサイン」<span class="role-tag papa">パパ確認</span></div>
+      <input type="text" id="agenda2" placeholder="例：水曜夜「ぼくのことだれも見てない」と言った">
+    </div>
+    <div class="agenda-item">
+      <div class="agenda-header"><span class="agenda-num">3</span>来週の役割分担<span class="role-tag both">決定</span></div>
+      <textarea id="agenda3" placeholder="例：火曜の学校連絡→パパ担当、木曜の療育お迎え→ママ担当"></textarea>
+    </div>
+    <button class="btn-primary" onclick="genMeetingSheet()">会議シートを生成</button>
+  </div>
+  <div id="meetingResult" style="display:none">
+    <div class="copy-wrap">
+      <div class="script-meta">📄 共有用 会議メモ</div>
+      <div class="script-box" id="meetingScript"></div>
+      <button class="copy-btn" onclick="copyText('meetingScript')">コピー</button>
+    </div>
+    <div class="share-label">📤 会議メモを共有する</div>
+    <div class="share-actions">
+      <button class="btn-export" onclick="exportImage('meeting')">
+        <svg class="icon-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>画像を保存
+      </button>
+      <button class="btn-line" onclick="shareImage('meeting')">
+        <svg class="icon-line" viewBox="0 0 24 24"><path d="M19.365 9.89c.5 0 .906.406.906.906s-.406.905-.906.905H17.87v1.047h1.495c.5 0 .906.406.906.906s-.406.905-.906.905h-2.4c-.5 0-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906h2.4zm-4.817 0c.5 0 .905.406.905.906v3.764c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.516 0c.347 0 .664.19.832.497l1.493 2.71V9.89c0-.5.406-.906.906-.906s.906.406.906.906v3.764c0 .5-.406.905-.906.905-.347 0-.664-.19-.832-.497l-1.494-2.71v2.302c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.957 0c.5 0 .906.406.906.906s-.406.905-.906.905H7.58v.59h1.495c.5 0 .905.405.905.905s-.405.905-.905.905H7.58v.059h1.495c.5 0 .906.405.906.905s-.406.906-.906.906h-2.4c-.5 0-.906-.406-.906-.906V9.89c0-.5.406-.906.906-.906h2.4zM12 2C6.477 2 2 6.226 2 11.4c0 3.11 1.558 5.877 3.983 7.664.175.128.194.377.04.526l-.694.664a.454.454 0 0 0 .307.783h.049c2.043-.232 3.72-.97 4.88-1.654.457.063.924.097 1.435.097C17.523 19.48 22 15.254 22 10.08 22 4.905 17.523.68 12 .68L12 2z"/></svg>LINEで送る
+      </button>
+    </div>
+    <div class="tip">「今週を死なずに乗り切る作戦会議」という前置きで始めると、夫も参加しやすくなります。</div>
+    <div style="margin-top:20px;">
+      <div class="card-title" style="margin-bottom:10px;">📊 会議の定着度（12週で習慣化）</div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>今週で <span id="meetingCount">0</span> 回目</span><span id="meetingPct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="meetingBar" style="width:0%"></div></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-secondary" onclick="addMeetingCount()">会議できた ✓</button>
+        <button class="btn-secondary" onclick="resetMeetingCount()">リセット</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ TAB 5: 権限委譲 ━━━ -->
+<div id="tab-delegate" class="section">
+  <div class="section-label">視点 05</div>
+  <div class="section-title">権限委譲<br>タスク移管ボード</div>
+  <div class="card">
+    <div class="card-title">📦 ママのタスクをパパへ移管する</div>
+    <div class="tip" style="margin-top:0">まず「私がやってきたこと」を登録。→ボタンでパパへ移管。失敗しても、フォローしないのがルール。</div>
+    <label>ママが担っているタスク</label>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
+      <input type="text" id="newTask" placeholder="例：療育連絡帳を書く" style="margin:0;flex:1;">
+      <button class="btn-secondary" onclick="addTask()" style="white-space:nowrap;">追加</button>
+    </div>
+    <div class="task-transfer">
+      <div>
+        <div class="transfer-label transfer-mama">ママ担当</div>
+        <div id="mamaTasks"></div>
+      </div>
+      <div class="transfer-arrow">→</div>
+      <div>
+        <div class="transfer-label transfer-papa">パパ担当</div>
+        <div id="papaTasks"></div>
+      </div>
+    </div>
+  </div>
+  <div id="delegateMessage" style="display:none" class="mt16">
+    <div class="copy-wrap">
+      <div class="script-meta">📱 パパへの引き継ぎLINE</div>
+      <div class="script-box" id="delegateScript"></div>
+      <button class="copy-btn" onclick="copyText('delegateScript')">コピー</button>
+    </div>
+    <div class="share-label">📤 移管リストを共有する</div>
+    <div class="share-actions">
+      <button class="btn-export" onclick="exportImage('delegate')">
+        <svg class="icon-dl" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>画像を保存
+      </button>
+      <button class="btn-line" onclick="shareImage('delegate')">
+        <svg class="icon-line" viewBox="0 0 24 24"><path d="M19.365 9.89c.5 0 .906.406.906.906s-.406.905-.906.905H17.87v1.047h1.495c.5 0 .906.406.906.906s-.406.905-.906.905h-2.4c-.5 0-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906h2.4zm-4.817 0c.5 0 .905.406.905.906v3.764c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.516 0c.347 0 .664.19.832.497l1.493 2.71V9.89c0-.5.406-.906.906-.906s.906.406.906.906v3.764c0 .5-.406.905-.906.905-.347 0-.664-.19-.832-.497l-1.494-2.71v2.302c0 .5-.405.905-.905.905s-.906-.405-.906-.905V9.89c0-.5.406-.906.906-.906zm-2.957 0c.5 0 .906.406.906.906s-.406.905-.906.905H7.58v.59h1.495c.5 0 .905.405.905.905s-.405.905-.905.905H7.58v.059h1.495c.5 0 .906.405.906.905s-.406.906-.906.906h-2.4c-.5 0-.906-.406-.906-.906V9.89c0-.5.406-.906.906-.906h2.4zM12 2C6.477 2 2 6.226 2 11.4c0 3.11 1.558 5.877 3.983 7.664.175.128.194.377.04.526l-.694.664a.454.454 0 0 0 .307.783h.049c2.043-.232 3.72-.97 4.88-1.654.457.063.924.097 1.435.097C17.523 19.48 22 15.254 22 10.08 22 4.905 17.523.68 12 .68L12 2z"/></svg>LINEで送る
+      </button>
+    </div>
+    <div class="tip">失敗しても、あなたがフォローしてはいけません。痛みを経験してはじめて、チームとして学習します。</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ━━━ UTILS ━━━
+const TABS = ['gdp','authority','mission','meeting','delegate'];
+
+function switchTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelectorAll('.tab')[TABS.indexOf(id)].classList.add('active');
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function copyText(id) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => showToast('コピーしました'));
+}
+
+function nowDateStr() {
+  const n = new Date();
+  return `${n.getFullYear()}年${n.getMonth()+1}月${n.getDate()}日`;
+}
+
+// ━━━ カード HTML ビルダー ━━━
+const CARD = {
+
+  gdp() {
+    if (!gdpLines.length) return null;
+    return `
+      <div class="sc-brand">survival_mam</div>
+      <div class="sc-tag">視点01 — 家庭内GDP</div>
+      <div class="sc-title">家庭内業務<br>可視化シート</div>
+      <div class="sc-date">${nowDateStr()} 作成</div>
+      <div class="sc-accent"></div>
+      <div class="sc-col-head">
+        <span>業務内容</span><span style="text-align:right">月間コスト</span><span style="text-align:right">内訳</span>
+      </div>
+      ${gdpLines.map(l=>`
+        <div class="sc-gdp-row">
+          <span>${l.name}</span>
+          <span class="sc-cost">${l.cost.toLocaleString()}円</span>
+          <span class="sc-detail">${l.min}分×週${l.times}回</span>
+        </div>`).join('')}
+      <div class="sc-total">
+        <span class="sc-total-label">月間 家庭内GDP 合計</span>
+        <span class="sc-total-value">${gdpTotal.toLocaleString()}<small>円</small></span>
+      </div>
+      <div class="sc-note">※ 市場単価（シッター・家事代行・療育支援）をもとに試算。
+これは感情論ではなく、家庭運営コストのデータです。</div>
+      <div class="sc-footer">survival_mam — 家族再起動プロジェクト</div>`;
+  },
+
+  mission() {
+    const text = document.getElementById('missionScript')?.innerText?.trim();
+    if (!text) return null;
+    return `
+      <div class="sc-brand">survival_mam</div>
+      <div class="sc-tag">視点03 — 弟ミッション</div>
+      <div class="sc-title">パパへの<br>ミッション発注書</div>
+      <div class="sc-date">${nowDateStr()}</div>
+      <div class="sc-accent"></div>
+      <div class="sc-block">
+        <div class="sc-block-body">${text}</div>
+      </div>
+      <div class="sc-footer">survival_mam — 家族再起動プロジェクト</div>`;
+  },
+
+  meeting() {
+    if (document.getElementById('meetingResult')?.style.display === 'none') return null;
+    const a1 = document.getElementById('agenda1')?.value || '（記入なし）';
+    const a2 = document.getElementById('agenda2')?.value || '（記入なし）';
+    const a3 = document.getElementById('agenda3')?.value || '（記入なし）';
+    return `
+      <div class="sc-brand">survival_mam</div>
+      <div class="sc-tag">視点04 — 家族会議</div>
+      <div class="sc-title">家族レジリエンス会議<br>議事メモ</div>
+      <div class="sc-date">${nowDateStr()}</div>
+      <div class="sc-accent"></div>
+      <div class="sc-block">
+        <div class="sc-block-label">① 娘のパニック傾向</div>
+        <div class="sc-block-body">${a1}</div>
+      </div>
+      <div class="sc-block">
+        <div class="sc-block-label">② 弟の「寂しいサイン」</div>
+        <div class="sc-block-body">${a2}</div>
+      </div>
+      <div class="sc-block">
+        <div class="sc-block-label">③ 来週の役割分担</div>
+        <div class="sc-block-body">${a3}</div>
+      </div>
+      <div class="sc-note">感情より作戦。来週も生き延びよう。</div>
+      <div class="sc-footer">survival_mam — 家族再起動プロジェクト</div>`;
+  },
+
+  delegate() {
+    if (!papaTasks.length) return null;
+    return `
+      <div class="sc-brand">survival_mam</div>
+      <div class="sc-tag">視点05 — 権限委譲</div>
+      <div class="sc-title">タスク移管リスト</div>
+      <div class="sc-date">${nowDateStr()} 更新</div>
+      <div class="sc-accent"></div>
+      <div class="sc-two-col">
+        <div>
+          <div class="sc-col-title sc-col-mama">ママ担当</div>
+          ${mamaTasks.map(t=>`<div class="sc-chip">${t}</div>`).join('') || '<div class="sc-chip" style="opacity:0.4">（なし）</div>'}
+        </div>
+        <div>
+          <div class="sc-col-title sc-col-papa">パパ担当</div>
+          ${papaTasks.map(t=>`<div class="sc-chip sc-chip-papa">${t}</div>`).join('')}
+        </div>
+      </div>
+      <div class="sc-note">失敗しても、ママはフォローしない。
+痛みを経験してはじめて、チームとして学習する。</div>
+      <div class="sc-footer">survival_mam — 家族再起動プロジェクト</div>`;
+  }
+};
+
+const FILE_NAMES = {
+  gdp: '家庭内GDP可視化シート',
+  mission: 'パパへのミッション発注書',
+  meeting: '家族会議議事メモ',
+  delegate: 'タスク移管リスト',
+};
+const imageCache = {};
+
+// ━━━ 画像生成エンジン ━━━
+async function generateImage(type) {
+  const html = CARD[type]?.();
+  if (!html) return null;
+
+  document.getElementById('scInner').innerHTML = html;
+  document.getElementById('spinnerOverlay').classList.add('show');
+  await new Promise(r => setTimeout(r, 350));
+
+  try {
+    const canvas = await html2canvas(document.getElementById('shareCard'), {
+      scale: 2, useCORS: true, backgroundColor: '#1a1410', logging: false, width: 640
+    });
+    document.getElementById('spinnerOverlay').classList.remove('show');
+    const url = canvas.toDataURL('image/png');
+    imageCache[type] = url;
+    return url;
+  } catch(e) {
+    document.getElementById('spinnerOverlay').classList.remove('show');
+    console.error(e);
+    return null;
+  }
+}
+
+async function exportImage(type) {
+  const url = await generateImage(type);
+  if (!url) { showToast('先に内容を生成してください'); return; }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${FILE_NAMES[type]}_${new Date().toISOString().slice(0,10)}.png`;
+  a.click();
+  showToast('画像を保存しました');
+}
+
+async function shareImage(type) {
+  const url = imageCache[type] || await generateImage(type);
+  if (!url) { showToast('先に内容を生成してください'); return; }
+
+  const textIds = { gdp:'gdpScript', mission:'missionScript', meeting:'meetingScript', delegate:'delegateScript' };
+  const text = document.getElementById(textIds[type])?.innerText || '';
+
+  if (navigator.share) {
+    try {
+      const blob = await (await fetch(url)).blob();
+      const file = new File([blob], `${FILE_NAMES[type]}.png`, { type: 'image/png' });
+      await navigator.share({ title: FILE_NAMES[type], text, files: [file] });
+      return;
+    } catch(e) { /* fall through */ }
+  }
+  // PC fallback
+  showToast('画像を保存してLINEに貼り付けてください');
+  if (text) window.open(`https://line.me/R/msg/text/?${encodeURIComponent(text)}`, '_blank');
+}
+
+// ━━━ TAB 1: GDP ━━━
+const defaultTasks = [
+  { name: '娘のパニック対応', min: 30, times: 5, rate: 2000 },
+  { name: '学校・療育との連絡調整', min: 20, times: 5, rate: 2500 },
+  { name: '弟の情緒ケア', min: 20, times: 7, rate: 1500 },
+  { name: '食事・掃除・洗濯', min: 90, times: 7, rate: 1200 },
+];
+let gdpData = JSON.parse(JSON.stringify(defaultTasks));
+let gdpLines = [], gdpTotal = 0;
+
+function renderGdpRows() {
+  document.getElementById('gdpRows').innerHTML = gdpData.map((d,i) =>
+    `<div class="task-row">
+      <input type="text" value="${d.name}" onchange="gdpData[${i}].name=this.value">
+      <input type="number" value="${d.min}" min="5" onchange="gdpData[${i}].min=+this.value">
+      <input type="number" value="${d.times}" min="1" onchange="gdpData[${i}].times=+this.value">
+      <input type="number" value="${d.rate}" min="500" step="100" onchange="gdpData[${i}].rate=+this.value">
+    </div>`).join('');
+}
+function addGdpRow() { gdpData.push({name:'',min:30,times:1,rate:1200}); renderGdpRows(); }
+
+function calcGdp() {
+  gdpTotal = 0; gdpLines = []; delete imageCache.gdp;
+  gdpData.forEach(d => {
+    if (!d.name) return;
+    const cost = Math.round((d.min * d.times * 4 / 60) * d.rate);
+    gdpTotal += cost;
+    gdpLines.push({...d, cost});
+  });
+  document.getElementById('gdpResultBox').innerHTML =
+    `<h4>📊 月間 家庭内GDP 試算</h4>` +
+    gdpLines.map(l=>`<div class="result-row"><span>${l.name}</span><span>${l.cost.toLocaleString()}円</span></div>`).join('') +
+    `<div class="result-total"><span>合計（月額）</span><span>${gdpTotal.toLocaleString()}円</span></div>`;
+  document.getElementById('gdpScript').textContent =
+    `少し真剣な話がしたい。\n\n私が家で担っている業務を、市場価格で試算したら月${gdpTotal.toLocaleString()}円分になった。\n感情的に責めたいわけじゃない。\nただ、このコストをこのまま一人で背負い続けるのは無理だという事実を、\n二人で共有したい。\n\nどのタスクをあなたが担うか、一緒に決めてほしい。`;
+  document.getElementById('gdpResult').style.display = 'block';
+}
+
+// ━━━ TAB 2: Authority ━━━
+function genAuthorityScript() {
+  const s = document.getElementById('sensei').value || '先生';
+  const k = document.getElementById('kikan').value || '学校';
+  const expMap = { call:'夫の携帯に直接お電話いただけますか', meeting:'次回の面談に夫も同席させたいのですが', report:'当日のご報告は夫に直接していただけますか', pickup:'お迎えをお願いしたい日の前日に夫に連絡していただけますか' };
+  const hMap = {
+    logic:`「実は今、かなり状況が深刻で、専門家の方にデータを見せてもらった。\n一度、あなたにも直接聞いてほしいことがある」と伝えると動きやすいです。`,
+    pride:`「あなたじゃないとこの子は変われないと思う」という言い方が一番効きます。\nミッション感覚で引き受けてもらうのがコツ。`,
+    avoid:`話を切り出す前に「10分だけ聞いてほしい、終わったら自由でいい」と\n時間を区切ってから話すと、逃げにくくなります。`
+  };
+  document.getElementById('senseiScript').textContent =
+    `${s}、いつもお世話になっております。\n\n一つお願いがあるのですが、娘の状況を夫にも直接理解してもらいたくて。\n${expMap[document.getElementById('experience').value]}。\n\n「お父さんの力が必要です」というメッセージを夫に届けていただければ、\n本人がより当事者意識を持てると思います。\nお手数ですが、よろしくお願いいたします。`;
+  document.getElementById('husbandScript').textContent =
+    `${k}の${s}から直接連絡があるかもしれない。\n\n私からじゃなく、専門家に現場の話を聞いてほしくて。\n\n${hMap[document.getElementById('husbandType').value]}`;
+  document.getElementById('authorityResult').style.display = 'block';
+}
+
+// ━━━ TAB 3: Mission ━━━
+let selectedMission = '';
+function selectMission(el, name) {
+  document.querySelectorAll('.mission-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); selectedMission = name;
+}
+function genMissionOrder() {
+  if (!selectedMission) { showToast('ミッションを選んでください'); return; }
+  const time = document.getElementById('missionTime').value;
+  const memo = document.getElementById('otoutoMemo').value;
+  delete imageCache.mission;
+  document.getElementById('missionScript').textContent =
+    `お姉ちゃんが荒れている間、\n弟の心を救えるのは今夜はあなたしかいない。\n\n【ミッション】\n${selectedMission}\n\n【時間】${time}でいい\n\n${memo?`【状況】${memo}\n\n`:''}弟はずっと我慢してる。\nパパとの時間が、今の弟には一番の安全基地になる。\nよろしく頼む。`;
+  document.getElementById('missionResult').style.display = 'block';
+}
+
+// ━━━ TAB 4: Meeting ━━━
+let meetingCount = parseInt(localStorage.getItem('meetingCount') || '0');
+function updateMeetingProgress() {
+  const pct = Math.min(100, Math.round(meetingCount / 12 * 100));
+  document.getElementById('meetingCount').textContent = meetingCount;
+  document.getElementById('meetingPct').textContent = pct + '%';
+  document.getElementById('meetingBar').style.width = pct + '%';
+}
+function addMeetingCount() { meetingCount++; localStorage.setItem('meetingCount', meetingCount); updateMeetingProgress(); showToast('会議 ' + meetingCount + '回目を記録しました'); }
+function resetMeetingCount() { meetingCount = 0; localStorage.setItem('meetingCount', 0); updateMeetingProgress(); showToast('リセットしました'); }
+function genMeetingSheet() {
+  const a1 = document.getElementById('agenda1').value || '（記入なし）';
+  const a2 = document.getElementById('agenda2').value || '（記入なし）';
+  const a3 = document.getElementById('agenda3').value || '（記入なし）';
+  const d = nowDateStr().replace('年','/').replace('月','/').replace('日','');
+  delete imageCache.meeting;
+  document.getElementById('meetingScript').textContent =
+    `━━━ 家族レジリエンス会議 ${d} ━━━\n\n【1】娘のパニック傾向\n${a1}\n\n【2】弟の「寂しいサイン」\n${a2}\n\n【3】来週の役割分担\n${a3}\n\n━━━ 感情より作戦。来週も生き延びよう ━━━`;
+  document.getElementById('meetingResult').style.display = 'block';
+  updateMeetingProgress();
+}
+
+// ━━━ TAB 5: Delegate ━━━
+let mamaTasks = JSON.parse(localStorage.getItem('mamaTasks') || '["療育連絡帳を書く","学校への電話対応","弟の寝かしつけ"]');
+let papaTasks = JSON.parse(localStorage.getItem('papaTasks') || '[]');
+
+function saveTasks() {
+  localStorage.setItem('mamaTasks', JSON.stringify(mamaTasks));
+  localStorage.setItem('papaTasks', JSON.stringify(papaTasks));
+}
+function renderTasks() {
+  document.getElementById('mamaTasks').innerHTML = mamaTasks.map((t,i)=>
+    `<div class="task-chip">${t}<button class="chip-btn" onclick="transferTask(${i})">→</button></div>`).join('');
+  document.getElementById('papaTasks').innerHTML = papaTasks.map((t,i)=>
+    `<div class="task-chip" style="border-color:#b8c9f0;background:#f0f4fe">${t}<button class="chip-btn" onclick="returnTask(${i})" style="color:#3a6ae0">←</button></div>`).join('');
+  if (papaTasks.length > 0) {
+    delete imageCache.delegate;
+    document.getElementById('delegateScript').textContent =
+      `ありがとう。\n\n以下のタスク、今日から担当お願いします。\n\n` +
+      papaTasks.map((t,i)=>`${i+1}. ${t}`).join('\n') +
+      `\n\nやり方が分からなければ聞いて。\nでも、やってみてから聞いてほしい。\nあなたを信頼してるから任せます。`;
+    document.getElementById('delegateMessage').style.display = 'block';
+  } else {
+    document.getElementById('delegateMessage').style.display = 'none';
+  }
+}
+function addTask() {
+  const input = document.getElementById('newTask');
+  if (!input.value.trim()) return;
+  mamaTasks.push(input.value.trim()); input.value = '';
+  saveTasks(); renderTasks();
+}
+function transferTask(i) { papaTasks.push(mamaTasks.splice(i,1)[0]); saveTasks(); renderTasks(); showToast('パパ担当に移管しました'); }
+function returnTask(i) { mamaTasks.push(papaTasks.splice(i,1)[0]); saveTasks(); renderTasks(); }
+
+// ━━━ INIT ━━━
+renderGdpRows();
+renderTasks();
+updateMeetingProgress();
+</script>
+</body>
+</html>
