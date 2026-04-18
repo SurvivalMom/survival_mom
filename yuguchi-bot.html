@@ -433,20 +433,25 @@ function addDivider(text) {
   messagesEl.appendChild(div);
 }
 
-// ── API呼び出し ──
+// ── API呼び出し（Gemini） ──
 const WORKER_URL = 'https://twilight-poetry-6783.sr-g-solti.workers.dev';
 
 async function callClaude(userMessage) {
-  conversationHistory.push({ role: 'user', content: userMessage });
+  conversationHistory.push({ role: 'user', parts: [{ text: userMessage }] });
+
+  // Gemini形式に変換
+  const geminiMessages = conversationHistory.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: m.parts || [{ text: m.content || '' }]
+  }));
 
   const response = await fetch(WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: SYSTEM_PROMPT,
-      messages: conversationHistory
+      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: geminiMessages,
+      generationConfig: { maxOutputTokens: 1000 }
     })
   });
 
@@ -455,8 +460,8 @@ async function callClaude(userMessage) {
     throw new Error(err?.error?.message || `HTTP ${response.status}`);
   }
   const data = await response.json();
-  const reply = data.content[0].text;
-  conversationHistory.push({ role: 'assistant', content: reply });
+  const reply = data.candidates[0].content.parts[0].text;
+  conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
   return reply;
 }
 
