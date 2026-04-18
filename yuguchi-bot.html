@@ -9,15 +9,10 @@
 
   :root {
     --cream: #faf7f2;
-    --cream-dark: #f0ebe1;
     --terra: #c4814a;
     --terra-light: #d9a278;
     --terra-dark: #a06535;
     --navy: #1a1410;
-    --navy-mid: #2d2420;
-    --navy-soft: #3d3028;
-    --text-main: #2a1f18;
-    --text-soft: #6b5548;
     --text-muted: #9c8478;
   }
 
@@ -31,7 +26,6 @@
     overflow: hidden;
   }
 
-  /* ── 星空背景 ── */
   #starfield {
     position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background:
@@ -51,19 +45,97 @@
       radial-gradient(1px 1px at 10% 70%, rgba(250,247,242,0.4), transparent),
       radial-gradient(1.5px 1.5px at 50% 80%, rgba(250,247,242,0.5), transparent),
       radial-gradient(1px 1px at 25% 90%, rgba(250,247,242,0.3), transparent),
-      radial-gradient(1px 1px at 85% 85%, rgba(250,247,242,0.4), transparent),
       radial-gradient(1px 1px at 45% 35%, rgba(250,247,242,0.3), transparent),
-      radial-gradient(1px 1px at 70% 75%, rgba(250,247,242,0.5), transparent),
-      radial-gradient(1.5px 1.5px at 5% 50%, rgba(250,247,242,0.4), transparent);
+      radial-gradient(1px 1px at 70% 75%, rgba(250,247,242,0.5), transparent);
   }
 
-  /* ── レイアウト ── */
   #app {
     position: relative; z-index: 1;
     display: flex; flex-direction: column;
     height: 100dvh;
     max-width: 640px;
     margin: 0 auto;
+  }
+
+  /* ── APIキー設定画面 ── */
+  #api-setup {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(26,20,16,0.97);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .setup-card {
+    background: rgba(45,36,32,0.95);
+    border: 1px solid rgba(196,129,74,0.3);
+    border-radius: 20px;
+    padding: 32px 28px;
+    max-width: 420px;
+    width: 100%;
+  }
+  .setup-logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--terra-light);
+    margin-bottom: 16px;
+  }
+  .setup-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .setup-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .setup-desc a { color: var(--terra-light); }
+  .setup-input {
+    width: 100%;
+    background: rgba(250,247,242,0.06);
+    border: 1px solid rgba(196,129,74,0.3);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--cream);
+    outline: none;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .setup-input:focus { border-color: rgba(196,129,74,0.6); }
+  .setup-input::placeholder { color: var(--text-muted); font-family: 'Noto Sans JP', sans-serif; letter-spacing: 0; }
+  .setup-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--terra), var(--terra-dark));
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    color: var(--cream);
+    font-size: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s;
+  }
+  .setup-btn:hover { opacity: 0.88; }
+  .setup-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .setup-error {
+    font-size: 12px;
+    color: #e87070;
+    margin-bottom: 10px;
+    min-height: 18px;
+    text-align: center;
   }
 
   /* ── ヘッダー ── */
@@ -73,28 +145,29 @@
     background: rgba(26,20,16,0.85);
     backdrop-filter: blur(12px);
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
+  .header-left {}
   .header-brand {
     font-family: 'Noto Serif JP', serif;
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--terra-light);
-    text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
   .header-title {
     font-family: 'Noto Serif JP', serif;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
     color: var(--cream);
-    letter-spacing: 0.05em;
-    line-height: 1.5;
+    letter-spacing: 0.04em;
   }
   .header-sub {
     font-size: 11px;
     color: var(--text-muted);
     margin-top: 2px;
-    letter-spacing: 0.03em;
   }
   .status-dot {
     display: inline-block;
@@ -108,6 +181,19 @@
     0%,100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.85); }
   }
+  .key-btn {
+    background: none;
+    border: 1px solid rgba(196,129,74,0.25);
+    border-radius: 8px;
+    padding: 6px 10px;
+    color: var(--text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .key-btn:hover { border-color: rgba(196,129,74,0.5); color: var(--terra-light); }
 
   /* ── メッセージエリア ── */
   #messages {
@@ -120,10 +206,8 @@
     scroll-behavior: smooth;
   }
   #messages::-webkit-scrollbar { width: 4px; }
-  #messages::-webkit-scrollbar-track { background: transparent; }
   #messages::-webkit-scrollbar-thumb { background: rgba(196,129,74,0.3); border-radius: 2px; }
 
-  /* ── 吹き出し ── */
   .msg {
     display: flex;
     gap: 10px;
@@ -160,20 +244,18 @@
     font-size: 14px;
     line-height: 1.75;
     letter-spacing: 0.02em;
+    white-space: pre-wrap;
   }
   .msg.bot .bubble {
     background: rgba(45,36,32,0.9);
     border: 1px solid rgba(196,129,74,0.2);
     border-bottom-left-radius: 4px;
-    color: var(--cream);
   }
   .msg.user .bubble {
     background: linear-gradient(135deg, var(--terra), var(--terra-dark));
     border-bottom-right-radius: 4px;
-    color: var(--cream);
   }
 
-  /* タイピング */
   .typing-bubble {
     background: rgba(45,36,32,0.9);
     border: 1px solid rgba(196,129,74,0.2);
@@ -197,17 +279,16 @@
 
   /* ── 入力エリア ── */
   #input-area {
-    padding: 12px 16px 16px;
+    padding: 10px 16px 14px;
     border-top: 1px solid rgba(196,129,74,0.15);
     background: rgba(26,20,16,0.92);
     backdrop-filter: blur(12px);
     flex-shrink: 0;
   }
 
-  /* ショートカットタグ */
   #shortcuts {
-    display: flex; gap: 8px; flex-wrap: wrap;
-    margin-bottom: 10px;
+    display: flex; gap: 7px; flex-wrap: wrap;
+    margin-bottom: 9px;
   }
   .shortcut-btn {
     font-family: 'Noto Sans JP', sans-serif;
@@ -219,14 +300,20 @@
     color: var(--terra-light);
     cursor: pointer;
     transition: all 0.2s;
-    letter-spacing: 0.02em;
     white-space: nowrap;
   }
-  .shortcut-btn:hover, .shortcut-btn:active {
-    background: rgba(196,129,74,0.2);
-    border-color: rgba(196,129,74,0.6);
-    transform: scale(1.03);
+  .shortcut-btn:hover { background: rgba(196,129,74,0.2); border-color: rgba(196,129,74,0.6); }
+
+  #voice-preview {
+    font-size: 12px;
+    color: var(--terra-light);
+    min-height: 16px;
+    margin-bottom: 6px;
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.3s;
   }
+  #voice-preview.active { opacity: 1; }
 
   #input-row {
     display: flex; gap: 10px; align-items: flex-end;
@@ -245,29 +332,10 @@
     max-height: 120px;
     line-height: 1.6;
     transition: border-color 0.2s;
-    letter-spacing: 0.02em;
   }
   #user-input::placeholder { color: var(--text-muted); }
   #user-input:focus { border-color: rgba(196,129,74,0.55); }
 
-  #send-btn {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    border: none;
-    background: linear-gradient(135deg, var(--terra), var(--terra-dark));
-    color: var(--cream);
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: transform 0.15s, opacity 0.15s;
-    box-shadow: 0 2px 12px rgba(196,129,74,0.35);
-  }
-  #send-btn:hover { transform: scale(1.08); }
-  #send-btn:active { transform: scale(0.94); }
-  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  /* ── マイクボタン ── */
   #mic-btn {
     width: 44px; height: 44px;
     border-radius: 50%;
@@ -278,43 +346,42 @@
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     transition: all 0.2s;
-    position: relative;
   }
-  #mic-btn:hover { background: rgba(196,129,74,0.18); border-color: rgba(196,129,74,0.6); }
+  #mic-btn:hover { background: rgba(196,129,74,0.18); }
   #mic-btn.recording {
     background: rgba(196,74,74,0.2);
     border-color: rgba(220,80,80,0.7);
     color: #e87070;
     animation: mic-pulse 1.2s ease-in-out infinite;
   }
-  #mic-btn.not-supported { opacity: 0.3; cursor: not-allowed; }
   @keyframes mic-pulse {
     0%,100% { box-shadow: 0 0 0 0 rgba(220,80,80,0.4); }
     50% { box-shadow: 0 0 0 8px rgba(220,80,80,0); }
   }
 
-  /* 音声認識中のテキスト表示 */
-  #voice-preview {
-    font-size: 12px;
-    color: var(--terra-light);
-    min-height: 16px;
-    margin-bottom: 6px;
-    letter-spacing: 0.03em;
-    transition: opacity 0.3s;
-    opacity: 0;
-    font-style: italic;
+  #send-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--terra), var(--terra-dark));
+    color: var(--cream);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.15s, opacity 0.15s;
+    box-shadow: 0 2px 12px rgba(196,129,74,0.35);
   }
-  #voice-preview.active { opacity: 1; }
+  #send-btn:hover { transform: scale(1.08); }
+  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
   .footer-note {
     text-align: center;
     font-size: 10px;
     color: var(--text-muted);
     margin-top: 8px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
   }
 
-  /* ── ウェルカム区切り ── */
   .divider {
     display: flex; align-items: center; gap: 10px;
     padding: 4px 0;
@@ -325,13 +392,37 @@
 </head>
 <body>
 <div id="starfield"></div>
+
+<!-- APIキー設定画面 -->
+<div id="api-setup">
+  <div class="setup-card">
+    <div class="setup-logo">SURVIVAL_MAM</div>
+    <div class="setup-title">壁打ちボットへようこそ</div>
+    <div class="setup-desc">
+      このボットを使うには、AnthropicのAPIキーが必要です。<br>
+      キーは <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> から取得できます。<br><br>
+      入力したキーはこのページ内にのみ保存され、外部には送信されません。
+    </div>
+    <input type="password" id="api-key-input" class="setup-input" placeholder="sk-ant-api03-..." autocomplete="off" />
+    <div class="setup-error" id="setup-error"></div>
+    <button class="setup-btn" onclick="startWithKey()">始める</button>
+    <div class="setup-note">
+      キーは再読み込みするとリセットされます<br>
+      （ブラウザには保存されません）
+    </div>
+  </div>
+</div>
+
 <div id="app">
   <header>
-    <div class="header-brand">survival_mam</div>
-    <div class="header-title">
-      <span class="status-dot"></span>壁打ちボット — いつでも聞いています
+    <div class="header-left">
+      <div class="header-brand">SURVIVAL_MAM</div>
+      <div class="header-title">
+        <span class="status-dot"></span>壁打ちボット
+      </div>
+      <div class="header-sub">完全匿名・正論なし・いつでも</div>
     </div>
-    <div class="header-sub">完全匿名・完全非公開・正論なし</div>
+    <button class="key-btn" onclick="resetKey()">🔑 キー変更</button>
   </header>
 
   <div id="messages"></div>
@@ -339,7 +430,7 @@
   <div id="input-area">
     <div id="shortcuts">
       <button class="shortcut-btn" onclick="quickSend('もう疲れた…')">もう疲れた…</button>
-      <button class="shortcut-btn" onclick="quickSend('夫にイライラする')">夫にイライラする</button>
+      <button class="shortcut-btn" onclick="quickSend('夫にイライラする')">夫にイライラ</button>
       <button class="shortcut-btn" onclick="quickSend('子どもに怒鳴ってしまった')">怒鳴ってしまった</button>
       <button class="shortcut-btn" onclick="quickSend('眠れない')">眠れない</button>
       <button class="shortcut-btn" onclick="quickSend('誰もわかってくれない')">誰もわかってくれない</button>
@@ -365,7 +456,6 @@
 
 <script>
 const SYSTEM_PROMPT = `あなたは「survival_mam」の愚痴聞きチャットボットです。
-名前は「ボット」ですが、温かみのある存在として振る舞ってください。
 
 【あなたの役割】
 発達グレーゾーンの子どもを持つ母親、不登校の子どもを持つ親、ワンオペで疲弊している保護者が、
@@ -377,59 +467,115 @@ const SYSTEM_PROMPT = `あなたは「survival_mam」の愚痴聞きチャット
 3. 感情を否定しない。「そんなこと思っちゃダメ」は絶対に言わない。
 4. ジャッジしない。どんな感情（子どもへの怒り、夫への憎しみ、育児放棄したいという気持ち）も受け止める。
 5. ただひたすら「聴く」「共感する」「一緒にいる」ことに徹する。
-6. 相手の言葉を否定せず、感情に寄り添う言葉を選ぶ。
 
 【会話スタイル】
 - 短めの返答でよい。長々と説明しない。
-- 相手の言葉をそのまま受け止めて、「そうか、〜なんだね」と反映する。
+- 相手の言葉をそのまま受け止めて「そうか、〜なんだね」と反映する。
 - 問いかけは1つだけ。複数の質問は圧力になる。
-- 「何があったの？」「もう少し聞かせて」など、話を続けやすい問いかけをする。
-- 深夜に一人で泣いている人に寄り添うような、静かで温かいトーンで。
+- 深夜に一人で泣いている人に寄り添う、静かで温かいトーンで。
 - 絵文字は使わない。
 
-【会話の始まり方】
-最初のメッセージでは、安心感を与える短い言葉で迎えてください。
-「ここに来てくれてよかった。何があったの？」程度の短さで。
-
 【重要な注意】
-もし相手が自傷や自殺を示唆するような言葉を使った場合は、
-寄り添いながら、「一人で抱えないでほしい」と伝え、
-専門家への相談（よりそいホットライン: 0120-279-338）を優しく案内してください。`;
+もし相手が自傷や自殺を示唆する言葉を使った場合は、
+寄り添いながら「一人で抱えないでほしい」と伝え、
+よりそいホットライン（0120-279-338）を優しく案内してください。`;
 
+let API_KEY = '';
 let conversationHistory = [];
 let isTyping = false;
 
 const messagesEl = document.getElementById('messages');
 const inputEl = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+const setupEl = document.getElementById('api-setup');
+const apiKeyInput = document.getElementById('api-key-input');
+const setupError = document.getElementById('setup-error');
 
-function scrollToBottom() {
-  messagesEl.scrollTop = messagesEl.scrollHeight;
+// ── APIキー設定 ──
+async function startWithKey() {
+  const key = apiKeyInput.value.trim();
+  if (!key.startsWith('sk-ant-')) {
+    setupError.textContent = 'APIキーは sk-ant- から始まる形式です';
+    return;
+  }
+  setupError.textContent = '確認中…';
+
+  // 軽くテスト
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 5,
+        messages: [{ role: 'user', content: 'hi' }]
+      })
+    });
+    if (res.status === 401) { setupError.textContent = 'APIキーが正しくありません'; return; }
+    if (!res.ok && res.status !== 200) { setupError.textContent = `エラー: ${res.status}`; return; }
+  } catch(e) {
+    setupError.textContent = 'ネットワークエラーです。接続を確認してください';
+    return;
+  }
+
+  API_KEY = key;
+  setupEl.style.display = 'none';
+  setupError.textContent = '';
+  initChat();
 }
+
+apiKeyInput.addEventListener('keydown', e => { if (e.key === 'Enter') startWithKey(); });
+
+function resetKey() {
+  API_KEY = '';
+  conversationHistory = [];
+  messagesEl.innerHTML = '';
+  apiKeyInput.value = '';
+  setupError.textContent = '';
+  setupEl.style.display = 'flex';
+}
+
+// ── チャット初期化 ──
+async function initChat() {
+  await new Promise(r => setTimeout(r, 500));
+  showTyping();
+  await new Promise(r => setTimeout(r, 1200));
+  hideTyping();
+
+  const hour = new Date().getHours();
+  let greeting;
+  if (hour >= 22 || hour < 5) {
+    greeting = 'こんな時間に来てくれたんだね。\n\n眠れないのかな、それとも…やっと一人になれた時間かな。\n\nどんなことでもいいよ。何があったの？';
+  } else if (hour < 12) {
+    greeting = 'おはよう。\n\n朝から来てくれたんだね。今日はもう何かあった？\n\nなんでも話してほしい。';
+  } else {
+    greeting = 'ここに来てくれてよかった。\n\n今日はどんな一日だった？何があったの？';
+  }
+  addMessage('bot', greeting);
+}
+
+// ── メッセージ表示 ──
+function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
 
 function addMessage(role, text) {
   const wrapper = document.createElement('div');
   wrapper.className = `msg ${role}`;
 
-  if (role === 'bot') {
-    const av = document.createElement('div');
-    av.className = 'avatar bot';
-    av.textContent = '🌙';
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.textContent = text;
-    wrapper.appendChild(av);
-    wrapper.appendChild(bubble);
-  } else {
-    const av = document.createElement('div');
-    av.className = 'avatar user-av';
-    av.textContent = '💬';
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.textContent = text;
-    wrapper.appendChild(av);
-    wrapper.appendChild(bubble);
-  }
+  const av = document.createElement('div');
+  av.className = `avatar ${role === 'bot' ? 'bot' : 'user-av'}`;
+  av.textContent = role === 'bot' ? '🌙' : '💬';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+
+  if (role === 'bot') { wrapper.appendChild(av); wrapper.appendChild(bubble); }
+  else { wrapper.appendChild(av); wrapper.appendChild(bubble); }
 
   messagesEl.appendChild(wrapper);
   scrollToBottom();
@@ -437,27 +583,16 @@ function addMessage(role, text) {
 
 function showTyping() {
   const wrapper = document.createElement('div');
-  wrapper.className = 'msg bot';
-  wrapper.id = 'typing-indicator';
-
+  wrapper.className = 'msg bot'; wrapper.id = 'typing-indicator';
   const av = document.createElement('div');
-  av.className = 'avatar bot';
-  av.textContent = '🌙';
-
+  av.className = 'avatar bot'; av.textContent = '🌙';
   const bubble = document.createElement('div');
   bubble.className = 'typing-bubble';
   bubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-
-  wrapper.appendChild(av);
-  wrapper.appendChild(bubble);
-  messagesEl.appendChild(wrapper);
-  scrollToBottom();
+  wrapper.appendChild(av); wrapper.appendChild(bubble);
+  messagesEl.appendChild(wrapper); scrollToBottom();
 }
-
-function hideTyping() {
-  const el = document.getElementById('typing-indicator');
-  if (el) el.remove();
-}
+function hideTyping() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
 
 function addDivider(text) {
   const div = document.createElement('div');
@@ -466,12 +601,18 @@ function addDivider(text) {
   messagesEl.appendChild(div);
 }
 
+// ── API呼び出し ──
 async function callClaude(userMessage) {
   conversationHistory.push({ role: 'user', content: userMessage });
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1000,
@@ -480,7 +621,10 @@ async function callClaude(userMessage) {
     })
   });
 
-  if (!response.ok) throw new Error('API error');
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `HTTP ${response.status}`);
+  }
   const data = await response.json();
   const reply = data.content[0].text;
   conversationHistory.push({ role: 'assistant', content: reply });
@@ -489,16 +633,12 @@ async function callClaude(userMessage) {
 
 async function sendMessage(text) {
   const message = text || inputEl.value.trim();
-  if (!message || isTyping) return;
+  if (!message || isTyping || !API_KEY) return;
 
-  if (!text) inputEl.value = '';
-  inputEl.style.height = 'auto';
-  isTyping = true;
-  sendBtn.disabled = true;
+  if (!text) { inputEl.value = ''; inputEl.style.height = 'auto'; }
+  isTyping = true; sendBtn.disabled = true;
 
-  if (conversationHistory.length === 0) {
-    addDivider('今夜の壁打ち');
-  }
+  if (conversationHistory.length === 0) addDivider('今夜の壁打ち');
 
   addMessage('user', message);
   showTyping();
@@ -509,17 +649,22 @@ async function sendMessage(text) {
     addMessage('bot', reply);
   } catch (e) {
     hideTyping();
-    addMessage('bot', 'ごめんなさい、少し繋がりにくくなっています。少し待ってからもう一度話しかけてもらえますか？');
+    addMessage('bot', `接続できませんでした。\n\nエラー: ${e.message}\n\nAPIキーやネットワークを確認してください。`);
   }
 
-  isTyping = false;
-  sendBtn.disabled = false;
-  inputEl.focus();
+  isTyping = false; sendBtn.disabled = false; inputEl.focus();
 }
 
-function quickSend(text) {
-  sendMessage(text);
-}
+function quickSend(text) { sendMessage(text); }
+
+// テキストエリア自動リサイズ
+inputEl.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+inputEl.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
 
 // ── 音声入力 ──
 const micBtn = document.getElementById('mic-btn');
@@ -527,13 +672,9 @@ const voicePreview = document.getElementById('voice-preview');
 let recognition = null;
 let isRecording = false;
 
-function setupSpeechRecognition() {
+(function setupSpeech() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    micBtn.classList.add('not-supported');
-    micBtn.title = 'このブラウザでは音声入力が使えません（Chrome推奨）';
-    return;
-  }
+  if (!SR) { micBtn.style.opacity = '0.3'; micBtn.title = 'このブラウザでは音声入力非対応（Chrome推奨）'; return; }
 
   recognition = new SR();
   recognition.lang = 'ja-JP';
@@ -541,102 +682,37 @@ function setupSpeechRecognition() {
   recognition.interimResults = true;
 
   recognition.onstart = () => {
-    isRecording = true;
-    micBtn.classList.add('recording');
-    voicePreview.textContent = '🎙 聞いています…';
-    voicePreview.classList.add('active');
+    isRecording = true; micBtn.classList.add('recording');
+    voicePreview.textContent = '🎙 聞いています…'; voicePreview.classList.add('active');
   };
-
   recognition.onresult = (e) => {
-    let interim = '';
-    let final = '';
+    let interim = '', final = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const t = e.results[i][0].transcript;
-      if (e.results[i].isFinal) final += t;
-      else interim += t;
+      if (e.results[i].isFinal) final += t; else interim += t;
     }
     if (final) {
       inputEl.value += final;
       inputEl.style.height = 'auto';
       inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + 'px';
       voicePreview.textContent = '✓ ' + final;
-    } else {
-      voicePreview.textContent = '🎙 ' + interim;
-    }
+    } else { voicePreview.textContent = '🎙 ' + interim; }
   };
-
   recognition.onerror = (e) => {
-    if (e.error === 'not-allowed') {
-      voicePreview.textContent = 'マイクの許可が必要です';
-    } else if (e.error === 'no-speech') {
-      voicePreview.textContent = '声が聞き取れませんでした';
-    } else {
-      voicePreview.textContent = '';
-    }
-    stopRecording();
+    voicePreview.textContent = e.error === 'not-allowed' ? 'マイクの許可が必要です' : e.error === 'no-speech' ? '声が聞き取れませんでした' : '';
+    stopRec();
   };
-
   recognition.onend = () => {
-    stopRecording();
-    // 文字が入っていたら少し待って送信するか、そのままテキストエリアに残す
-    setTimeout(() => {
-      voicePreview.classList.remove('active');
-      setTimeout(() => { voicePreview.textContent = ''; }, 300);
-    }, 1500);
+    stopRec();
+    setTimeout(() => { voicePreview.classList.remove('active'); setTimeout(() => { voicePreview.textContent = ''; }, 300); }, 1500);
   };
-}
+})();
 
-function stopRecording() {
-  isRecording = false;
-  micBtn.classList.remove('recording');
-}
-
-function toggleMic() {
+function stopRec() { isRecording = false; micBtn.classList.remove('recording'); }
+micBtn.addEventListener('click', () => {
   if (!recognition) return;
-  if (isRecording) {
-    recognition.stop();
-  } else {
-    inputEl.value = '';
-    inputEl.style.height = 'auto';
-    try { recognition.start(); } catch(e) {}
-  }
-}
-
-micBtn.addEventListener('click', toggleMic);
-setupSpeechRecognition();
-
-
-inputEl.addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-});
-
-// Enterキー送信（Shift+Enterは改行）
-inputEl.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-// 初期ウェルカムメッセージ
-window.addEventListener('load', async () => {
-  await new Promise(r => setTimeout(r, 600));
-  showTyping();
-  await new Promise(r => setTimeout(r, 1400));
-  hideTyping();
-
-  const hour = new Date().getHours();
-  let greeting;
-  if (hour >= 22 || hour < 5) {
-    greeting = 'こんな時間に来てくれたんだね。\n\n眠れないのかな、それとも…やっと一人になれた時間かな。\n\nどんなことでもいいよ。何があったの？';
-  } else if (hour >= 5 && hour < 12) {
-    greeting = 'おはよう。\n\n朝から来てくれたんだね。今日はもう何かあった？\n\nなんでも話してほしい。';
-  } else {
-    greeting = 'ここに来てくれてよかった。\n\n今日はどんな一日だった？何があったの？';
-  }
-
-  addMessage('bot', greeting);
+  if (isRecording) recognition.stop();
+  else { inputEl.value = ''; inputEl.style.height = 'auto'; try { recognition.start(); } catch(e) {} }
 });
 </script>
 </body>
