@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サバイバルキット｜survival_mam</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Shippori+Mincho:wght@400;600;800&display=swap');
+
+  :root {
+    --cream: #faf7f2;
+    --terra: #c4814a;
+    --terra-light: #e8a87c;
+    --terra-dark: #8a5530;
+    --navy: #1a1410;
+    --navy-soft: #2e261e;
+    --warm-gray: #9e8e80;
+    --light-gray: #ede8e2;
+    --soft-green: #7a9e7e;
+    --soft-rose: #c4808a;
+    --font-serif: 'Shippori Mincho', serif;
+    --font-sans: 'Zen Kaku Gothic New', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--navy);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--navy);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(26,20,16,0.3);
+  }
+  .site-logo {
+    font-family: var(--font-serif);
+    font-size: 13px;
+    color: var(--terra-light);
+    letter-spacing: 0.15em;
+    font-weight: 600;
+  }
+  .site-tagline {
+    font-size: 10px;
+    color: var(--warm-gray);
+    letter-spacing: 0.1em;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 60%, #3a2510 100%);
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,129,74,0.15) 0%, transparent 70%);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -30px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,129,74,0.1) 0%, transparent 70%);
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    color: var(--terra-light);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(22px, 5vw, 32px);
+    color: var(--cream);
+    line-height: 1.5;
+    font-weight: 800;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-title span {
+    color: var(--terra-light);
+  }
+  .hero-sub {
+    font-size: 12px;
+    color: var(--warm-gray);
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* TAB NAV */
+  .tab-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--navy-soft);
+    border-bottom: 2px solid var(--terra-dark);
+    position: sticky;
+    top: 57px;
+    z-index: 90;
+  }
+  .tab-btn {
+    padding: 14px 4px;
+    border: none;
+    background: transparent;
+    color: var(--warm-gray);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.25s;
+    border-bottom: 3px solid transparent;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .tab-btn .tab-icon {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .tab-btn:hover { color: var(--terra-light); background: rgba(196,129,74,0.05); }
+  .tab-btn.active {
+    color: var(--terra-light);
+    border-bottom-color: var(--terra);
+    background: rgba(196,129,74,0.08);
+  }
+
+  /* PANELS */
+  .panel { display: none; padding: 24px 20px 80px; max-width: 600px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  .panel-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--light-gray);
+  }
+  .panel-number {
+    font-size: 10px;
+    color: var(--terra);
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .panel-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .panel-desc {
+    font-size: 12px;
+    color: var(--warm-gray);
+    line-height: 1.8;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--terra);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--light-gray);
+  }
+
+  /* FORM ELEMENTS */
+  .field-group { margin-bottom: 16px; }
+  .field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy-soft);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+  .field-hint {
+    font-size: 10px;
+    color: var(--warm-gray);
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+  input[type="text"], input[type="time"], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--light-gray);
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--navy);
+    background: white;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--terra);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* TIME BLOCKS */
+  .time-grid { display: flex; flex-direction: column; gap: 8px; }
+  .time-row {
+    display: grid;
+    grid-template-columns: 90px 1fr auto;
+    gap: 8px;
+    align-items: start;
+    background: white;
+    border: 1.5px solid var(--light-gray);
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: border-color 0.2s;
+  }
+  .time-row:focus-within { border-color: var(--terra-light); }
+  .time-row input[type="time"] {
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--terra-dark);
+    background: transparent;
+  }
+  .time-row input[type="text"] {
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    background: transparent;
+  }
+  .time-row .delete-btn {
+    background: none;
+    border: none;
+    color: var(--warm-gray);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .time-row .delete-btn:hover { color: var(--soft-rose); }
+
+  /* CHECKLIST */
+  .check-list { display: flex; flex-direction: column; gap: 10px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: white;
+    border: 1.5px solid var(--light-gray);
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .check-item.checked {
+    background: #f0f7f1;
+    border-color: var(--soft-green);
+  }
+  .check-item input[type="checkbox"] { display: none; }
+  .check-box {
+    width: 20px; height: 20px;
+    border: 2px solid var(--light-gray);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: white;
+  }
+  .check-item.checked .check-box {
+    background: var(--soft-green);
+    border-color: var(--soft-green);
+  }
+  .check-box::after {
+    content: '✓';
+    font-size: 12px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .check-item.checked .check-box::after { opacity: 1; }
+  .check-text { font-size: 13px; line-height: 1.6; color: var(--navy); flex: 1; }
+  .check-item.checked .check-text { color: var(--warm-gray); text-decoration: line-through; }
+  .check-category {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--terra);
+    margin-bottom: 2px;
+  }
+
+  /* SCRIPT CARDS */
+  .script-card {
+    background: white;
+    border: 1.5px solid var(--light-gray);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .script-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--terra);
+    border-radius: 4px 0 0 4px;
+  }
+  .script-situation {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--terra);
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
+  .script-text {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .script-note {
+    font-size: 11px;
+    color: var(--warm-gray);
+    line-height: 1.7;
+    border-top: 1px solid var(--light-gray);
+    padding-top: 8px;
+  }
+  .script-custom { background: #fdf8f3; }
+
+  /* ROUTINE */
+  .routine-steps { display: flex; flex-direction: column; gap: 0; }
+  .routine-step {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+  .step-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+    flex-shrink: 0;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    background: var(--terra);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .step-line {
+    width: 2px;
+    background: var(--light-gray);
+    flex: 1;
+    min-height: 20px;
+  }
+  .routine-step:last-child .step-line { display: none; }
+  .step-content {
+    flex: 1;
+    padding: 0 0 20px 14px;
+  }
+  .step-duration {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--terra);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .step-title-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .step-detail {
+    font-size: 12px;
+    color: var(--warm-gray);
+    line-height: 1.7;
+  }
+  .step-input-area textarea {
+    margin-top: 8px;
+    font-size: 12px;
+    min-height: 60px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .btn-primary {
+    background: var(--terra);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--terra-dark); }
+  .btn-outline {
+    background: white;
+    color: var(--terra);
+    border: 1.5px solid var(--terra);
+  }
+  .btn-outline:hover { background: var(--terra); color: white; }
+  .btn-sm { padding: 7px 14px; font-size: 11px; }
+  .btn-add {
+    background: var(--cream);
+    color: var(--terra);
+    border: 1.5px dashed var(--terra-light);
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .btn-add:hover { background: #f5ede3; }
+
+  /* ACTION BAR */
+  .action-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--light-gray);
+    flex-wrap: wrap;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--light-gray);
+    border-radius: 100px;
+    height: 6px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terra), var(--terra-light));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 10px;
+    color: var(--warm-gray);
+    text-align: right;
+  }
+
+  /* CARD */
+  .info-card {
+    background: linear-gradient(135deg, #fff8f2, #fdf3ea);
+    border: 1px solid #f0dcc8;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .info-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--terra-dark);
+    margin-bottom: 6px;
+  }
+  .info-card-text {
+    font-size: 12px;
+    color: var(--navy-soft);
+    line-height: 1.8;
+  }
+
+  /* PRINT/PDF STYLES */
+  @media print {
+    .site-header, .tab-nav, .action-bar, .tab-btn { display: none !important; }
+    .panel { display: block !important; padding: 0 !important; page-break-after: always; }
+    body { background: white; }
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: var(--cream);
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    vertical-align: middle;
+  }
+  .badge-terra { background: #f5ede3; color: var(--terra-dark); }
+  .badge-green { background: #e8f3e9; color: #4a7a4e; }
+  .badge-rose { background: #f5e8ea; color: #8a3a44; }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--light-gray); margin: 20px 0; }
+
+  /* FOOTER NOTE */
+  .footer-note {
+    text-align: center;
+    padding: 20px;
+    font-size: 10px;
+    color: var(--warm-gray);
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <div class="site-logo">survival_mam</div>
+  </div>
+  <div class="site-tagline">サバイバルキット</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">SURVIVAL KIT for moms</div>
+  <h1 class="hero-title">「もしも」の夜に、<br><span>ママは壊れない。</span></h1>
+  <p class="hero-sub">4つのツールで、今日から備える。</p>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('schedule')">
+    <span class="tab-icon">📋</span>24時間<br>スケジュール
+  </button>
+  <button class="tab-btn" onclick="switchTab('checklist')">
+    <span class="tab-icon">🛡</span>感覚<br>シェルター
+  </button>
+  <button class="tab-btn" onclick="switchTab('script')">
+    <span class="tab-icon">💬</span>きょうだい児<br>スクリプト
+  </button>
+  <button class="tab-btn" onclick="switchTab('routine')">
+    <span class="tab-icon">⏱</span>5分間<br>ルーティン
+  </button>
+</nav>
+
+<!-- PANEL 1: SCHEDULE -->
+<div id="panel-schedule" class="panel active">
+  <div class="panel-header">
+    <div class="panel-number">TOOL 01</div>
+    <h2 class="panel-title">避難所24時間<br>スケジュール</h2>
+    <p class="panel-desc">脳がフリーズしても動ける「視覚支援ボード」。書き込んだら印刷して、あの子の目に届く場所に貼る。</p>
+  </div>
+
+  <div class="info-card">
+    <div class="info-card-title">🌿 使い方</div>
+    <div class="info-card-text">避難直後〜48時間の「次に何が起こるか」を書き込んでください。汚くてもいい。あの子の脳が欲しいのは、"見える形の次"です。</div>
+  </div>
+
+  <div class="field-group">
+    <label class="field-label">子どもの名前</label>
+    <input type="text" id="child-name" placeholder="例：さくら" oninput="saveData()">
+  </div>
+
+  <div class="field-group">
+    <label class="field-label">今日の日付・状況メモ</label>
+    <input type="text" id="situation-memo" placeholder="例：避難所2日目。体育館の隅スペース確保済み" oninput="saveData()">
+  </div>
+
+  <div class="section-label">タイムブロック</div>
+
+  <div class="time-grid" id="time-grid">
+    <!-- Populated by JS -->
+  </div>
+  <button class="btn btn-add" onclick="addTimeBlock()">＋ 時間ブロックを追加</button>
+
+  <div class="section-label">お受験学習タイム</div>
+  <div class="field-group">
+    <div class="field-hint">毎日の「ドリル1ページ」は、環境激変時のあの子にとって最大の安定剤です。時間と内容を決めておく。</div>
+    <input type="time" id="study-time" oninput="saveData()" style="max-width:140px; margin-bottom:8px;">
+    <input type="text" id="study-content" placeholder="例：計算ドリル1ページ（5分）" oninput="saveData()">
+  </div>
+
+  <div class="section-label">今日の「よかったこと」メモ</div>
+  <div class="field-group">
+    <div class="field-hint">ママ自身のための記録。1行でいい。</div>
+    <textarea id="good-memo" placeholder="例：パニックなく夕食食べられた" oninput="saveData()"></textarea>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="exportPDF('schedule')">📄 PDFで保存</button>
+    <button class="btn btn-outline" onclick="exportText('schedule')">📋 テキストでコピー</button>
+  </div>
+</div>
+
+<!-- PANEL 2: CHECKLIST -->
+<div id="panel-checklist" class="panel">
+  <div class="panel-header">
+    <div class="panel-number">TOOL 02</div>
+    <h2 class="panel-title">感覚シェルター<br>設計チェックリスト</h2>
+    <p class="panel-desc">音・視線・匂い・触覚、4つの感覚別に今夜から準備できるものをすべてリスト化。チェックが増えるほど、あの子のパニックリスクが下がる。</p>
+  </div>
+
+  <div id="check-progress-wrap">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="check-progress" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="check-label">0 / 16 完了</div>
+  </div>
+
+  <div class="section-label">🔊 音の防衛</div>
+  <div class="check-list" id="checklist-sound"></div>
+
+  <div class="section-label">👁 視線のシェルター</div>
+  <div class="check-list" id="checklist-vision"></div>
+
+  <div class="section-label">🌿 匂いの安心</div>
+  <div class="check-list" id="checklist-smell"></div>
+
+  <div class="section-label">✋ 触覚の安全地帯</div>
+  <div class="check-list" id="checklist-touch"></div>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="exportPDF('checklist')">📄 PDFで保存</button>
+    <button class="btn btn-outline" onclick="exportText('checklist')">📋 テキストでコピー</button>
+    <button class="btn btn-sm btn-outline" onclick="resetChecklist()">リセット</button>
+  </div>
+</div>
+
+<!-- PANEL 3: SCRIPT -->
+<div id="panel-script" class="panel">
+  <div class="panel-header">
+    <div class="panel-number">TOOL 03</div>
+    <h2 class="panel-title">きょうだい児<br>「秘密の3ルール」<br>声かけスクリプト</h2>
+    <p class="panel-desc">特性児のケアに追われながら、下の子の心を繋ぎ止めるための言葉。「ありがとう」では足りない。あの子が本当に欲しいものを届ける。</p>
+  </div>
+
+  <div class="info-card">
+    <div class="info-card-title">💡 「秘密の3ルール」とは</div>
+    <div class="info-card-text">避難所という極限状態で、下の子の「いい子」の糸が切れる前に。ママと二人だけの特別なルールを持つことで、弟・妹は「ちゃんと見てもらえている」と感じることができます。</div>
+  </div>
+
+  <div class="section-label">ルール① 毎日の「秘密の合言葉」</div>
+  <div id="scripts-rule1"></div>
+
+  <div class="section-label">ルール② 「○○だけ特別」の時間</div>
+  <div id="scripts-rule2"></div>
+
+  <div class="section-label">ルール③ 「我慢してくれてありがとう」の伝え方</div>
+  <div id="scripts-rule3"></div>
+
+  <div class="section-label">あなただけのオリジナルスクリプト</div>
+  <div class="field-group">
+    <label class="field-label">状況メモ（弟・妹の名前や今の様子）</label>
+    <input type="text" id="sibling-name" placeholder="例：こうた（5歳）、最近無口になってきた" oninput="saveData()">
+  </div>
+  <div class="field-group">
+    <label class="field-label">今日つかう言葉</label>
+    <textarea id="my-script" placeholder="ここに今日の声かけ言葉を書いておく。明日見返したとき、続けられた自分を褒めてあげて。" oninput="saveData()"></textarea>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="exportPDF('script')">📄 PDFで保存</button>
+    <button class="btn btn-outline" onclick="exportText('script')">📋 テキストでコピー</button>
+  </div>
+</div>
+
+<!-- PANEL 4: ROUTINE -->
+<div id="panel-routine" class="panel">
+  <div class="panel-header">
+    <div class="panel-number">TOOL 04</div>
+    <h2 class="panel-title">5分間学習<br>ルーティン設計</h2>
+    <p class="panel-desc">ドリル1ページが、なぜあの子の安定剤になるのか。環境が激変しても「日常」を取り戻す5分から始まるプロセス。</p>
+  </div>
+
+  <div class="info-card">
+    <div class="info-card-title">🌱 なぜ「5分」なのか</div>
+    <div class="info-card-text">脳は「変化」に抵抗する。避難所でも、登校しぶりの朝でも、「いつもと同じ5分」があるだけで、あの子の脳は「今日も大丈夫」と判断できる。最初の5分が、その日の全部を決める。</div>
+  </div>
+
+  <div class="field-group">
+    <label class="field-label">子どもの名前・学年</label>
+    <input type="text" id="routine-child" placeholder="例：さくら・年長" oninput="saveData()">
+  </div>
+  <div class="field-group">
+    <label class="field-label">目標（お受験・学校復帰・その他）</label>
+    <input type="text" id="routine-goal" placeholder="例：小学校受験・11月入試" oninput="saveData()">
+  </div>
+
+  <div class="section-label">5ステップ ルーティン</div>
+  <div class="routine-steps" id="routine-steps-container"></div>
+
+  <div class="section-label">今週の振り返り</div>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px;" id="week-track"></div>
+
+  <div class="field-group">
+    <label class="field-label">ママへのメモ（今週気づいたこと）</label>
+    <textarea id="routine-memo" placeholder="例：声かけ前にドリルを机に出しておくと抵抗が減った" oninput="saveData()"></textarea>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="exportPDF('routine')">📄 PDFで保存</button>
+    <button class="btn btn-outline" onclick="exportText('routine')">📋 テキストでコピー</button>
+  </div>
+</div>
+
+<div class="footer-note">survival_mam © Sena Mam｜あなたの毎日に、小さな確信を。</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+const checklistData = {
+  sound: [
+    { id:'s1', text:'使い慣れたノイズキャンセリングイヤーマフ・ヘッドホンを非常袋に入れてある', category:'必須' },
+    { id:'s2', text:'100均の耳栓とは別に「あの子が慣れた」ものを用意してある', category:'必須' },
+    { id:'s3', text:'大きな音に備えた「耳ふさぎのサイン」を二人で決めてある', category:'推奨' },
+    { id:'s4', text:'お気に入りの音楽・動画が端末にオフラインで入っている', category:'推奨' },
+  ],
+  vision: [
+    { id:'v1', text:'避難所では「隅のスペース」を優先確保する計画がある', category:'必須' },
+    { id:'v2', text:'段ボール1枚で「小さな壁」を作れる準備がある', category:'必須' },
+    { id:'v3', text:'目隠し用のタオルやバンダナが非常袋にある', category:'推奨' },
+    { id:'v4', text:'視界を遮る「お気に入りフード付きパーカー」が入っている', category:'推奨' },
+  ],
+  smell: [
+    { id:'m1', text:'いつも使っている柔軟剤で洗ったタオル・小物を非常袋に入れてある', category:'必須' },
+    { id:'m2', text:'ママの匂いがついた小さなもの（ハンカチなど）が入っている', category:'必須' },
+    { id:'m3', text:'苦手な匂いを遮断するマスクが入っている', category:'推奨' },
+    { id:'m4', text:'お気に入りのにおい（ロールオンアロマなど）が入っている', category:'推奨' },
+  ],
+  touch: [
+    { id:'t1', text:'いつもの肌触りのブランケット・クッションが非常袋にある', category:'必須' },
+    { id:'t2', text:'靴下・下着など「肌に直接触れるもの」の替えがある', category:'必須' },
+    { id:'t3', text:'感覚刺激グッズ（フィジェット等）が入っている', category:'推奨' },
+    { id:'t4', text:'避難所の「床の硬さ」対策（折りたたみマットなど）がある', category:'推奨' },
+  ]
+};
+
+const scriptData = {
+  rule1: [
+    { situation: '寝る前・起き抜け', text: '「ねえ、今日のひみつ合言葉ね。『こうたが一番すき』だよ。誰にも言わないでね」', note: '内容はなんでもいい。「二人だけの秘密がある」という事実が、弟・妹を守る。毎日変えると効果倍増。' },
+    { situation: 'ざわついた場所で', text: '「○○だけに教えるね。ここのひみつの場所、あそこの隅っこね。ここ来たら大丈夫だから」', note: '「逃げていい場所」を二人で決める。ママとの共同作業が安心感を生む。' },
+  ],
+  rule2: [
+    { situation: '姉のケア中に割り込まれたとき', text: '「今はお姉ちゃんのターンだけど、次は絶対○○のターン。○時になったら呼んで」', note: '「見捨てていない、番が来る」という見通しを渡す。時間は必ず守る。' },
+    { situation: '夜寝かしつけ前', text: '「今日はお姉ちゃんより先に寝かせてあげるね。○○だけ特別ね」', note: '順番や特別感は、小さな子の承認欲求を満たす最強の道具。' },
+  ],
+  rule3: [
+    { situation: 'ぐっすり眠った後の朝', text: '「昨日、ほんとうに助かったよ。○○がいてくれたから、ママ頑張れたんだよ」', note: '「我慢」ではなく「助けてくれた」という解釈を渡す。我慢させていることへの罪悪感をそのまま言葉にしなくていい。' },
+    { situation: '泣いてしまったとき', text: '「泣いていいよ。ぜんぶ出して。終わったらぎゅってしよう」', note: '「我慢しなくていい場面」を明示的に作る。ここが解放される場だと知らせる。' },
+  ],
+};
+
+const routineSteps = [
+  { num: 1, duration: '0〜1分', title: '「準備サイン」を出す', detail: 'ドリルを机に置くだけ。「やりなさい」は言わない。視覚的なサインだけで脳に「始まり」を伝える。' },
+  { num: 2, duration: '1〜2分', title: 'ママも一緒に座る', detail: '隣に座るだけでいい。「一緒にいる」という感覚が、あの子を動かす最大の燃料。' },
+  { num: 3, duration: '2〜5分', title: '1ページだけやる', detail: '終わったら必ず「できたね」と言う。量は関係ない。「今日もやった」という事実が積み上がる。' },
+  { num: 4, duration: '5〜7分', title: '「よかったこと」を1つ言い合う', detail: '子どもが言う。ママも言う。1つでいい。評価ではなく「気づき」の共有。' },
+  { num: 5, duration: '終わりに', title: '記録する', detail: 'このアプリの「今週の記録」にチェックを入れる。続いた日が見える化されると、ふたりのモチベーションが維持できる。' },
+];
+
+// ===== STATE =====
+let state = {
+  timeBlocks: [
+    { time: '06:00', activity: '起床・顔を洗う' },
+    { time: '07:00', activity: '朝食（好きなもの優先）' },
+    { time: '09:00', activity: '自由時間・お気に入り活動' },
+    { time: '12:00', activity: '昼食' },
+    { time: '14:00', activity: '学習タイム（5分）' },
+    { time: '18:00', activity: '夕食' },
+    { time: '21:00', activity: '就寝準備・読み聞かせ' },
+  ],
+  checks: {},
+  weekTrack: {},
+  childName: '',
+  situationMemo: '',
+  studyTime: '',
+  studyContent: '',
+  goodMemo: '',
+  siblingName: '',
+  myScript: '',
+  routineChild: '',
+  routineGoal: '',
+  routineMemo: '',
+};
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('survival_kit_v1');
+    if (saved) { state = { ...state, ...JSON.parse(saved) }; }
+  } catch(e) {}
+}
+
+function saveData() {
+  state.childName = document.getElementById('child-name')?.value || '';
+  state.situationMemo = document.getElementById('situation-memo')?.value || '';
+  state.studyTime = document.getElementById('study-time')?.value || '';
+  state.studyContent = document.getElementById('study-content')?.value || '';
+  state.goodMemo = document.getElementById('good-memo')?.value || '';
+  state.siblingName = document.getElementById('sibling-name')?.value || '';
+  state.myScript = document.getElementById('my-script')?.value || '';
+  state.routineChild = document.getElementById('routine-child')?.value || '';
+  state.routineGoal = document.getElementById('routine-goal')?.value || '';
+  state.routineMemo = document.getElementById('routine-memo')?.value || '';
+  localStorage.setItem('survival_kit_v1', JSON.stringify(state));
+}
+
+// ===== TABS =====
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ===== SCHEDULE =====
+function renderSchedule() {
+  const grid = document.getElementById('time-grid');
+  grid.innerHTML = '';
+  state.timeBlocks.forEach((block, i) => {
+    const row = document.createElement('div');
+    row.className = 'time-row';
+    row.innerHTML = `
+      <input type="time" value="${block.time}" onchange="updateBlock(${i},'time',this.value)">
+      <input type="text" value="${block.activity}" placeholder="何をする？" onchange="updateBlock(${i},'activity',this.value)">
+      <button class="delete-btn" onclick="deleteBlock(${i})">✕</button>
+    `;
+    grid.appendChild(row);
+  });
+}
+
+function addTimeBlock() {
+  state.timeBlocks.push({ time: '12:00', activity: '' });
+  renderSchedule();
+  saveData();
+}
+
+function updateBlock(i, key, val) {
+  state.timeBlocks[i][key] = val;
+  saveData();
+}
+
+function deleteBlock(i) {
+  state.timeBlocks.splice(i, 1);
+  renderSchedule();
+  saveData();
+}
+
+// ===== CHECKLIST =====
+function renderChecklist() {
+  ['sound','vision','smell','touch'].forEach(cat => {
+    const container = document.getElementById('checklist-' + cat);
+    container.innerHTML = '';
+    checklistData[cat].forEach(item => {
+      const div = document.createElement('div');
+      const checked = state.checks[item.id];
+      div.className = 'check-item' + (checked ? ' checked' : '');
+      div.innerHTML = `
+        <div class="check-box"></div>
+        <div class="check-text">
+          <div class="check-category">${item.category}</div>
+          ${item.text}
+        </div>
+      `;
+      div.onclick = () => toggleCheck(item.id);
+      container.appendChild(div);
+    });
+  });
+  updateProgress();
+}
+
+function toggleCheck(id) {
+  state.checks[id] = !state.checks[id];
+  saveData();
+  renderChecklist();
+}
+
+function updateProgress() {
+  const total = Object.values(checklistData).reduce((a, c) => a + c.length, 0);
+  const done = Object.values(state.checks).filter(Boolean).length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById('check-progress').style.width = pct + '%';
+  document.getElementById('check-label').textContent = `${done} / ${total} 完了（${pct}%）`;
+}
+
+function resetChecklist() {
+  if (confirm('チェックをすべてリセットしますか？')) {
+    state.checks = {};
+    saveData();
+    renderChecklist();
+  }
+}
+
+// ===== SCRIPTS =====
+function renderScripts() {
+  ['rule1','rule2','rule3'].forEach(rule => {
+    const container = document.getElementById('scripts-' + rule);
+    container.innerHTML = '';
+    scriptData[rule].forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'script-card';
+      card.innerHTML = `
+        <div class="script-situation">📍 ${s.situation}</div>
+        <div class="script-text">「${s.text.replace(/「|」/g,'')}」</div>
+        <div class="script-note">${s.note}</div>
+      `;
+      container.appendChild(card);
+    });
+  });
+}
+
+// ===== ROUTINE =====
+function renderRoutine() {
+  const container = document.getElementById('routine-steps-container');
+  container.innerHTML = '';
+  routineSteps.forEach(step => {
+    const div = document.createElement('div');
+    div.className = 'routine-step';
+    div.innerHTML = `
+      <div class="step-left">
+        <div class="step-num">${step.num}</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-duration">${step.duration}</div>
+        <div class="step-title-text">${step.title}</div>
+        <div class="step-detail">${step.detail}</div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  // Week tracker
+  const days = ['月','火','水','木','金','土','日'];
+  const weekWrap = document.getElementById('week-track');
+  weekWrap.innerHTML = '';
+  days.forEach((d, i) => {
+    const cell = document.createElement('div');
+    const key = 'day' + i;
+    const done = state.weekTrack[key];
+    cell.style.cssText = `
+      background: ${done ? 'var(--terra)' : 'white'};
+      border: 1.5px solid ${done ? 'var(--terra)' : 'var(--light-gray)'};
+      border-radius: 8px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    `;
+    cell.innerHTML = `<div style="font-size:11px;font-weight:700;color:${done?'white':'var(--warm-gray)'};">${d}</div><div style="font-size:16px;margin-top:2px;">${done ? '✓' : '　'}</div>`;
+    cell.onclick = () => {
+      state.weekTrack[key] = !state.weekTrack[key];
+      saveData();
+      renderRoutine();
+    };
+    weekWrap.appendChild(cell);
+  });
+}
+
+// ===== EXPORT =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function exportText(tab) {
+  let text = '';
+  const name = state.childName || 'お子さん';
+  const today = new Date().toLocaleDateString('ja-JP');
+
+  if (tab === 'schedule') {
+    text = `【避難所スケジュール】${name}｜${today}\n`;
+    text += `状況: ${state.situationMemo || '未記入'}\n\n`;
+    text += `--- タイムブロック ---\n`;
+    state.timeBlocks.forEach(b => { text += `${b.time}　${b.activity}\n`; });
+    text += `\n学習タイム: ${state.studyTime} ${state.studyContent}\n`;
+    text += `\n今日のよかったこと:\n${state.goodMemo || '未記入'}\n`;
+  } else if (tab === 'checklist') {
+    text = `【感覚シェルターチェックリスト】${today}\n\n`;
+    ['sound','vision','smell','touch'].forEach(cat => {
+      const labels = {sound:'音の防衛',vision:'視線のシェルター',smell:'匂いの安心',touch:'触覚の安全地帯'};
+      text += `■ ${labels[cat]}\n`;
+      checklistData[cat].forEach(item => {
+        text += `${state.checks[item.id] ? '[✓]' : '[　]'} ${item.text}\n`;
+      });
+      text += '\n';
+    });
+  } else if (tab === 'script') {
+    text = `【きょうだい児スクリプト】${today}\n`;
+    text += `対象: ${state.siblingName || '未記入'}\n\n`;
+    ['rule1','rule2','rule3'].forEach((rule, ri) => {
+      text += `■ ルール${ri+1}\n`;
+      scriptData[rule].forEach(s => {
+        text += `[${s.situation}]\n${s.text}\n→ ${s.note}\n\n`;
+      });
+    });
+    text += `■ 今日の言葉\n${state.myScript || '未記入'}\n`;
+  } else if (tab === 'routine') {
+    text = `【5分間ルーティン】${state.routineChild || name}｜${today}\n`;
+    text += `目標: ${state.routineGoal || '未記入'}\n\n`;
+    routineSteps.forEach(s => {
+      text += `STEP${s.num} [${s.duration}] ${s.title}\n${s.detail}\n\n`;
+    });
+    const days = ['月','火','水','木','金','土','日'];
+    text += '今週の記録: ';
+    days.forEach((d, i) => { text += `${d}:${state.weekTrack['day'+i]?'✓':'_'} `; });
+    text += `\n\nメモ:\n${state.routineMemo || '未記入'}\n`;
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 テキストをコピーしました');
+  }).catch(() => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('📋 テキストをコピーしました');
+  });
+}
+
+function exportPDF(tab) {
+  // Reveal all panels briefly for print
+  const allPanels = document.querySelectorAll('.panel');
+  const currentActive = document.querySelector('.panel.active');
+
+  // Store original display
+  allPanels.forEach(p => {
+    if (!p.classList.contains('active')) {
+      p.style.display = 'none';
+    }
+  });
+
+  window.print();
+  showToast('📄 印刷画面を開きました（PDF保存可）');
+}
+
+// ===== INIT =====
+function init() {
+  loadData();
+  renderSchedule();
+  renderChecklist();
+  renderScripts();
+  renderRoutine();
+
+  // Fill saved values
+  if (state.childName) document.getElementById('child-name').value = state.childName;
+  if (state.situationMemo) document.getElementById('situation-memo').value = state.situationMemo;
+  if (state.studyTime) document.getElementById('study-time').value = state.studyTime;
+  if (state.studyContent) document.getElementById('study-content').value = state.studyContent;
+  if (state.goodMemo) document.getElementById('good-memo').value = state.goodMemo;
+  if (state.siblingName) document.getElementById('sibling-name').value = state.siblingName;
+  if (state.myScript) document.getElementById('my-script').value = state.myScript;
+  if (state.routineChild) document.getElementById('routine-child').value = state.routineChild;
+  if (state.routineGoal) document.getElementById('routine-goal').value = state.routineGoal;
+  if (state.routineMemo) document.getElementById('routine-memo').value = state.routineMemo;
+}
+
+init();
+</script>
+</body>
+</html>
