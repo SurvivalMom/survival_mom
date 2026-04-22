@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>朝の設計図｜survival_mam</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Shippori+Mincho:wght@400;600;800&display=swap');
+
+:root {
+  /* ── Brand base ── */
+  --cream: #faf7f2;
+  --navy: #1a1410;
+  --navy-soft: #2e261e;
+  --warm-gray: #9e8e80;
+  --light-gray: #ede8e2;
+  --mid-gray: #d4ccc4;
+
+  /* ── App accent: Forest × Mist ── */
+  --forest: #3d6b52;
+  --forest-light: #6a9e7e;
+  --forest-pale: #e8f2ec;
+  --forest-dark: #234a38;
+  --mist: #6b8fa8;
+  --mist-light: #a0bfce;
+  --mist-pale: #e8f0f5;
+  --mist-dark: #3d5f74;
+
+  /* ── Semantic ── */
+  --dawn: #e8b86d;      /* 朝の光：お受験・達成 */
+  --dawn-pale: #fdf4e3;
+  --rose: #b87070;      /* 崩れた日 */
+  --rose-pale: #f5eaea;
+  --sage: #7a9e7e;      /* 完了・できた */
+  --sage-pale: #eaf2eb;
+
+  --font-serif: 'Shippori Mincho', serif;
+  --font-sans: 'Zen Kaku Gothic New', sans-serif;
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--forest-dark);
+  padding: 0 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 1px 0 rgba(106,158,126,0.3);
+}
+.header-logo {
+  font-family: var(--font-serif);
+  font-size: 12px;
+  color: var(--forest-light);
+  letter-spacing: 0.2em;
+  font-weight: 600;
+}
+.header-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(155deg, var(--forest-dark) 0%, #1a3528 50%, #0f2318 100%);
+  padding: 36px 22px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  left: -60px; bottom: -60px;
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(106,158,126,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  right: 20px; top: 20px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(107,143,168,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(106,158,126,0.2);
+  border: 1px solid rgba(106,158,126,0.35);
+  border-radius: 100px;
+  padding: 3px 12px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--forest-light);
+  letter-spacing: 0.2em;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 5.5vw, 30px);
+  color: #f0ede8;
+  font-weight: 800;
+  line-height: 1.55;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+.hero-title em { color: var(--forest-light); font-style: normal; }
+.hero-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  line-height: 1.8;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── TAB NAV ── */
+.tab-nav {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: var(--forest-dark);
+  position: sticky;
+  top: 52px;
+  z-index: 190;
+  border-bottom: 2px solid rgba(106,158,126,0.2);
+}
+.tab-btn {
+  padding: 10px 3px 9px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.25);
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  text-align: center;
+  line-height: 1.4;
+}
+.tab-btn .ti { font-size: 16px; display: block; margin-bottom: 2px; }
+.tab-btn:hover { color: var(--forest-light); background: rgba(106,158,126,0.06); }
+.tab-btn.active {
+  color: var(--forest-light);
+  border-bottom-color: var(--forest-light);
+  background: rgba(106,158,126,0.1);
+}
+
+/* ── PANELS ── */
+.panel { display: none; padding: 22px 18px 88px; max-width: 640px; margin: 0 auto; }
+.panel.active { display: block; animation: fadeUp 0.22s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── PANEL HEADER ── */
+.ph { margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--light-gray); }
+.ph-num { font-size: 9px; color: var(--forest); letter-spacing: 0.25em; font-weight: 700; margin-bottom: 5px; }
+.ph-title { font-family: var(--font-serif); font-size: 19px; font-weight: 800; line-height: 1.4; margin-bottom: 6px; }
+.ph-desc { font-size: 12px; color: var(--warm-gray); line-height: 1.85; }
+
+/* ── SECTION LABEL ── */
+.sl {
+  font-size: 9px; font-weight: 700; color: var(--forest);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin: 22px 0 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sl::after { content: ''; flex: 1; height: 1px; background: var(--light-gray); }
+
+/* ── INFO CARD ── */
+.ic {
+  background: var(--forest-pale);
+  border: 1px solid rgba(61,107,82,0.18);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.ic-t { font-size: 11px; font-weight: 700; color: var(--forest-dark); margin-bottom: 5px; }
+.ic-b { font-size: 12px; color: var(--navy-soft); line-height: 1.85; }
+
+/* ── FORM ── */
+.fg { margin-bottom: 14px; }
+.fl { display: block; font-size: 11px; font-weight: 700; color: var(--navy-soft); margin-bottom: 5px; letter-spacing: 0.04em; }
+.fh { font-size: 10px; color: var(--warm-gray); margin-bottom: 5px; line-height: 1.6; }
+input[type=text], input[type=time], textarea, select {
+  width: 100%; padding: 9px 12px;
+  border: 1.5px solid var(--light-gray); border-radius: 8px;
+  font-family: var(--font-sans); font-size: 13px; color: var(--navy);
+  background: white; transition: border-color 0.18s; outline: none;
+  -webkit-appearance: none;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--forest); }
+textarea { resize: vertical; min-height: 72px; }
+
+/* ── COLLISION MAP ── */
+.collision-item {
+  background: white;
+  border: 1.5px solid var(--light-gray);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.collision-item.flagged { border-color: var(--rose); background: var(--rose-pale); }
+.ci-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.ci-num {
+  width: 26px; height: 26px; background: var(--forest);
+  color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 900; flex-shrink: 0;
+  transition: background 0.2s;
+}
+.collision-item.flagged .ci-num { background: var(--rose); }
+.ci-label { font-size: 13px; font-weight: 700; color: var(--navy); flex: 1; }
+.ci-flag-btn {
+  font-size: 10px; font-weight: 700;
+  color: var(--warm-gray); background: var(--light-gray);
+  border: none; border-radius: 100px; padding: 3px 10px;
+  cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.collision-item.flagged .ci-flag-btn { background: var(--rose); color: white; }
+.ci-desc { font-size: 11px; color: var(--warm-gray); line-height: 1.75; margin-bottom: 8px; }
+
+/* ── LAYER CARDS ── */
+.layer-card {
+  background: white;
+  border: 1.5px solid var(--light-gray);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.lc-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--light-gray);
+}
+.lc-head.l1 { background: linear-gradient(90deg, var(--mist-pale), transparent); }
+.lc-head.l2 { background: linear-gradient(90deg, var(--forest-pale), transparent); }
+.lc-head.l3 { background: linear-gradient(90deg, var(--dawn-pale), transparent); }
+.lc-icon { font-size: 20px; flex-shrink: 0; }
+.lc-meta { flex: 1; }
+.lc-num { font-size: 9px; color: var(--forest); font-weight: 700; letter-spacing: 0.15em; margin-bottom: 2px; }
+.lc-title { font-family: var(--font-serif); font-size: 15px; font-weight: 800; color: var(--navy); }
+.lc-time { font-size: 11px; color: var(--mist); font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.lc-body { padding: 14px 16px; }
+.track-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.track-box { background: var(--cream); border-radius: 8px; padding: 10px 12px; }
+.track-name { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px; }
+.track-name.ane { color: var(--forest); }
+.track-name.oto { color: var(--mist-dark); }
+.track-items { font-size: 11px; color: var(--navy-soft); line-height: 1.8; }
+.layer-tip {
+  font-size: 11px; color: var(--forest-dark);
+  background: var(--forest-pale);
+  border-radius: 8px; padding: 9px 12px; line-height: 1.7;
+}
+
+/* ── FLOWCHART ── */
+.flow-root { position: relative; padding-left: 26px; }
+.flow-node { position: relative; margin-bottom: 6px; }
+.flow-node::before {
+  content: '';
+  position: absolute;
+  left: -20px; top: 20px;
+  width: 2px; height: calc(100% + 6px);
+  background: var(--light-gray);
+}
+.flow-node:last-child::before { display: none; }
+.fn-box {
+  background: white;
+  border: 1.5px solid var(--light-gray);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  position: relative;
+}
+.fn-box::before {
+  content: '';
+  position: absolute;
+  left: -28px; top: 14px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--light-gray);
+  border: 2px solid var(--cream);
+  box-shadow: 0 0 0 2px var(--light-gray);
+  transition: all 0.2s;
+}
+.fn-box.leaf { border-color: var(--forest-pale); background: var(--forest-pale); }
+.fn-box.leaf::before { background: var(--forest-light); box-shadow: 0 0 0 2px var(--forest-light); }
+.fn-q {
+  display: inline-flex; align-items: center;
+  font-size: 9px; font-weight: 700;
+  border-radius: 100px; padding: 2px 8px; margin-bottom: 4px;
+  letter-spacing: 0.1em;
+}
+.fn-q.yes { background: var(--sage-pale); color: var(--sage); }
+.fn-q.no  { background: var(--rose-pale); color: var(--rose); }
+.fn-q.sub { background: var(--mist-pale); color: var(--mist-dark); }
+.fn-text { font-size: 13px; font-weight: 700; color: var(--navy); line-height: 1.4; }
+.fn-sub { font-size: 11px; color: var(--warm-gray); margin-top: 4px; line-height: 1.65; }
+.fn-children { padding-left: 18px; margin-top: 6px; }
+
+/* ── ESCAPE BOX ── */
+.escape-box {
+  background: linear-gradient(135deg, var(--forest-dark) 0%, #152d22 100%);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-top: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.escape-box::after {
+  content: '';
+  position: absolute; right: -20px; top: -20px;
+  width: 100px; height: 100px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(106,158,126,0.2) 0%, transparent 70%);
+}
+.eb-badge { font-size: 9px; color: var(--forest-light); letter-spacing: 0.2em; font-weight: 700; margin-bottom: 8px; }
+.eb-title { font-family: var(--font-serif); font-size: 16px; font-weight: 800; color: #f0ede8; line-height: 1.5; margin-bottom: 12px; }
+.eb-steps { display: flex; flex-direction: column; gap: 8px; }
+.eb-step {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px;
+}
+.eb-sn {
+  width: 20px; height: 20px; background: var(--forest-light);
+  color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 900; flex-shrink: 0; margin-top: 1px;
+}
+.eb-st { font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.65; }
+.eb-st em { color: var(--forest-light); font-style: normal; font-weight: 700; }
+
+/* ── 30 SEC ── */
+.script-card {
+  background: white;
+  border: 1.5px solid var(--light-gray);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.script-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; background: var(--mist); border-radius: 4px 0 0 4px;
+}
+.sc-badge { font-size: 9px; font-weight: 700; color: var(--mist-dark); letter-spacing: 0.15em; margin-bottom: 5px; }
+.sc-line { font-family: var(--font-serif); font-size: 15px; font-weight: 600; color: var(--navy); line-height: 1.65; margin-bottom: 8px; }
+.sc-note { font-size: 11px; color: var(--warm-gray); line-height: 1.7; border-top: 1px solid var(--light-gray); padding-top: 8px; }
+
+/* ── DRILL ── */
+.stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.stat-chip { background: white; border: 1.5px solid var(--light-gray); border-radius: var(--radius); padding: 12px 10px; text-align: center; }
+.sc-val { font-family: var(--font-serif); font-size: 24px; font-weight: 800; }
+.sc-val.done { color: var(--sage); }
+.sc-val.crashed { color: var(--rose); }
+.sc-val.rest { color: var(--mist); }
+.sc-label { font-size: 9px; color: var(--warm-gray); font-weight: 700; letter-spacing: 0.08em; margin-top: 2px; }
+
+.week-header { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
+.wh-day { font-size: 9px; font-weight: 700; color: var(--warm-gray); text-align: center; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.cal-cell {
+  aspect-ratio: 1; min-height: 36px;
+  border: 1.5px solid var(--light-gray);
+  border-radius: 8px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.18s; background: white;
+}
+.cal-cell:hover { border-color: var(--forest-light); }
+.cal-cell.done { background: var(--sage); border-color: var(--sage); }
+.cal-cell.crashed { background: var(--rose-pale); border-color: var(--rose); }
+.cal-cell.rest { background: var(--mist-pale); border-color: var(--mist); }
+.cal-cell.today { box-shadow: 0 0 0 2px var(--forest); }
+.cal-num { font-size: 11px; font-weight: 700; color: var(--warm-gray); }
+.cal-cell.done .cal-num { color: white; }
+.cal-cell.crashed .cal-num { color: var(--rose); }
+.cal-cell.rest .cal-num { color: var(--mist-dark); }
+.cal-mark { font-size: 12px; line-height: 1; }
+.cal-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.cl-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--warm-gray); }
+.cl-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+/* ── WEEK TRACKER ── */
+.week-track { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; margin-bottom: 4px; }
+.wt-cell {
+  aspect-ratio: 1; min-height: 36px;
+  border: 1.5px solid var(--light-gray); border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.18s; background: white;
+}
+.wt-cell:hover { border-color: var(--mist-light); }
+.wt-cell.done { background: var(--mist); border-color: var(--mist); }
+.wt-cell .wt-day { font-size: 9px; font-weight: 700; color: var(--warm-gray); }
+.wt-cell.done .wt-day { color: white; }
+.wt-cell .wt-check { font-size: 14px; line-height: 1; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 9px 18px; border: none; border-radius: 8px;
+  font-family: var(--font-sans); font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em;
+}
+.btn-primary { background: var(--forest); color: white; }
+.btn-primary:hover { background: var(--forest-dark); transform: translateY(-1px); }
+.btn-outline { background: white; color: var(--forest); border: 1.5px solid var(--forest); }
+.btn-outline:hover { background: var(--forest); color: white; }
+.btn-ghost { background: var(--light-gray); color: var(--warm-gray); }
+.btn-ghost:hover { background: var(--mid-gray); }
+.action-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--light-gray); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--forest-dark); color: #f0ede8;
+  padding: 10px 22px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  z-index: 999; transition: transform 0.28s ease; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+.app-footer { text-align: center; padding: 16px; font-size: 10px; color: var(--mid-gray); letter-spacing: 0.1em; }
+
+@media print {
+  .header, .tab-nav, .action-bar { display: none !important; }
+  .panel { display: block !important; padding: 0 !important; page-break-after: always; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">survival_mam</div>
+  <div class="header-title">朝の設計図</div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">🌅 MORNING DESIGN KIT</div>
+  <h1 class="hero-title">崩れても、<br><em>立て直せる朝。</em></h1>
+  <p class="hero-sub">5つのツールで、明日の朝を設計する。</p>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('collision',this)"><span class="ti">🗺</span>衝突<br>マップ</button>
+  <button class="tab-btn" onclick="switchTab('layers',this)"><span class="ti">📐</span>設計図<br>3層</button>
+  <button class="tab-btn" onclick="switchTab('flow',this)"><span class="ti">🔀</span>崩れた<br>とき</button>
+  <button class="tab-btn" onclick="switchTab('thirty',this)"><span class="ti">💬</span>30秒<br>設計</button>
+  <button class="tab-btn" onclick="switchTab('drill',this)"><span class="ti">📖</span>ドリル<br>記録</button>
+</nav>
+
+<!-- ═══ TAB 1: COLLISION MAP ═══ -->
+<div id="panel-collision" class="panel active">
+  <div class="ph">
+    <div class="ph-num">TOOL 01</div>
+    <h2 class="ph-title">朝の衝突マップ</h2>
+    <p class="ph-desc">あなたの朝のどこで一番崩れているか。「ここが地雷だ」と知っているだけで、対処が変わる。</p>
+  </div>
+  <div class="ic">
+    <div class="ic-t">🌿 使い方</div>
+    <div class="ic-b">よく崩れるポイントに「ここが地雷」をタップ。崩れる場所と理由をメモしておくと、設計図（タブ②）が作りやすくなります。</div>
+  </div>
+  <div class="fg"><label class="fl">姉の名前</label><input type="text" id="child1-name" placeholder="例：さくら" oninput="save()"></div>
+  <div class="fg"><label class="fl">弟・妹の名前</label><input type="text" id="child2-name" placeholder="例：こうた" oninput="save()"></div>
+  <div class="sl">衝突ポイント</div>
+  <div id="collision-list"></div>
+  <div class="sl">気づきメモ</div>
+  <div class="fg">
+    <div class="fh">どのパターンのとき、自分が一番消耗するか。</div>
+    <textarea id="collision-memo" placeholder="例：朝食中に二人のペースが合わないとき、どちらにも合わせられなくて思考が止まる" oninput="save()"></textarea>
+  </div>
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="doPrint()">📄 PDF保存</button>
+    <button class="btn btn-outline" onclick="doTextCopy('collision')">📋 テキストコピー</button>
+  </div>
+</div>
+
+<!-- ═══ TAB 2: LAYERS ═══ -->
+<div id="panel-layers" class="panel">
+  <div class="ph">
+    <div class="ph-num">TOOL 02</div>
+    <h2 class="ph-title">設計図<br>3層構造メーカー</h2>
+    <p class="ph-desc">姉と弟を「同じ空間で、別のトラック」で動かす。起床・出発時刻を入れると時間割が自動計算されます。</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+    <div class="fg" style="margin:0"><label class="fl">起床時刻</label><input type="time" id="wake-time" value="06:30" oninput="renderLayers()"></div>
+    <div class="fg" style="margin:0"><label class="fl">出発時刻</label><input type="time" id="leave-time" value="08:00" oninput="renderLayers()"></div>
+  </div>
+  <div id="layer-cards"></div>
+  <div class="sl">今週うまくいったこと</div>
+  <div class="fg"><textarea id="layer-memo" placeholder="例：第1層で弟に別室で遊ばせたら、姉の朝食が穏やかだった" oninput="save()"></textarea></div>
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="doPrint()">📄 PDF保存</button>
+    <button class="btn btn-outline" onclick="doTextCopy('layers')">📋 テキストコピー</button>
+  </div>
+</div>
+
+<!-- ═══ TAB 3: FLOWCHART ═══ -->
+<div id="panel-flow" class="panel">
+  <div class="ph">
+    <div class="ph-num">TOOL 03</div>
+    <h2 class="ph-title">崩れたときの<br>フローチャート</h2>
+    <p class="ph-desc">脳がフリーズしても動ける。「次に何をするか」を事前に決めておく。</p>
+  </div>
+  <div class="sl">姉が崩れた</div>
+  <div class="flow-root" id="flow-ane"></div>
+  <div class="sl">弟が崩れた</div>
+  <div class="flow-root" id="flow-oto"></div>
+  <div class="sl">両方が同時に崩れた</div>
+  <div class="escape-box">
+    <div class="eb-badge">⚑ 戦略的撤退プロトコル</div>
+    <h3 class="eb-title">ベストな対応などない。<br>「最悪を防ぐ対応」だけがある。</h3>
+    <div class="eb-steps">
+      <div class="eb-step"><div class="eb-sn">1</div><div class="eb-st"><em>その場を離れる。</em>洗面所に3分だけ。これは逃げじゃない、戦略的撤退だ。</div></div>
+      <div class="eb-step"><div class="eb-sn">2</div><div class="eb-st">3分後に戻る。それだけでいい。</div></div>
+      <div class="eb-step"><div class="eb-sn">3</div><div class="eb-st"><em>「今日の朝は、終わりにする」</em>と宣言する。できなかったことは明日に繰り越す。</div></div>
+    </div>
+  </div>
+  <div class="sl">今日崩れたことのメモ</div>
+  <div class="fg"><textarea id="flow-memo" placeholder="例：弟のランドセル準備で姉のペースが崩れた。次は弟の準備を第1層の間に終わらせておく" oninput="save()"></textarea></div>
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="doPrint()">📄 PDF保存</button>
+    <button class="btn btn-outline" onclick="doTextCopy('flow')">📋 テキストコピー</button>
+  </div>
+</div>
+
+<!-- ═══ TAB 4: 30SEC ═══ -->
+<div id="panel-thirty" class="panel">
+  <div class="ph">
+    <div class="ph-num">TOOL 04</div>
+    <h2 class="ph-title">弟への<br>「30秒設計」</h2>
+    <p class="ph-desc">弟の目を見て、名前を呼んで、一言だけ言う。その30秒が「今日の朝に居場所があった」という記憶になる。</p>
+  </div>
+  <div class="ic">
+    <div class="ic-t">💡 なぜ30秒なのか</div>
+    <div class="ic-b">462日間の記録で、弟が笑顔で出かけた朝に共通していたのは、この「30秒」だった。言葉の内容より、目を見て名前を呼ぶことが大事。</div>
+  </div>
+  <div class="sl">すぐ使えるフレーズ</div>
+  <div id="thirty-scripts"></div>
+  <div class="sl">今日の30秒メモ</div>
+  <div class="fg"><label class="fl">弟・妹の様子</label><input type="text" id="thirty-child" placeholder="例：こうた、最近無口になってきた" oninput="save()"></div>
+  <div class="fg"><label class="fl">今日つかった言葉</label><textarea id="thirty-word" placeholder="例：『こうた、今日の体育なに？』って聞いたら少し笑ってくれた" oninput="save()"></textarea></div>
+  <div class="sl">今週の30秒記録</div>
+  <div class="week-track" id="thirty-week"></div>
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="doPrint()">📄 PDF保存</button>
+    <button class="btn btn-outline" onclick="doTextCopy('thirty')">📋 テキストコピー</button>
+  </div>
+</div>
+
+<!-- ═══ TAB 5: DRILL ═══ -->
+<div id="panel-drill" class="panel">
+  <div class="ph">
+    <div class="ph-num">TOOL 05</div>
+    <h2 class="ph-title">ドリル記録<br>カレンダー</h2>
+    <p class="ph-desc">できた日も、崩れた日も、休息日も記録する。「全体の流れ」が見えると、罪悪感が減る。</p>
+  </div>
+  <div class="stat-row" id="drill-stats"></div>
+  <div class="ic">
+    <div class="ic-t">📌 3つのルール</div>
+    <div class="ic-b">
+      ① 今日できなかった分は翌日に持ち越さない。翌日は翌日の1ページだけ。<br>
+      ② 崩れた朝の翌日は難易度を一段下げる。できた感触を最優先する。<br>
+      ③ 週に1日は「休息日」を先に決めておく。
+    </div>
+  </div>
+  <div class="sl">今月の記録（タップで記録）</div>
+  <div class="week-header" id="cal-head"></div>
+  <div class="calendar-grid" id="cal-grid"></div>
+  <div class="cal-legend">
+    <div class="cl-item"><div class="cl-dot" style="background:var(--sage)"></div>できた</div>
+    <div class="cl-item"><div class="cl-dot" style="background:var(--rose)"></div>崩れた日</div>
+    <div class="cl-item"><div class="cl-dot" style="background:var(--mist)"></div>休息日</div>
+  </div>
+  <div class="sl">今週のメモ・来週の目標</div>
+  <div class="fg"><textarea id="drill-memo" placeholder="例：声かけ前にドリルを机に出しておくと抵抗が減った" oninput="save()"></textarea></div>
+  <div class="fg"><label class="fl">来週の目標</label><input type="text" id="drill-goal" placeholder="例：週5日×1ページ＝5ページ" oninput="save()"></div>
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="doPrint()">📄 PDF保存</button>
+    <button class="btn btn-outline" onclick="doTextCopy('drill')">📋 テキストコピー</button>
+    <button class="btn btn-ghost" onclick="if(confirm('今月のカレンダーをリセットしますか？')){S.drillCal={};save();renderDrill()}">リセット</button>
+  </div>
+</div>
+
+<div class="app-footer">survival_mam © Sena Mam｜崩れても、立て直せる朝を。</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ════ DATA ════
+const collisionData = [
+  { id:'c1', label:'起床〜身支度（感覚の地雷原）', desc:'姉にとって朝は感覚が最も無防備な時間。大きな音・強い光があるとその後1〜2時間が丸ごと崩れる。' },
+  { id:'c2', label:'朝食（二人のペース差）', desc:'姉は食感・温度・匂いに敏感で時間がかかる。弟は早く終わって次に行きたい。この差が毎朝小さな摩擦を生む。' },
+  { id:'c3', label:'出発前（ダブルバインドの罠）', desc:'姉の準備が遅れれば弟を急かす。弟を待たせれば我慢が蓄積する。どちらを優先しても正解がない。' },
+];
+
+const layerDefs = [
+  { icon:'🌫', headCls:'l1', num:'第1層', title:'感覚の準備時間', min:15,
+    ane:['光の調整（カーテンを薄明かりから）','音の最小化（食器・テレビ・声）','着替えを急かさない'],
+    oto:['別室 or 静かな一人遊び','この時間は弟の自由時間'],
+    tip:'この15分があるかないかで、その後の朝が別物になる。' },
+  { icon:'⚙️', headCls:'l2', num:'第2層', title:'並行進行ゾーン', min:25,
+    ane:['朝食','身支度','ドリル1ページ（朝食後・着替え前）'],
+    oto:['朝食','身支度','自由時間（待たされているのではなく自分の時間）'],
+    tip:'「弟の自由時間」を意図的に設計することで、弟の我慢の総量が変わる。' },
+  { icon:'🛡', headCls:'l3', num:'第3層', title:'出発バッファ', min:15,
+    ane:['持ち物確認（声に出して一緒に）','出発'],
+    oto:['持ち物確認','出発'],
+    tip:'崩れた日はここで立て直す。バッファがある事実だけで焦りが根本から変わる。' },
+];
+
+const aneFlow = [
+  { q:'', text:'パニックになっている？', children:[
+    { q:'yes', text:'感覚シェルタープロトコルへ', sub:'¥980記事のサバイバルキットアプリを開く', leaf:true },
+    { q:'no',  text:'ペース遅れ・時間不足', sub:'ドリルを翌朝に繰り越す（今日は捨てる）\n出発に間に合わない → 弟を先に出す', leaf:true },
+  ]},
+];
+
+const otoFlow = [
+  { q:'', text:'理由は何？', children:[
+    { q:'sub', text:'我慢の限界', sub:'「今夜、弟だけの時間を作る」と口頭で約束する', leaf:true },
+    { q:'sub', text:'身体の不調', sub:'今日の設計を全部捨てて弟優先に切り替える', leaf:true },
+    { q:'sub', text:'理由不明', sub:'抱きしめて「何があった？」だけ聞く。解決しなくていい', leaf:true },
+  ]},
+];
+
+const thirtyScripts = [
+  { sit:'朝食中・さっと一言', line:'「○○、今日ごはんなに食べたい？」', note:'内容は何でもいい。名前を呼んで、目を見る。それだけで弟の脳に「見てもらえた」が届く。' },
+  { sit:'身支度の合間に', line:'「○○のシャツ今日もかっこいいね」', note:'評価ではなく観察。「見ているよ」というサインを短い言葉で渡す。' },
+  { sit:'姉のケア中に割り込まれたとき', line:'「今はお姉ちゃんのターン。○○のターンは10分後だよ」', note:'「待たせている」のではなく「番がある」ことを伝える。時間は必ず守る。' },
+  { sit:'出発直前に', line:'「行ってらっしゃい。今日も○○のこと好きだよ」', note:'たった一言が、弟の1日を支える。' },
+];
+
+// ════ STATE ════
+let S = { child1:'', child2:'', collisionFlags:{}, collisionMemo:'', wakeTime:'06:30', leaveTime:'08:00', layerMemo:'', flowMemo:'', thirtyChild:'', thirtyWord:'', thirtyWeek:{}, drillCal:{}, drillMemo:'', drillGoal:'' };
+
+function load() { try { const d=localStorage.getItem('sm_morning_v2'); if(d) S={...S,...JSON.parse(d)}; } catch(e){} }
+function save() {
+  S.child1=v('child1-name'); S.child2=v('child2-name');
+  S.collisionMemo=v('collision-memo'); S.wakeTime=v('wake-time'); S.leaveTime=v('leave-time');
+  S.layerMemo=v('layer-memo'); S.flowMemo=v('flow-memo');
+  S.thirtyChild=v('thirty-child'); S.thirtyWord=v('thirty-word');
+  S.drillMemo=v('drill-memo'); S.drillGoal=v('drill-goal');
+  localStorage.setItem('sm_morning_v2', JSON.stringify(S));
+}
+function v(id) { return document.getElementById(id)?.value||''; }
+function sv(id,val) { const el=document.getElementById(id); if(el&&val) el.value=val; }
+
+// ════ TABS ════
+function switchTab(id,btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ════ COLLISION ════
+function renderCollision() {
+  const el=document.getElementById('collision-list'); el.innerHTML='';
+  collisionData.forEach(c=>{
+    const flagged=S.collisionFlags[c.id];
+    const div=document.createElement('div');
+    div.className='collision-item'+(flagged?' flagged':'');
+    div.innerHTML=`<div class="ci-head"><div class="ci-num">${collisionData.indexOf(c)+1}</div><div class="ci-label">${c.label}</div><button class="ci-flag-btn" onclick="toggleFlag('${c.id}')">${flagged?'🚨 地雷！':'ここが地雷'}</button></div><div class="ci-desc">${c.desc}</div><div class="fg" style="margin:0"><div class="fh">このポイントでどんなことが起きる？</div><textarea style="min-height:56px" id="cm-${c.id}" placeholder="例：コップの音で姉が耳を塞いで…" oninput="saveNote('${c.id}')">${S['cm_'+c.id]||''}</textarea></div>`;
+    el.appendChild(div);
+  });
+}
+function toggleFlag(id) { S.collisionFlags[id]=!S.collisionFlags[id]; save(); renderCollision(); }
+function saveNote(id) { S['cm_'+id]=document.getElementById('cm-'+id)?.value||''; save(); }
+
+// ════ LAYERS ════
+function parseTime(t) { const[h,m]=t.split(':').map(Number); return h*60+m; }
+function addMin(t,m) { const tot=parseTime(t)+m; return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0'); }
+function renderLayers() {
+  save();
+  const el=document.getElementById('layer-cards'); el.innerHTML='';
+  let cur=document.getElementById('wake-time')?.value||'06:30';
+  layerDefs.forEach(l=>{
+    const end=addMin(cur,l.min);
+    const card=document.createElement('div'); card.className='layer-card';
+    card.innerHTML=`<div class="lc-head ${l.headCls}"><div class="lc-icon">${l.icon}</div><div class="lc-meta"><div class="lc-num">${l.num}</div><div class="lc-title">${l.title}</div></div><div class="lc-time">${cur}〜${end}</div></div><div class="lc-body"><div class="track-grid"><div class="track-box"><div class="track-name ane">姉のトラック</div><div class="track-items">${l.ane.map(a=>'・'+a).join('<br>')}</div></div><div class="track-box"><div class="track-name oto">弟のトラック</div><div class="track-items">${l.oto.map(a=>'・'+a).join('<br>')}</div></div></div><div class="layer-tip">💡 ${l.tip}</div></div>`;
+    el.appendChild(card); cur=end;
+  });
+}
+
+// ════ FLOW ════
+function buildFlow(nodes, container) {
+  container.innerHTML='';
+  nodes.forEach(n=>{
+    const wrap=document.createElement('div'); wrap.className='flow-node';
+    const box=document.createElement('div'); box.className='fn-box'+(n.leaf?' leaf':'');
+    box.innerHTML=(n.q?`<span class="fn-q ${n.q}">${n.q==='yes'?'YES':n.q==='no'?'NO':'▸ '+n.text}</span>`:'')+(n.q&&(n.q==='yes'||n.q==='no')?`<div class="fn-text">${n.text}</div>`:'')+((!n.q||n.q==='')?`<div class="fn-text">${n.text}</div>`:'' )+(n.sub?`<div class="fn-sub">${n.sub.replace(/\n/g,'<br>')}</div>`:'');
+    wrap.appendChild(box);
+    if(n.children?.length){ const ch=document.createElement('div'); ch.className='fn-children flow-root'; buildFlow(n.children,ch); wrap.appendChild(ch); }
+    container.appendChild(wrap);
+  });
+}
+
+// ════ 30SEC ════
+function renderThirty() {
+  const el=document.getElementById('thirty-scripts'); el.innerHTML='';
+  thirtyScripts.forEach(s=>{
+    const d=document.createElement('div'); d.className='script-card';
+    d.innerHTML=`<div class="sc-badge">📍 ${s.sit}</div><div class="sc-line">「${s.line.replace(/「|」/g,'')}」</div><div class="sc-note">${s.note}</div>`;
+    el.appendChild(d);
+  });
+  const days=['月','火','水','木','金','土','日'];
+  const el2=document.getElementById('thirty-week'); el2.innerHTML='';
+  days.forEach((_,i)=>{
+    const key='tw'+i; const done=S.thirtyWeek[key];
+    const cell=document.createElement('div'); cell.className='wt-cell'+(done?' done':'');
+    cell.innerHTML=`<div class="wt-day">${days[i]}</div><div class="wt-check">${done?'✓':''}</div>`;
+    cell.onclick=()=>{ S.thirtyWeek[key]=!S.thirtyWeek[key]; save(); renderThirty(); };
+    el2.appendChild(cell);
+  });
+}
+
+// ════ DRILL ════
+const today=new Date();
+function renderDrill() {
+  const year=today.getFullYear(), month=today.getMonth();
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const adj=(firstDay+6)%7;
+  let done=0,crashed=0,rest=0;
+  Object.values(S.drillCal).forEach(v=>{ if(v==='done')done++; else if(v==='crashed')crashed++; else if(v==='rest')rest++; });
+  document.getElementById('drill-stats').innerHTML=`<div class="stat-chip"><div class="sc-val done">${done}</div><div class="sc-label">できた日</div></div><div class="stat-chip"><div class="sc-val crashed">${crashed}</div><div class="sc-label">崩れた日</div></div><div class="stat-chip"><div class="sc-val rest">${rest}</div><div class="sc-label">休息日</div></div>`;
+  const head=document.getElementById('cal-head'); head.innerHTML='';
+  ['月','火','水','木','金','土','日'].forEach(d=>{ const div=document.createElement('div'); div.className='wh-day'; div.textContent=d; head.appendChild(div); });
+  const grid=document.getElementById('cal-grid'); grid.innerHTML='';
+  for(let i=0;i<adj;i++){ const e=document.createElement('div'); e.style.background='transparent'; grid.appendChild(e); }
+  const cycle={done:'crashed',crashed:'rest',rest:null,null:'done',undefined:'done'};
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${year}-${month}-${d}`, st=S.drillCal[key];
+    const isToday=d===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
+    const cell=document.createElement('div');
+    cell.className='cal-cell'+(st?' '+st:'')+(isToday?' today':'');
+    cell.innerHTML=`<div class="cal-num">${d}</div><div class="cal-mark">${st==='done'?'✓':st==='crashed'?'💧':st==='rest'?'🌿':''}</div>`;
+    cell.onclick=()=>{ const next=cycle[st]; if(next===null) delete S.drillCal[key]; else S.drillCal[key]=next; save(); renderDrill(); };
+    grid.appendChild(cell);
+  }
+}
+
+// ════ EXPORT ════
+function doPrint(){ window.print(); showToast('📄 印刷画面を開きました'); }
+function doTextCopy(tab){
+  let text='';
+  const c1=S.child1||'姉', c2=S.child2||'弟';
+  const d=new Date().toLocaleDateString('ja-JP');
+  if(tab==='collision'){
+    text=`【朝の衝突マップ】${c1}・${c2}｜${d}\n\n`;
+    collisionData.forEach(c=>{ text+=`■ ${c.label}${S.collisionFlags[c.id]?' 🚨':''}\n${S['cm_'+c.id]||'（未記入）'}\n\n`; });
+    text+=`気づきメモ：\n${S.collisionMemo||'（未記入）'}\n`;
+  } else if(tab==='layers'){
+    const wt=document.getElementById('wake-time')?.value||'06:30';
+    text=`【設計図 3層構造】${d} 起床：${wt}\n\n`;
+    let cur=wt;
+    layerDefs.forEach(l=>{ const end=addMin(cur,l.min); text+=`■ ${l.num} ${l.title}（${cur}〜${end}）\n姉：${l.ane.join('→')}\n弟：${l.oto.join('→')}\n${l.tip}\n\n`; cur=end; });
+    text+=`メモ：\n${S.layerMemo||'（未記入）'}\n`;
+  } else if(tab==='flow'){
+    text=`【崩れたときのフローチャート】${d}\n\n■ 姉が崩れた\nパニック→感覚シェルターへ／ペース遅れ→ドリル繰り越し\n\n■ 弟が崩れた\n我慢の限界→夜の約束／不調→弟優先／理由不明→抱きしめて聞く\n\n■ 両方崩れた\n①3分間洗面所へ ②戻る ③「今日の朝は終わり」宣言\n\n今日のメモ：\n${S.flowMemo||'（未記入）'}\n`;
+  } else if(tab==='thirty'){
+    text=`【30秒設計メモ】${c2}｜${d}\n様子：${S.thirtyChild||'未記入'}\n\n`;
+    thirtyScripts.forEach(s=>{ text+=`[${s.sit}]\n${s.line}\n→${s.note}\n\n`; });
+    text+=`今日つかった言葉：\n${S.thirtyWord||'（未記入）'}\n`;
+    const days=['月','火','水','木','金','土','日'];
+    text+=`今週の記録：`; days.forEach((_,i)=>{ text+=`${days[i]}:${S.thirtyWeek['tw'+i]?'✓':'_'} `; });
+  } else if(tab==='drill'){
+    let done=0,crashed=0; Object.values(S.drillCal).forEach(v=>{ if(v==='done')done++; else if(v==='crashed')crashed++; });
+    text=`【ドリル記録】${d}\n今月：できた${done}日 / 崩れた${crashed}日\n目標：${S.drillGoal||'未記入'}\n\nメモ：\n${S.drillMemo||'（未記入）'}\n`;
+  }
+  navigator.clipboard.writeText(text).catch(()=>{ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); });
+  showToast('📋 テキストをコピーしました');
+}
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+// ════ INIT ════
+function init(){
+  load();
+  renderCollision();
+  renderLayers();
+  buildFlow(aneFlow, document.getElementById('flow-ane'));
+  buildFlow(otoFlow, document.getElementById('flow-oto'));
+  renderThirty();
+  renderDrill();
+  sv('child1-name',S.child1); sv('child2-name',S.child2);
+  sv('collision-memo',S.collisionMemo); sv('layer-memo',S.layerMemo);
+  sv('flow-memo',S.flowMemo); sv('thirty-child',S.thirtyChild);
+  sv('thirty-word',S.thirtyWord); sv('drill-memo',S.drillMemo); sv('drill-goal',S.drillGoal);
+  collisionData.forEach(c=>sv('cm-'+c.id, S['cm_'+c.id]||''));
+}
+init();
+</script>
+</body>
+</html>
