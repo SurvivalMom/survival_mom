@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学校対応メモ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --terra: #c4814a;
+    --terra-light: #e8c4a0;
+    --terra-dark: #9a5e30;
+    --navy: #1a1410;
+    --navy-mid: #3a2e28;
+    --muted: #8a7a70;
+    --border: #e0d5c8;
+    --white: #ffffff;
+    --success: #5a8a6a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--navy);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 48px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--navy);
+    padding: 20px 20px 18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner { max-width: 560px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .app-title { font-family: 'Noto Serif JP', serif; font-size: 15px; color: var(--cream); letter-spacing: 0.08em; }
+  .app-sub { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; margin-top: 2px; }
+
+  /* Tab nav */
+  .tabs {
+    background: var(--navy-mid);
+    display: flex;
+    max-width: 560px;
+    margin: 0 auto;
+    position: sticky;
+    top: 64px;
+    z-index: 99;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 12px 8px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--terra-light); border-bottom-color: var(--terra); }
+
+  /* Main content */
+  .main { max-width: 560px; margin: 0 auto; padding: 28px 16px 0; }
+
+  /* Memo card */
+  .memo-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    overflow: hidden;
+    display: none;
+  }
+  .memo-card.active { display: block; }
+
+  .card-head {
+    background: var(--navy);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--terra);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-title { color: var(--cream); font-size: 14px; font-weight: 500; }
+  .card-desc { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+  .card-body { padding: 20px; }
+
+  /* Hint */
+  .hint-toggle {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--terra-dark);
+    cursor: pointer; margin-bottom: 14px;
+    background: none; border: none;
+    font-family: 'Noto Sans JP', sans-serif;
+    padding: 0;
+  }
+  .hint-toggle::before { content: '▶'; font-size: 9px; transition: transform 0.2s; }
+  .hint-toggle.open::before { transform: rotate(90deg); }
+  .hint-box {
+    background: #fdf5ec;
+    border-left: 3px solid var(--terra-light);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .hint-box.open { display: block; }
+  .hint-box ul { padding-left: 16px; font-size: 13px; line-height: 1.9; color: var(--navy-mid); }
+  .hint-box li { margin-bottom: 2px; }
+
+  /* Sample loader */
+  .sample-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sample-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: none;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.15s;
+  }
+  .sample-btn:hover { border-color: var(--terra); color: var(--terra-dark); }
+  .sample-btn.loaded { border-color: var(--terra); color: var(--terra-dark); background: #fdf5ec; }
+
+  /* Textarea */
+  .field-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.04em; }
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.85;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--navy);
+    background: var(--cream);
+    resize: vertical;
+    min-height: 160px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  textarea:focus { border-color: var(--terra); }
+
+  /* Save btn */
+  .save-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--terra);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .save-btn:hover { background: var(--terra-dark); }
+  .save-btn:active { transform: scale(0.99); }
+  .save-notice {
+    text-align: center;
+    font-size: 12px;
+    color: var(--success);
+    margin-top: 8px;
+    height: 18px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .save-notice.show { opacity: 1; }
+
+  /* View tab */
+  .view-section { margin-bottom: 28px; }
+  .view-label {
+    font-size: 11px; letter-spacing: 0.1em; color: var(--muted);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .view-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .view-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--navy-mid);
+    white-space: pre-wrap;
+    min-height: 80px;
+  }
+  .view-box.empty { color: var(--muted); font-style: italic; font-size: 12px; }
+
+  /* Share btn */
+  .share-btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+  .share-btn:hover { background: var(--navy-mid); }
+
+  .clear-all {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Noto Sans JP', sans-serif;
+    text-decoration: underline;
+  }
+
+  /* Tab panel */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .empty-state .icon { font-size: 28px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="app-title">学校対応メモ</div>
+      <div class="app-sub">survival_mam</div>
+    </div>
+  </div>
+</div>
+
+<div style="background: var(--navy-mid); position: sticky; top: 64px; z-index: 99;">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('edit')">✏ メモを作る</button>
+    <button class="tab-btn" onclick="switchTab('view')">📋 メモを見る</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- 編集タブ -->
+  <div id="tab-edit" class="tab-panel active">
+
+    <!-- メモ1 -->
+    <div class="memo-card active" id="card1">
+      <div class="card-head">
+        <div class="card-num">1</div>
+        <div>
+          <div class="card-title">電話が来た時の返答テンプレ</div>
+          <div class="card-desc">最初の一文を決めておく。すぐ全部を決めなくていい。</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <button class="hint-toggle" id="hint1-btn" onclick="toggleHint(1)">書き方のヒント</button>
+        <div class="hint-box" id="hint1">
+          <ul>
+            <li>「今すぐ答えを出さなくていい」一文を最初に決める</li>
+            <li>折り返しまでの時間を「〇分以内」と具体的に入れると使いやすい</li>
+            <li>仕事中・在宅中で文面を変えておくと当日迷わない</li>
+            <li>謝罪より事実確認を先にするだけで、気持ちが違う</li>
+          </ul>
+        </div>
+        <div class="sample-row">
+          <button class="sample-btn" onclick="loadSample(1,'A')">サンプルA 仕事中</button>
+          <button class="sample-btn" onclick="loadSample(1,'B')">サンプルB 在宅</button>
+          <button class="sample-btn" onclick="loadSample(1,'C')">サンプルC 様子確認</button>
+        </div>
+        <div class="field-label">自分用のメモ</div>
+        <textarea id="memo1" placeholder="ここに自分の言葉で書いてください" oninput="autoSave(1)"></textarea>
+        <button class="save-btn" onclick="save(1)">保存する</button>
+        <div class="save-notice" id="notice1">保存しました</div>
+      </div>
+    </div>
+
+    <!-- メモ2 -->
+    <div class="memo-card active" id="card2">
+      <div class="card-head">
+        <div class="card-num">2</div>
+        <div>
+          <div class="card-title">迎えが必要になった時の動き方</div>
+          <div class="card-desc">パニックの時に最初の一歩を出すためのメモ。</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <button class="hint-toggle" id="hint2-btn" onclick="toggleHint(2)">書き方のヒント</button>
+        <div class="hint-box" id="hint2">
+          <ul>
+            <li>「誰に連絡 → どこへ行く → 子どもをどうする」の順番を決める</li>
+            <li>仕事の抜け方（上司への一言）もメモしておくと当日スムーズ</li>
+            <li>迎えに行けない時の代替手段も一行添えておく</li>
+            <li>完璧な計画でなくていい。①だけ見れば次が出てくる設計で十分</li>
+          </ul>
+        </div>
+        <div class="sample-row">
+          <button class="sample-btn" onclick="loadSample(2,'A')">サンプルA 在宅ワーク</button>
+          <button class="sample-btn" onclick="loadSample(2,'B')">サンプルB 外勤</button>
+        </div>
+        <div class="field-label">自分用のメモ</div>
+        <textarea id="memo2" placeholder="① まず何をするか&#10;② 次に何をするか&#10;※代替：動けない時は" oninput="autoSave(2)" style="min-height:180px;"></textarea>
+        <button class="save-btn" onclick="save(2)">保存する</button>
+        <div class="save-notice" id="notice2">保存しました</div>
+      </div>
+    </div>
+
+    <!-- メモ3 -->
+    <div class="memo-card active" id="card3">
+      <div class="card-head">
+        <div class="card-num">3</div>
+        <div>
+          <div class="card-title">先生への固定文</div>
+          <div class="card-desc">毎回ゼロから説明しなくていいよう、一度まとめて使い回す。</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <button class="hint-toggle" id="hint3-btn" onclick="toggleHint(3)">書き方のヒント</button>
+        <div class="hint-box" id="hint3">
+          <ul>
+            <li>「困りごと・避けてほしいこと・助かる対応」の3点だけでOK</li>
+            <li>診断名がなくても、子どもの様子を事実ベースで書ける</li>
+            <li>避けてほしいことは、過去に崩れた場面から逆算する</li>
+            <li>新学年・担任交代・面談のたびにそのまま使い回せる</li>
+          </ul>
+        </div>
+        <div class="sample-row">
+          <button class="sample-btn" onclick="loadSample(3,'A')">サンプルA 丁寧ベース</button>
+          <button class="sample-btn" onclick="loadSample(3,'B')">サンプルB 淡々ベース</button>
+        </div>
+        <div class="field-label">自分用のメモ</div>
+        <textarea id="memo3" placeholder="◎ 困っていること&#10;・&#10;&#10;◎ 避けてほしいこと&#10;・&#10;&#10;◎ 助かる対応&#10;・" oninput="autoSave(3)" style="min-height:220px;"></textarea>
+        <button class="save-btn" onclick="save(3)">保存する</button>
+        <div class="save-notice" id="notice3">保存しました</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 閲覧タブ -->
+  <div id="tab-view" class="tab-panel">
+    <div class="view-section">
+      <div class="view-label">メモ 1｜電話が来た時の返答テンプレ</div>
+      <div class="view-box" id="view1"></div>
+    </div>
+    <div class="view-section">
+      <div class="view-label">メモ 2｜迎えが必要になった時の動き方</div>
+      <div class="view-box" id="view2"></div>
+    </div>
+    <div class="view-section">
+      <div class="view-label">メモ 3｜先生への固定文</div>
+      <div class="view-box" id="view3"></div>
+    </div>
+    <button class="share-btn" onclick="shareToLine()">LINEで共有（テキストをコピー）</button>
+    <button class="clear-all" onclick="clearAll()">すべてのメモをリセットする</button>
+  </div>
+
+</div>
+
+<script>
+const SAMPLES = {
+  1: {
+    A: `「ありがとうございます。今すぐ動けるか確認して、10分以内に折り返します。」`,
+    B: `「分かりました。状況を確認して、すぐに折り返します。」`,
+    C: `「ありがとうございます。今日の子どもの様子を聞かせていただけますか？迎えが必要かどうか、確認してから判断させてください。」`
+  },
+  2: {
+    A: `① 作業を一時中断してPCをスリープ\n② 車のキーと保険証を持つ\n③ 学校まで約○分。到着したら保健室へ直接\n④ 帰宅後、子どもを休ませてから仕事に戻る\n\n※代替：動けない日は（　）に連絡`,
+    B: `① 上司に「子どもの体調不良で早退します」と伝える\n② 持ち帰り可能な仕事だけ確認して退席\n③ 電車○本 or 車で約○分\n④ 保健室→子どもの状態確認→帰宅判断\n\n※代替：急に動けない時は「30分待ってほしい」と学校に折り返す`
+  },
+  3: {
+    A: `【子どもの名前】についてのお願い\n\n◎ 困っていること\n・朝の切り替えが苦手で、準備に時間がかかります\n・予定の変更があると、気持ちの切り替えに時間が必要です\n・疲れやすく、午後になると気力が落ちます\n\n◎ 避けていただけると助かること\n・「なぜ来られないの？」「頑張れば来られるよ」という声かけ\n・本人の前での保護者への電話（傍で聞いていると不安が増します）\n\n◎ 助かっている対応\n・保健室や別室での時間を選択肢として提示してもらえること\n・来られた時に一言だけ声をかけてもらえるくらいのゆるいつながり\n\nいつもありがとうございます。よろしくお願いします。`,
+    B: `【子どもの名前】についての共有事項\n\n・朝の切り替えに30〜60分かかることがあります\n・予定変更は前日までに知らせていただけると助かります\n・「頑張れ」系の声かけは本人がつらいと言っています\n・保健室が使えると安心感がある様子です\n\nよろしくお願いします。`
+  }
+};
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'view') updateViews();
+}
+
+function toggleHint(n) {
+  const box = document.getElementById('hint' + n);
+  const btn = document.getElementById('hint' + n + '-btn');
+  box.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function loadSample(memoNum, variant) {
+  const ta = document.getElementById('memo' + memoNum);
+  ta.value = SAMPLES[memoNum][variant];
+  autoSave(memoNum);
+  // mark loaded button
+  const row = ta.closest('.card-body').querySelector('.sample-row');
+  row.querySelectorAll('.sample-btn').forEach(b => b.classList.remove('loaded'));
+  event.target.classList.add('loaded');
+}
+
+function autoSave(n) {
+  localStorage.setItem('school_memo_' + n, document.getElementById('memo' + n).value);
+}
+
+function save(n) {
+  autoSave(n);
+  const notice = document.getElementById('notice' + n);
+  notice.classList.add('show');
+  setTimeout(() => notice.classList.remove('show'), 2000);
+}
+
+function updateViews() {
+  [1,2,3].forEach(n => {
+    const val = localStorage.getItem('school_memo_' + n) || '';
+    const el = document.getElementById('view' + n);
+    if (val.trim()) {
+      el.textContent = val;
+      el.classList.remove('empty');
+    } else {
+      el.textContent = 'まだメモが保存されていません';
+      el.classList.add('empty');
+    }
+  });
+}
+
+function shareToLine() {
+  const m1 = localStorage.getItem('school_memo_1') || '（未入力）';
+  const m2 = localStorage.getItem('school_memo_2') || '（未入力）';
+  const m3 = localStorage.getItem('school_memo_3') || '（未入力）';
+  const text = `【学校対応メモ】\n\n■ 電話が来た時の返答\n${m1}\n\n■ 迎えの動き方\n${m2}\n\n■ 先生への固定文\n${m3}`;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('コピーしました。LINEに貼り付けてお使いください。');
+  }).catch(() => {
+    prompt('以下をコピーしてお使いください', text);
+  });
+}
+
+function clearAll() {
+  if (!confirm('すべてのメモをリセットしますか？')) return;
+  [1,2,3].forEach(n => {
+    localStorage.removeItem('school_memo_' + n);
+    document.getElementById('memo' + n).value = '';
+  });
+  updateViews();
+}
+
+// 起動時にロード
+window.onload = () => {
+  [1,2,3].forEach(n => {
+    const saved = localStorage.getItem('school_memo_' + n);
+    if (saved) document.getElementById('memo' + n).value = saved;
+  });
+};
+</script>
+</body>
+</html>
