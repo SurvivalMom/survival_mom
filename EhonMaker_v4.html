@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EhonMaker AI — 絵本メーカー</title>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Opti:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#faf7f2;--navy:#1a1410;--terra:#c4814a;--terra-dk:#9a5c28;
+  --muted:#8a8070;--border:#e0d8cc;--white:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;font-family:'Zen Maru Gothic',sans-serif;background:var(--bg);color:var(--navy);}
+
+/* ── SCREEN MANAGER ── */
+.screen{display:none;width:100vw;height:100vh;overflow-y:auto;flex-direction:column;align-items:center;}
+.screen.on{display:flex;}
+.center-screen{justify-content:center;}
+
+/* ── COMMON ── */
+.blob{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;}
+.bl1{width:50vw;height:50vw;background:rgba(196,129,74,.14);top:-20%;left:-15%;animation:bf 10s ease-in-out infinite;}
+.bl2{width:40vw;height:40vw;background:rgba(90,170,122,.10);bottom:-10%;right:-10%;animation:bf 10s ease-in-out infinite;animation-delay:-5s;}
+@keyframes bf{0%,100%{transform:scale(1);}50%{transform:scale(1.08) translate(20px,-20px);}}
+
+.card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:22px;margin-bottom:14px;}
+.card-on-white{background:white;border:1px solid var(--border);border-radius:20px;padding:22px;margin-bottom:14px;}
+.card-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;}
+.card-title-dark{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}
+
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.field:last-child{margin-bottom:0;}
+.field label{font-size:11px;color:rgba(255,255,255,.48);}
+.field label.dark{color:var(--muted);}
+.field input,.field textarea,.field select{
+  padding:11px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.09);color:white;font-size:13px;
+  font-family:'Zen Maru Gothic',sans-serif;outline:none;transition:.2s;width:100%;
+}
+.field input.dark,.field textarea.dark,.field select.dark{
+  background:var(--bg);border-color:var(--border);color:var(--navy);
+}
+.field input:focus,.field textarea:focus{border-color:var(--terra);}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.25);}
+.field input.dark::placeholder,.field textarea.dark::placeholder{color:#bbb;}
+.field textarea{resize:vertical;min-height:72px;}
+
+.btn-primary{width:100%;padding:15px;background:var(--terra);color:white;border:none;border-radius:13px;font-size:15px;font-weight:700;font-family:'Kaisei Opti',serif;cursor:pointer;transition:.2s;letter-spacing:.04em;}
+.btn-primary:hover{background:var(--terra-dk);transform:translateY(-2px);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-secondary{width:100%;padding:12px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15);border-radius:13px;font-size:14px;font-weight:700;font-family:'Kaisei Opti',serif;cursor:pointer;transition:.2s;}
+.btn-secondary:hover{background:rgba(255,255,255,.14);}
+.btn-dark{width:100%;padding:12px;background:var(--navy);color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:.2s;}
+.btn-dark:hover{opacity:.85;}
+.btn-terra{width:100%;padding:12px;background:var(--terra);color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;transition:.2s;}
+.btn-terra:hover{opacity:.85;}
+
+.logo-row{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.logo{width:50px;height:50px;background:var(--terra);border-radius:14px;transform:rotate(12deg);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(196,129,74,.4);font-family:'Kaisei Opti',serif;color:white;font-size:25px;font-weight:700;flex-shrink:0;}
+.app-name{font-family:'Kaisei Opti',serif;color:white;font-size:22px;font-weight:700;}
+.app-sub{font-size:11px;color:rgba(255,255,255,.38);margin-top:2px;letter-spacing:.06em;}
+
+/* ── STEP INDICATOR ── */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:28px;}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.step-dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);transition:.3s;}
+.step-dot.done{background:var(--terra);border-color:var(--terra);color:white;}
+.step-dot.active{border-color:var(--terra);color:var(--terra);}
+.step-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.06em;text-transform:uppercase;}
+.step-label.active,.step-label.done{color:rgba(255,255,255,.6);}
+.step-line{flex:1;height:2px;background:rgba(255,255,255,.12);margin:0 -2px;margin-bottom:16px;}
+.step-line.done{background:var(--terra);}
+
+/* ══ SCREEN: SETUP ══ */
+#s-setup{background:var(--navy);position:relative;}
+.setup-wrap{position:relative;z-index:1;width:100%;max-width:540px;padding:36px 20px 60px;}
+.note-txt{font-size:10px;color:rgba(255,255,255,.25);line-height:1.65;text-align:center;margin-top:10px;}
+
+/* ══ SCREEN: RESEARCH ══ */
+#s-research{background:var(--navy);position:relative;}
+.research-wrap{position:relative;z-index:1;width:100%;max-width:560px;padding:36px 20px 60px;}
+.research-result{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;margin-bottom:16px;}
+.research-section{margin-bottom:16px;}
+.research-section h3{font-size:12px;font-weight:700;color:var(--terra);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.trend-chip{display:inline-flex;padding:4px 12px;border-radius:20px;background:rgba(196,129,74,.18);border:1px solid rgba(196,129,74,.3);color:rgba(255,255,255,.8);font-size:11px;margin:3px;cursor:pointer;transition:.2s;}
+.trend-chip:hover{background:rgba(196,129,74,.32);}
+.trend-chip.sel{background:var(--terra);color:white;border-color:var(--terra);}
+
+/* ══ SCREEN: PROPOSALS ══ */
+#s-proposals{background:var(--navy);position:relative;}
+.proposals-wrap{position:relative;z-index:1;width:100%;max-width:620px;padding:36px 20px 60px;}
+.proposal-card{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:18px;padding:22px;margin-bottom:14px;cursor:pointer;transition:.3s;}
+.proposal-card:hover{background:rgba(255,255,255,.12);border-color:rgba(196,129,74,.4);transform:translateY(-2px);}
+.proposal-card.selected{background:rgba(196,129,74,.18);border-color:var(--terra);}
+.proposal-num{font-size:10px;font-weight:700;color:var(--terra);letter-spacing:.1em;margin-bottom:6px;}
+.proposal-title{font-family:'Kaisei Opti',serif;font-size:17px;color:white;font-weight:700;line-height:1.4;margin-bottom:4px;}
+.proposal-sub{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:10px;}
+.proposal-body{font-size:12px;color:rgba(255,255,255,.62);line-height:1.7;}
+.proposal-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.proposal-tag{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;letter-spacing:.06em;}
+
+/* ══ SCREEN: CUSTOMIZE ══ */
+#s-customize{background:var(--navy);position:relative;}
+.customize-wrap{position:relative;z-index:1;width:100%;max-width:540px;padding:36px 20px 60px;}
+
+/* ══ SCREEN: PLANNING / GEN ══ */
+#s-planning,#s-gen{background:var(--navy);}
+.progress-wrap{display:flex;flex-direction:column;align-items:center;gap:20px;max-width:400px;width:90%;text-align:center;}
+.spin-ring svg{animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.prog-title{font-family:'Kaisei Opti',serif;font-size:21px;color:white;font-weight:700;}
+.prog-sub{font-size:12px;color:rgba(255,255,255,.42);line-height:1.7;}
+.prog-bar-bg{width:100%;height:5px;background:rgba(255,255,255,.1);border-radius:5px;overflow:hidden;}
+.prog-bar-f{height:100%;background:var(--terra);border-radius:5px;transition:width .4s;}
+.prog-pct{font-size:11px;color:rgba(255,255,255,.35);text-align:right;margin-top:4px;}
+.gen-preview{width:180px;height:180px;border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;}
+.gen-preview img{width:100%;height:100%;object-fit:cover;}
+
+/* ══ SCREEN: CONFIRM STORY ══ */
+#s-confirm{background:var(--navy);position:relative;}
+.confirm-wrap{position:relative;z-index:1;width:100%;max-width:680px;padding:36px 20px 60px;}
+.confirm-header{margin-bottom:20px;}
+.confirm-header h2{font-family:'Kaisei Opti',serif;font-size:20px;color:white;font-weight:700;}
+.confirm-header p{font-size:12px;color:rgba(255,255,255,.42);margin-top:4px;}
+.outline-list{display:flex;flex-direction:column;gap:5px;margin-bottom:22px;max-height:55vh;overflow-y:auto;padding-right:4px;}
+.outline-list::-webkit-scrollbar{width:3px;}
+.outline-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);}
+.ol-row{display:flex;gap:10px;align-items:flex-start;padding:9px 13px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.07);}
+.ol-n{font-size:9px;color:rgba(255,255,255,.3);min-width:20px;padding-top:2px;}
+.ol-sec{font-size:11px;font-weight:700;min-width:68px;padding-top:2px;}
+.ol-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ol-txt{font-size:11px;color:rgba(255,255,255,.6);line-height:1.55;flex:1;}
+.confirm-btns{display:flex;gap:10px;}
+.cbtn{flex:1;padding:13px;border-radius:12px;font-size:14px;font-weight:700;font-family:'Kaisei Opti',serif;cursor:pointer;border:none;transition:.2s;}
+.cbtn.go{background:var(--terra);color:white;}.cbtn.go:hover{background:var(--terra-dk);}
+.cbtn.back{background:rgba(255,255,255,.08);color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.14);}
+
+/* ══ SCREEN: VIEWER ══ */
+#s-view{background:radial-gradient(ellipse at 40% 50%,#e8ddd0,#cec4b8);flex-direction:row;overflow:hidden;}
+.sidebar{width:190px;flex-shrink:0;background:rgba(250,247,242,.94);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sb-head{padding:13px 12px 10px;border-bottom:1px solid var(--border);}
+.sb-head h2{font-family:'Kaisei Opti',serif;font-size:11px;color:var(--navy);line-height:1.6;}
+.sb-list{flex:1;overflow-y:auto;padding:6px;}
+.sb-list::-webkit-scrollbar{width:3px;}
+.sb-list::-webkit-scrollbar-thumb{background:var(--border);}
+.spi{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;cursor:pointer;margin-bottom:2px;transition:.15s;border:1.5px solid transparent;}
+.spi:hover{background:rgba(0,0,0,.04);}
+.spi.on{background:white;border-color:var(--terra);}
+.spi-n{font-size:9px;color:var(--muted);min-width:16px;}
+.spi-l{font-size:10px;color:var(--navy);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.spi-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.spi-st{font-size:9px;flex-shrink:0;}
+.sb-foot{padding:8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px;}
+.sfbtn{padding:8px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Zen Maru Gothic',sans-serif;transition:.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:5px;}
+.sfbtn.p{background:var(--navy);color:white;}.sfbtn.s{background:var(--terra);color:white;}
+.sfbtn:hover{opacity:.85;}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.book-wrap{border-radius:10px;height:min(88vh,calc(88vw * 1.412));aspect-ratio:7.165/10.118;filter:drop-shadow(0 28px 56px rgba(0,0,0,.26));transition:opacity .28s,transform .28s;}
+.book-wrap.flip{opacity:0;transform:scale(.97);}
+.bp{width:100%;height:100%;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;background:white;}
+.iz{flex:0 0 54%;position:relative;overflow:hidden;background:#f0ebe0;}
+.iz img{width:100%;height:100%;object-fit:cover;display:block;}
+.iz-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.iz-ph svg{animation:spin 1s linear infinite;}
+.tz{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px 8% 22px;text-align:center;position:relative;}
+.tz-stripe{position:absolute;top:0;left:0;right:0;height:5px;}
+.tz-sec{position:absolute;top:8px;left:11px;font-size:8px;font-weight:700;letter-spacing:.06em;}
+.tz-badge{display:inline-flex;align-items:center;padding:4px 14px;border-radius:20px;color:white;font-size:clamp(9px,1.3vh,12px);font-weight:700;letter-spacing:.07em;margin-bottom:clamp(8px,1.6vh,18px);flex-shrink:0;}
+.tz-txt{font-family:'Kaisei Opti',serif;font-weight:700;font-size:clamp(20px,4.4vh,40px);line-height:1.72;color:var(--navy);letter-spacing:.04em;word-break:keep-all;}
+.tz-n{position:absolute;bottom:7px;right:11px;font-size:8px;color:#ccc;}
+.cov-full{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px;background:linear-gradient(to top,rgba(20,14,8,.88) 0%,transparent 55%);}
+.cov-ttl{font-family:'Kaisei Opti',serif;color:white;font-weight:700;font-size:clamp(14px,3vh,26px);text-align:center;line-height:1.45;text-shadow:0 2px 10px rgba(0,0,0,.55);margin-bottom:5px;}
+.cov-sub2{font-size:clamp(9px,1.1vh,11px);color:rgba(255,255,255,.6);letter-spacing:.1em;}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--navy);box-shadow:0 4px 18px rgba(0,0,0,.12);transition:.2s;z-index:5;}
+.nav:hover{background:white;transform:translateY(-50%) scale(1.1);}
+.nav:disabled{opacity:.15;cursor:default;transform:translateY(-50%);}
+.nprev{left:-26px;}.nnext{right:-26px;}
+.vbar{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(26,20,16,.82);backdrop-filter:blur(10px);border-radius:18px;padding:7px 18px;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.08);}
+.vbar-l{font-size:8px;font-weight:700;color:rgba(255,255,255,.44);letter-spacing:.1em;text-transform:uppercase;}
+.vbar-b{width:88px;height:2px;background:rgba(255,255,255,.14);border-radius:2px;overflow:hidden;}
+.vbar-f{height:100%;background:var(--terra);transition:width .4s;}
+.vbar-c{font-size:10px;color:rgba(255,255,255,.56);font-weight:700;}
+.regen-btn{position:absolute;top:8px;right:8px;background:rgba(26,20,16,.72);color:white;border:none;border-radius:8px;padding:5px 10px;font-size:10px;cursor:pointer;font-family:'Zen Maru Gothic',sans-serif;transition:.2s;z-index:10;}
+.regen-btn:hover{background:rgba(26,20,16,.92);}
+
+/* PDF overlay */
+#pdf-ov{display:none;position:fixed;inset:0;background:rgba(26,20,16,.9);backdrop-filter:blur(12px);z-index:9999;flex-direction:column;align-items:center;justify-content:center;}
+#pdf-ov.on{display:flex;}
+.pdf-box{background:white;border-radius:28px;padding:44px 52px;text-align:center;display:flex;flex-direction:column;gap:16px;min-width:300px;}
+.pdf-box h3{font-family:'Kaisei Opti',serif;font-size:20px;color:var(--navy);}
+.pdf-bar-bg{height:8px;background:#f0ebe0;border-radius:8px;overflow:hidden;}
+.pdf-bar-f{height:100%;background:var(--terra);border-radius:8px;transition:width .4s;}
+.pdf-pct{font-size:11px;color:var(--muted);}
+
+/* loading */
+#ld{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;transition:opacity .7s;}
+#ld.out{opacity:0;pointer-events:none;}
+.ld-dots span{display:inline-block;animation:dotB 1.2s infinite;font-size:26px;color:var(--terra);margin:0 3px;}
+.ld-dots span:nth-child(2){animation-delay:.2s;}.ld-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dotB{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-13px);}}
+.ld-t{font-family:'Kaisei Opti',serif;color:white;font-size:20px;margin-top:16px;}
+@keyframes pIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
+.pin{animation:pIn .44s cubic-bezier(.16,1,.3,1);}
+</style>
+</head>
+<body>
+<div id="ld"><div class="ld-dots"><span>●</span><span>●</span><span>●</span></div><div class="ld-t">EhonMaker AI</div></div>
+<div id="pdf-ov"><div class="pdf-box"><h3>📄 PDF生成中...</h3><div class="pdf-bar-bg"><div class="pdf-bar-f" id="pdf-fill"></div></div><div class="pdf-pct" id="pdf-pct">0%</div></div></div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 1: SETUP (APIキー入力)
+══════════════════════════════════════════ -->
+<div class="screen center-screen on" id="s-setup">
+  <div class="blob bl1"></div><div class="blob bl2"></div>
+  <div class="setup-wrap">
+    <div class="logo-row">
+      <div class="logo">絵</div>
+      <div><div class="app-name">EhonMaker AI</div><div class="app-sub">RESEARCH → STORY → IMAGE → PDF</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔑 Google AI Studio APIキー</div>
+      <div class="field">
+        <input id="api-key" type="password" placeholder="AIza... (Google AI Studio で取得)">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.6);">
+          <input type="checkbox" id="save-key" style="width:15px;height:15px;accent-color:var(--terra);cursor:pointer;">
+          次回から自動入力する
+        </label>
+        <button onclick="clearSavedKey()" style="background:rgba(255,80,60,.15);border:1px solid rgba(255,80,60,.3);color:rgba(255,120,100,.9);font-size:11px;cursor:pointer;padding:4px 10px;border-radius:8px;font-family:'Zen Maru Gothic',sans-serif;">🗑 削除</button>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.25);line-height:1.6;margin-top:8px;">
+        ✓ ブラウザのlocalStorageにのみ保存。外部送信なし。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚙️ 絵本の基本設定</div>
+      <div class="field">
+        <label>対象年齢</label>
+        <select id="f-age">
+          <option value="3〜4歳">3〜4歳（超シンプル・ひらがなのみ）</option>
+          <option value="3〜5歳" selected>3〜5歳（ひらがな中心・2行まで）</option>
+          <option value="4〜6歳">4〜6歳（すこし長め・3行まで）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>ページ数</label>
+        <select id="f-pages">
+          <option value="20">20ページ（短め）</option>
+          <option value="32" selected>32ページ（標準）</option>
+          <option value="40">40ページ（しっかり）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>イラストスタイル</label>
+        <select id="f-style">
+          <option value="soft watercolor, pastel colors, warm and gentle, Studio Ghibli inspired">水彩・パステル（やわらか）</option>
+          <option value="bold colorful flat illustration, bright vivid colors, Pixar style">カラフル・ポップ（鮮やか）</option>
+          <option value="crayon and colored pencil sketch, handmade warm texture">クレヨン・手描き風</option>
+          <option value="dreamy digital painting, soft gradients, magical atmosphere">デジタル絵画（幻想的）</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startResearch()">🔍 リサーチしてタイトルを考える →</button>
+    <p class="note-txt">まずAmazonランキングと育児トレンドをリサーチし、売れる絵本テーマを分析します。</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 2: RESEARCH (リサーチ中)
+══════════════════════════════════════════ -->
+<div class="screen center-screen" id="s-research">
+  <div class="blob bl1"></div>
+  <div class="research-wrap">
+    <div class="logo-row" style="margin-bottom:16px;">
+      <div class="logo">調</div>
+      <div><div class="app-name">リサーチ中...</div><div class="app-sub">STEP 1 OF 4 — MARKET RESEARCH</div></div>
+    </div>
+    <div id="research-content">
+      <div style="text-align:center;padding:40px 0;">
+        <div class="spin-ring">
+          <svg width="56" height="56" viewBox="0 0 56 56">
+            <circle cx="28" cy="28" r="22" stroke="rgba(196,129,74,.2)" stroke-width="5" fill="none"/>
+            <path d="M28 6a22 22 0 0 1 22 22" stroke="#c4814a" stroke-width="5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div style="color:white;font-family:'Kaisei Opti',serif;font-size:18px;margin-top:16px;" id="research-step">Amazonランキングを分析中...</div>
+        <div style="color:rgba(255,255,255,.4);font-size:12px;margin-top:8px;">育児トレンドとママの声を調査しています</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 3: PROPOSALS (タイトル案提案)
+══════════════════════════════════════════ -->
+<div class="screen" id="s-proposals">
+  <div class="blob bl1"></div>
+  <div class="proposals-wrap" style="padding-top:36px;padding-bottom:60px;">
+    <div class="logo-row" style="margin-bottom:6px;">
+      <div class="logo">提</div>
+      <div><div class="app-name">タイトル案</div><div class="app-sub">STEP 2 OF 4 — PROPOSALS</div></div>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.42);margin-bottom:20px;line-height:1.6;" id="research-summary"></div>
+    <div id="proposals-list"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+      <button class="btn-primary" id="btn-select-proposal" onclick="goCustomize()" disabled>✦ この案でカスタマイズする →</button>
+      <button class="btn-secondary" onclick="startResearch()">🔄 リサーチし直す</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 4: CUSTOMIZE (カスタマイズ)
+══════════════════════════════════════════ -->
+<div class="screen center-screen" id="s-customize">
+  <div class="blob bl1"></div>
+  <div class="customize-wrap">
+    <div class="logo-row">
+      <div class="logo">編</div>
+      <div><div class="app-name">カスタマイズ</div><div class="app-sub">STEP 3 OF 4 — CUSTOMIZE</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📖 選択中の案</div>
+      <div id="selected-summary" style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.7;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">✏️ カスタマイズ（任意）</div>
+      <div class="field">
+        <label>タイトルを変更（空欄でAI案をそのまま使用）</label>
+        <input id="c-title" placeholder="（AIが提案したタイトルを使用）">
+      </div>
+      <div class="field">
+        <label>登場キャラクターを追加・変更（任意）</label>
+        <input id="c-chars" placeholder="例：黒猫くろ、おかあさん（空欄でAIが考えます）">
+      </div>
+      <div class="field">
+        <label>追加したいメッセージ・要望（任意）</label>
+        <textarea id="c-extra" placeholder="例：最後はハッピーエンドにしてほしい、きょうだいが出てきてほしい"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn-primary" onclick="startPlanning()">✦ ストーリーを生成する →</button>
+      <button class="btn-secondary" onclick="showScreen('s-proposals')">← 案を選び直す</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 5: PLANNING (ストーリー生成中)
+══════════════════════════════════════════ -->
+<div class="screen center-screen" id="s-planning">
+  <div class="progress-wrap">
+    <div class="spin-ring">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" stroke="rgba(196,129,74,.2)" stroke-width="6" fill="none"/>
+        <path d="M40 8a32 32 0 0 1 32 32" stroke="#c4814a" stroke-width="6" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="prog-title" id="planning-title">ストーリーを考えています...</div>
+    <div class="prog-sub" id="planning-sub">AIが40ページの構成を設計中です</div>
+    <div style="width:100%">
+      <div class="prog-bar-bg"><div class="prog-bar-f" id="planning-bar"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 6: CONFIRM (ストーリー確認)
+══════════════════════════════════════════ -->
+<div class="screen" id="s-confirm">
+  <div class="blob bl1" style="opacity:.4;"></div>
+  <div class="confirm-wrap">
+    <div class="confirm-header">
+      <h2 id="confirm-h">ストーリー構成の確認</h2>
+      <p>AIが作ったページ構成です。確認してから画像生成を始めましょう。</p>
+    </div>
+    <div class="outline-list" id="outline-list"></div>
+    <div class="confirm-btns">
+      <button class="cbtn back" onclick="showScreen('s-customize')">← 修正する</button>
+      <button class="cbtn go" onclick="startGeneration()">✦ この構成で画像を生成する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 7: GENERATE (画像生成中)
+══════════════════════════════════════════ -->
+<div class="screen center-screen" id="s-gen">
+  <div class="progress-wrap">
+    <div class="spin-ring">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" stroke="rgba(196,129,74,.2)" stroke-width="6" fill="none"/>
+        <path d="M40 8a32 32 0 0 1 32 32" stroke="#c4814a" stroke-width="6" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="prog-title" id="gen-title">イラストを描いています...</div>
+    <div class="prog-sub" id="gen-page-label">ページ 1 / 32</div>
+    <div class="gen-preview" id="gen-preview">
+      <svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" stroke="rgba(196,129,74,.3)" stroke-width="4" fill="none"/><path d="M16 4a12 12 0 0 1 12 12" stroke="#c4814a" stroke-width="4" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <div style="width:100%">
+      <div class="prog-bar-bg"><div class="prog-bar-f" id="gen-bar"></div></div>
+      <div class="prog-pct" id="gen-pct">0%</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+  SCREEN 8: VIEWER (閲覧・PDF)
+══════════════════════════════════════════ -->
+<div class="screen" id="s-view">
+  <div class="sidebar">
+    <div class="sb-head"><h2 id="sb-ttl">絵本タイトル</h2></div>
+    <div class="sb-list" id="sb-list"></div>
+    <div class="sb-foot">
+      <button class="sfbtn s" onclick="makePDF()">📄 PDF保存</button>
+      <button class="sfbtn p" onclick="startOver()">← 新しい絵本</button>
+    </div>
+  </div>
+  <div class="stage">
+    <button class="nav nprev" id="np" onclick="navPage(-1)">‹</button>
+    <div class="book-wrap" id="bw"><div class="bp" id="bp"></div></div>
+    <button class="nav nnext" id="nn" onclick="navPage(1)">›</button>
+    <div class="vbar">
+      <span class="vbar-l">Story</span>
+      <div class="vbar-b"><div class="vbar-f" id="vbar-f"></div></div>
+      <span class="vbar-c" id="vbar-c">1/32</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// EMOTION COLORS
+// ═══════════════════════════════════════════════════════════
+const EM = {
+  pun:  {n:'ぷんぷん',s:'怒り',  h:'#e8604a',l:'#fde8e4'},
+  shiku:{n:'しくしく',s:'悲しみ',h:'#5a8fc4',l:'#e4eef8'},
+  waku: {n:'わくわく',s:'喜び',  h:'#f0c040',l:'#fdf6d8'},
+  hoka: {n:'ほかほか',s:'安心',  h:'#5aaa7a',l:'#e2f4ea'},
+  fura: {n:'ふらふら',s:'不安',  h:'#9a6ac4',l:'#f0e8fa'},
+  doki: {n:'どきどき',s:'緊張',  h:'#e060a0',l:'#fde4f0'},
+  waku2:{n:'きらきら',s:'好奇心',h:'#f0a050',l:'#fef2dc'},
+  hoka2:{n:'にこにこ',s:'やさしさ',h:'#78b878',l:'#e0f4e0'},
+};
+function getEM(key){ return EM[key] || EM.waku; }
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let API_KEY = '';
+let AGE = '3〜5歳';
+let PAGES_COUNT = 32;
+let ART_STYLE = '';
+let PROPOSALS = [];
+let SELECTED_IDX = -1;
+let PAGES = [];
+let images = {};
+let curIdx = 0;
+let bookTitle = '';
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function startOver(){
+  if(confirm('新しい絵本を作りますか？現在の内容は消えます。')){
+    images={}; PAGES=[]; PROPOSALS=[]; SELECTED_IDX=-1;
+    showScreen('s-setup');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// GEMINI API
+// ═══════════════════════════════════════════════════════════
+async function geminiText(prompt){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+  const res=await fetch(url,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
+  const data=await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+}
+
+async function geminiImage(prompt,retries=2){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${API_KEY}`;
+  const body={contents:[{parts:[{text:prompt}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}};
+  for(let attempt=0;attempt<=retries;attempt++){
+    try{
+      const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!res.ok){
+        if(res.status===429){await sleep(3000+attempt*2000);continue;}
+        const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);
+      }
+      const data=await res.json();
+      for(const part of(data.candidates?.[0]?.content?.parts||[])){
+        if(part.inlineData?.mimeType?.startsWith('image/')){
+          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        }
+      }
+      throw new Error('No image returned');
+    }catch(e){if(attempt===retries)throw e;await sleep(2000);}
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 1: RESEARCH
+// ═══════════════════════════════════════════════════════════
+function clearSavedKey(){
+  localStorage.removeItem('ehon_api_key');
+  document.getElementById('api-key').value='';
+  document.getElementById('save-key').checked=false;
+  alert('保存済みのAPIキーを削除しました。');
+}
+
+async function startResearch(){
+  const key=document.getElementById('api-key').value.trim();
+  if(!key){alert('APIキーを入力してください。');return;}
+  if(!key.startsWith('AI')){alert('APIキーが正しくないようです（AIza...で始まるキーを入力してください）。');return;}
+  if(document.getElementById('save-key').checked){
+    localStorage.setItem('ehon_api_key', key);
+  } else {
+    localStorage.removeItem('ehon_api_key');
+  }
+  API_KEY=key;
+  AGE=document.getElementById('f-age').value;
+  PAGES_COUNT=parseInt(document.getElementById('f-pages').value);
+  ART_STYLE=document.getElementById('f-style').value;
+  showScreen('s-research');
+
+  const steps=[
+    'Amazonランキングを分析中...',
+    'ママたちの声を調査中...',
+    '育児トレンドを分析中...',
+    'ヒット作のパターンを分析中...',
+    'タイトル案を生成中...',
+  ];
+  let si=0;
+  const iv=setInterval(()=>{
+    si=(si+1)%steps.length;
+    const el=document.getElementById('research-step');
+    if(el) el.textContent=steps[si];
+  },1800);
+
+  const prompt=`あなたは日本の絵本市場の専門アナリストです。
+${AGE}向けの絵本で、2024〜2025年にAmazon・絵本ナビで売れているジャンル・テーマを分析し、
+若いママさんが「子どもに読ませたい」と思う絵本の特徴を踏まえて、
+完全オリジナルの絵本タイトル案を3つ考えてください。
+
+分析する観点：
+- Amazonランキング上位に共通するテーマ
+- 3〜6歳の発達段階で特に響くメッセージ
+- 若いママ（20代後半〜30代）が「SNSでシェアしたくなる」絵本の特徴
+- 自己肯定感・EQ・社会性・生活習慣など今ニーズが高いジャンル
+
+出力形式（JSONのみ、説明文・コードブロック不要）：
+{
+  "researchSummary": "リサーチで判明した市場トレンドの要約（3〜4文、日本語）",
+  "trends": ["トレンドキーワード1","トレンドキーワード2","トレンドキーワード3","トレンドキーワード4","トレンドキーワード5"],
+  "proposals": [
+    {
+      "title": "絵本タイトル（ひらがな中心・キャッチーに）",
+      "subtitle": "サブタイトル（1行）",
+      "theme": "テーマ・伝えたいメッセージ",
+      "synopsis": "あらすじ（3〜4文）",
+      "mamaPitch": "ママへの訴求ポイント（なぜ買いたくなるか・1〜2文）",
+      "characters": "主な登場キャラクター",
+      "tags": ["タグ1","タグ2","タグ3"],
+      "tagColors": ["#e8604a","#5a8fc4","#5aaa7a"]
+    }
+  ]
+}`;
+
+  try{
+    const raw=await geminiText(prompt);
+    clearInterval(iv);
+    let json=raw.trim().replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+    const parsed=JSON.parse(json);
+    PROPOSALS=parsed.proposals||[];
+    showProposals(parsed.researchSummary||'',parsed.trends||[]);
+  }catch(e){
+    clearInterval(iv);
+    alert(`リサーチに失敗しました：${e.message}`);
+    showScreen('s-setup');
+  }
+}
+
+function showProposals(summary,trends){
+  document.getElementById('research-summary').textContent=summary;
+  const list=document.getElementById('proposals-list');
+  list.innerHTML='';
+  PROPOSALS.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='proposal-card';
+    d.onclick=()=>selectProposal(i);
+    d.innerHTML=`
+      <div class="proposal-num">案 ${i+1}</div>
+      <div class="proposal-title">${p.title}</div>
+      <div class="proposal-sub">${p.subtitle||''}</div>
+      <div class="proposal-body">${p.synopsis}</div>
+      <div class="proposal-body" style="margin-top:8px;color:rgba(255,255,255,.8);font-size:11px;">
+        📣 ${p.mamaPitch}
+      </div>
+      <div class="proposal-tags">
+        ${(p.tags||[]).map((t,ti)=>`<span class="proposal-tag" style="background:${(p.tagColors||[])[ti]||'#888'}33;color:${(p.tagColors||[])[ti]||'#888'}">${t}</span>`).join('')}
+      </div>`;
+    list.appendChild(d);
+  });
+  showScreen('s-proposals');
+}
+
+function selectProposal(i){
+  SELECTED_IDX=i;
+  document.querySelectorAll('.proposal-card').forEach((c,ci)=>c.classList.toggle('selected',ci===i));
+  document.getElementById('btn-select-proposal').disabled=false;
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 2: CUSTOMIZE → PLAN
+// ═══════════════════════════════════════════════════════════
+function goCustomize(){
+  if(SELECTED_IDX<0)return;
+  const p=PROPOSALS[SELECTED_IDX];
+  document.getElementById('selected-summary').innerHTML=
+    `<strong style="color:var(--terra)">${p.title}</strong><br>${p.subtitle||''}<br><br>${p.theme}`;
+  document.getElementById('c-title').value='';
+  document.getElementById('c-chars').value='';
+  document.getElementById('c-extra').value='';
+  showScreen('s-customize');
+}
+
+async function startPlanning(){
+  const p=PROPOSALS[SELECTED_IDX];
+  const customTitle=document.getElementById('c-title').value.trim();
+  const customChars=document.getElementById('c-chars').value.trim();
+  const customExtra=document.getElementById('c-extra').value.trim();
+  bookTitle=customTitle||p.title;
+
+  showScreen('s-planning');
+  const steps=['テーマを深掘り中...','ページ構成を設計中...','セリフを考えています...','仕上げ中...'];
+  let si=0;
+  const iv=setInterval(()=>{
+    si=(si+1)%steps.length;
+    const el=document.getElementById('planning-title');
+    if(el) el.textContent=steps[si];
+  },2000);
+  document.getElementById('planning-bar').style.width='20%';
+
+  const prompt=`あなたは${AGE}向け絵本の専門編集者です。
+以下の情報をもとに${PAGES_COUNT}ページの絵本ページ構成をJSON形式で出力してください。
+
+タイトル：${bookTitle}
+テーマ：${p.theme}
+あらすじ：${p.synopsis}
+登場キャラクター：${customChars||p.characters||'（適切に考えてください）'}
+対象年齢：${AGE}
+イラストスタイル：${ART_STYLE}
+追加要望：${customExtra||'なし'}
+
+出力形式（JSONのみ、説明文・コードブロック不要）：
+{
+  "title": "最終タイトル",
+  "pages": [
+    {
+      "n": 1,
+      "sec": "セクション名（6文字以内）",
+      "emotion": "pun/shiku/waku/hoka/fura/doki/waku2/hoka2 のいずれか",
+      "lines": ["本文行1（${AGE==='3〜4歳'?'8文字以内':'12文字以内'}）","本文行2（任意）"],
+      "imagePrompt": "英語でこのページのイラスト指示（60〜90語。キャラ・場面・色調・雰囲気を具体的に。no text in image.）"
+    }
+  ]
+}
+
+重要：
+- 1ページ目は必ず表紙（sec:"表紙"）
+- 全${PAGES_COUNT}ページ分を作成すること
+- linesは${AGE==='3〜4歳'?'1行のみ':'最大2行'}、ひらがな中心
+- 起承転結のある感動的な展開
+- 表情豊かで毎ページ違う場面をimagePromptで描写
+- imagePromptには必ず"${ART_STYLE}"スタイルを含める`;
+
+  try{
+    document.getElementById('planning-bar').style.width='60%';
+    const raw=await geminiText(prompt);
+    clearInterval(iv);
+    document.getElementById('planning-bar').style.width='100%';
+    await sleep(300);
+
+    let json=raw.trim().replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+    const parsed=JSON.parse(json);
+    bookTitle=parsed.title||bookTitle;
+    PAGES=(parsed.pages||[]).map(p=>({
+      n:p.n, sec:p.sec||`p${p.n}`,
+      e:p.emotion||'waku',
+      lines:Array.isArray(p.lines)?p.lines:[p.lines||''],
+      prompt:p.imagePrompt||`Children's picture book illustration. ${ART_STYLE}. No text.`
+    }));
+
+    showConfirm();
+  }catch(e){
+    clearInterval(iv);
+    alert(`ストーリー生成に失敗しました：${e.message}`);
+    showScreen('s-customize');
+  }
+}
+
+function showConfirm(){
+  document.getElementById('confirm-h').textContent=`「${bookTitle}」— ${PAGES.length}ページ`;
+  const list=document.getElementById('outline-list');
+  list.innerHTML='';
+  PAGES.forEach(pg=>{
+    const em=getEM(pg.e);
+    const d=document.createElement('div');
+    d.className='ol-row';
+    d.innerHTML=`
+      <span class="ol-n">${pg.n}</span>
+      <span class="ol-sec" style="color:${em.h};">${pg.sec}</span>
+      <span class="ol-dot" style="background:${em.h};"></span>
+      <span class="ol-txt">${pg.lines.join(' / ')}</span>`;
+    list.appendChild(d);
+  });
+  showScreen('s-confirm');
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 3: GENERATE IMAGES
+// ═══════════════════════════════════════════════════════════
+async function startGeneration(){
+  images={};
+  buildSidebar();
+  document.getElementById('sb-ttl').textContent=bookTitle;
+  showScreen('s-gen');
+
+  for(let i=0;i<PAGES.length;i++){
+    const pg=PAGES[i];
+    const pct=Math.round((i/PAGES.length)*100);
+    document.getElementById('gen-bar').style.width=pct+'%';
+    document.getElementById('gen-pct').textContent=pct+'%';
+    document.getElementById('gen-page-label').textContent=`ページ ${pg.n} / ${PAGES.length}　「${pg.sec}」`;
+    document.getElementById('gen-title').textContent='イラストを描いています...';
+
+    try{
+      const fullPrompt=`${pg.prompt} Style: ${ART_STYLE}. Beautiful children's picture book illustration, no text in image, suitable for ages 3-6, high quality.`;
+      const dataUrl=await geminiImage(fullPrompt);
+      images[i]=dataUrl;
+      document.getElementById('gen-preview').innerHTML=`<img src="${dataUrl}">`;
+      updateSBItem(i,true);
+    }catch(e){
+      console.error(`Page ${pg.n}:`,e);
+      images[i]=null;
+      updateSBItem(i,false,true);
+    }
+    await sleep(600);
+  }
+
+  document.getElementById('gen-bar').style.width='100%';
+  document.getElementById('gen-pct').textContent='100%';
+  await sleep(600);
+  showScreen('s-view');
+  renderPage(0);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════════════
+function buildSidebar(){
+  const c=document.getElementById('sb-list');c.innerHTML='';
+  PAGES.forEach((pg,i)=>{
+    const em=getEM(pg.e);
+    const d=document.createElement('div');
+    d.className='spi'+(i===0?' on':'');d.dataset.i=i;
+    d.onclick=()=>jumpPage(i);
+    d.innerHTML=`<span class="spi-n">${pg.n}</span><span class="spi-l">${pg.sec}</span><span class="spi-dot" style="background:${em.h}"></span><span class="spi-st">⏳</span>`;
+    c.appendChild(d);
+  });
+}
+function updateSBItem(i,ok,err=false){
+  const el=document.querySelector(`.spi[data-i="${i}"] .spi-st`);
+  if(el) el.textContent=err?'⚠️':'✓';
+}
+function updateSidebar(){
+  document.querySelectorAll('.spi').forEach((el,i)=>el.classList.toggle('on',i===curIdx));
+  document.querySelector('.spi.on')?.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE RENDER
+// ═══════════════════════════════════════════════════════════
+function renderPage(idx){
+  const pg=PAGES[idx];const em=getEM(pg.e);const bp=document.getElementById('bp');
+  const imgSrc=images[idx];
+  const imgHtml=imgSrc
+    ?`<img src="${imgSrc}" alt="p${pg.n}">`
+    :`<div class="iz-ph"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" stroke="rgba(196,129,74,.3)" stroke-width="4" fill="none"/><path d="M14 4a10 10 0 0 1 10 10" stroke="#c4814a" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>`;
+
+  if(pg.n===1){
+    bp.innerHTML=`
+      <div class="iz" style="flex:1 0 100%;position:relative;">
+        ${imgHtml}
+        <button class="regen-btn" onclick="regenPage(${idx})">🔄 再生成</button>
+        <div class="cov-full">
+          <div class="cov-ttl">${bookTitle}</div>
+          <div class="cov-sub2">${AGE}から よめる えほん</div>
+        </div>
+      </div>`;
+  }else{
+    bp.innerHTML=`
+      <div class="iz" style="position:relative;">
+        ${imgHtml}
+        <button class="regen-btn" onclick="regenPage(${idx})">🔄 再生成</button>
+      </div>
+      <div class="tz" style="background:${em.l};">
+        <div class="tz-stripe" style="background:${em.h};"></div>
+        <div class="tz-sec" style="color:${em.h};">${pg.sec}</div>
+        <div class="tz-badge" style="background:${em.h};">${em.n}（${em.s}）</div>
+        <div class="tz-txt">${pg.lines.join('<br>')}</div>
+        <div class="tz-n">${pg.n}</div>
+      </div>`;
+  }
+  bp.className='bp pin';setTimeout(()=>bp.classList.remove('pin'),500);
+  const tot=PAGES.length;
+  document.getElementById('np').disabled=idx===0;
+  document.getElementById('nn').disabled=idx===tot-1;
+  document.getElementById('vbar-c').textContent=`${idx+1}/${tot}`;
+  document.getElementById('vbar-f').style.width=`${(idx/(tot-1||1))*100}%`;
+  updateSidebar();
+}
+
+function navPage(d){
+  const nx=curIdx+d;if(nx<0||nx>=PAGES.length)return;
+  const bw=document.getElementById('bw');bw.classList.add('flip');
+  setTimeout(()=>{curIdx=nx;renderPage(curIdx);bw.classList.remove('flip');},280);
+}
+function jumpPage(idx){
+  if(idx===curIdx)return;
+  const bw=document.getElementById('bw');bw.classList.add('flip');
+  setTimeout(()=>{curIdx=idx;renderPage(curIdx);bw.classList.remove('flip');},280);
+}
+
+async function regenPage(idx){
+  const pg=PAGES[idx];
+  const izEl=document.querySelector('.iz');
+  if(izEl) izEl.innerHTML=`<div class="iz-ph"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" stroke="rgba(196,129,74,.3)" stroke-width="4" fill="none"/><path d="M14 4a10 10 0 0 1 10 10" stroke="#c4814a" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>`;
+  try{
+    const dataUrl=await geminiImage(`${pg.prompt} Style: ${ART_STYLE}. Children's picture book illustration, no text.`);
+    images[idx]=dataUrl;updateSBItem(idx,true);renderPage(idx);
+  }catch(e){alert(`再生成に失敗しました: ${e.message}`);}
+}
+
+// ═══════════════════════════════════════════════════════════
+// PDF
+// ═══════════════════════════════════════════════════════════
+async function makePDF(){
+  const ov=document.getElementById('pdf-ov');ov.classList.add('on');
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'p',unit:'in',format:[7.165,10.118]});
+  const W=1075,H=1518;
+
+  for(let i=0;i<PAGES.length;i++){
+    const pg=PAGES[i];const em=getEM(pg.e);
+    const pct=Math.round((i+1)/PAGES.length*100);
+    document.getElementById('pdf-fill').style.width=pct+'%';
+    document.getElementById('pdf-pct').textContent=pct+'%';
+
+    const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
+    const ctx=canvas.getContext('2d');
+
+    if(pg.n===1){
+      ctx.fillStyle=em.l;ctx.fillRect(0,0,W,H);
+      if(images[i]){const img=new Image();await new Promise(r=>{img.onload=r;img.src=images[i];});ctx.drawImage(img,0,0,W,H);}
+      ctx.fillStyle='rgba(20,14,8,0.82)';ctx.fillRect(0,H*.40,W,H*.60);
+      ctx.fillStyle='white';ctx.textAlign='center';
+      ctx.font=`bold ${Math.round(H*.034)}px serif`;ctx.fillText(bookTitle,W/2,H*.54);
+      ctx.font=`${Math.round(H*.012)}px sans-serif`;ctx.fillStyle='rgba(255,255,255,0.6)';
+      ctx.fillText(AGE+'から よめる えほん',W/2,H*.62);
+    }else{
+      const illusH=Math.round(H*.54);
+      ctx.fillStyle='#f0ebe0';ctx.fillRect(0,0,W,H);
+      if(images[i]){const img=new Image();await new Promise(r=>{img.onload=r;img.src=images[i];});ctx.drawImage(img,0,0,W,illusH);}
+      ctx.fillStyle=em.l;ctx.fillRect(0,illusH,W,H-illusH);
+      ctx.fillStyle=em.h;ctx.fillRect(0,illusH,W,7);
+      const bw2=240,bh2=44,bx2=W/2-bw2/2,by2=illusH+18;
+      ctx.fillStyle=em.h;rRect(ctx,bx2,by2,bw2,bh2,22);
+      ctx.fillStyle='white';ctx.textAlign='center';
+      ctx.font=`bold ${Math.round(H*.013)}px sans-serif`;
+      ctx.fillText(`${em.n}（${em.s}）`,W/2,by2+bh2*.67);
+      const fs=Math.round(H*.042);
+      ctx.font=`bold ${fs}px serif`;ctx.fillStyle='#1a1410';
+      const lh=fs*1.75,tot2=pg.lines.length*lh;
+      const mid=(illusH+bh2+30+H-24)/2;
+      let sy=mid-tot2/2+lh/2;
+      pg.lines.forEach(l=>{ctx.fillText(l,W/2,sy);sy+=lh;});
+      ctx.fillStyle='#ccc';ctx.font=`${Math.round(H*.009)}px sans-serif`;ctx.fillText(String(pg.n),W/2,H-12);
+    }
+
+    const imgData=canvas.toDataURL('image/jpeg',.90);
+    if(i>0)doc.addPage([7.165,10.118],'p');
+    doc.addImage(imgData,'JPEG',0,0,7.165,10.118);
+    await sleep(10);
+  }
+
+  doc.save(bookTitle+'.pdf');ov.classList.remove('on');
+}
+
+function rRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.fill();
+}
+
+// keyboard
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('s-view').classList.contains('on')){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown') navPage(1);
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp') navPage(-1);
+  }
+});
+
+// boot
+window.addEventListener('load',()=>{
+  const ld=document.getElementById('ld');ld.classList.add('out');setTimeout(()=>ld.style.display='none',800);
+  // Load saved API key
+  const saved=localStorage.getItem('ehon_api_key');
+  if(saved){
+    document.getElementById('api-key').value=saved;
+    document.getElementById('save-key').checked=true;
+  }
+});
+</script>
+</body>
+</html>
