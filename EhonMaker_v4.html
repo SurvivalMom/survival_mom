@@ -478,7 +478,7 @@ function startOver(){
 // GEMINI API
 // ═══════════════════════════════════════════════════════════
 async function geminiText(prompt){
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
   const res=await fetch(url,{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
@@ -489,24 +489,40 @@ async function geminiText(prompt){
 }
 
 async function geminiImage(prompt,retries=2){
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${API_KEY}`;
-  const body={contents:[{parts:[{text:prompt}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}};
-  for(let attempt=0;attempt<=retries;attempt++){
-    try{
-      const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-      if(!res.ok){
-        if(res.status===429){await sleep(3000+attempt*2000);continue;}
-        const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);
-      }
-      const data=await res.json();
-      for(const part of(data.candidates?.[0]?.content?.parts||[])){
-        if(part.inlineData?.mimeType?.startsWith('image/')){
-          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+  // Try models in order: latest preview first, then fallback
+  const IMAGE_MODELS=[
+    'gemini-2.0-flash-preview-image-generation',
+    'gemini-2.0-flash-exp',
+  ];
+  let lastErr=null;
+  for(const model of IMAGE_MODELS){
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+    const body={contents:[{parts:[{text:prompt}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}};
+    for(let attempt=0;attempt<=retries;attempt++){
+      try{
+        const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        if(!res.ok){
+          const e=await res.json().catch(()=>({}));
+          const msg=e.error?.message||`HTTP ${res.status}`;
+          if(res.status===429){await sleep(3000+attempt*2000);continue;}
+          if(res.status===404||msg.includes('no longer available')||msg.includes('not found')){break;} // try next model
+          throw new Error(msg);
         }
+        const data=await res.json();
+        for(const part of(data.candidates?.[0]?.content?.parts||[])){
+          if(part.inlineData?.mimeType?.startsWith('image/')){
+            return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+          }
+        }
+        throw new Error('No image returned');
+      }catch(e){
+        lastErr=e;
+        if(attempt===retries) break;
+        await sleep(2000);
       }
-      throw new Error('No image returned');
-    }catch(e){if(attempt===retries)throw e;await sleep(2000);}
+    }
   }
+  throw lastErr||new Error('All image models failed');
 }
 
 // ═══════════════════════════════════════════════════════════
