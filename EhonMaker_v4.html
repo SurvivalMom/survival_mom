@@ -597,6 +597,9 @@ ${AGE}向けの絵本で、2024〜2025年にAmazon・絵本ナビで売れてい
     const raw=await geminiText(prompt);
     clearInterval(iv);
     let json=raw.trim().replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+    const jsonStart2=json.indexOf('{');const jsonEnd2=json.lastIndexOf('}');
+    if(jsonStart2>=0&&jsonEnd2>=0) json=json.slice(jsonStart2,jsonEnd2+1);
+    json=json.replace(/,\s*([}\]])/g,'$1').replace(/[\x00-\x09\x0b\x0c\x0e-\x1f]/g,'');
     const parsed=JSON.parse(json);
     PROPOSALS=parsed.proposals||[];
     showProposals(parsed.researchSummary||'',parsed.trends||[]);
@@ -668,38 +671,28 @@ async function startPlanning(){
   },2000);
   document.getElementById('planning-bar').style.width='20%';
 
+  const maxLines = AGE==='3〜4歳' ? '1行のみ' : '最大2行';
+  const maxChars = AGE==='3〜4歳' ? '8文字以内' : '12文字以内';
   const prompt=`あなたは${AGE}向け絵本の専門編集者です。
 以下の情報をもとに${PAGES_COUNT}ページの絵本ページ構成をJSON形式で出力してください。
 
 タイトル：${bookTitle}
 テーマ：${p.theme}
 あらすじ：${p.synopsis}
-登場キャラクター：${customChars||p.characters||'（適切に考えてください）'}
+登場キャラクター：${customChars||p.characters||'適切に考えてください'}
 対象年齢：${AGE}
-イラストスタイル：${ART_STYLE}
 追加要望：${customExtra||'なし'}
 
-出力形式（JSONのみ、説明文・コードブロック不要）：
-{
-  "title": "最終タイトル",
-  "pages": [
-    {
-      "n": 1,
-      "sec": "セクション名（6文字以内）",
-      "emotion": "pun/shiku/waku/hoka/fura/doki/waku2/hoka2 のいずれか",
-      "lines": ["本文行1（${AGE==='3〜4歳'?'8文字以内':'12文字以内'}）","本文行2（任意）"],
-      "imagePrompt": "英語でこのページのイラスト指示（60〜90語。キャラ・場面・色調・雰囲気を具体的に。no text in image.）"
-    }
-  ]
-}
+【重要】以下のJSON形式のみを出力してください。説明文・コードブロック・改行は不要です。
+各ページのimagePromptは英語で50語以内に収めてください。
+linesの文字列内にダブルクォートや特殊文字を使わないでください。
 
-重要：
-- 1ページ目は必ず表紙（sec:"表紙"）
-- 全${PAGES_COUNT}ページ分を作成すること
-- linesは${AGE==='3〜4歳'?'1行のみ':'最大2行'}、ひらがな中心
-- 起承転結のある感動的な展開
-- 表情豊かで毎ページ違う場面をimagePromptで描写
-- imagePromptには必ず"${ART_STYLE}"スタイルを含める`;
+{"title":"最終タイトル","pages":[{"n":1,"sec":"表紙","emotion":"waku","lines":["1行目"],"imagePrompt":"english prompt here"},{"n":2,"sec":"はじまり","emotion":"waku","lines":["1行目","2行目"],"imagePrompt":"english prompt here"}]}
+
+上記の形式で${PAGES_COUNT}ページ分を出力してください。
+emotionは pun shiku waku hoka fura doki のいずれか。
+linesは${maxLines}、ひらがな中心、${maxChars}。
+1ページ目は必ず表紙。起承転結のある展開。`;
 
   try{
     document.getElementById('planning-bar').style.width='60%';
@@ -708,15 +701,49 @@ async function startPlanning(){
     document.getElementById('planning-bar').style.width='100%';
     await sleep(300);
 
-    let json=raw.trim().replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
-    const parsed=JSON.parse(json);
+    // Robust JSON extraction and repair
+    let json = raw.trim();
+    // Remove markdown fences
+    json = json.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+    // Extract JSON object
+    const jsonStart = json.indexOf('{');
+    const jsonEnd = json.lastIndexOf('}');
+    if(jsonStart>=0 && jsonEnd>=0) json = json.slice(jsonStart, jsonEnd+1);
+    // Fix common issues: remove trailing commas before ] or }
+    json = json.replace(/,\s*([}\]])/g, '$1');
+    // Remove control characters inside strings
+    json = json.replace(/[\x00-\x09\x0b\x0c\x0e-\x1f]/g,'');
+    let parsed;
+    try{
+      parsed = JSON.parse(json);
+    }catch(parseErr){
+      // Try to extract pages array even if outer JSON is broken
+      console.error('JSON parse error:', parseErr.message);
+      console.log('Raw JSON (first 500):', json.slice(0,500));
+      // Attempt line-by-line page extraction as fallback
+      const pageMatches = [...json.matchAll(/"n"\s*:\s*(\d+)[^}]*?"sec"\s*:\s*"([^"]*)"[^}]*?"emotion"\s*:\s*"([^"]*)"[^}]*?"lines"\s*:\s*\[([^\]]*?)\][^}]*?"imagePrompt"\s*:\s*"([^"]*)"/gs)];
+      if(pageMatches.length>0){
+        parsed = {
+          title: bookTitle,
+          pages: pageMatches.map(m=>({
+            n: parseInt(m[1]),
+            sec: m[2],
+            emotion: m[3],
+            lines: m[4].split(',').map(l=>l.trim().replace(/^"|"$/g,'')).filter(Boolean),
+            imagePrompt: m[5]
+          }))
+        };
+      } else {
+        throw new Error('JSONの解析に失敗しました。もう一度お試しください。');
+      }
+    }
     bookTitle=parsed.title||bookTitle;
-    PAGES=(parsed.pages||[]).map(p=>({
-      n:p.n, sec:p.sec||`p${p.n}`,
-      e:p.emotion||'waku',
-      lines:Array.isArray(p.lines)?p.lines:[p.lines||''],
-      prompt:p.imagePrompt||`Children's picture book illustration. ${ART_STYLE}. No text.`
-    }));
+    PAGES=(parsed.pages||[]).map(pg=>({
+      n:pg.n||1, sec:pg.sec||'ページ',
+      e:(pg.emotion||'waku').replace(/[^a-z0-9]/g,''),
+      lines:Array.isArray(pg.lines)?pg.lines.filter(Boolean):[pg.lines||''],
+      prompt:pg.imagePrompt||'Children picture book illustration. No text.'
+    })).filter(pg=>pg.n>0);
 
     showConfirm();
   }catch(e){
