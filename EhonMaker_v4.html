@@ -491,107 +491,118 @@ async function geminiText(prompt){
 async function geminiImage(prompt){
   let log = [];
 
-  // ── 有料APIキー向け: Nano Banana 2 (gemini-3.1-flash-image-preview) ──
-  // ── 無料キーでは404になります（有料キーなら最高品質）────────────────
-  const PAID_MODELS = [
-    { id:'gemini-3.1-flash-image-preview', type:'generate' },
-    { id:'gemini-2.5-flash-image',         type:'generate' },
-    { id:'gemini-3-pro-image-preview',     type:'generate' },
+  // ── 1. Nano Banana 2 = gemini-3.1-flash-image-preview（有料・最高品質）
+  const GENERATE_MODELS = [
+    'gemini-3.1-flash-image-preview',
+    'gemini-2.5-flash-image',
+    'gemini-2.5-flash-preview-image-generation',
+    'gemini-2.0-flash-preview-image-generation',
   ];
 
-  for(const m of PAID_MODELS){
+  for(const model of GENERATE_MODELS){
     try{
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${m.id}:generateContent?key=${API_KEY}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
       const res = await fetch(url,{
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
-          contents:[{parts:[{text:prompt}]}],
+          contents:[{parts:[{text: prompt}]}],
           generationConfig:{responseModalities:['TEXT','IMAGE']}
         })
       });
       const data = await res.json();
       if(res.ok){
-        for(const part of(data.candidates?.[0]?.content?.parts||[])){
+        const parts = data.candidates?.[0]?.content?.parts || [];
+        for(const part of parts){
           if(part.inlineData?.mimeType?.startsWith('image/')){
-            console.log('✓ image via', m.id);
+            console.log('✓ image:', model);
             return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
           }
         }
+        log.push(`[${model}]: 画像なし (parts=${parts.length})`);
+      } else {
+        const msg = data.error?.message || `HTTP ${res.status}`;
+        if(res.status === 404){ log.push(`[${model}]: 404`); continue; }
+        if(res.status === 429){ await sleep(6000); }
+        log.push(`[${model}]: ${msg.slice(0,80)}`);
+        console.warn(model, msg);
       }
-      const msg = data.error?.message || `HTTP ${res.status}`;
-      if(res.status===404){ log.push(`[${m.id}]: 有料キーのみ対応`); continue; }
-      if(res.status===429){ await sleep(5000); }
-      log.push(`[${m.id}]: ${msg}`);
-    }catch(e){ log.push(`[${m.id}]: ${e.message}`); }
+    }catch(e){ log.push(`[${model}]: ${e.message}`); }
     await sleep(500);
   }
 
-  // ── 無料・有料両対応: SVGイラスト自動生成 ────────────────────────
-  // gemini-2.5-flash（テキスト）でSVGコードを生成 → 画像として使用
-  console.log('SVGイラスト生成中...');
+  // ── 2. Imagen 4 系（predict形式）
+  const IMAGEN_MODELS = [
+    'imagen-4.0-fast-generate-002',
+    'imagen-4.0-generate-002',
+    'imagen-3.0-generate-002',
+  ];
+  for(const model of IMAGEN_MODELS){
+    try{
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${API_KEY}`;
+      const res = await fetch(url,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          instances:[{prompt: prompt}],
+          parameters:{sampleCount:1, aspectRatio:'3:4', safetyFilterLevel:'block_few'}
+        })
+      });
+      const data = await res.json();
+      if(res.ok){
+        const b64  = data.predictions?.[0]?.bytesBase64Encoded;
+        const mime = data.predictions?.[0]?.mimeType || 'image/png';
+        if(b64){ console.log('✓ imagen:', model); return `data:${mime};base64,${b64}`; }
+      }
+      const msg = data.error?.message || `HTTP ${res.status}`;
+      if(res.status === 404){ log.push(`[${model}]: 404`); continue; }
+      log.push(`[${model}]: ${msg.slice(0,80)}`);
+    }catch(e){ log.push(`[${model}]: ${e.message}`); }
+    await sleep(500);
+  }
+
+  // ── 3. SVGフォールバック（無料・gemini-2.5-flash）
+  console.log('SVG生成中...');
   try{
-    const svgPrompt = `You are a children's picture book illustrator.
-Create a colorful SVG illustration for this scene: "${prompt.slice(0,150)}"
-
-STRICT RULES:
-- Output ONLY raw SVG code, nothing else
-- Start with: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530" width="400" height="530">
-- End with: </svg>
-- Use bright cheerful colors (no dark/scary colors)
-- Draw sky, background scene, and at least 2-3 distinct objects/characters
-- Use simple geometric shapes: rect, circle, ellipse, polygon, path
-- NO text elements, NO labels, NO title tags
-- Make it look like a charming children's book illustration`;
-
+    const svgPrompt = `You are a children's picture book illustrator. Draw an SVG illustration.
+Scene: "${prompt.slice(0,150)}"
+RULES:
+- Output ONLY raw SVG, no explanation, no markdown
+- Start exactly with: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530">
+- End exactly with: </svg>
+- Use bright warm colors. Draw sky, ground, and 2-3 objects or characters.
+- Simple geometric shapes: rect, circle, ellipse, polygon, path
+- NO text or label elements inside SVG`;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-    const res = await fetch(url,{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        contents:[{parts:[{text:svgPrompt}]}],
-        generationConfig:{temperature:1.0, maxOutputTokens:4096}
-      })
-    });
+    const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:svgPrompt}]}],
+        generationConfig:{temperature:1.0,maxOutputTokens:4096}})});
     const data = await res.json();
     if(res.ok){
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      // Extract SVG - try multiple patterns
-      let svgCode = '';
       const m1 = text.match(/```svg([\s\S]*?)```/i);
       const m2 = text.match(/(<svg[\s\S]*?<\/svg>)/i);
-      if(m1) svgCode = m1[1].trim();
-      else if(m2) svgCode = m2[1];
-      if(svgCode && svgCode.includes('<svg')){
-        // Ensure proper SVG wrapper
-        if(!svgCode.startsWith('<svg')){
-          svgCode = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530" width="400" height="530">' + svgCode + '</svg>';
-        }
+      const svgCode = m1 ? m1[1].trim() : m2 ? m2[1] : '';
+      if(svgCode.includes('<svg')){
         const b64 = btoa(unescape(encodeURIComponent(svgCode)));
-        console.log('✓ SVG illustration generated');
+        console.log('✓ SVG fallback');
         return `data:image/svg+xml;base64,${b64}`;
       }
-      log.push('[svg]: SVGコードが見つかりません');
-    } else {
-      log.push(`[svg]: ${data.error?.message||'error'}`);
     }
   }catch(e){ log.push(`[svg]: ${e.message}`); }
 
-  // ── 最終フォールバック: プレースホルダー画像を生成 ────────────────
-  console.log('プレースホルダー生成中...');
-  const colors = ['#FFB3BA','#FFDFBA','#FFFFBA','#BAFFC9','#BAE1FF','#ECD5FF'];
-  const bg = colors[Math.floor(Math.random()*colors.length)];
-  const placeholder = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530" width="400" height="530">
-    <rect width="400" height="530" fill="${bg}" rx="8"/>
-    <circle cx="200" cy="180" r="80" fill="rgba(255,255,255,0.5)"/>
-    <circle cx="200" cy="165" r="35" fill="#FF9B9B"/>
-    <ellipse cx="200" cy="210" rx="50" ry="40" fill="#FF9B9B"/>
-    <circle cx="185" cy="158" r="6" fill="#333"/>
-    <circle cx="215" cy="158" r="6" fill="#333"/>
-    <path d="M185 175 Q200 185 215 175" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <ellipse cx="200" cy="400" rx="160" ry="30" fill="rgba(255,255,255,0.3)"/>
-    <rect x="50" y="460" width="300" height="2" fill="rgba(0,0,0,0.1)" rx="1"/>
+  // ── 4. カラープレースホルダー
+  const colors=['#FFB3BA','#FFDFBA','#FFFFBA','#BAFFC9','#BAE1FF','#ECD5FF'];
+  const bg=colors[Math.floor(Math.random()*colors.length)];
+  const ph=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530">
+    <rect width="400" height="530" fill="${bg}"/>
+    <circle cx="200" cy="200" r="90" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="200" cy="185" r="40" fill="#FF9B9B"/>
+    <ellipse cx="200" cy="240" rx="58" ry="48" fill="#FF9B9B"/>
+    <circle cx="183" cy="178" r="7" fill="#333"/>
+    <circle cx="217" cy="178" r="7" fill="#333"/>
+    <path d="M183 198 Q200 210 217 198" stroke="#333" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <text x="200" y="320" text-anchor="middle" font-size="13" fill="rgba(0,0,0,0.4)" font-family="sans-serif">イラスト生成中...</text>
   </svg>`;
-  const b64ph = btoa(unescape(encodeURIComponent(placeholder)));
-  return `data:image/svg+xml;base64,${b64ph}`;
+  return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(ph)))}`;
 }
 
 
