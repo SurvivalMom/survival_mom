@@ -491,103 +491,107 @@ async function geminiText(prompt){
 async function geminiImage(prompt){
   let log = [];
 
-  // ── Imagen 4 Fast（predict形式 / 1日70枚）─────────────────
-  const IMAGEN_MODELS = [
-    'imagen-4.0-fast-generate-002',
-    'imagen-4.0-generate-002',
-    'imagen-3.0-generate-002',
+  // ── 有料APIキー向け: Nano Banana 2 (gemini-3.1-flash-image-preview) ──
+  // ── 無料キーでは404になります（有料キーなら最高品質）────────────────
+  const PAID_MODELS = [
+    { id:'gemini-3.1-flash-image-preview', type:'generate' },
+    { id:'gemini-2.5-flash-image',         type:'generate' },
+    { id:'gemini-3-pro-image-preview',     type:'generate' },
   ];
-  for(const model of IMAGEN_MODELS){
-    try{
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${API_KEY}`;
-      const body = JSON.stringify({
-        instances:[{prompt: prompt}],
-        parameters:{sampleCount:1, aspectRatio:'3:4', safetyFilterLevel:'block_few'}
-      });
-      const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body});
-      const data = await res.json();
-      if(res.ok){
-        const b64  = data.predictions?.[0]?.bytesBase64Encoded;
-        const mime = data.predictions?.[0]?.mimeType || 'image/png';
-        if(b64){ console.log('✓',model); return `data:${mime};base64,${b64}`; }
-      }
-      const msg = data.error?.message || `HTTP ${res.status}`;
-      log.push(`[${model}]: ${msg}`);
-      console.warn(model, msg);
-      if(res.status===429) await sleep(5000);
-    }catch(e){ log.push(`[${model}]: ${e.message}`); }
-    await sleep(800);
-  }
 
-  // ── Nano Banana 2（generateContent形式 / 1日1000枚）────────
-  // モデルIDの候補を全試行
-  const NB_MODELS = [
-    'gemini-2.0-flash-preview-image-generation',
-    'gemini-2.5-flash-preview-image-generation',
-    'gemini-3.1-flash-image-generation',
-    'gemini-2.0-flash-exp-image-generation',
-  ];
-  for(const model of NB_MODELS){
+  for(const m of PAID_MODELS){
     try{
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
-      const body = JSON.stringify({
-        contents:[{parts:[{text:prompt}]}],
-        generationConfig:{responseModalities:['TEXT','IMAGE']}
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${m.id}:generateContent?key=${API_KEY}`;
+      const res = await fetch(url,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          contents:[{parts:[{text:prompt}]}],
+          generationConfig:{responseModalities:['TEXT','IMAGE']}
+        })
       });
-      const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body});
       const data = await res.json();
       if(res.ok){
         for(const part of(data.candidates?.[0]?.content?.parts||[])){
           if(part.inlineData?.mimeType?.startsWith('image/')){
-            console.log('✓',model);
+            console.log('✓ image via', m.id);
             return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
           }
         }
       }
       const msg = data.error?.message || `HTTP ${res.status}`;
-      // 404はモデルが存在しない→スキップ
-      if(res.status===404){ log.push(`[${model}]: 404 not found`); continue; }
-      log.push(`[${model}]: ${msg}`);
-      console.warn(model, msg);
-    }catch(e){ log.push(`[${model}]: ${e.message}`); }
+      if(res.status===404){ log.push(`[${m.id}]: 有料キーのみ対応`); continue; }
+      if(res.status===429){ await sleep(5000); }
+      log.push(`[${m.id}]: ${msg}`);
+    }catch(e){ log.push(`[${m.id}]: ${e.message}`); }
     await sleep(500);
   }
 
-  // ── SVGフォールバック（Gemini 2.5 Flash でコード生成）──────
+  // ── 無料・有料両対応: SVGイラスト自動生成 ────────────────────────
+  // gemini-2.5-flash（テキスト）でSVGコードを生成 → 画像として使用
+  console.log('SVGイラスト生成中...');
   try{
-    console.log('trying SVG fallback...');
-    const svgPrompt = `Create a children's picture book page illustration as SVG.
-Topic: ${prompt.slice(0,120)}
-Requirements:
-- Output ONLY the SVG element starting with <svg
-- viewBox="0 0 400 530" width="400" height="530"
-- Bright cheerful colors, cute simple shapes
-- NO text, NO labels, NO title elements
-- Include sky, ground, at least one character or object`;
+    const svgPrompt = `You are a children's picture book illustrator.
+Create a colorful SVG illustration for this scene: "${prompt.slice(0,150)}"
+
+STRICT RULES:
+- Output ONLY raw SVG code, nothing else
+- Start with: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530" width="400" height="530">
+- End with: </svg>
+- Use bright cheerful colors (no dark/scary colors)
+- Draw sky, background scene, and at least 2-3 distinct objects/characters
+- Use simple geometric shapes: rect, circle, ellipse, polygon, path
+- NO text elements, NO labels, NO title tags
+- Make it look like a charming children's book illustration`;
+
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-    const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:svgPrompt}]}]})});
+    const res = await fetch(url,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents:[{parts:[{text:svgPrompt}]}],
+        generationConfig:{temperature:1.0, maxOutputTokens:4096}
+      })
+    });
     const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text||'';
-    const svgMatch = text.match(/<svg[\s\S]*?<\/svg>/i);
-    if(svgMatch){
-      const b64 = btoa(unescape(encodeURIComponent(svgMatch[0])));
-      console.log('✓ SVG fallback');
-      return `data:image/svg+xml;base64,${b64}`;
+    if(res.ok){
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      // Extract SVG - try multiple patterns
+      let svgCode = '';
+      const m1 = text.match(/```svg([\s\S]*?)```/i);
+      const m2 = text.match(/(<svg[\s\S]*?<\/svg>)/i);
+      if(m1) svgCode = m1[1].trim();
+      else if(m2) svgCode = m2[1];
+      if(svgCode && svgCode.includes('<svg')){
+        // Ensure proper SVG wrapper
+        if(!svgCode.startsWith('<svg')){
+          svgCode = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530" width="400" height="530">' + svgCode + '</svg>';
+        }
+        const b64 = btoa(unescape(encodeURIComponent(svgCode)));
+        console.log('✓ SVG illustration generated');
+        return `data:image/svg+xml;base64,${b64}`;
+      }
+      log.push('[svg]: SVGコードが見つかりません');
+    } else {
+      log.push(`[svg]: ${data.error?.message||'error'}`);
     }
-    log.push('[svg]: no SVG in response');
   }catch(e){ log.push(`[svg]: ${e.message}`); }
 
-  // ── 全失敗 ─────────────────────────────────────────────────
-  console.error('All methods failed:\n'+log.join('\n'));
-  throw new Error(
-    '画像生成に失敗しました。\n\n' +
-    '【確認事項】\n' +
-    '・Google AI Studioで「Imagen 4 Generate」が有効か\n' +
-    '・1日の生成上限（70枚）に達していないか\n' +
-    '・APIキーにImagen APIの権限があるか\n\n' +
-    '詳細: ' + log.slice(-3).join(' / ')
-  );
+  // ── 最終フォールバック: プレースホルダー画像を生成 ────────────────
+  console.log('プレースホルダー生成中...');
+  const colors = ['#FFB3BA','#FFDFBA','#FFFFBA','#BAFFC9','#BAE1FF','#ECD5FF'];
+  const bg = colors[Math.floor(Math.random()*colors.length)];
+  const placeholder = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 530" width="400" height="530">
+    <rect width="400" height="530" fill="${bg}" rx="8"/>
+    <circle cx="200" cy="180" r="80" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="200" cy="165" r="35" fill="#FF9B9B"/>
+    <ellipse cx="200" cy="210" rx="50" ry="40" fill="#FF9B9B"/>
+    <circle cx="185" cy="158" r="6" fill="#333"/>
+    <circle cx="215" cy="158" r="6" fill="#333"/>
+    <path d="M185 175 Q200 185 215 175" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="200" cy="400" rx="160" ry="30" fill="rgba(255,255,255,0.3)"/>
+    <rect x="50" y="460" width="300" height="2" fill="rgba(0,0,0,0.1)" rx="1"/>
+  </svg>`;
+  const b64ph = btoa(unescape(encodeURIComponent(placeholder)));
+  return `data:image/svg+xml;base64,${b64ph}`;
 }
 
 
@@ -740,7 +744,7 @@ async function startPlanning(){
 追加要望：${customExtra||'なし'}
 
 【重要】以下のJSON形式のみを出力してください。説明文・コードブロック・改行は不要です。
-各ページのimagePromptは英語で50語以内に収めてください。
+各ページのimagePromptは英語で30語以内、シンプルな単語のみ使ってください。ダブルクォート・改行・特殊文字は使わないでください。
 linesの文字列内にダブルクォートや特殊文字を使わないでください。
 
 {"title":"最終タイトル","pages":[{"n":1,"sec":"表紙","emotion":"waku","lines":["1行目"],"imagePrompt":"english prompt here"},{"n":2,"sec":"はじまり","emotion":"waku","lines":["1行目","2行目"],"imagePrompt":"english prompt here"}]}
