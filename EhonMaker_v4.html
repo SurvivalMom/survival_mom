@@ -488,42 +488,104 @@ async function geminiText(prompt){
   return data.candidates?.[0]?.content?.parts?.[0]?.text||'';
 }
 
-async function geminiImage(prompt,retries=2){
-  // Try models in order: latest preview first, then fallback
-  const IMAGE_MODELS=[
-    'gemini-2.0-flash-preview-image-generation',
-    'gemini-2.0-flash-exp',
+async function geminiImage(prompt){
+  let lastMsg = '';
+
+  // ── 1. Nano Banana 2 = Gemini 3.1 Flash Image（メイン：100RPM/1日1000枚）
+  const NB2_MODELS = [
+    'gemini-2.0-flash-preview-image-generation',  // 旧名
+    'imagen-3.0-generate-002',                    // Imagen 3
+    'imagen-4.0-generate-002',                    // Imagen 4（10RPM/70枚）
+    'imagen-4.0-fast-generate-002',               // Imagen 4 Fast
   ];
-  let lastErr=null;
-  for(const model of IMAGE_MODELS){
-    const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
-    const body={contents:[{parts:[{text:prompt}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}};
-    for(let attempt=0;attempt<=retries;attempt++){
-      try{
-        const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-        if(!res.ok){
-          const e=await res.json().catch(()=>({}));
-          const msg=e.error?.message||`HTTP ${res.status}`;
-          if(res.status===429){await sleep(3000+attempt*2000);continue;}
-          if(res.status===404||msg.includes('no longer available')||msg.includes('not found')){break;} // try next model
-          throw new Error(msg);
-        }
-        const data=await res.json();
+
+  // まず Nano Banana 2（generateContent形式）
+  const NB2_GENERATE_MODELS = [
+    'gemini-2.0-flash-preview-image-generation',
+  ];
+
+  for(const model of NB2_GENERATE_MODELS){
+    try{
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+      const res = await fetch(url,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          contents:[{parts:[{text:prompt}]}],
+          generationConfig:{responseModalities:['TEXT','IMAGE']}
+        })
+      });
+      const data = await res.json();
+      if(res.ok){
         for(const part of(data.candidates?.[0]?.content?.parts||[])){
           if(part.inlineData?.mimeType?.startsWith('image/')){
+            console.log('✓ image via', model);
             return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
           }
         }
-        throw new Error('No image returned');
-      }catch(e){
-        lastErr=e;
-        if(attempt===retries) break;
-        await sleep(2000);
       }
-    }
+      const msg = data.error?.message||`HTTP ${res.status}`;
+      lastMsg += `[${model}]: ${msg}\n`;
+      console.warn(model, msg);
+    }catch(e){ lastMsg += `[${model}]: ${e.message}\n`; }
+    await sleep(600);
   }
-  throw lastErr||new Error('All image models failed');
+
+  // ── 2. Imagen 系（predict形式）────────────────────────────
+  const IMAGEN_MODELS = [
+    'imagen-4.0-fast-generate-002',
+    'imagen-4.0-generate-002',
+    'imagen-3.0-generate-002',
+  ];
+  for(const model of IMAGEN_MODELS){
+    try{
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${API_KEY}`;
+      const res = await fetch(url,{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          instances:[{prompt:prompt}],
+          parameters:{sampleCount:1, aspectRatio:'3:4', safetyFilterLevel:'block_few'}
+        })
+      });
+      const data = await res.json();
+      if(res.ok){
+        const b64  = data.predictions?.[0]?.bytesBase64Encoded;
+        const mime = data.predictions?.[0]?.mimeType||'image/png';
+        if(b64){ console.log('✓ image via', model); return `data:${mime};base64,${b64}`; }
+      }
+      const msg = data.error?.message||`HTTP ${res.status}`;
+      lastMsg += `[${model}]: ${msg}\n`;
+      console.warn(model, msg);
+    }catch(e){ lastMsg += `[${model}]: ${e.message}\n`; }
+    await sleep(600);
+  }
+
+  // ── 3. SVGフォールバック（全モデル失敗時）────────────────
+  try{
+    const svgPrompt = `Draw a simple cheerful children's picture book SVG illustration.
+Scene: ${prompt.slice(0,100)}
+Rules: Output ONLY a <svg> element, width=400 height=530, bright colors, simple cute shapes, NO text elements, NO labels.`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+    const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:svgPrompt}]}]})});
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    const svgMatch = text.match(/<svg[\s\S]*?<\/svg>/i);
+    if(svgMatch){
+      const b64 = btoa(unescape(encodeURIComponent(svgMatch[0])));
+      console.log('✓ SVG fallback used');
+      return `data:image/svg+xml;base64,${b64}`;
+    }
+  }catch(e){ lastMsg += `[svg]: ${e.message}\n`; }
+
+  throw new Error(
+    '画像生成に失敗しました。\n' +
+    'Google AI Studioで以下を確認してください:\n' +
+    '・APIキーが有効か\n' +
+    '・Nano Banana 2 / Imagen 4 のレート制限に達していないか\n\n' +
+    '詳細エラー:\n' + lastMsg
+  );
 }
+
 
 // ═══════════════════════════════════════════════════════════
 // STEP 1: RESEARCH
@@ -776,6 +838,7 @@ function showConfirm(){
 // ═══════════════════════════════════════════════════════════
 async function startGeneration(){
   images={};
+  let lastImgError='';
   buildSidebar();
   document.getElementById('sb-ttl').textContent=bookTitle;
   showScreen('s-gen');
@@ -792,14 +855,25 @@ async function startGeneration(){
       const fullPrompt=`${pg.prompt} Style: ${ART_STYLE}. Beautiful children's picture book illustration, no text in image, suitable for ages 3-6, high quality.`;
       const dataUrl=await geminiImage(fullPrompt);
       images[i]=dataUrl;
-      document.getElementById('gen-preview').innerHTML=`<img src="${dataUrl}">`;
+      document.getElementById('gen-preview').innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
       updateSBItem(i,true);
     }catch(e){
-      console.error(`Page ${pg.n}:`,e);
+      console.error(`Page ${pg.n} error:`,e.message);
       images[i]=null;
       updateSBItem(i,false,true);
+      // 最初のページでエラーが出たらユーザーに通知
+      if(i===0){
+        const cont = confirm(`画像生成エラー（ページ1）:\n${e.message}\n\n続けて残りのページを試みますか？`);
+        if(!cont){
+          document.getElementById('gen-bar').style.width='100%';
+          await sleep(300);
+          showScreen('s-view');
+          renderPage(0);
+          return;
+        }
+      }
     }
-    await sleep(600);
+    await sleep(1500); // Nano Banana 2: 100RPM = wait ~1.5s between requests
   }
 
   document.getElementById('gen-bar').style.width='100%';
