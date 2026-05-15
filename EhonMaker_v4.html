@@ -170,7 +170,7 @@ html,body{height:100%;overflow:hidden;font-family:'Zen Maru Gothic',sans-serif;b
 .tz-badge{display:inline-flex;align-items:center;padding:4px 14px;border-radius:20px;color:white;font-size:clamp(9px,1.3vh,12px);font-weight:700;letter-spacing:.07em;margin-bottom:clamp(8px,1.6vh,18px);flex-shrink:0;}
 .tz-txt{font-family:'Kaisei Opti',serif;font-weight:700;font-size:clamp(20px,4.4vh,40px);line-height:1.72;color:var(--navy);letter-spacing:.04em;word-break:keep-all;}
 .tz-n{position:absolute;bottom:7px;right:11px;font-size:8px;color:#ccc;}
-.cov-full{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px;background:linear-gradient(to top,rgba(20,14,8,.88) 0%,transparent 55%);}
+.cov-full{display:none;}
 .cov-ttl{font-family:'Kaisei Opti',serif;color:white;font-weight:700;font-size:clamp(14px,3vh,26px);text-align:center;line-height:1.45;text-shadow:0 2px 10px rgba(0,0,0,.55);margin-bottom:5px;}
 .cov-sub2{font-size:clamp(9px,1.1vh,11px);color:rgba(255,255,255,.6);letter-spacing:.1em;}
 .nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--navy);box-shadow:0 4px 18px rgba(0,0,0,.12);transition:.2s;z-index:5;}
@@ -417,6 +417,7 @@ html,body{height:100%;overflow:hidden;font-family:'Zen Maru Gothic',sans-serif;b
     <div class="sb-list" id="sb-list"></div>
     <div class="sb-foot">
       <button class="sfbtn s" onclick="makePDF()">📄 PDF保存</button>
+      <button class="sfbtn s" style="background:#5a8fc4;" onclick="downloadAllImages()">🖼 画像を一括DL</button>
       <button class="sfbtn p" onclick="startOver()">← 新しい絵本</button>
     </div>
   </div>
@@ -926,13 +927,18 @@ function renderPage(idx){
     :`<div class="iz-ph"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" stroke="rgba(196,129,74,.3)" stroke-width="4" fill="none"/><path d="M14 4a10 10 0 0 1 10 10" stroke="#c4814a" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>`;
 
   if(pg.n===1){
+    // 表紙: イラスト全面表示 + 下部だけにタイトルオーバーレイ
     bp.innerHTML=`
-      <div class="iz" style="flex:1 0 100%;position:relative;">
+      <div style="width:100%;height:100%;position:relative;background:#f0ebe0;border-radius:8px;overflow:hidden;">
         ${imgHtml}
         <button class="regen-btn" onclick="regenPage(${idx})">🔄 再生成</button>
-        <div class="cov-full">
-          <div class="cov-ttl">${bookTitle}</div>
-          <div class="cov-sub2">${AGE}から よめる えほん</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;
+          background:linear-gradient(to top, rgba(20,14,8,0.82) 0%, rgba(20,14,8,0.60) 50%, transparent 100%);
+          padding:32px 20px 18px;text-align:center;pointer-events:none;">
+          <div style="font-family:'Kaisei Opti',serif;color:white;font-weight:700;
+            font-size:clamp(15px,2.8vh,26px);line-height:1.45;
+            text-shadow:0 2px 10px rgba(0,0,0,.6);margin-bottom:5px;">${bookTitle}</div>
+          <div style="font-size:clamp(9px,1.1vh,12px);color:rgba(255,255,255,.65);letter-spacing:.1em;">${AGE}から よめる えほん</div>
         </div>
       </div>`;
   }else{
@@ -980,6 +986,76 @@ async function regenPage(idx){
 }
 
 // ═══════════════════════════════════════════════════════════
+// DOWNLOAD ALL IMAGES
+// ═══════════════════════════════════════════════════════════
+async function downloadAllImages(){
+  const total = PAGES.length;
+  const missing = PAGES.filter((_,i)=>!images[i]).length;
+  if(missing>0 && !confirm(`${missing}ページの画像がまだ生成されていません。生成済みの${total-missing}ページだけダウンロードしますか？`)) return;
+
+  // ZIP形式でまとめてダウンロード（JSZipが使えない場合は1枚ずつ）
+  // まずJSZipを動的に読み込む
+  const dlBtn = document.querySelector('.sfbtn[onclick="downloadAllImages()"]');
+  if(dlBtn){ dlBtn.textContent='⏳ 準備中...'; dlBtn.disabled=true; }
+
+  try{
+    // JSZipをCDNから読み込む
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    const zip = new JSZip();
+    const folder = zip.folder(bookTitle || 'ehon');
+
+    for(let i=0; i<PAGES.length; i++){
+      if(!images[i]) continue;
+      const pg = PAGES[i];
+      const dataUrl = images[i];
+      // DataURLをblobに変換
+      const [meta, b64] = dataUrl.split(',');
+      const mime = meta.match(/:(.*?);/)[1];
+      const ext  = mime.includes('svg') ? 'svg' : mime.includes('png') ? 'png' : 'jpg';
+      const binary = atob(b64);
+      const bytes  = new Uint8Array(binary.length);
+      for(let j=0;j<binary.length;j++) bytes[j]=binary.charCodeAt(j);
+      folder.file(`page_${String(pg.n).padStart(2,'0')}_${pg.sec}.${ext}`, bytes);
+    }
+
+    const blob = await zip.generateAsync({type:'blob'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (bookTitle||'ehon') + '_images.zip';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    if(dlBtn){ dlBtn.textContent='✓ ダウンロード完了'; }
+    setTimeout(()=>{ if(dlBtn){ dlBtn.textContent='🖼 画像を一括DL'; dlBtn.disabled=false; } }, 3000);
+
+  }catch(e){
+    console.error('ZIP失敗、1枚ずつダウンロードに切り替えます:', e);
+    // フォールバック: 1枚ずつ順番にダウンロード
+    for(let i=0; i<PAGES.length; i++){
+      if(!images[i]) continue;
+      const pg = PAGES[i];
+      if(dlBtn) dlBtn.textContent=`⬇ ${pg.n}/${PAGES.length}枚目...`;
+      const a = document.createElement('a');
+      a.href = images[i];
+      const ext = images[i].startsWith('data:image/svg') ? 'svg' : images[i].startsWith('data:image/png') ? 'png' : 'jpg';
+      a.download = `page_${String(pg.n).padStart(2,'0')}_${pg.sec}.${ext}`;
+      a.click();
+      await sleep(600); // ブラウザが連続DLをブロックしないよう待機
+    }
+    if(dlBtn){ dlBtn.textContent='✓ 完了'; dlBtn.disabled=false; }
+    setTimeout(()=>{ if(dlBtn){ dlBtn.textContent='🖼 画像を一括DL'; } }, 3000);
+  }
+}
+
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    if(document.querySelector(`script[src="${src}"]`)){ resolve(); return; }
+    const s=document.createElement('script');
+    s.src=src; s.onload=resolve; s.onerror=reject;
+    document.head.appendChild(s);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
 // PDF
 // ═══════════════════════════════════════════════════════════
 async function makePDF(){
@@ -1000,11 +1076,32 @@ async function makePDF(){
     if(pg.n===1){
       ctx.fillStyle=em.l;ctx.fillRect(0,0,W,H);
       if(images[i]){const img=new Image();await new Promise(r=>{img.onload=r;img.src=images[i];});ctx.drawImage(img,0,0,W,H);}
-      ctx.fillStyle='rgba(20,14,8,0.82)';ctx.fillRect(0,H*.40,W,H*.60);
+      // 表紙: 下部20%だけグラデーションオーバーレイ
+      const grd=canvas.getContext('2d').createLinearGradient(0,H*.72,0,H);
+      grd.addColorStop(0,'rgba(20,14,8,0)');
+      grd.addColorStop(0.3,'rgba(20,14,8,0.75)');
+      grd.addColorStop(1,'rgba(20,14,8,0.90)');
+      ctx.fillStyle=grd; ctx.fillRect(0,H*.72,W,H*.28);
       ctx.fillStyle='white';ctx.textAlign='center';
-      ctx.font=`bold ${Math.round(H*.034)}px serif`;ctx.fillText(bookTitle,W/2,H*.54);
-      ctx.font=`${Math.round(H*.012)}px sans-serif`;ctx.fillStyle='rgba(255,255,255,0.6)';
-      ctx.fillText(AGE+'から よめる えほん',W/2,H*.62);
+      // タイトルを2行に分割（14文字超の場合）
+      const titleLen=bookTitle.length;
+      const fontSize=Math.round(H*(titleLen>12?0.028:0.034));
+      ctx.font=`bold ${fontSize}px serif`;
+      if(titleLen>14){
+        // スペースで分割、なければ中央で切る
+        const sp=bookTitle.lastIndexOf(' ',Math.floor(titleLen/2)+3);
+        const cut=sp>0?sp:Math.floor(titleLen/2);
+        ctx.fillText(bookTitle.slice(0,cut),W/2,H*.84);
+        ctx.fillText(bookTitle.slice(cut).trim(),W/2,H*.90);
+        ctx.font=`${Math.round(H*.011)}px sans-serif`;
+        ctx.fillStyle='rgba(255,255,255,0.65)';
+        ctx.fillText(AGE+'から よめる えほん',W/2,H*.95);
+      }else{
+        ctx.fillText(bookTitle,W/2,H*.88);
+        ctx.font=`${Math.round(H*.011)}px sans-serif`;
+        ctx.fillStyle='rgba(255,255,255,0.65)';
+        ctx.fillText(AGE+'から よめる えほん',W/2,H*.94);
+      }
     }else{
       const illusH=Math.round(H*.54);
       ctx.fillStyle='#f0ebe0';ctx.fillRect(0,0,W,H);
