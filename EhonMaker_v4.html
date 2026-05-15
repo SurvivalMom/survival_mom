@@ -862,7 +862,8 @@ async function startGeneration(){
     document.getElementById('gen-title').textContent='イラストを描いています...';
 
     try{
-      const fullPrompt=`${pg.prompt} Style: ${ART_STYLE}. Beautiful children's picture book illustration, no text in image, suitable for ages 3-6, high quality.`;
+      const coverNote = pg.n===1 ? ' Cover composition: keep a clean bright empty space in the upper center for the title, place main characters in the lower half, no text, no letters, no logo.' : '';
+      const fullPrompt=`${pg.prompt}${coverNote} Style: ${ART_STYLE}. Beautiful children's picture book illustration, no text in image, suitable for ages 3-6, high quality.`;
       const dataUrl=await geminiImage(fullPrompt);
       images[i]=dataUrl;
       document.getElementById('gen-preview').innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
@@ -919,6 +920,49 @@ function updateSidebar(){
 // ═══════════════════════════════════════════════════════════
 // PAGE RENDER
 // ═══════════════════════════════════════════════════════════
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+}
+
+function splitTitleForCover(title){
+  const t=String(title||'').trim();
+  if(!t) return [''];
+  if(t.length<=12) return [t];
+  const preferred=['、','。','！','？','!','?',' '];
+  const mid=Math.floor(t.length/2);
+  let best=-1,bestScore=999;
+  for(const ch of preferred){
+    let pos=t.indexOf(ch);
+    while(pos>=0){
+      if(pos>2 && pos<t.length-2){
+        const score=Math.abs(pos-mid)+(ch===' '?0:1);
+        if(score<bestScore){bestScore=score;best=pos+1;}
+      }
+      pos=t.indexOf(ch,pos+1);
+    }
+  }
+  const cut=best>0?best:mid;
+  return [t.slice(0,cut).trim(), t.slice(cut).trim()].filter(Boolean);
+}
+
+function coverPreviewHtml(idx,imgHtml){
+  const lines=splitTitleForCover(bookTitle).map(escapeHtml);
+  return `
+    <div style="width:100%;height:100%;position:relative;background:#f7efe3;border-radius:8px;overflow:hidden;">
+      ${imgHtml}
+      <button class="regen-btn" onclick="regenPage(${idx})">🔄 再生成</button>
+      <div style="position:absolute;top:6%;left:6%;right:6%;text-align:center;pointer-events:none;">
+        <div style="font-family:'Kaisei Opti',serif;color:#4a2a16;font-weight:700;
+          font-size:clamp(22px,4.6vh,48px);line-height:1.28;letter-spacing:.04em;
+          text-shadow:0 2px 0 rgba(255,255,255,.92), 0 -2px 0 rgba(255,255,255,.92), 2px 0 0 rgba(255,255,255,.92), -2px 0 0 rgba(255,255,255,.92), 0 6px 18px rgba(255,255,255,.75);">
+          ${lines.join('<br>')}
+        </div>
+        <div style="font-size:clamp(9px,1.3vh,14px);font-weight:700;color:#5b3a27;letter-spacing:.08em;margin-top:8px;
+          text-shadow:0 1px 0 rgba(255,255,255,.95), 0 3px 12px rgba(255,255,255,.85);">${escapeHtml(AGE)}から　よめる　えほん</div>
+      </div>
+    </div>`;
+}
+
 function renderPage(idx){
   const pg=PAGES[idx];const em=getEM(pg.e);const bp=document.getElementById('bp');
   const imgSrc=images[idx];
@@ -927,20 +971,8 @@ function renderPage(idx){
     :`<div class="iz-ph"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" stroke="rgba(196,129,74,.3)" stroke-width="4" fill="none"/><path d="M14 4a10 10 0 0 1 10 10" stroke="#c4814a" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>`;
 
   if(pg.n===1){
-    // 表紙: イラスト全面表示 + 下部だけにタイトルオーバーレイ
-    bp.innerHTML=`
-      <div style="width:100%;height:100%;position:relative;background:#f0ebe0;border-radius:8px;overflow:hidden;">
-        ${imgHtml}
-        <button class="regen-btn" onclick="regenPage(${idx})">🔄 再生成</button>
-        <div style="position:absolute;bottom:0;left:0;right:0;
-          background:linear-gradient(to top, rgba(20,14,8,0.82) 0%, rgba(20,14,8,0.60) 50%, transparent 100%);
-          padding:32px 20px 18px;text-align:center;pointer-events:none;">
-          <div style="font-family:'Kaisei Opti',serif;color:white;font-weight:700;
-            font-size:clamp(15px,2.8vh,26px);line-height:1.45;
-            text-shadow:0 2px 10px rgba(0,0,0,.6);margin-bottom:5px;">${bookTitle}</div>
-          <div style="font-size:clamp(9px,1.1vh,12px);color:rgba(255,255,255,.65);letter-spacing:.1em;">${AGE}から よめる えほん</div>
-        </div>
-      </div>`;
+    // 表紙: 黒いオーバーレイを使わず、完成版のように明るい1枚絵の上へタイトルを配置
+    bp.innerHTML=coverPreviewHtml(idx,imgHtml);
   }else{
     bp.innerHTML=`
       <div class="iz" style="position:relative;">
@@ -980,7 +1012,8 @@ async function regenPage(idx){
   const izEl=document.querySelector('.iz');
   if(izEl) izEl.innerHTML=`<div class="iz-ph"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" stroke="rgba(196,129,74,.3)" stroke-width="4" fill="none"/><path d="M14 4a10 10 0 0 1 10 10" stroke="#c4814a" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>`;
   try{
-    const dataUrl=await geminiImage(`${pg.prompt} Style: ${ART_STYLE}. Children's picture book illustration, no text.`);
+    const coverNote = pg.n===1 ? ' Cover composition: keep a clean bright empty space in the upper center for the title, place main characters in the lower half, no text, no letters, no logo.' : '';
+    const dataUrl=await geminiImage(`${pg.prompt}${coverNote} Style: ${ART_STYLE}. Children's picture book illustration, no text.`);
     images[idx]=dataUrl;updateSBItem(idx,true);renderPage(idx);
   }catch(e){alert(`再生成に失敗しました: ${e.message}`);}
 }
@@ -1058,6 +1091,57 @@ function loadScript(src){
 // ═══════════════════════════════════════════════════════════
 // PDF
 // ═══════════════════════════════════════════════════════════
+function loadCanvasImage(src){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=src;
+  });
+}
+
+function drawImageCover(ctx,img,x,y,w,h){
+  const ir=img.width/img.height;
+  const r=w/h;
+  let dw=w,dh=h,dx=x,dy=y;
+  if(ir>r){dh=h;dw=h*ir;dx=x+(w-dw)/2;}else{dw=w;dh=w/ir;dy=y+(h-dh)/2;}
+  ctx.drawImage(img,dx,dy,dw,dh);
+}
+
+function drawCoverTitle(ctx,W,H){
+  const lines=splitTitleForCover(bookTitle);
+  ctx.save();
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.lineJoin='round';
+
+  const longest=lines.reduce((m,l)=>Math.max(m,l.length),1);
+  const base = lines.length>1 ? 78 : 92;
+  const fs = Math.max(54, Math.min(base, Math.floor(W/(longest*0.9))));
+  const lh = fs*1.22;
+  const startY = H*0.135 - ((lines.length-1)*lh)/2;
+
+  ctx.font=`bold ${fs}px 'Kaisei Opti', serif`;
+  lines.forEach((line,idx)=>{
+    const y=startY+idx*lh;
+    ctx.lineWidth=Math.max(8,fs*0.12);
+    ctx.strokeStyle='rgba(255,255,255,0.96)';
+    ctx.strokeText(line,W/2,y);
+    ctx.fillStyle='#4a2a16';
+    ctx.fillText(line,W/2,y);
+  });
+
+  ctx.font=`bold ${Math.round(fs*0.27)}px sans-serif`;
+  ctx.lineWidth=5;
+  ctx.strokeStyle='rgba(255,255,255,0.95)';
+  ctx.fillStyle='#5b3a27';
+  const sub=`${AGE}から　よめる　えほん`;
+  const subY=startY+(lines.length-1)*lh+fs*0.62;
+  ctx.strokeText(sub,W/2,subY);
+  ctx.fillText(sub,W/2,subY);
+  ctx.restore();
+}
+
 async function makePDF(){
   const ov=document.getElementById('pdf-ov');ov.classList.add('on');
   const {jsPDF}=window.jspdf;
@@ -1074,38 +1158,17 @@ async function makePDF(){
     const ctx=canvas.getContext('2d');
 
     if(pg.n===1){
-      ctx.fillStyle=em.l;ctx.fillRect(0,0,W,H);
-      if(images[i]){const img=new Image();await new Promise(r=>{img.onload=r;img.src=images[i];});ctx.drawImage(img,0,0,W,H);}
-      // 表紙: 下部20%だけグラデーションオーバーレイ
-      const grd=canvas.getContext('2d').createLinearGradient(0,H*.72,0,H);
-      grd.addColorStop(0,'rgba(20,14,8,0)');
-      grd.addColorStop(0.3,'rgba(20,14,8,0.75)');
-      grd.addColorStop(1,'rgba(20,14,8,0.90)');
-      ctx.fillStyle=grd; ctx.fillRect(0,H*.72,W,H*.28);
-      ctx.fillStyle='white';ctx.textAlign='center';
-      // タイトルを2行に分割（14文字超の場合）
-      const titleLen=bookTitle.length;
-      const fontSize=Math.round(H*(titleLen>12?0.028:0.034));
-      ctx.font=`bold ${fontSize}px serif`;
-      if(titleLen>14){
-        // スペースで分割、なければ中央で切る
-        const sp=bookTitle.lastIndexOf(' ',Math.floor(titleLen/2)+3);
-        const cut=sp>0?sp:Math.floor(titleLen/2);
-        ctx.fillText(bookTitle.slice(0,cut),W/2,H*.84);
-        ctx.fillText(bookTitle.slice(cut).trim(),W/2,H*.90);
-        ctx.font=`${Math.round(H*.011)}px sans-serif`;
-        ctx.fillStyle='rgba(255,255,255,0.65)';
-        ctx.fillText(AGE+'から よめる えほん',W/2,H*.95);
-      }else{
-        ctx.fillText(bookTitle,W/2,H*.88);
-        ctx.font=`${Math.round(H*.011)}px sans-serif`;
-        ctx.fillStyle='rgba(255,255,255,0.65)';
-        ctx.fillText(AGE+'から よめる えほん',W/2,H*.94);
+      // 表紙: 黒い半透明オーバーレイは描かず、1枚絵の上部へタイトルを直接配置
+      ctx.fillStyle='#f7efe3';ctx.fillRect(0,0,W,H);
+      if(images[i]){
+        const img=await loadCanvasImage(images[i]);
+        drawImageCover(ctx,img,0,0,W,H);
       }
+      drawCoverTitle(ctx,W,H);
     }else{
       const illusH=Math.round(H*.54);
       ctx.fillStyle='#f0ebe0';ctx.fillRect(0,0,W,H);
-      if(images[i]){const img=new Image();await new Promise(r=>{img.onload=r;img.src=images[i];});ctx.drawImage(img,0,0,W,illusH);}
+      if(images[i]){const img=await loadCanvasImage(images[i]);ctx.drawImage(img,0,0,W,illusH);}
       ctx.fillStyle=em.l;ctx.fillRect(0,illusH,W,H-illusH);
       ctx.fillStyle=em.h;ctx.fillRect(0,illusH,W,7);
       const bw2=240,bh2=44,bx2=W/2-bw2/2,by2=illusH+18;
@@ -1122,7 +1185,7 @@ async function makePDF(){
       ctx.fillStyle='#ccc';ctx.font=`${Math.round(H*.009)}px sans-serif`;ctx.fillText(String(pg.n),W/2,H-12);
     }
 
-    const imgData=canvas.toDataURL('image/jpeg',.90);
+    const imgData=canvas.toDataURL('image/jpeg',.92);
     if(i>0)doc.addPage([7.165,10.118],'p');
     doc.addImage(imgData,'JPEG',0,0,7.165,10.118);
     await sleep(10);
