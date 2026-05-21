@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>survival_mam | ツールライブラリ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --terracotta: #c4704a;
+    --terracotta-light: #e8b89a;
+    --terracotta-pale: #fdf2ec;
+    --navy: #2d3f5c;
+    --navy-light: #4a5f7e;
+    --forest: #3d6b52;
+    --mist: #6b8fa8;
+    --dusty-rose: #c47a85;
+    --warm-yellow: #c8a84b;
+    --cream: #faf7f2;
+    --ink: #1a1a1a;
+    --muted: #666;
+    --border: #e5ddd4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    position: relative;
+    background: var(--navy);
+    overflow: hidden;
+    padding: 80px 24px 60px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(196,112,74,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(61,107,82,0.2) 0%, transparent 60%);
+  }
+  .hero-inner { position: relative; text-align: center; max-width: 680px; }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 400; letter-spacing: 0.25em;
+    color: var(--terracotta-light); text-transform: uppercase; margin-bottom: 28px;
+  }
+  .hero-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(2rem, 6vw, 3.6rem); font-weight: 500; color: #fff;
+    line-height: 1.4; margin-bottom: 24px; letter-spacing: 0.05em;
+  }
+  .hero-title em { font-style: normal; color: var(--terracotta-light); }
+  .hero-lead { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 2; margin-bottom: 48px; font-weight: 300; }
+  .hero-scroll { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.4); font-size: 11px; letter-spacing: 0.15em; justify-content: center; }
+  .scroll-line { width: 40px; height: 1px; background: rgba(255,255,255,0.3); animation: scrollPulse 2s ease-in-out infinite; }
+  @keyframes scrollPulse { 0%,100%{opacity:.3;transform:scaleX(1)} 50%{opacity:.8;transform:scaleX(1.3)} }
+
+  /* ── STICKY NAV ── */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,247,242,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); padding: 0 24px;
+  }
+  .nav-inner { max-width: 1080px; margin: 0 auto; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0; padding: 14px 16px;
+    font-family: 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: 400;
+    color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap; letter-spacing: 0.05em;
+  }
+  .nav-btn:hover, .nav-btn.active { color: var(--terracotta); border-bottom-color: var(--terracotta); }
+  .nav-btn-packs { color: var(--terracotta) !important; font-weight: 500 !important; }
+
+  /* ── SECTION ── */
+  .section { padding: 80px 24px; }
+  .section-inner { max-width: 1080px; margin: 0 auto; }
+  .section-header { margin-bottom: 48px; }
+  .section-tag {
+    display: inline-block; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 2px; margin-bottom: 16px;
+  }
+  .section-title { font-family: 'Shippori Mincho', serif; font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 500; line-height: 1.5; letter-spacing: 0.04em; }
+  .section-desc { margin-top: 12px; font-size: 13px; color: var(--muted); font-weight: 300; line-height: 2; }
+  .section-divider { max-width: 1080px; margin: 0 auto; border: none; border-top: 1px solid var(--border); }
+
+  /* ── CARD GRID ── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .card {
+    background: #fff; border-radius: 12px; border: 1px solid var(--border);
+    overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,0.08); }
+  .card-accent { height: 4px; }
+  .card-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+  .card-label { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .card-name { font-family: 'Shippori Mincho', serif; font-size: 18px; font-weight: 500; margin-bottom: 10px; line-height: 1.4; }
+  .card-desc { font-size: 12px; color: var(--muted); line-height: 1.9; margin-bottom: 20px; flex: 1; }
+  .card-footer { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-block; padding: 9px 20px; border-radius: 6px;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.05em;
+    text-decoration: none; transition: all 0.2s; cursor: pointer;
+    border: none; font-family: 'Noto Sans JP', sans-serif;
+  }
+  .btn-primary { color: #fff; }
+  .btn-outline { background: transparent; border: 1px solid; }
+  .btn:hover { opacity: 0.82; }
+  .btn-ghost {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-size: 11px; padding: 7px 14px;
+  }
+  .btn-ghost:hover { border-color: var(--terracotta); color: var(--terracotta); opacity: 1; }
+
+  /* ── BADGES ── */
+  .badge-free {
+    display: inline-block; font-size: 10px; letter-spacing: 0.1em;
+    padding: 3px 10px; border-radius: 100px;
+    background: #f0f7f3; color: var(--forest); border: 1px solid rgba(61,107,82,0.2);
+  }
+  .badge-note {
+    display: inline-block; font-size: 10px; letter-spacing: 0.08em;
+    padding: 3px 10px; border-radius: 100px;
+    background: #f5f0f8; color: #7a5fa0; border: 1px solid rgba(122,95,160,0.2);
+  }
+
+  /* ── COLOR THEMES ── */
+  .theme-morning .card-accent { background: linear-gradient(90deg, var(--forest), var(--mist)); }
+  .theme-morning .section-tag { background: rgba(61,107,82,0.1); color: var(--forest); }
+  .theme-morning .section-title { color: var(--forest); }
+  .theme-morning .card-label { color: var(--forest); }
+  .theme-morning .btn-primary { background: var(--forest); }
+  .theme-morning .btn-outline { color: var(--forest); border-color: var(--forest); }
+
+  .theme-sensory .card-accent { background: linear-gradient(90deg, var(--terracotta), var(--dusty-rose)); }
+  .theme-sensory .section-tag { background: rgba(196,112,74,0.1); color: var(--terracotta); }
+  .theme-sensory .section-title { color: var(--terracotta); }
+  .theme-sensory .card-label { color: var(--terracotta); }
+  .theme-sensory .btn-primary { background: var(--terracotta); }
+  .theme-sensory .btn-outline { color: var(--terracotta); border-color: var(--terracotta); }
+
+  .theme-comm .card-accent { background: linear-gradient(90deg, var(--dusty-rose), var(--warm-yellow)); }
+  .theme-comm .section-tag { background: rgba(196,122,133,0.1); color: var(--dusty-rose); }
+  .theme-comm .section-title { color: var(--dusty-rose); }
+  .theme-comm .card-label { color: var(--dusty-rose); }
+  .theme-comm .btn-primary { background: var(--dusty-rose); }
+  .theme-comm .btn-outline { color: var(--dusty-rose); border-color: var(--dusty-rose); }
+
+  .theme-school .card-accent { background: linear-gradient(90deg, var(--navy), var(--mist)); }
+  .theme-school .section-tag { background: rgba(45,63,92,0.1); color: var(--navy); }
+  .theme-school .section-title { color: var(--navy); }
+  .theme-school .card-label { color: var(--navy); }
+  .theme-school .btn-primary { background: var(--navy); }
+  .theme-school .btn-outline { color: var(--navy); border-color: var(--navy); }
+
+  .theme-quest .card-accent { background: linear-gradient(90deg, var(--warm-yellow), #d4a855); }
+  .theme-quest .section-tag { background: rgba(200,168,75,0.1); color: #a07a20; }
+  .theme-quest .section-title { color: #a07a20; }
+  .theme-quest .card-label { color: #a07a20; }
+  .theme-quest .btn-primary { background: var(--warm-yellow); color: #fff; }
+  .theme-quest .btn-outline { color: #a07a20; border-color: var(--warm-yellow); }
+
+  /* ── INTRO ── */
+  .intro-section { background: #fff; border-bottom: 1px solid var(--border); }
+  .intro-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    align-items: center; max-width: 900px; margin: 0 auto; padding: 64px 0;
+  }
+  .intro-title { font-family: 'Shippori Mincho', serif; font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 500; line-height: 1.7; color: var(--navy); }
+  .intro-body { font-size: 13px; color: var(--muted); line-height: 2.1; }
+  .intro-legend { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+  .legend-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+
+  /* ── CHATBOT BANNER ── */
+  .chatbot-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, #3d5a80 100%);
+    border-radius: 16px; padding: 40px; color: #fff;
+    display: flex; gap: 32px; align-items: center; flex-wrap: wrap; margin-top: 48px;
+  }
+  .chatbot-banner-text { flex: 1; min-width: 240px; }
+  .chatbot-banner-title { font-family: 'Shippori Mincho', serif; font-size: 22px; font-weight: 500; margin-bottom: 10px; }
+  .chatbot-banner-desc { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.9; }
+  .chatbot-banner .btn { background: var(--terracotta); color: #fff; padding: 12px 28px; font-size: 13px; }
+
+  /* ── KOKOLOG SECTION ── */
+  .kokolog-banner {
+    background: linear-gradient(135deg, #4a3d6b 0%, #6b5a8f 100%);
+    border-radius: 16px; padding: 40px; color: #fff;
+    display: flex; gap: 32px; align-items: center; flex-wrap: wrap; margin-top: 48px;
+  }
+  .kokolog-banner-text { flex: 1; min-width: 240px; }
+  .kokolog-banner-title { font-family: 'Shippori Mincho', serif; font-size: 22px; font-weight: 500; margin-bottom: 10px; }
+  .kokolog-banner-desc { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.9; }
+  .kokolog-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-purple { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .btn-purple-primary { background: #fff; color: #4a3d6b; font-weight: 500; }
+
+  /* ── PACKS SECTION ── */
+  .packs-section { background: var(--navy); padding: 96px 24px; }
+  .pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .pack-card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 32px 28px; position: relative;
+    transition: transform 0.25s, background 0.25s; display: flex; flex-direction: column; gap: 12px;
+  }
+  .pack-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); }
+  .pack-featured { border-color: var(--terracotta); background: rgba(196,112,74,0.12); }
+  .pack-badge {
+    position: absolute; top: -12px; left: 24px;
+    background: var(--terracotta); color: #fff; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.12em; padding: 4px 12px; border-radius: 100px;
+  }
+  .pack-icon { font-size: 28px; line-height: 1; }
+  .pack-name { font-family: 'Shippori Mincho', serif; font-size: 18px; font-weight: 500; color: #fff; line-height: 1.5; }
+  .pack-name span { font-size: 13px; color: rgba(255,255,255,0.6); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; }
+  .pack-desc { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.9; flex: 1; }
+  .pack-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .pack-btn-lp { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); font-size: 12px; padding: 8px 16px; }
+  .pack-btn-buy { background: var(--terracotta); color: #fff; font-size: 12px; padding: 8px 18px; }
+
+  /* ── DIGITAL CARDS ── */
+  .digital-section-title { font-family: 'Shippori Mincho', serif; font-size: 20px; color: rgba(255,255,255,0.8); margin-bottom: 8px; text-align: center; letter-spacing: 0.06em; }
+  .digital-section-sub { text-align: center; font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 32px; }
+  .digital-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .digital-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 18px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    transition: background 0.2s;
+  }
+  .digital-card:hover { background: rgba(255,255,255,0.08); }
+  .digital-head { display: flex; align-items: center; gap: 14px; flex: 1; }
+  .digital-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+  .digital-name { font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.85); line-height: 1.5; }
+  .digital-sub { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; letter-spacing: 0.05em; }
+  .digital-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .digital-btn-trial { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); font-size: 11px; padding: 6px 12px; border-radius: 6px; white-space: nowrap; }
+  .digital-btn-buy { background: var(--terracotta); color: #fff; font-size: 11px; padding: 6px 14px; border-radius: 6px; white-space: nowrap; }
+  .digital-btn-trial:hover, .digital-btn-buy:hover { opacity: 0.85; }
+
+  /* ── FOOTER ── */
+  .footer { background: var(--navy); color: rgba(255,255,255,0.5); text-align: center; padding: 48px 24px; font-size: 12px; letter-spacing: 0.1em; }
+  .footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+  .footer-brand { font-family: 'Shippori Mincho', serif; font-size: 18px; color: rgba(255,255,255,0.8); margin-bottom: 12px; letter-spacing: 0.08em; }
+
+  /* ── FADE-IN ── */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .intro-grid { grid-template-columns: 1fr; gap: 32px; padding: 48px 0; }
+    .chatbot-banner, .kokolog-banner { padding: 28px 24px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .digital-actions { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">survival_mam ツールライブラリ</p>
+    <h1 class="hero-title">消えないように、<br><em>記録してきた</em>。<br>そこから生まれたツールたち。</h1>
+    <p class="hero-lead">
+      感覚過敏の姉、きょうだい児の弟、<br>
+      そして壊れそうな私を支えるために作り続けたアプリを、<br>
+      ここにまとめました。
+    </p>
+    <div class="hero-scroll">
+      <span class="scroll-line"></span>
+      scroll
+      <span class="scroll-line"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ STICKY NAV ═══════ -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <button class="nav-btn" onclick="goTo('morning')">朝・時間管理</button>
+    <button class="nav-btn" onclick="goTo('sensory')">感覚過敏・きょうだい</button>
+    <button class="nav-btn" onclick="goTo('comm')">コミュニケーション</button>
+    <button class="nav-btn" onclick="goTo('school')">学校・不登校</button>
+    <button class="nav-btn" onclick="goTo('quest')">子どもの自走</button>
+    <button class="nav-btn" onclick="goTo('other')">記録・その他</button>
+    <button class="nav-btn nav-btn-packs" onclick="goTo('packs')">🛒 まとめパック</button>
+  </div>
+</nav>
+
+<!-- ═══════ INTRO ═══════ -->
+<section class="intro-section">
+  <div class="section-inner">
+    <div class="intro-grid">
+      <div>
+        <h2 class="intro-title">noteの記事を読んで、<br>もっと使いたいと思ったら。</h2>
+      </div>
+      <div>
+        <p class="intro-body">
+          このページでは、survival_mamのnote記事に付録としてついているアプリと、単品・セットで購入できる教材を一覧でご紹介しています。
+        </p>
+        <div class="intro-legend">
+          <div class="legend-item"><span class="badge-note">note記事付録</span>…対応するnote記事をご購入後に利用できます</div>
+          <div class="legend-item"><span class="badge-free">無料</span>…そのままお使いいただけます</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     1. 朝・時間管理
+══════════════════════════════════════ -->
+<section class="section theme-morning fade-in" id="morning">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">Morning &amp; Time Design</span>
+      <h2 class="section-title">朝・時間管理</h2>
+      <p class="section-desc">バラバラな朝を、設計し直す。崩れても立て直せる仕組みへ。</p>
+    </div>
+    <div class="card-grid">
+
+      <!-- ハコどり -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Time Management</span>
+          <h3 class="card-name">ハコどり</h3>
+          <p class="card-desc">めんどうくさがりやでも14日でタイムマネジメントをマスターする効率化術。固定枠・バッファ・すき間タスクで時間を設計する14日プログラム。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/hakodori.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ハコどり特典 -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Time Management · Bonus</span>
+          <h3 class="card-name">ハコどり特典</h3>
+          <p class="card-desc">ハコどり14日プログラムのボーナスコンテンツ。9タブ構成で、より深く時間設計に取り組めます。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/hakodori_bonus.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ととのえ -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Morning Design · 5 Layers</span>
+          <h3 class="card-name">ととのえ（朝の設計5層）</h3>
+          <p class="card-desc">朝の10分、どこで失ってる？5つの層で朝を設計し直すアプリ。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/asa_design_5so.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 崩れても立て直せる朝 -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Morning Routine</span>
+          <h3 class="card-name">崩れても立て直せる朝</h3>
+          <p class="card-desc">毎日の設計図。感覚過敏の姉ときょうだい児の弟、両方の朝をどう回すか。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/morning_design.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10分ルーティーン -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Daily Routine</span>
+          <h3 class="card-name">１０分ルーティーン</h3>
+          <p class="card-desc">タスクに追われる朝を抜ける、10分設計。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/routine_check.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 明日の当番1行メモ -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Daily Memo</span>
+          <h3 class="card-name">明日の当番１行メモ</h3>
+          <p class="card-desc">「10分設計」の記事に付録。翌朝の準備を一行でメモしておくシンプルツール。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/tomorrow_memo.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 私の人生予約します -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Life Planning</span>
+          <h3 class="card-name">私の人生予約します</h3>
+          <p class="card-desc">自分のための時間を、先に"予約"する発想のライフデザインツール。</p>
+          <div class="card-footer">
+            <span class="badge-free">無料</span>
+            <a href="https://survivalmom.github.io/survival_mom/watashi_yoyaku.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════
+     2. 感覚過敏・きょうだい支援
+══════════════════════════════════════ -->
+<section class="section theme-sensory fade-in" id="sensory">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">Sensory · Siblings</span>
+      <h2 class="section-title">感覚過敏・きょうだい支援</h2>
+      <p class="section-desc">グレーゾーンの子と、その隣にいる子。両方を抱えて生きるための設計。</p>
+    </div>
+    <div class="card-grid">
+
+      <!-- survivalキット -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Survival Kit</span>
+          <h3 class="card-name">survivalキット</h3>
+          <p class="card-desc">「もしも」が来ても、壊れない。発達グレーの姉ときょうだい児の弟を連れて、避難所を生き延びた母の記録から生まれた防災・生存ツール。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/survival_kit.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- こころチェック -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Emotion Check</span>
+          <h3 class="card-name">こころチェック</h3>
+          <p class="card-desc">不登校を経験した子の中学受験「また壊れないか」という恐怖を抱えながら前に進む親のための心の状態設計ツール。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/kokocheck.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nowa -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Self Check</span>
+          <h3 class="card-name">Nowa</h3>
+          <p class="card-desc">怒鳴った後、ひとりで泣いたことがある。そんな私が作ったアプリ。親自身の感情状態を記録・確認するツール。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/nowa.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ママlog -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Stress Log</span>
+          <h3 class="card-name">ママlog</h3>
+          <p class="card-desc">子育ても仕事も中途半端…と感じるあなたへ。焦らず整える"私のペース"の見つけ方。自分の感情・疲労を記録するログアプリ。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/mamalog.html" class="btn btn-primary" target="_blank">本編を開く</a>
+            <a href="https://survivalmom.github.io/survival_mom/mamalog.trial.html" class="btn btn-outline" target="_blank">体験版</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════
+     3. コミュニケーション
+══════════════════════════════════════ -->
+<section class="section theme-comm fade-in" id="comm">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">Communication</span>
+      <h2 class="section-title">コミュニケーション</h2>
+      <p class="section-desc">「察して」に疲れた。夫へ、義母へ、言葉にするための道具。</p>
+    </div>
+    <div class="card-grid">
+
+      <!-- つたえる -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Partner Communication</span>
+          <h3 class="card-name">つたえる</h3>
+          <p class="card-desc">「言わなくてもわかるでしょ」を捨てたら、夫が育児チームメイトに変わった。伝え方の4段階フレームワーク搭載アプリ。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/tsutaeru.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- まごころ翻訳機（義母版） -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Translation Tool</span>
+          <h3 class="card-name">まごころ翻訳機（義母版）</h3>
+          <p class="card-desc">義母に「甘やかしすぎ」と言われた帰り道。私は間違っていなかった。義母の言葉を"本当の意味"に翻訳するツール。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/magokoro-app.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- まごころ翻訳機（夫版） -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Translation Tool</span>
+          <h3 class="card-name">まごころ翻訳機（夫版）</h3>
+          <p class="card-desc">「普通級か、支援級か」答えが出ないまま、入学式を迎えた私へ。夫の言葉を翻訳して、本音を引き出すツール。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/magokoro_otto.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 夫との再契約ツールキット -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Partner Contract</span>
+          <h3 class="card-name">夫との再契約ツールキット</h3>
+          <p class="card-desc">夫の「俺は稼いでる」を無効化する。不登校・凸凹姉弟をチームで育てるための、家庭内再契約マニュアル。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/saikeiyaku.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- つながりログ -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">School Meeting Log</span>
+          <h3 class="card-name">つながりログ</h3>
+          <p class="card-desc">面談のたびに、言葉が出なくなる。先生との面談・やりとりを記録・整理するためのコミュニケーションログ。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/tsunagari_log_v2.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════
+     4. 学校・不登校サポート
+══════════════════════════════════════ -->
+<section class="section theme-school fade-in" id="school">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">School · Futoukou</span>
+      <h2 class="section-title">学校・不登校サポート</h2>
+      <p class="section-desc">「学校行かない」は絶望じゃない。でも、親には設計が必要だ。</p>
+    </div>
+    <div class="card-grid">
+
+      <!-- 道具箱01 -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Kindergarten Support</span>
+          <h3 class="card-name">道具箱01</h3>
+          <p class="card-desc">幼稚園の登園渋り、3ヶ月、毎朝壊れ続けた記録。登園渋りへの対応ツールキット。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/dougubako01.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 友達作り応援チェックシート -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Friend Building</span>
+          <h3 class="card-name">友達作り応援チェックシート</h3>
+          <p class="card-desc">入学後に「一人ぼっち」と泣いた我が子が、14日で友達と給食を食べられるようになった3ステップ。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/tomodachi-check.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- なみだノート・学校メモ -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">School Memo</span>
+          <h3 class="card-name">なみだノート / 学校メモ</h3>
+          <p class="card-desc">学校からの電話が怖いままでいい。怖くても動けるメモを、3枚だけ作っておく。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/school-memo-app.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 不登校サポート実践ツール集 -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Futoukou Support</span>
+          <h3 class="card-name">不登校サポート実践ツール集</h3>
+          <p class="card-desc">「学校行かない」は絶望じゃない。不登校の息子と母が笑顔を取り戻すまでの「緊急メンテナンス」マニュアル。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/futoukou.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 親子で作る受験戦略ツールキット -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Exam Prep</span>
+          <h3 class="card-name">親子で作る受験戦略ツールキット</h3>
+          <p class="card-desc">中学受験の宿題地獄から脱出。塾に振り回されない親の戦略マニュアル。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/zyuku.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 合格後の地獄を覚悟する実践ツール -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Post-Exam Support</span>
+          <h3 class="card-name">合格後の地獄を覚悟する実践ツール</h3>
+          <p class="card-desc">中学受験後の不登校を防ぐ。進学校で親子が潰れないための3つの「生存戦略」。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/goukakugo.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- もう、学校やめた。4点セット -->
+      <div class="card" style="grid-column: 1 / -1; background: #f7f3ff; border-color: rgba(122,95,160,0.2);">
+        <div class="card-accent" style="background: linear-gradient(90deg, #7a5fa0, var(--dusty-rose));"></div>
+        <div class="card-body">
+          <span class="card-label" style="color:#7a5fa0;">Article Bundle · もう、学校やめた。</span>
+          <h3 class="card-name">才能発掘シート・学校連携テンプレート・関心ごと分離マトリクス・問題→データ変換アプリ</h3>
+          <p class="card-desc">「もう、学校やめた。」記事の付録4点セット。それぞれのアプリを個別に開けます。</p>
+          <div class="card-footer" style="flex-wrap:wrap;gap:8px;">
+            <a href="https://survivalmom.github.io/survival_mom/sainou.html" class="btn btn-ghost" target="_blank">才能発掘シート</a>
+            <a href="https://survivalmom.github.io/survival_mom/gakkou.html" class="btn btn-ghost" target="_blank">学校連携テンプレート</a>
+            <a href="https://survivalmom.github.io/survival_mom/mental.html" class="btn btn-ghost" target="_blank">関心ごと分離マトリクス</a>
+            <a href="https://survivalmom.github.io/survival_mom/moadai.html" class="btn btn-ghost" target="_blank">問題→データ変換</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════
+     5. 子どもの自走支援
+══════════════════════════════════════ -->
+<section class="section theme-quest fade-in" id="quest">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">Child Independence</span>
+      <h2 class="section-title">子どもの自走支援</h2>
+      <p class="section-desc">放置で変える、という戦略。自分で動ける子を育てる仕組みへ。</p>
+    </div>
+
+    <!-- ライフクエストボードシリーズ見出し -->
+    <p style="font-size:11px;letter-spacing:0.2em;color:#a07a20;text-transform:uppercase;margin-bottom:16px;">ライフクエストボード シリーズ — note記事付録（梅・竹・松）</p>
+    <div class="card-grid" style="margin-bottom:32px;">
+
+      <!-- 今日の大ぼうけん（梅版） -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Quest Starter · 梅版</span>
+          <h3 class="card-name">今日の大ぼうけん</h3>
+          <p class="card-desc">自走の正解【梅版】。Success Cycle Starterとも呼ばれる入門版。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/success.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 冒険者の地図（竹版） -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Quest Standard · 竹版</span>
+          <h3 class="card-name">冒険者の地図</h3>
+          <p class="card-desc">自走の正解【竹版】。子どもが自分で進む地図を描くインタラクティブなアプリ。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/map.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ライフクエストボード premium（松版） -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Quest Premium · 松版</span>
+          <h3 class="card-name">ライフクエストボード premium</h3>
+          <p class="card-desc">自走の正解【松版】。完全版のゲーミフィケーション自走支援アプリ。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/quest_premium.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- その他の自走支援ツール -->
+    <div class="card-grid">
+
+      <!-- 母親が「放置」できる家庭内自動化チェックリスト -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Automation Checklist</span>
+          <h3 class="card-name">母親が「放置」できる<br>家庭内自動化チェックリスト</h3>
+          <p class="card-desc">深夜1時、一人ですべてを抱え込む、鏡の中のあなたへ。家庭内の仕組み化を設計するチェックリスト。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/checklist.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 凸凹親子の生存戦略ジェネレーター -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Strategy Generator</span>
+          <h3 class="card-name">凸凹親子の生存戦略ジェネレーター</h3>
+          <p class="card-desc">診断書で泣いた私が、教科書を捨てて見つけた「凸凹脳の環境ハック」実験録。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/torisetsu.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 戦略マスターアプリ -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Master Strategy</span>
+          <h3 class="card-name">戦略マスターアプリ</h3>
+          <p class="card-desc">子どもの感情が安定し始めたら、次はあなたの番。次のステージの親戦略を設計するマスターツール。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/master-strategy.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 心を鎮火するシート -->
+      <div class="card">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <span class="card-label">Emotion Cooling</span>
+          <h3 class="card-name">心を鎮火するシート</h3>
+          <p class="card-desc">子どもの成績で爆発する親を、科学的に止める実験。爆発しそうな感情を落ち着かせるための設計シート。</p>
+          <div class="card-footer">
+            <span class="badge-note">note記事付録</span>
+            <a href="https://survivalmom.github.io/survival_mom/chinka.html" class="btn btn-primary" target="_blank">アプリを開く</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ══════════════════════════════════════
+     6. 記録・その他ツール
+══════════════════════════════════════ -->
+<section class="section fade-in" id="other">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag" style="background:rgba(107,143,168,0.1);color:var(--mist);">Record &amp; Others</span>
+      <h2 class="section-title" style="color:var(--mist);">記録・その他ツール</h2>
+      <p class="section-desc">感情の記録、心の整理。一人で抱え込まないための道具。</p>
+    </div>
+
+    <!-- ここログシリーズ バナー -->
+    <div class="kokolog-banner">
+      <div class="kokolog-banner-text">
+        <h3 class="kokolog-banner-title">ここログ シリーズ</h3>
+        <p class="kokolog-banner-desc">
+          462日・518エントリーの記録から生まれた感情ログツール。<br>
+          基本版（無料）・カスタム版・LP の3つをご用意しています。
+        </p>
+      </div>
+      <div class="kokolog-btns">
+        <a href="https://survivalmom.github.io/survival_mom/cocolog.html" class="btn btn-purple-primary" target="_blank">ここログ（無料）を開く</a>
+        <a href="https://survivalmom.github.io/survival_mom/kokoLog_custom.html" class="btn btn-purple" target="_blank">カスタム版</a>
+        <a href="https://survivalmom.github.io/survival_mom/kokoLog_lp.html" class="btn btn-purple" target="_blank">LP を見る</a>
+      </div>
+    </div>
+
+    <!-- チャットボット バナー -->
+    <div class="chatbot-banner">
+      <div class="chatbot-banner-text">
+        <h3 class="chatbot-banner-title">AIチャットボット「ゆぐちbot」</h3>
+        <p class="chatbot-banner-desc">
+          「普通」なんて知らない。survival_mam 憩いの場へようこそ。<br>
+          あなたの話を、ただ聞いてくれるAIがいます。
+        </p>
+      </div>
+      <a href="https://survivalmom.github.io/survival_mom/yuguchi-bot.html" class="btn" target="_blank">話しかけてみる</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PACKS — まとめパック
+══════════════════════════════════════ -->
+<section class="packs-section fade-in" id="packs">
+  <div class="section-inner">
+    <div class="section-header" style="text-align:center;max-width:600px;margin:0 auto 56px;">
+      <span class="section-tag" style="background:rgba(196,112,74,0.2);color:var(--terracotta-light);">Bundled Packs</span>
+      <h2 class="section-title" style="color:#fff;margin-top:12px;">まとめパックで、<br>まるごと手に入れる。</h2>
+      <p class="section-desc" style="color:rgba(255,255,255,0.5);">
+        テーマ別にまとめたパックなら、関連ツールをまとめて受け取れます。<br>Stripeの決済ページへ直接移動します。
+      </p>
+    </div>
+
+    <!-- パック4点 -->
+    <div class="pack-grid">
+
+      <!-- 5アプリまとめパック -->
+      <div class="pack-card pack-featured">
+        <div class="pack-badge">おすすめ</div>
+        <div class="pack-icon">📦</div>
+        <h3 class="pack-name">5アプリまとめパック<br><span>全支援ツールセット</span></h3>
+        <p class="pack-desc">survival_mamの主要5アプリを一度に。バラバラに揃えるより確実にお得なフルセット。</p>
+        <div class="pack-links">
+          <a href="https://survivalmom.github.io/survival_mom/omatome.html" class="btn pack-btn-lp" target="_blank">LP を見る</a>
+          <a href="https://buy.stripe.com/8x28wR9Vc4mmaaKe8v73G01" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+      <!-- お受験準備サポートセット -->
+      <div class="pack-card">
+        <div class="pack-icon">🎓</div>
+        <h3 class="pack-name">お受験準備<br><span>サポートセット</span></h3>
+        <p class="pack-desc">受験準備から入学後まで。塾に振り回されない親の戦略ツール一式。</p>
+        <div class="pack-links">
+          <a href="https://buy.stripe.com/9B63cxebs8CCgz81lJ73G03" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+      <!-- "できる"を育てるサポートツールセット -->
+      <div class="pack-card">
+        <div class="pack-icon">🌱</div>
+        <h3 class="pack-name">"できる"を育てる<br><span>サポートツールセット</span></h3>
+        <p class="pack-desc">子どもの自走と自己肯定感を育てるためのサポートツール一式。</p>
+        <div class="pack-links">
+          <a href="https://buy.stripe.com/6oUaEZ0kC7yygz8d4r73G00" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+      <!-- 在宅・不登校サポートツールセット -->
+      <div class="pack-card">
+        <div class="pack-icon">🏠</div>
+        <h3 class="pack-name">在宅・不登校<br><span>サポートツールセット</span></h3>
+        <p class="pack-desc">「学校行かない」に直面した親のための、在宅生活設計ツール一式。</p>
+        <div class="pack-links">
+          <a href="https://buy.stripe.com/00weVf9VcaKK4Qq6G373G02" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 単品デジタル教材 -->
+    <div style="margin-top:72px;">
+      <h3 class="digital-section-title">単品デジタル教材</h3>
+      <p class="digital-section-sub">カード・観察ノート・プロンプト集を単品でも購入できます。体験版はリンクが準備でき次第更新します。</p>
+
+      <div class="digital-grid">
+
+        <!-- ライフクエストボード Standard -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">🃏</span>
+            <div>
+              <p class="digital-name">ライフクエストボード Standard</p>
+              <p class="digital-sub">体験版あり</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://buy.stripe.com/fZu7sN5EWlaa9G6G373G08" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- 巧緻性×言語トレーニングカード -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">✏️</span>
+            <div>
+              <p class="digital-name">巧緻性×言語トレーニングカード</p>
+              <p class="digital-sub">体験版あり</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://buy.stripe.com/14A00l2sK8CC82C0hF73G07" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- スモールステップカード -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">🪜</span>
+            <div>
+              <p class="digital-name">スモールステップカード</p>
+              <p class="digital-sub">体験版あり</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://buy.stripe.com/4gMcN7aZgdWWdmW3tR73G06" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- 感覚プロファイル観察ノート -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">📓</span>
+            <div>
+              <p class="digital-name">感覚プロファイル観察ノート</p>
+              <p class="digital-sub">体験版あり</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://buy.stripe.com/cNi28t9Vcg54ciSe8v73G05" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- 対話プロンプト100 -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">💬</span>
+            <div>
+              <p class="digital-name">対話プロンプト 100</p>
+              <p class="digital-sub">体験版あり</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://buy.stripe.com/4gM8wRc3k9GGfv46G373G04" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="footer">
+  <p class="footer-brand">survival_mam</p>
+  <p>Sena Mam | <a href="https://note.com/survival_mom_lab" target="_blank">note.com/survival_mom_lab</a></p>
+  <p style="margin-top:6px;">
+    <a href="https://survivalmom.github.io/survival_mom/index.html" target="_blank">コンセプトLP</a>
+    　｜　
+    <a href="https://survivalmom.github.io/survival_mom/tokusyou.html" target="_blank">特定商取引法に基づく表記</a>
+  </p>
+</footer>
+
+<script>
+function goTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Fade-in
+const fadeObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+// Active nav
+const sectionIds = ['morning','sensory','comm','school','quest','other','packs'];
+const navBtns = document.querySelectorAll('.nav-btn');
+const navObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = sectionIds.indexOf(e.target.id);
+      navBtns.forEach((b, i) => b.classList.toggle('active', i === idx));
+    }
+  });
+}, { threshold: 0.25 });
+sectionIds.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) navObserver.observe(el);
+});
+</script>
+</body>
+</html>
