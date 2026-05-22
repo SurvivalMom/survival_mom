@@ -72,6 +72,7 @@
     position: sticky; top: 0; z-index: 100;
     background: rgba(250,247,242,0.95); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border); padding: 0 24px;
+    position: sticky; /* override */ isolation: isolate;
   }
   .nav-inner { max-width: 1080px; margin: 0 auto; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
   .nav-inner::-webkit-scrollbar { display: none; }
@@ -260,7 +261,87 @@
   .digital-btn-buy { background: var(--terracotta); color: #fff; font-size: 11px; padding: 6px 14px; border-radius: 6px; white-space: nowrap; }
   .digital-btn-trial:hover, .digital-btn-buy:hover { opacity: 0.85; }
 
-  /* ── FOOTER ── */
+  /* ── HERO CTA ── */
+  .hero-cta {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px;
+  }
+  .btn-hero-primary {
+    background: var(--terracotta); color: #fff;
+    padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    letter-spacing: 0.06em; text-decoration: none;
+    box-shadow: 0 4px 20px rgba(196,112,74,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(196,112,74,0.5); opacity: 1; }
+  .btn-hero-secondary {
+    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 14px 28px; border-radius: 8px; font-size: 13px;
+    text-decoration: none; letter-spacing: 0.06em;
+    transition: background 0.2s;
+  }
+  .btn-hero-secondary:hover { background: rgba(255,255,255,0.18); opacity: 1; }
+
+  /* ── NAV グラデーションヒント ── */
+  .nav-fade {
+    position: absolute; right: 0; top: 0; bottom: 0; width: 48px;
+    background: linear-gradient(to right, transparent, rgba(250,247,242,0.95));
+    pointer-events: none;
+  }
+  .nav-arrow {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: 14px; color: var(--terracotta); opacity: 0.6; pointer-events: none;
+    animation: nudge 1.8s ease-in-out infinite;
+  }
+  @keyframes nudge { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-50%) translateX(3px)} }
+
+  /* ── MAGAZINE BANNER ── */
+  .magazine-banner {
+    max-width: 1080px; margin: 0 auto 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1a2e1a 100%);
+    border-radius: 16px; padding: 48px 40px;
+    display: flex; gap: 32px; align-items: center; flex-wrap: wrap;
+    border: 1px solid rgba(255,255,255,0.08);
+    position: relative; overflow: hidden;
+  }
+  .magazine-banner::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(196,112,74,0.12) 0%, transparent 60%);
+  }
+  .magazine-banner-text { flex: 1; min-width: 260px; position: relative; }
+  .magazine-eyebrow {
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--warm-yellow); margin-bottom: 12px;
+  }
+  .magazine-title {
+    font-family: 'Shippori Mincho', serif; font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 500; color: #fff; line-height: 1.6; margin-bottom: 12px;
+  }
+  .magazine-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 2; }
+  .magazine-price {
+    font-size: 11px; color: rgba(255,255,255,0.4);
+    margin-top: 10px; letter-spacing: 0.05em;
+  }
+  .btn-magazine {
+    background: linear-gradient(135deg, var(--warm-yellow), #d4a840);
+    color: #1a1a1a; font-weight: 600; font-size: 13px;
+    padding: 14px 28px; border-radius: 8px; text-decoration: none;
+    white-space: nowrap; position: relative; flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(200,168,75,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-magazine:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,168,75,0.5); opacity: 1; }
+
+  /* ── PACK TOP LEAD ── */
+  .pack-top-lead {
+    text-align: center; max-width: 680px; margin: 0 auto 48px;
+    background: rgba(196,112,74,0.08); border: 1px solid rgba(196,112,74,0.2);
+    border-radius: 12px; padding: 20px 28px;
+    font-size: 13px; color: rgba(255,255,255,0.75); line-height: 2;
+  }
+  .pack-top-lead strong { color: var(--terracotta-light); }
+
+
   .footer { background: var(--navy); color: rgba(255,255,255,0.5); text-align: center; padding: 48px 24px; font-size: 12px; letter-spacing: 0.1em; }
   .footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
   .footer-brand { font-family: 'Shippori Mincho', serif; font-size: 18px; color: rgba(255,255,255,0.8); margin-bottom: 12px; letter-spacing: 0.08em; }
@@ -290,6 +371,10 @@
       そして壊れそうな私を支えるために作り続けたアプリを、<br>
       ここにまとめました。
     </p>
+    <div class="hero-cta">
+      <a href="#packs" class="btn-hero-primary" onclick="event.preventDefault();goTo('packs')">一番人気のまとめパックを見る</a>
+      <a href="#morning" class="btn-hero-secondary" onclick="event.preventDefault();goTo('morning')">ツール一覧を見る</a>
+    </div>
     <div class="hero-scroll">
       <span class="scroll-line"></span>
       scroll
@@ -301,14 +386,16 @@
 <!-- ═══════ STICKY NAV ═══════ -->
 <nav class="sticky-nav">
   <div class="nav-inner">
+    <button class="nav-btn" onclick="goTo('packs')" style="color:var(--terracotta);font-weight:500;">🛒 まとめパック</button>
     <button class="nav-btn" onclick="goTo('morning')">朝・時間管理</button>
     <button class="nav-btn" onclick="goTo('sensory')">感覚過敏・きょうだい</button>
     <button class="nav-btn" onclick="goTo('comm')">コミュニケーション</button>
     <button class="nav-btn" onclick="goTo('school')">学校・不登校</button>
     <button class="nav-btn" onclick="goTo('quest')">子どもの自走</button>
     <button class="nav-btn" onclick="goTo('other')">記録・その他</button>
-    <button class="nav-btn nav-btn-packs" onclick="goTo('packs')">🛒 まとめパック</button>
   </div>
+  <div class="nav-fade"></div>
+  <span class="nav-arrow">›</span>
 </nav>
 
 <!-- ═══════ INTRO ═══════ -->
@@ -330,6 +417,173 @@
     </div>
   </div>
 </section>
+
+<!-- ══════════════════════════════════════
+     PACKS — まとめパック（最優先表示）
+══════════════════════════════════════ -->
+<section class="packs-section fade-in" id="packs">
+  <div class="section-inner">
+    <div class="section-header" style="text-align:center;max-width:600px;margin:0 auto 32px;">
+      <span class="section-tag" style="background:rgba(196,112,74,0.2);color:var(--terracotta-light);">Bundled Packs</span>
+      <h2 class="section-title" style="color:#fff;margin-top:12px;">まとめパックで、<br>まるごと手に入れる。</h2>
+      <p class="section-desc" style="color:rgba(255,255,255,0.5);">
+        テーマ別にまとめたパックなら、関連ツールをまとめて受け取れます。<br>Stripeの決済ページへ直接移動します。
+      </p>
+    </div>
+
+    <div class="pack-top-lead">
+      どれを選べばいいか迷う方は、テーマ別にすべてが揃う<strong>「まとめパック」が一番お得で確実</strong>です。<br>
+      単品をバラバラに揃えるより、まとめて手に入れる方がシンプルに解決します。
+    </div>
+
+    <!-- パック4点 -->
+    <div class="pack-grid">
+
+      <!-- 5アプリまとめパック -->
+      <div class="pack-card pack-featured">
+        <div class="pack-badge">おすすめ</div>
+        <div class="pack-icon">📦</div>
+        <h3 class="pack-name">5アプリまとめパック<br><span>全支援ツールセット</span></h3>
+        <p class="pack-desc">全5ツールをまとめて。単体合計9,900円のところ<br><strong style="color:#fff;">7,980円（税込）▶ 1,920円お得</strong></p>
+        <p class="pack-contents">🗡️ライフクエスト　✋巧緻性カード　✅スモールステップ　📝感覚ノート　💬対話プロンプト</p>
+        <div class="pack-links">
+          <a href="https://survivalmom.github.io/survival_mom/omatome.html" class="btn pack-btn-lp" target="_blank">LP を見る</a>
+          <a href="https://buy.stripe.com/8x28wR9Vc4mmaaKe8v73G01" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+      <!-- お受験準備サポートセット -->
+      <div class="pack-card">
+        <div class="pack-icon">🎓</div>
+        <h3 class="pack-name">お受験準備<br><span>サポートセット</span></h3>
+        <p class="pack-desc">単体合計3,960円のところ<br><strong style="color:#fff;">3,480円（税込）▶ 480円お得</strong></p>
+        <p class="pack-contents">🗡️ライフクエスト　✋巧緻性カード</p>
+        <div class="pack-links">
+          <a href="https://buy.stripe.com/9B63cxebs8CCgz81lJ73G03" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+      <!-- "できる"を育てるサポートツールセット -->
+      <div class="pack-card">
+        <div class="pack-icon">🌱</div>
+        <h3 class="pack-name">"できる"を育てる<br><span>サポートツールセット</span></h3>
+        <p class="pack-desc">単体合計5,940円のところ<br><strong style="color:#fff;">4,980円（税込）▶ 960円お得</strong></p>
+        <p class="pack-contents">✅スモールステップ　📝感覚ノート　💬対話プロンプト</p>
+        <div class="pack-links">
+          <a href="https://buy.stripe.com/6oUaEZ0kC7yygz8d4r73G00" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+      <!-- 在宅・不登校サポートツールセット -->
+      <div class="pack-card">
+        <div class="pack-icon">🏠</div>
+        <h3 class="pack-name">在宅・不登校<br><span>サポートツールセット</span></h3>
+        <p class="pack-desc">単体合計5,940円のところ<br><strong style="color:#fff;">4,980円（税込）▶ 960円お得</strong></p>
+        <p class="pack-contents">🗡️ライフクエスト　✅スモールステップ　💬対話プロンプト</p>
+        <div class="pack-links">
+          <a href="https://buy.stripe.com/00weVf9VcaKK4Qq6G373G02" class="btn pack-btn-buy" target="_blank">購入する →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 単品デジタル教材 -->
+    <div style="margin-top:72px;">
+      <h3 class="digital-section-title">単品デジタル教材</h3>
+      <p class="digital-section-sub">カード・観察ノート・プロンプト集を単品でも購入できます。体験版はリンクが準備でき次第更新します。</p>
+
+      <div class="digital-grid">
+
+        <!-- ライフクエストボード Standard -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">🃏</span>
+            <div>
+              <p class="digital-name">ライフ・クエスト・ボード Standard</p>
+              <p class="digital-sub">習慣化 · ゲーミフィケーション · 意欲サポート</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://survivalmom.github.io/survival_mom/quest_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
+            <a href="https://buy.stripe.com/fZu7sN5EWlaa9G6G373G08" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- 巧緻性×言語トレーニングカード -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">✋</span>
+            <div>
+              <p class="digital-name">巧緻性×言語トレーニングカード</p>
+              <p class="digital-sub">お受験対策 · 巧緻性 · 言語発達</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://survivalmom.github.io/survival_mom/training_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
+            <a href="https://buy.stripe.com/14A00l2sK8CC82C0hF73G07" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- スモールステップカード -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">✅</span>
+            <div>
+              <p class="digital-name">スモールステップカード</p>
+              <p class="digital-sub">発達グレー · 実行機能 · 自己肯定感</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://survivalmom.github.io/survival_mom/smallstep_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
+            <a href="https://buy.stripe.com/4gMcN7aZgdWWdmW3tR73G06" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- 感覚プロファイル観察ノート -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">📝</span>
+            <div>
+              <p class="digital-name">感覚プロファイル観察ノート</p>
+              <p class="digital-sub">感覚統合 · 観察記録 · 専門家連携</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://survivalmom.github.io/survival_mom/sensory_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
+            <a href="https://buy.stripe.com/cNi28t9Vcg54ciSe8v73G05" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+        <!-- 対話プロンプト100 -->
+        <div class="digital-card">
+          <div class="digital-head">
+            <span class="digital-icon">💬</span>
+            <div>
+              <p class="digital-name">対話プロンプト 100</p>
+              <p class="digital-sub">コミュニケーション · 不登校サポート · 声かけ改善</p>
+            </div>
+          </div>
+          <div class="digital-actions">
+            <a href="https://survivalmom.github.io/survival_mom/dialog_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
+            <a href="https://buy.stripe.com/4gM8wRc3k9GGfv46G373G04" class="btn digital-btn-buy" target="_blank">購入する →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 個別ツール一覧へのブリッジ -->
+    <p style="text-align:center;margin-top:48px;font-size:13px;color:rgba(255,255,255,0.4);">
+      個別のアプリを見たい方は↓のカテゴリからどうぞ
+    </p>
+    <div style="text-align:center;margin-top:16px;">
+      <a href="#morning" class="btn pack-btn-lp" onclick="event.preventDefault();goTo('morning')" style="font-size:13px;padding:10px 24px;">アプリ一覧を見る ↓</a>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
 
 <!-- ══════════════════════════════════════
      1. 朝・時間管理
@@ -895,157 +1149,24 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════
-     PACKS — まとめパック
-══════════════════════════════════════ -->
-<section class="packs-section fade-in" id="packs">
-  <div class="section-inner">
-    <div class="section-header" style="text-align:center;max-width:600px;margin:0 auto 56px;">
-      <span class="section-tag" style="background:rgba(196,112,74,0.2);color:var(--terracotta-light);">Bundled Packs</span>
-      <h2 class="section-title" style="color:#fff;margin-top:12px;">まとめパックで、<br>まるごと手に入れる。</h2>
-      <p class="section-desc" style="color:rgba(255,255,255,0.5);">
-        テーマ別にまとめたパックなら、関連ツールをまとめて受け取れます。<br>Stripeの決済ページへ直接移動します。
+<!-- ═══════ MAGAZINE BANNER ═══════ -->
+<section style="background:var(--cream);padding:64px 24px 80px;">
+  <div class="magazine-banner">
+    <div class="magazine-banner-text">
+      <p class="magazine-eyebrow">VIP · 完全版マガジン</p>
+      <h2 class="magazine-title">ツールだけでなく、<br>survival_mamの脳内を<br>根底からインストールしたい方へ。</h2>
+      <p class="magazine-desc">
+        462日間の記録・全72記事が読み放題の「完全版マガジン」。<br>
+        単品や設計ツールを超えた、マインドごと変わる最強の武器庫です。
       </p>
+      <p class="magazine-price">note マガジン</p>
     </div>
-
-    <!-- パック4点 -->
-    <div class="pack-grid">
-
-      <!-- 5アプリまとめパック -->
-      <div class="pack-card pack-featured">
-        <div class="pack-badge">おすすめ</div>
-        <div class="pack-icon">📦</div>
-        <h3 class="pack-name">5アプリまとめパック<br><span>全支援ツールセット</span></h3>
-        <p class="pack-desc">全5ツールをまとめて。単体合計9,900円のところ<br><strong style="color:#fff;">7,980円（税込）▶ 1,920円お得</strong></p>
-        <p class="pack-contents">🗡️ライフクエスト　✋巧緻性カード　✅スモールステップ　📝感覚ノート　💬対話プロンプト</p>
-        <div class="pack-links">
-          <a href="https://survivalmom.github.io/survival_mom/omatome.html" class="btn pack-btn-lp" target="_blank">LP を見る</a>
-          <a href="https://buy.stripe.com/8x28wR9Vc4mmaaKe8v73G01" class="btn pack-btn-buy" target="_blank">購入する →</a>
-        </div>
-      </div>
-
-      <!-- お受験準備サポートセット -->
-      <div class="pack-card">
-        <div class="pack-icon">🎓</div>
-        <h3 class="pack-name">お受験準備<br><span>サポートセット</span></h3>
-        <p class="pack-desc">単体合計3,960円のところ<br><strong style="color:#fff;">3,480円（税込）▶ 480円お得</strong></p>
-        <p class="pack-contents">🗡️ライフクエスト　✋巧緻性カード</p>
-        <div class="pack-links">
-          <a href="https://buy.stripe.com/9B63cxebs8CCgz81lJ73G03" class="btn pack-btn-buy" target="_blank">購入する →</a>
-        </div>
-      </div>
-
-      <!-- "できる"を育てるサポートツールセット -->
-      <div class="pack-card">
-        <div class="pack-icon">🌱</div>
-        <h3 class="pack-name">"できる"を育てる<br><span>サポートツールセット</span></h3>
-        <p class="pack-desc">単体合計5,940円のところ<br><strong style="color:#fff;">4,980円（税込）▶ 960円お得</strong></p>
-        <p class="pack-contents">✅スモールステップ　📝感覚ノート　💬対話プロンプト</p>
-        <div class="pack-links">
-          <a href="https://buy.stripe.com/6oUaEZ0kC7yygz8d4r73G00" class="btn pack-btn-buy" target="_blank">購入する →</a>
-        </div>
-      </div>
-
-      <!-- 在宅・不登校サポートツールセット -->
-      <div class="pack-card">
-        <div class="pack-icon">🏠</div>
-        <h3 class="pack-name">在宅・不登校<br><span>サポートツールセット</span></h3>
-        <p class="pack-desc">単体合計5,940円のところ<br><strong style="color:#fff;">4,980円（税込）▶ 960円お得</strong></p>
-        <p class="pack-contents">🗡️ライフクエスト　✅スモールステップ　💬対話プロンプト</p>
-        <div class="pack-links">
-          <a href="https://buy.stripe.com/00weVf9VcaKK4Qq6G373G02" class="btn pack-btn-buy" target="_blank">購入する →</a>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- 単品デジタル教材 -->
-    <div style="margin-top:72px;">
-      <h3 class="digital-section-title">単品デジタル教材</h3>
-      <p class="digital-section-sub">カード・観察ノート・プロンプト集を単品でも購入できます。体験版はリンクが準備でき次第更新します。</p>
-
-      <div class="digital-grid">
-
-        <!-- ライフクエストボード Standard -->
-        <div class="digital-card">
-          <div class="digital-head">
-            <span class="digital-icon">🃏</span>
-            <div>
-              <p class="digital-name">ライフ・クエスト・ボード Standard</p>
-              <p class="digital-sub">習慣化 · ゲーミフィケーション · 意欲サポート</p>
-            </div>
-          </div>
-          <div class="digital-actions">
-            <a href="https://survivalmom.github.io/survival_mom/quest_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
-            <a href="https://buy.stripe.com/fZu7sN5EWlaa9G6G373G08" class="btn digital-btn-buy" target="_blank">購入する →</a>
-          </div>
-        </div>
-
-        <!-- 巧緻性×言語トレーニングカード -->
-        <div class="digital-card">
-          <div class="digital-head">
-            <span class="digital-icon">✋</span>
-            <div>
-              <p class="digital-name">巧緻性×言語トレーニングカード</p>
-              <p class="digital-sub">お受験対策 · 巧緻性 · 言語発達</p>
-            </div>
-          </div>
-          <div class="digital-actions">
-            <a href="https://survivalmom.github.io/survival_mom/training_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
-            <a href="https://buy.stripe.com/14A00l2sK8CC82C0hF73G07" class="btn digital-btn-buy" target="_blank">購入する →</a>
-          </div>
-        </div>
-
-        <!-- スモールステップカード -->
-        <div class="digital-card">
-          <div class="digital-head">
-            <span class="digital-icon">✅</span>
-            <div>
-              <p class="digital-name">スモールステップカード</p>
-              <p class="digital-sub">発達グレー · 実行機能 · 自己肯定感</p>
-            </div>
-          </div>
-          <div class="digital-actions">
-            <a href="https://survivalmom.github.io/survival_mom/smallstep_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
-            <a href="https://buy.stripe.com/4gMcN7aZgdWWdmW3tR73G06" class="btn digital-btn-buy" target="_blank">購入する →</a>
-          </div>
-        </div>
-
-        <!-- 感覚プロファイル観察ノート -->
-        <div class="digital-card">
-          <div class="digital-head">
-            <span class="digital-icon">📝</span>
-            <div>
-              <p class="digital-name">感覚プロファイル観察ノート</p>
-              <p class="digital-sub">感覚統合 · 観察記録 · 専門家連携</p>
-            </div>
-          </div>
-          <div class="digital-actions">
-            <a href="https://survivalmom.github.io/survival_mom/sensory_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
-            <a href="https://buy.stripe.com/cNi28t9Vcg54ciSe8v73G05" class="btn digital-btn-buy" target="_blank">購入する →</a>
-          </div>
-        </div>
-
-        <!-- 対話プロンプト100 -->
-        <div class="digital-card">
-          <div class="digital-head">
-            <span class="digital-icon">💬</span>
-            <div>
-              <p class="digital-name">対話プロンプト 100</p>
-              <p class="digital-sub">コミュニケーション · 不登校サポート · 声かけ改善</p>
-            </div>
-          </div>
-          <div class="digital-actions">
-            <a href="https://survivalmom.github.io/survival_mom/dialog_taiken.html" class="btn digital-btn-trial" target="_blank">体験版</a>
-            <a href="https://buy.stripe.com/4gM8wRc3k9GGfv46G373G04" class="btn digital-btn-buy" target="_blank">購入する →</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
+    <a href="https://note.com/survival_mom_lab/m/mca01528a8fad" class="btn-magazine" target="_blank">完全版マガジンを見る →</a>
   </div>
 </section>
+
+<!-- ═══════ DUMMY PACKS ANCHOR（旧位置 id 保持）→ イントロ直後に移動済み ═══════ -->
+<div id="packs-end"></div>
 
 <!-- ═══════ FOOTER ═══════ -->
 <footer class="footer">
@@ -1070,7 +1191,7 @@ const fadeObserver = new IntersectionObserver(entries => {
 document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
 
 // Active nav
-const sectionIds = ['morning','sensory','comm','school','quest','other','packs'];
+const sectionIds = ['packs','morning','sensory','comm','school','quest','other'];
 const navBtns = document.querySelectorAll('.nav-btn');
 const navObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
