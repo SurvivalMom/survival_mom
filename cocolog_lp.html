@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ここログ | 見えない離職コストを断ち切る、対話記録システム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0d1b2a;
+      --navy2:   #1a2e42;
+      --navy3:   #243d54;
+      --teal:    #1a9b8c;
+      --teal2:   #22c5b3;
+      --teal-lt: #e8f8f6;
+      --red:     #c0392b;
+      --red2:    #e74c3c;
+      --gold:    #f39c12;
+      --white:   #ffffff;
+      --off:     #f5f3ef;
+      --ink:     #1c1c1c;
+      --ink2:    #4a4a4a;
+      --ink3:    #7a7a7a;
+      --border:  rgba(255,255,255,0.1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      line-height: 1.7;
+    }
+
+    /* ══ HERO ══ */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #0a1520 0%, #0d1b2a 40%, #12253a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 80px 24px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 60%, rgba(26,155,140,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(192,57,43,0.08) 0%, transparent 60%);
+    }
+
+    .hero-inner { position: relative; max-width: 860px; }
+
+    .hero-sub {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      color: var(--teal2);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      display: block;
+    }
+
+    .hero h1 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 28px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--teal2);
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.65);
+      max-width: 560px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+
+    /* iceberg SVG */
+    .iceberg-wrap {
+      margin: 48px auto 0;
+      width: 280px;
+      opacity: 0.85;
+    }
+
+    /* ══ SECTION BASE ══ */
+    .section {
+      padding: 100px 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-dark {
+      background: var(--navy2);
+      max-width: 100%;
+      padding: 100px 24px;
+    }
+
+    .section-dark .section-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-light {
+      background: var(--off);
+      color: var(--ink);
+      max-width: 100%;
+      padding: 100px 24px;
+    }
+
+    .section-light .section-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-teal {
+      background: linear-gradient(135deg, #0f4d45, #1a6b60);
+      max-width: 100%;
+      padding: 100px 24px;
+    }
+
+    .section-teal .section-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* ══ TYPOGRAPHY ══ */
+    .label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--teal2);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .label-dark { color: var(--teal); }
+
+    h2 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    h2 em {
+      font-style: normal;
+      color: var(--teal2);
+    }
+
+    h2.dark { color: var(--ink); }
+    h2.dark em { color: var(--teal); }
+
+    .lead {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.7);
+      max-width: 680px;
+    }
+
+    .lead-dark {
+      color: var(--ink2);
+    }
+
+    /* ══ PROBLEM SECTION ══ */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 640px) {
+      .problem-grid { grid-template-columns: 1fr; }
+    }
+
+    .problem-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .problem-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .problem-card p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.75;
+    }
+
+    /* ══ LOSS SECTION ══ */
+    .loss-wrap {
+      text-align: center;
+      margin-top: 56px;
+    }
+
+    .loss-number {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 700;
+      color: var(--red2);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .loss-label {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 12px;
+    }
+
+    .loss-desc {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    .loss-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-top: 56px;
+      flex-wrap: wrap;
+    }
+
+    .loss-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      min-width: 140px;
+    }
+
+    .loss-arrow {
+      font-size: 1.4rem;
+      color: var(--red2);
+      padding: 0 8px;
+      flex-shrink: 0;
+    }
+
+    /* ══ DOMINO / CHAIN ══ */
+    .chain-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 56px;
+      position: relative;
+    }
+
+    @media (max-width: 700px) {
+      .chain-steps { grid-template-columns: 1fr 1fr; }
+    }
+
+    .chain-step {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 28px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .chain-step:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--red2);
+      font-size: 1.2rem;
+      z-index: 2;
+    }
+
+    @media (max-width: 700px) {
+      .chain-step:not(:last-child)::after { display: none; }
+    }
+
+    .chain-num {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--teal2);
+      margin-bottom: 10px;
+    }
+
+    .chain-text {
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .chain-warning {
+      margin-top: 32px;
+      background: rgba(192,57,43,0.15);
+      border: 1px solid rgba(192,57,43,0.3);
+      border-radius: 8px;
+      padding: 20px 28px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* ══ CASE STUDY ══ */
+    .timeline-wrap {
+      margin-top: 56px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 40px;
+    }
+
+    .timeline-rows { display: flex; flex-direction: column; gap: 0; }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 0;
+    }
+
+    .timeline-role {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--ink3);
+      padding: 16px 0;
+      border-right: 2px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+    }
+
+    .timeline-events {
+      display: flex;
+      align-items: center;
+      padding: 16px 24px;
+      gap: 0;
+    }
+
+    .t-event {
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: rgba(255,255,255,0.75);
+      position: relative;
+    }
+
+    .t-event.danger {
+      background: rgba(192,57,43,0.2);
+      border: 1px solid rgba(192,57,43,0.35);
+      color: #ff8a7a;
+    }
+
+    .t-connector {
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      margin: 0 8px;
+    }
+
+    .t-result {
+      margin-top: 28px;
+      text-align: center;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.4rem;
+      color: var(--red2);
+      letter-spacing: 0.05em;
+    }
+
+    /* ══ GAP TABLE ══ */
+    .gap-grid {
+      display: grid;
+      grid-template-columns: 1fr 80px 1fr;
+      gap: 0;
+      margin-top: 48px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .gap-col {
+      padding: 32px 28px;
+    }
+
+    .gap-col.left {
+      background: #edecea;
+      color: var(--ink);
+    }
+
+    .gap-col.center {
+      background: #d9d6d2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .gap-col.right {
+      background: var(--teal);
+      color: white;
+    }
+
+    .gap-col h3 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0.6;
+    }
+
+    .gap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .gap-item .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      margin-top: 7px;
+      flex-shrink: 0;
+      opacity: 0.5;
+    }
+
+    /* ══ FEATURES ══ */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    @media (max-width: 700px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 32px 28px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(26,155,140,0.4);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .feature-card p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.75;
+    }
+
+    /* ══ 3 STEPS ══ */
+    .steps-ring {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+      position: relative;
+    }
+
+    @media (max-width: 640px) {
+      .steps-ring { grid-template-columns: 1fr; }
+    }
+
+    .step-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 36px 28px;
+      text-align: center;
+      position: relative;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .step-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--teal2);
+    }
+
+    .step-card p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.75;
+    }
+
+    /* ══ COMPARISON TABLE ══ */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 48px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .compare-table th {
+      padding: 18px 24px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    .compare-table th:first-child { text-align: left; background: #2a3a4a; }
+    .compare-table th.col-old { background: #3a3a3a; color: rgba(255,255,255,0.6); }
+    .compare-table th.col-new { background: var(--teal); color: white; }
+
+    .compare-table td {
+      padding: 16px 24px;
+      font-size: 0.88rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .compare-table tr td:first-child {
+      background: rgba(255,255,255,0.03);
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .compare-table tr td:nth-child(2) {
+      background: rgba(255,255,255,0.01);
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+    }
+
+    .compare-table tr td:nth-child(3) {
+      background: rgba(26,155,140,0.07);
+      color: rgba(255,255,255,0.85);
+      text-align: center;
+    }
+
+    .compare-table tr:last-child td:nth-child(2) { color: var(--red2); font-weight: 700; }
+    .compare-table tr:last-child td:nth-child(3) { color: var(--teal2); font-weight: 700; }
+
+    /* ══ SAFETY POINTS ══ */
+    .safety-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 640px) {
+      .safety-grid { grid-template-columns: 1fr; }
+    }
+
+    .safety-card {
+      text-align: center;
+      padding: 36px 24px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    .safety-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .safety-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .safety-card p {
+      font-size: 0.82rem;
+      color: var(--ink2);
+      line-height: 1.75;
+    }
+
+    /* ══ CTA ══ */
+    .cta-section {
+      background: linear-gradient(160deg, #0a1e1c 0%, #0d2a26 50%, #0f1e18 100%);
+      padding: 120px 24px;
+      text-align: center;
+    }
+
+    .cta-inner { max-width: 720px; margin: 0 auto; }
+
+    .cta-section h2 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 24px;
+    }
+
+    .cta-section p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.85;
+      margin-bottom: 48px;
+    }
+
+    .cta-checks {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+      max-width: 480px;
+      margin: 0 auto 48px;
+    }
+
+    .cta-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+    }
+
+    .cta-check-icon {
+      width: 22px;
+      height: 22px;
+      background: var(--teal);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: white;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .btn-cta {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--teal), #14c4b2);
+      color: white;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 20px 56px;
+      border-radius: 100px;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      box-shadow: 0 8px 32px rgba(26,155,140,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(26,155,140,0.55);
+    }
+
+    /* ══ DIVIDER ══ */
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* ══ FADE IN ══ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner fade-in">
+    <span class="hero-sub">データ駆動型対話システム</span>
+    <h1>見えない離職コストを断ち切り、<br><em>組織の基盤を守る</em></h1>
+    <p class="hero-desc">対話記録システム『ここログ』導入のご提案</p>
+
+    <!-- Iceberg SVG -->
+    <div class="iceberg-wrap">
+      <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+        <!-- water line -->
+        <line x1="0" y1="140" x2="280" y2="140" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+        <!-- above water (light) -->
+        <polygon points="140,20 180,140 100,140" fill="rgba(200,220,240,0.85)"/>
+        <!-- below water (dark red) -->
+        <polygon points="100,140 180,140 220,300 60,300" fill="rgba(160,40,40,0.45)"/>
+        <polygon points="100,140 180,140 220,300 60,300" fill="none" stroke="rgba(192,57,43,0.3)" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROBLEM 1 ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label">The Problem</span>
+      <h2>「また１人、辞めてしまいました…」</h2>
+      <p class="lead">現場からこの報告を受けるたび、言葉にできない疲労感が蔓延します。<br>この状況は、一部の事業所の問題ではありません。<br>全国の介護事業所で日々起きている、<strong style="color:white">組織構造上のシステミック・リスク</strong>です。</p>
+    </div>
+
+    <div class="problem-grid fade-in">
+      <div class="problem-card">
+        <h3>🔇 言葉にされないSOS</h3>
+        <p>「大丈夫です」と答えながら、内側では限界が近づいている。その声を、私たちは見落とし続けています。</p>
+      </div>
+      <div class="problem-card">
+        <h3>😰 関わり方が分からない</h3>
+        <p>どこまで踏み込めばいいか分からない。声をかけたいのに、言葉が出てこない。そんなリーダーが現場を支えています。</p>
+      </div>
+      <div class="problem-card">
+        <h3>⏰ 事後対応の繰り返し</h3>
+        <p>退職相談が来てから動き出す。でもその時にはもう遅い。予兆は必ずあった、気づけなかっただけで。</p>
+      </div>
+      <div class="problem-card">
+        <h3>📊 感覚頼りのマネジメント</h3>
+        <p>経験と勘に頼ったフォローは、担当者によってばらつきが出る。組織の均質なケアが実現できません。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LOSS ══ -->
+<section style="background:#0a1118; padding:100px 24px;">
+  <div style="max-width:1000px; margin:0 auto;">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label">Hidden Cost</span>
+      <h2>1人の離職がもたらす「見えない損失」</h2>
+    </div>
+    <div class="loss-wrap fade-in">
+      <div class="loss-number">¥100万<span style="font-size:0.5em">以上</span></div>
+      <p class="loss-label">1人の離職でかかるコスト</p>
+      <p class="loss-desc">採用広告費 ＋ 研修人件費 ＋ 現場の調整コスト。新人1人あたり少なくとも90万円以上の教育・定着コストが発生。</p>
+    </div>
+
+    <div class="loss-flow fade-in" style="margin-top:48px; gap:8px;">
+      <div class="loss-item">📢<br>採用広告費</div>
+      <div class="loss-arrow">＋</div>
+      <div class="loss-item">👥<br>研修人件費</div>
+      <div class="loss-arrow">＋</div>
+      <div class="loss-item">🔄<br>現場の調整コスト</div>
+      <div class="loss-arrow">＝</div>
+      <div class="loss-item" style="background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.4); color:#ff8a7a;">💸<br><strong>100万円超の損失</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHAIN ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label">Negative Chain</span>
+      <h2>放置された損失が引き起こす「<em>負の連鎖</em>」</h2>
+    </div>
+    <div class="chain-steps fade-in">
+      <div class="chain-step">
+        <div class="chain-num">STEP 1</div>
+        <div class="chain-text">1人の離職</div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-num">STEP 2</div>
+        <div class="chain-text">残されたスタッフの疲弊・穴埋め</div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-num">STEP 3</div>
+        <div class="chain-text">チームの分断と連鎖的な離職</div>
+      </div>
+      <div class="chain-step">
+        <div class="chain-num">STEP 4</div>
+        <div class="chain-text">採用の難航と経営の不安定化</div>
+      </div>
+    </div>
+    <div class="chain-warning fade-in">
+      最悪の場合、事業所の継続そのものが危うくなります。<br>この連鎖を、ここで断ち切らなければなりません。
+    </div>
+  </div>
+</section>
+
+<!-- ══ CASE STUDY ══ -->
+<section style="background:#111a24; padding:100px 24px;">
+  <div style="max-width:1000px; margin:0 auto;">
+    <div class="fade-in">
+      <span class="label">Case Study</span>
+      <h2>「突然」の退職はなぜ起きるのか？</h2>
+      <p class="lead" style="margin-top:8px;">時短ママのケース ── 管理者の視点と本人の真実</p>
+    </div>
+    <div class="timeline-wrap fade-in">
+      <div style="display:flex; flex-direction:column; gap:0;">
+        <!-- 管理者の視点 -->
+        <div style="display:grid; grid-template-columns: 110px 1fr; border-bottom: 1px solid rgba(255,255,255,0.06);">
+          <div style="padding:20px 16px; border-right:2px solid rgba(255,255,255,0.1); font-size:0.72rem; font-weight:700; letter-spacing:0.1em; color:rgba(255,255,255,0.45); display:flex; align-items:center;">管理者<br>の視点</div>
+          <div style="display:flex; align-items:center; padding:20px 24px; gap:8px; flex-wrap:wrap;">
+            <div class="t-event">「大丈夫です」と言っていた</div>
+            <div class="t-connector" style="min-width:24px;"></div>
+            <div class="t-event">特に不満は聞いていない</div>
+            <div class="t-connector" style="min-width:24px;"></div>
+            <div class="t-event">「問題ないと思っていた」</div>
+          </div>
+        </div>
+        <!-- 本人の真実 -->
+        <div style="display:grid; grid-template-columns: 110px 1fr;">
+          <div style="padding:20px 16px; border-right:2px solid rgba(255,255,255,0.1); font-size:0.72rem; font-weight:700; letter-spacing:0.1em; color:rgba(255,255,255,0.45); display:flex; align-items:center;">本人の<br>真実</div>
+          <div style="display:flex; align-items:center; padding:20px 24px; gap:8px; flex-wrap:wrap;">
+            <div class="t-event">時短復帰、周囲に気を遣う</div>
+            <div class="t-connector" style="min-width:24px;"></div>
+            <div class="t-event">申し訳なさから本音を言えない</div>
+            <div class="t-connector" style="min-width:24px;"></div>
+            <div class="t-event danger">限界を迎え、笑顔が減る</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-result">→ 数週間後、突然の退職相談。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GAP ══ -->
+<section class="section-light">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label dark-label" style="color:var(--teal);">Management Gap</span>
+      <h2 class="dark">従来の「感覚に頼るマネジメント」の<em>限界</em></h2>
+    </div>
+    <div class="gap-grid fade-in">
+      <div class="gap-col left">
+        <h3>管理者が見ているもの</h3>
+        <div class="gap-item"><span class="dot"></span>表面的な笑顔</div>
+        <div class="gap-item"><span class="dot"></span>業務の完了</div>
+        <div class="gap-item"><span class="dot"></span>「大丈夫です」という言葉</div>
+      </div>
+      <div class="gap-col center">🔍</div>
+      <div class="gap-col right">
+        <h3>実際に見落としているもの</h3>
+        <div class="gap-item"><span class="dot"></span>溜まった疲労</div>
+        <div class="gap-item"><span class="dot"></span>自己犠牲</div>
+        <div class="gap-item"><span class="dot"></span>孤立感、SOSのサイン</div>
+      </div>
+    </div>
+    <p class="lead-dark fade-in" style="margin-top:32px; font-size:0.9rem; background:#e8f8f6; padding:20px 24px; border-radius:10px; color:#1a5a52; border-left:4px solid var(--teal);">
+      離職は「突然」起きるのではありません。単に、私たちがそのサインを「察知できていない」だけなのです。主観や感覚への依存からの脱却が急務です。
+    </p>
+  </div>
+</section>
+
+<!-- ══ SOLUTION ══ -->
+<section style="background: linear-gradient(160deg, #0d1f1d 0%, #0f2a26 100%); padding:100px 24px;">
+  <div style="max-width:1000px; margin:0 auto;">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label">Solution</span>
+      <h2 style="text-align:center;">見えないSOSを<em>可視化</em>するレーダー機能<br>対話記録システム『ここログ』</h2>
+    </div>
+    <div class="features-grid fade-in">
+      <div class="feature-card">
+        <span class="feature-icon">📡</span>
+        <h3>主観からデータへ</h3>
+        <p>コンディションタグや推移データで、隠れたリスクを客観的に早期発見。感覚ではなく記録が教えてくれます。</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔗</span>
+        <h3>属人化の解消</h3>
+        <p>AIヒント機能により、全てのリーダーが質の高いフォローを実現。ベテランの感覚を、システムが補います。</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🛡️</span>
+        <h3>離職の防止</h3>
+        <p>超過アラートやタイムライン機能で事前介入。負の連鎖を未然に防ぐ、組織の防波堤として機能します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 3 STEPS ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label">How It Works</span>
+      <h2 style="text-align:center;">『ここログ』が実現する<br>定着への<em>3ステップ</em></h2>
+    </div>
+    <div class="steps-ring fade-in">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>察知</h3>
+        <p>言葉にされない疲労や負荷をデータとして記録・可視化。状況タグで客観的な記録を積み上げます。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>支援</h3>
+        <p>状態の推移をグラフで追い、適切なタイミングで介入。タイムライン表示で変化を一目で把握できます。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>定着</h3>
+        <p>次回の面談用ポジティブメモを残し、承認欲求を満たし定着へ繋げます。記録が関係を育てます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AI HINT ══ -->
+<section style="background:#0a1620; padding:100px 24px;">
+  <div style="max-width:1000px; margin:0 auto;">
+    <div class="fade-in">
+      <span class="label">AI Feature</span>
+      <h2>面談スキルのばらつきを補完する<br>「<em>AIヒント</em>」機能</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-top:48px;" class="fade-in">
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:36px 32px;">
+        <p style="font-size:1rem; color:rgba(255,255,255,0.7); line-height:1.8; margin-bottom:0;">
+          「SOSには気づいたが、<br>どう声をかければいいか分からない」
+        </p>
+        <p style="margin-top:20px; font-size:0.8rem; color:rgba(255,255,255,0.35);">← 経験の浅いリーダーが直面する壁</p>
+      </div>
+      <div style="background:rgba(26,155,140,0.1); border:1px solid rgba(26,155,140,0.25); border-radius:14px; padding:36px 32px;">
+        <div style="font-size:0.7rem; font-weight:700; letter-spacing:0.15em; color:var(--teal2); margin-bottom:12px;">AI HINT</div>
+        <p style="font-size:0.88rem; color:rgba(255,255,255,0.75); line-height:1.8;">
+          相手の状況（タグや表情）に基づき、最適な声かけのヒントをAIが自動提示。経験の浅いリーダーでも、ベテランと同等の心理的安全性に配慮した対話が可能に。
+        </p>
+      </div>
+    </div>
+    <p style="margin-top:32px; font-size:1rem; font-weight:700; color:rgba(255,255,255,0.8); text-align:center;" class="fade-in">マネジメント品質の均一化と、リーダー自身の心理的負担の軽減。</p>
+  </div>
+</section>
+
+<!-- ══ SAFETY ══ -->
+<section class="section-light">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label" style="color:var(--teal);">Security & Ease</span>
+      <h2 class="dark">法人本部が求める<br>「高い安全性」と「<em>導入の容易さ</em>」</h2>
+    </div>
+    <div class="safety-grid fade-in">
+      <div class="safety-card">
+        <span class="safety-icon">🔒</span>
+        <h3>完全ローカル保存<br>（データ保護）</h3>
+        <p>すべて端末（ブラウザ）に保存。外部サーバーへの送信は一切なし。個人情報漏洩リスクを極小化。</p>
+      </div>
+      <div class="safety-card">
+        <span class="safety-icon">💻</span>
+        <h3>インフラ投資ゼロ</h3>
+        <p>ブラウザベースで動作。新たなシステム構築や高額なサーバー費用は不要。即日導入が可能です。</p>
+      </div>
+      <div class="safety-card">
+        <span class="safety-icon">📊</span>
+        <h3>簡単なデータ<br>バックアップ</h3>
+        <p>全データをCSVで書き出し可能。Excelでの集計や本部でのマクロ分析にも容易に連携。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARE ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label">Paradigm Shift</span>
+      <h2>マネジメントの<em>パラダイムシフト</em></h2>
+    </div>
+    <div class="fade-in">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="col-old">従来</th>
+            <th class="col-new">ここログ導入後</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SOSの察知</td>
+            <td>本人の申告や表面的な態度に依存（見落とし多発）</td>
+            <td>コンディションタグと推移データで客観的に可視化</td>
+          </tr>
+          <tr>
+            <td>リーダーの負担</td>
+            <td>個人の経験と勘に依存、心理的プレッシャー大</td>
+            <td>AIヒントと記録機能により、対話の質をシステムが補助</td>
+          </tr>
+          <tr>
+            <td>アクション</td>
+            <td>問題が起きてから（退職相談後）の事後対応</td>
+            <td>超過アラートやタイムラインによる事前介入</td>
+          </tr>
+          <tr>
+            <td>最終的な結果</td>
+            <td>突然の離職、100万円超の損失、負の連鎖</td>
+            <td>スタッフの定着、採用・育成コストの劇的な削減</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="cta-inner fade-in">
+    <h2>現場の悲鳴をデータに変え、<br><em style="color:var(--teal2)">100万円の損失を防ぐ</em></h2>
+    <div class="cta-checks">
+      <div class="cta-check">
+        <div class="cta-check-icon">✓</div>
+        <span>「大丈夫です」の裏にある本当のSOSを、もう見落とさない。</span>
+      </div>
+      <div class="cta-check">
+        <div class="cta-check-icon">✓</div>
+        <span>1人の離職から始まる「負の連鎖」を、確実なデータと対話で断ち切る。</span>
+      </div>
+    </div>
+    <p>持続可能な組織運営のため、<br>『ここログ』の全社導入をご検討ください。</p>
+    <a href="#" class="btn-cta">法人プランの詳細・お問い合わせ</a>
+  </div>
+</section>
+
+<script>
+  // fade-in on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

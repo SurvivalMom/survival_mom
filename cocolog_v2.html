@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ここログ | 対話記録システム</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════ Design Tokens ══════════ */
+    :root {
+      --bg:         #f4f3f0;
+      --bg2:        #ebe9e4;
+      --surface:    #ffffff;
+      --surface2:   #faf9f7;
+
+      --forest:     #2d4a3e;
+      --forest2:    #3d6452;
+      --forest3:    #4e8068;
+      --forest-lt:  #d4e8df;
+      --forest-xl:  #eef6f2;
+
+      --amber:      #c8922a;
+      --amber2:     #e8b050;
+      --amber-lt:   #fdf3e0;
+      --amber-xl:   #fffbf3;
+
+      --coral:      #c85a4a;
+      --coral-lt:   #fde8e5;
+
+      --slate:      #6b7a8d;
+      --slate2:     #8a9ab0;
+      --slate-lt:   #edf1f5;
+
+      --violet:     #7c5cbf;
+      --violet-lt:  #f0eaf8;
+
+      --rose:       #b85c8a;
+      --rose-lt:    #fce8f3;
+
+      --ink:        #1c2420;
+      --ink2:       #3a4840;
+      --ink3:       #6a7870;
+      --ink4:       #a0aca8;
+
+      --border:     rgba(28,36,32,0.10);
+      --border2:    rgba(28,36,32,0.06);
+
+      --shadow-sm:  0 1px 3px rgba(28,36,32,0.07);
+      --shadow:     0 4px 20px rgba(28,36,32,0.09), 0 1px 4px rgba(28,36,32,0.05);
+      --shadow-lg:  0 12px 48px rgba(28,36,32,0.12), 0 4px 14px rgba(28,36,32,0.06);
+      --shadow-xl:  0 24px 80px rgba(28,36,32,0.16), 0 8px 24px rgba(28,36,32,0.08);
+
+      --r-xl: 20px;
+      --r-lg: 14px;
+      --r-md: 9px;
+      --r-sm: 5px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', 'Sora', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--ink);
+      line-height: 1.75;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 0% 0%,    rgba(45,74,62,0.07), transparent 55%),
+        radial-gradient(ellipse 50% 60% at 100% 80%,  rgba(200,146,42,0.06), transparent 55%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    /* ══════════ パスワード画面 ══════════ */
+    #pw-screen {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      background: var(--forest);
+      transition: opacity 0.6s ease, visibility 0.6s;
+    }
+    #pw-screen::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 30%, rgba(78,128,104,0.3), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(200,146,42,0.15), transparent 55%);
+    }
+    #pw-screen.hide { opacity: 0; visibility: hidden; }
+
+    .pw-card {
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: var(--r-xl);
+      padding: 48px 40px 44px;
+      max-width: 400px; width: 100%;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .pw-logo {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--forest3), var(--forest2));
+      border: 1.5px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin: 0 auto 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .pw-title { font-family: 'Noto Serif JP', serif; font-size: 1.5rem; font-weight: 700; color: rgba(255,255,255,0.95); margin-bottom: 4px; letter-spacing: 0.04em; }
+    .pw-subtitle { font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 36px; }
+    .pw-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); display: block; text-align: left; margin-bottom: 8px; }
+    .pw-input {
+      width: 100%; padding: 14px 18px;
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.16);
+      border-radius: var(--r-md); font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1rem; color: rgba(255,255,255,0.9); outline: none;
+      text-align: center; letter-spacing: 0.18em;
+      transition: border-color 0.2s, background 0.2s; margin-bottom: 14px;
+    }
+    .pw-input:focus  { border-color: var(--amber2); background: rgba(255,255,255,0.12); }
+    .pw-input.error  { border-color: #f87171; animation: shake 0.35s; }
+    .pw-input::placeholder { color: rgba(255,255,255,0.25); letter-spacing: 0.05em; }
+    .pw-btn {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--amber), var(--amber2));
+      color: var(--forest); border: none; border-radius: var(--r-md);
+      font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.06em; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(200,146,42,0.35);
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    }
+    .pw-btn:hover  { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(200,146,42,0.4); }
+    .pw-btn:active { transform: translateY(1px); opacity: 0.9; }
+    .pw-error { margin-top: 12px; font-size: 0.78rem; color: #fca5a5; min-height: 18px; }
+
+    /* ══════════ App Shell ══════════ */
+    #app {
+      position: relative; z-index: 1;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.55s ease 0.1s, transform 0.55s ease 0.1s;
+    }
+    #app.visible { opacity: 1; transform: translateY(0); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--forest);
+      min-height: 100vh;
+      padding: 32px 20px;
+      position: sticky; top: 0; height: 100vh;
+      overflow-y: auto; scrollbar-width: none;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 36px; padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-logo-icon {
+      width: 40px; height: 40px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--forest3), var(--amber));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .sidebar-logo-name { font-family: 'Noto Serif JP', serif; font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.92); letter-spacing: 0.06em; }
+    .sidebar-logo-sub  { font-size: 0.6rem; color: rgba(255,255,255,0.38); letter-spacing: 0.18em; text-transform: uppercase; }
+
+    .sidebar-section-label {
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      margin-bottom: 8px; margin-top: 24px; padding-left: 4px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: var(--r-md);
+      cursor: pointer; color: rgba(255,255,255,0.55);
+      font-size: 0.82rem; font-weight: 500;
+      transition: background 0.15s, color 0.15s; margin-bottom: 2px;
+    }
+    .nav-item:hover  { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+    .nav-item.active { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.95); }
+    .nav-item-icon { font-size: 0.95rem; width: 20px; text-align: center; flex-shrink: 0; }
+
+    /* セルフケアボタン（サイドバー下部） */
+    .selfcare-btn {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      background: linear-gradient(135deg, rgba(124,92,191,0.25), rgba(184,92,138,0.2));
+      border: 1px solid rgba(124,92,191,0.3);
+      cursor: pointer;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .selfcare-btn:hover { background: linear-gradient(135deg, rgba(124,92,191,0.4), rgba(184,92,138,0.3)); border-color: rgba(124,92,191,0.5); }
+    .selfcare-pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #c084fc; flex-shrink: 0;
+      animation: pulse-dot 2s infinite;
+    }
+
+    .sidebar-user {
+      margin-top: auto; padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-user-row { display: flex; align-items: center; gap: 10px; padding: 10px 4px; }
+    .sidebar-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--forest3), var(--amber));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700; color: white; flex-shrink: 0;
+    }
+    .sidebar-username { font-size: 0.82rem; color: rgba(255,255,255,0.75); font-weight: 500; }
+    .sidebar-role     { font-size: 0.62rem; color: rgba(255,255,255,0.35); }
+    .logout-btn {
+      width: 100%; margin-top: 10px; padding: 9px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--r-md); color: rgba(255,255,255,0.45);
+      font-size: 0.75rem; font-weight: 600; cursor: pointer;
+      font-family: 'Noto Sans JP', sans-serif;
+      transition: background 0.15s, color 0.15s; letter-spacing: 0.06em;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.7); }
+
+    /* ── Main ── */
+    .main { padding: 36px 36px 80px; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+    .page-eyebrow { font-family: 'Sora', sans-serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--forest3); margin-bottom: 6px; }
+    .page-title   { font-family: 'Noto Serif JP', serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); }
+
+    /* ── ログイン画面 ── */
+    #loginView { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+    .login-card {
+      background: var(--surface); border-radius: var(--r-xl);
+      border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+      padding: 40px 36px; max-width: 400px; width: 100%;
+    }
+    .login-card-title { font-family: 'Noto Serif JP', serif; font-size: 1.15rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .login-card-sub { font-size: 0.78rem; color: var(--ink3); margin-bottom: 28px; }
+
+    .guide-banner {
+      background: var(--amber-xl); border: 1px solid rgba(200,146,42,0.3);
+      border-left: 4px solid var(--amber); border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 24px;
+    }
+    .guide-banner-title { font-size: 0.85rem; font-weight: 700; color: var(--amber); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .guide-banner-text  { font-size: 0.78rem; color: var(--ink2); line-height: 1.7; }
+    .guide-banner-check { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.78rem; color: var(--ink3); cursor: pointer; }
+
+    /* ── フォームカード ── */
+    .form-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); box-shadow: var(--shadow);
+      overflow: hidden; margin-bottom: 24px;
+    }
+    .form-card-header { padding: 20px 26px 16px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; gap: 12px; }
+    .form-card-icon { width: 36px; height: 36px; border-radius: var(--r-sm); background: var(--forest-xl); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .form-card-title { font-size: 0.92rem; font-weight: 700; color: var(--ink); }
+    .form-card-sub   { font-size: 0.72rem; color: var(--ink3); margin-top: 1px; }
+    .form-card-body  { padding: 24px 26px; }
+
+    .field { margin-bottom: 20px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .f-label { font-family: 'Sora', sans-serif; font-size: 0.63rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); display: block; margin-bottom: 7px; }
+    .f-required { color: var(--coral); margin-left: 4px; }
+
+    .f-input, .f-select, .f-textarea {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-family: 'Noto Sans JP', sans-serif; font-size: 0.88rem; color: var(--ink);
+      background: var(--surface2); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .f-input:focus, .f-select:focus, .f-textarea:focus {
+      border-color: var(--forest3); box-shadow: 0 0 0 3px rgba(78,128,104,0.12); background: var(--surface);
+    }
+    .f-textarea { resize: vertical; min-height: 90px; line-height: 1.65; }
+
+    /* タグ選択 ── NEW ② */
+    .tag-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag-btn {
+      padding: 6px 13px; border-radius: 99px;
+      border: 1.5px solid var(--border);
+      background: var(--surface2); cursor: pointer;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.72rem; font-weight: 600; color: var(--ink3);
+      transition: all 0.15s;
+    }
+    .tag-btn:hover { border-color: var(--forest3); color: var(--forest); background: var(--forest-xl); }
+    .tag-btn.selected { border-color: var(--forest3); background: var(--forest-xl); color: var(--forest2); }
+
+    /* フォロー日・褒めポイント ── NEW ③ */
+    .follow-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .praise-area { position: relative; }
+    .praise-counter {
+      position: absolute; bottom: 10px; right: 12px;
+      font-size: 0.62rem; color: var(--ink4); font-family: 'Sora', sans-serif;
+    }
+
+    /* 様子セレクター */
+    .mood-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+    .mood-btn {
+      padding: 12px 8px; border-radius: var(--r-md);
+      border: 2px solid var(--border); background: var(--surface2);
+      cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.72rem; font-weight: 700; color: var(--ink3);
+      text-align: center; transition: all 0.15s;
+    }
+    .mood-btn:hover { border-color: var(--forest3); color: var(--forest); }
+    .mood-btn.sel-元気       { border-color: #4ade80; background: #f0fdf4; color: #166534; }
+    .mood-btn.sel-疲れている  { border-color: var(--amber2); background: var(--amber-xl); color: var(--amber); }
+    .mood-btn.sel-表情が乏しい{ border-color: var(--coral); background: var(--coral-lt); color: var(--coral); }
+    .mood-btn.sel-不明        { border-color: var(--slate2); background: var(--slate-lt); color: var(--slate); }
+    .mood-emoji { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+
+    .ai-hint-box {
+      background: linear-gradient(135deg, var(--forest-xl), #f0faf5);
+      border: 1.5px solid rgba(78,128,104,0.25);
+      border-radius: var(--r-lg); padding: 18px 20px; margin-top: 20px;
+    }
+    .ai-hint-header { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--forest3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .ai-hint-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--forest3); animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+    .ai-hint-list { list-style: none; }
+    .ai-hint-list li { font-size: 0.82rem; color: var(--ink2); line-height: 1.65; padding: 5px 0; border-bottom: 1px solid rgba(78,128,104,0.1); display: flex; gap: 10px; }
+    .ai-hint-list li:last-child { border-bottom: none; }
+    .ai-hint-list li::before { content: '→'; color: var(--forest3); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── ボタン群 ── */
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+    .btn {
+      padding: 12px 22px; border-radius: var(--r-md); border: none;
+      font-family: 'Noto Sans JP', 'Sora', sans-serif;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; letter-spacing: 0.03em;
+    }
+    .btn:hover  { transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px); opacity: 0.9; }
+    .btn-primary { background: linear-gradient(135deg, var(--forest2), var(--forest)); color: white; box-shadow: 0 4px 14px rgba(45,74,62,0.3); }
+    .btn-primary:hover { box-shadow: 0 8px 22px rgba(45,74,62,0.38); }
+    .btn-outline { background: var(--surface); color: var(--ink2); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--forest3); color: var(--forest); }
+    .btn-amber  { background: linear-gradient(135deg, var(--amber), var(--amber2)); color: var(--forest); box-shadow: 0 4px 14px rgba(200,146,42,0.25); }
+    .btn-danger { background: var(--surface); color: var(--coral); border: 1.5px solid rgba(200,90,74,0.25); }
+    .btn-danger:hover { background: var(--coral-lt); }
+    .btn-violet { background: linear-gradient(135deg, var(--violet), #9d74d4); color: white; box-shadow: 0 4px 14px rgba(124,92,191,0.3); }
+
+    /* ══════════ 記録一覧 ══════════ */
+    #logsView { display: none; }
+
+    /* 検索バー ── NEW ① */
+    .search-bar-wrap {
+      display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .search-input-wrap { position: relative; flex: 1; min-width: 180px; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink4); font-size: 0.85rem; pointer-events: none; }
+    .search-input {
+      width: 100%; padding: 10px 12px 10px 34px;
+      border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-family: 'Noto Sans JP', sans-serif; font-size: 0.84rem; color: var(--ink);
+      background: var(--surface); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus { border-color: var(--forest3); box-shadow: 0 0 0 3px rgba(78,128,104,0.1); }
+    .search-select {
+      padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-family: 'Noto Sans JP', sans-serif; font-size: 0.84rem; color: var(--ink);
+      background: var(--surface); outline: none; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .search-select:focus { border-color: var(--forest3); }
+
+    /* タイムライングラフ ── NEW ① */
+    .timeline-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); box-shadow: var(--shadow);
+      padding: 22px 24px; margin-bottom: 20px; display: none;
+    }
+    .timeline-title { font-size: 0.78rem; font-weight: 700; color: var(--forest); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .timeline-chart { display: flex; align-items: flex-end; gap: 6px; height: 70px; }
+    .timeline-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+    .timeline-bar {
+      width: 100%; border-radius: 4px 4px 0 0;
+      min-height: 6px; transition: height 0.4s ease;
+    }
+    .timeline-bar-label { font-size: 0.52rem; color: var(--ink4); font-family: 'Sora', sans-serif; white-space: nowrap; }
+    .timeline-legend { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--ink3); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px 20px; box-shadow: var(--shadow-sm); }
+    .stat-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink4); margin-bottom: 6px; }
+    .stat-value { font-family: 'Sora', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--forest); line-height: 1; }
+    .stat-sub   { font-size: 0.7rem; color: var(--ink4); margin-top: 4px; }
+
+    /* ログカード */
+    .log-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 20px 22px; box-shadow: var(--shadow-sm);
+      margin-bottom: 10px; position: relative; overflow: hidden;
+      animation: fade-slide 0.35s ease;
+    }
+    @keyframes fade-slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .log-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+    .log-card[data-mood="元気"]::before        { background: #4ade80; }
+    .log-card[data-mood="疲れている"]::before  { background: var(--amber2); }
+    .log-card[data-mood="表情が乏しい"]::before{ background: var(--coral); }
+    .log-card[data-mood="不明"]::before        { background: var(--slate2); }
+
+    .log-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .log-name   { font-size: 0.95rem; font-weight: 700; color: var(--ink); }
+    .log-date   { font-size: 0.72rem; color: var(--ink4); font-family: 'Sora', sans-serif; }
+    .log-mood-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 99px; font-size: 0.68rem; font-weight: 700; margin-bottom: 8px;
+    }
+    .badge-元気        { background: #f0fdf4; color: #166534; border: 1px solid #4ade80; }
+    .badge-疲れている  { background: var(--amber-xl); color: var(--amber); border: 1px solid var(--amber2); }
+    .badge-表情が乏しい{ background: var(--coral-lt); color: var(--coral); border: 1px solid var(--coral); }
+    .badge-不明        { background: var(--slate-lt); color: var(--slate); border: 1px solid var(--slate2); }
+
+    .log-section { margin-top: 10px; }
+    .log-section-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink4); margin-bottom: 3px; }
+    .log-section-text  { font-size: 0.82rem; color: var(--ink2); line-height: 1.65; }
+
+    /* タグバッジ（ログカード内） */
+    .log-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .log-tag-badge {
+      padding: 2px 9px; border-radius: 99px; font-size: 0.65rem; font-weight: 600;
+      background: var(--slate-lt); color: var(--slate); border: 1px solid rgba(107,122,141,0.3);
+    }
+
+    /* フォロー日バッジ */
+    .follow-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 99px; font-size: 0.68rem; font-weight: 600;
+      background: var(--amber-xl); color: var(--amber); border: 1px solid rgba(200,146,42,0.3);
+      margin-top: 6px;
+    }
+    .follow-badge.overdue { background: var(--coral-lt); color: var(--coral); border-color: rgba(200,90,74,0.3); }
+
+    /* 褒めポイントバッジ */
+    .praise-badge {
+      margin-top: 8px; padding: 8px 12px;
+      background: linear-gradient(135deg, #fffbf0, #fef3c7);
+      border: 1px solid rgba(200,146,42,0.25); border-radius: var(--r-sm);
+      font-size: 0.75rem; color: var(--amber); display: flex; gap: 6px; align-items: flex-start;
+    }
+
+    .log-delete-btn {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; cursor: pointer;
+      color: var(--ink4); font-size: 0.85rem; padding: 4px;
+      border-radius: var(--r-sm); transition: color 0.15s, background 0.15s;
+    }
+    .log-delete-btn:hover { color: var(--coral); background: var(--coral-lt); }
+
+    .empty-state { text-align: center; padding: 60px 24px; color: var(--ink4); }
+    .empty-state-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.5; }
+    .empty-state-text { font-size: 0.85rem; }
+
+    /* ── ガイドカードビュー ── */
+    #guideView { display: none; }
+    .guide-card-preview {
+      background: var(--surface); border-radius: var(--r-xl);
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      padding: 36px; max-width: 400px;
+    }
+    .guide-card-preview h3 { font-family: 'Noto Serif JP', serif; font-size: 1.05rem; font-weight: 700; color: var(--forest); margin-bottom: 16px; }
+    .guide-card-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border2); font-size: 0.82rem; color: var(--ink2); line-height: 1.6; }
+    .guide-card-item:last-child { border-bottom: none; }
+    .guide-card-check { color: var(--forest3); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .trust-note { background: var(--forest-xl); border: 1px solid rgba(78,128,104,0.2); border-radius: var(--r-md); padding: 14px 16px; font-size: 0.75rem; color: var(--ink3); line-height: 1.7; margin-top: 24px; }
+
+    /* ══════════ セルフケアビュー ── NEW ④ ══════════ */
+    #selfcareView { display: none; }
+
+    .selfcare-header-card {
+      background: linear-gradient(135deg, #2a1f3d, #3d1f35);
+      border-radius: var(--r-xl); padding: 32px 28px; margin-bottom: 24px;
+      position: relative; overflow: hidden;
+    }
+    .selfcare-header-card::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 60% 80% at 90% 20%, rgba(192,132,252,0.18), transparent 60%);
+    }
+    .selfcare-header-title { font-family: 'Noto Serif JP', serif; font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 6px; position: relative; }
+    .selfcare-header-sub   { font-size: 0.78rem; color: rgba(255,255,255,0.55); line-height: 1.6; position: relative; }
+
+    /* 疲れ度メーター */
+    .fatigue-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); box-shadow: var(--shadow); padding: 24px 26px; margin-bottom: 20px;
+    }
+    .fatigue-title { font-size: 0.85rem; font-weight: 700; color: var(--ink); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .fatigue-scale { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
+    .fatigue-btn {
+      padding: 14px 8px; border-radius: var(--r-md); border: 2px solid var(--border);
+      background: var(--surface2); cursor: pointer; text-align: center;
+      font-family: 'Noto Sans JP', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--ink3);
+      transition: all 0.15s;
+    }
+    .fatigue-btn:hover { border-color: var(--violet); color: var(--violet); }
+    .fatigue-btn.sel { border-color: var(--violet); background: var(--violet-lt); color: var(--violet); }
+    .fatigue-emoji { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+    .fatigue-memo-wrap { margin-top: 16px; }
+    .fatigue-save-row  { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+    .fatigue-history   { margin-top: 16px; }
+    .fatigue-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border2); font-size: 0.78rem; color: var(--ink2); }
+    .fatigue-hist-item:last-child { border-bottom: none; }
+    .fatigue-hist-score { font-family: 'Sora', sans-serif; font-weight: 700; color: var(--violet); }
+
+    /* ──リーダーナレッジ（TikTok知見）── */
+    .knowledge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 8px; }
+    .knowledge-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg); box-shadow: var(--shadow-sm);
+      padding: 20px; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .knowledge-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .knowledge-cat {
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .knowledge-card-title { font-size: 0.85rem; font-weight: 700; color: var(--ink); line-height: 1.5; margin-bottom: 8px; }
+    .knowledge-card-body  { font-size: 0.75rem; color: var(--ink3); line-height: 1.65; }
+    .knowledge-tag {
+      display: inline-block; padding: 2px 9px; border-radius: 99px;
+      font-size: 0.62rem; font-weight: 600; margin-top: 10px;
+    }
+    .cat-対人 .knowledge-cat { color: var(--coral); }
+    .cat-対人 .knowledge-tag { background: var(--coral-lt); color: var(--coral); border: 1px solid rgba(200,90,74,0.2); }
+    .cat-マネジメント .knowledge-cat { color: var(--forest2); }
+    .cat-マネジメント .knowledge-tag { background: var(--forest-xl); color: var(--forest2); border: 1px solid rgba(78,128,104,0.2); }
+    .cat-感情 .knowledge-cat { color: var(--violet); }
+    .cat-感情 .knowledge-tag { background: var(--violet-lt); color: var(--violet); border: 1px solid rgba(124,92,191,0.2); }
+
+    /* フレーズ詳細モーダル */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(10,16,14,0.65); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      opacity: 0; visibility: hidden; transition: all 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .modal-box {
+      background: var(--surface); border-radius: var(--r-xl);
+      box-shadow: var(--shadow-xl); padding: 36px;
+      max-width: 580px; width: 100%; max-height: 80vh; overflow-y: auto;
+      transform: scale(0.95) translateY(12px); transition: transform 0.25s;
+    }
+    .modal-overlay.open .modal-box { transform: scale(1) translateY(0); }
+    .modal-title { font-family: 'Noto Serif JP', serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 6px; line-height: 1.5; }
+    .modal-creator { font-size: 0.68rem; color: var(--ink4); margin-bottom: 20px; }
+    .modal-section-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--forest3); margin-bottom: 8px; margin-top: 18px; }
+    .modal-phrase {
+      background: linear-gradient(135deg, var(--forest-xl), #f0faf5);
+      border: 1.5px solid rgba(78,128,104,0.25); border-radius: var(--r-lg);
+      padding: 16px 18px; font-size: 0.9rem; font-weight: 600;
+      color: var(--forest); line-height: 1.6;
+    }
+    .modal-point { font-size: 0.82rem; color: var(--ink2); line-height: 1.7; }
+    .modal-close-row { display: flex; justify-content: flex-end; margin-top: 24px; }
+
+    /* ── セルフケアモーダル ── */
+    #selfcareModal .modal-box { background: linear-gradient(135deg, #1e1530, #2d1525); border: 1px solid rgba(192,132,252,0.2); }
+    #selfcareModal .modal-title { color: rgba(255,255,255,0.92); }
+    #selfcareModal .modal-creator { color: rgba(255,255,255,0.35); }
+    #selfcareModal .modal-section-label { color: #c084fc; }
+    #selfcareModal .modal-phrase { background: rgba(192,132,252,0.12); border-color: rgba(192,132,252,0.25); color: #e9d5ff; }
+    #selfcareModal .modal-point { color: rgba(255,255,255,0.65); }
+    #selfcareModal .modal-close-row .btn { background: rgba(192,132,252,0.15); color: #e9d5ff; border: 1px solid rgba(192,132,252,0.3); }
+
+    /* ── トースト ── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 500;
+      background: var(--ink); color: rgba(255,255,255,0.92);
+      padding: 13px 20px; border-radius: var(--r-md); font-size: 0.82rem; font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px) scale(0.96); opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      pointer-events: none; max-width: 320px;
+    }
+    #toast.show { transform: translateY(0) scale(1); opacity: 1; }
+
+    @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+    /* フォロー期限バナー */
+    .follow-alert-banner {
+      background: var(--amber-xl); border: 1px solid rgba(200,146,42,0.4);
+      border-left: 4px solid var(--amber);
+      border-radius: var(--r-lg); padding: 14px 18px; margin-bottom: 20px;
+      font-size: 0.78rem; color: var(--ink2); line-height: 1.65; display: none;
+    }
+    .follow-alert-banner.show { display: block; }
+    .follow-alert-title { font-weight: 700; color: var(--amber); margin-bottom: 4px; }
+
+    @media (max-width: 680px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; min-height: auto; }
+      .main { padding: 24px 18px 48px; }
+      .field-row, .follow-row { grid-template-columns: 1fr; }
+      .mood-grid { grid-template-columns: repeat(2,1fr); }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .fatigue-scale { grid-template-columns: repeat(5,1fr); }
+      .knowledge-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ パスワード画面 ══════════ -->
+<div id="pw-screen">
+  <div class="pw-card">
+    <div class="pw-logo">🌿</div>
+    <div class="pw-title">ここログ</div>
+    <div class="pw-subtitle">Dialogue Record System</div>
+    <label class="pw-label" for="pwInput">Password</label>
+    <input class="pw-input" type="password" id="pwInput" placeholder="パスワードを入力" autocomplete="off">
+    <button class="pw-btn" id="pwBtn">システムにアクセス</button>
+    <div class="pw-error" id="pwError"></div>
+  </div>
+</div>
+
+<!-- ══════════ App ══════════ -->
+<div id="app">
+  <div class="layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🌿</div>
+        <div class="sidebar-logo-text">
+          <div class="sidebar-logo-name">ここログ</div>
+          <div class="sidebar-logo-sub">Care Dialogue System</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section-label">メニュー</div>
+      <div class="nav-item active" onclick="showView('form')" id="nav-form">
+        <span class="nav-item-icon">✏️</span> 対話を記録する
+      </div>
+      <div class="nav-item" onclick="showView('logs')" id="nav-logs">
+        <span class="nav-item-icon">📋</span> 記録一覧
+      </div>
+      <div class="nav-item" onclick="showView('guide')" id="nav-guide">
+        <span class="nav-item-icon">🗂️</span> 安心ガイドカード
+      </div>
+      <div class="nav-item" onclick="showView('selfcare')" id="nav-selfcare">
+        <span class="nav-item-icon">💜</span> セルフケア
+      </div>
+
+      <div class="sidebar-section-label" style="margin-top: 32px;">ツール</div>
+      <div class="nav-item" onclick="downloadCSV()">
+        <span class="nav-item-icon">⬇️</span> CSVで書き出す
+      </div>
+      <div class="nav-item" onclick="printGuide()">
+        <span class="nav-item-icon">🖨️</span> カードを印刷する
+      </div>
+
+      <!-- セルフケアクイックボタン -->
+      <div class="selfcare-btn" onclick="showView('selfcare')" style="margin-top:20px;">
+        <div class="selfcare-pulse"></div>
+        <span>今日の疲れ度を記録する</span>
+      </div>
+
+      <div class="sidebar-user" id="sidebarUser" style="display:none">
+        <div class="sidebar-user-row">
+          <div class="sidebar-avatar" id="sidebarAvatar">管</div>
+          <div>
+            <div class="sidebar-username" id="sidebarUsername">—</div>
+            <div class="sidebar-role">管理者</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">ログアウト</button>
+      </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <main class="main">
+
+      <!-- ログイン画面 -->
+      <div id="loginView">
+        <div class="guide-banner" id="guideBanner">
+          <div class="guide-banner-title">👋 はじめての方へ</div>
+          <div class="guide-banner-text">
+            このツールは職員の皆さんがより安心して働けるよう、管理者が"そっと気づく"ために活用しています。<br>
+            評価や監視ではなく、あなたの言葉に寄り添うための支援ツールです。
+          </div>
+          <label class="guide-banner-check">
+            <input type="checkbox" id="hideGuideCheck" onchange="hideGuideForever()">
+            <span>今後この表示は不要</span>
+          </label>
+        </div>
+        <div class="login-card">
+          <div class="login-card-title">管理者ログイン</div>
+          <div class="login-card-sub">お名前を入力してください。記録の管理者として保存されます。</div>
+          <div class="field">
+            <label class="f-label" for="usernameInput">管理者名 <span class="f-required">*</span></label>
+            <input class="f-input" type="text" id="usernameInput" placeholder="例：田中主任" autocomplete="name">
+          </div>
+          <div class="btn-row" style="margin-top: 0;">
+            <button class="btn btn-primary" style="width:100%;" onclick="login()">ログインして記録を開始</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 記録フォーム -->
+      <div id="formView" style="display:none">
+        <div class="page-header">
+          <div>
+            <div class="page-eyebrow">New Record</div>
+            <div class="page-title">対話を記録する</div>
+          </div>
+        </div>
+
+        <!-- 基本情報 -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <div class="form-card-icon">📝</div>
+            <div>
+              <div class="form-card-title">基本情報</div>
+              <div class="form-card-sub">対話の日時と相手の職員名を入力してください</div>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="field-row">
+              <div class="field">
+                <label class="f-label" for="dateInput">対話日 <span class="f-required">*</span></label>
+                <input class="f-input" type="date" id="dateInput">
+              </div>
+              <div class="field">
+                <label class="f-label" for="nameInput">職員名 <span class="f-required">*</span></label>
+                <input class="f-input" type="text" id="nameInput" placeholder="例：山田さん">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 様子 -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <div class="form-card-icon">👁️</div>
+            <div>
+              <div class="form-card-title">相手の様子</div>
+              <div class="form-card-sub">対話時の印象を選んでください</div>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="mood-grid">
+              <button class="mood-btn" data-mood="元気" onclick="selectMood(this)">
+                <span class="mood-emoji">😊</span>元気
+              </button>
+              <button class="mood-btn" data-mood="疲れている" onclick="selectMood(this)">
+                <span class="mood-emoji">😔</span>疲れている
+              </button>
+              <button class="mood-btn" data-mood="表情が乏しい" onclick="selectMood(this)">
+                <span class="mood-emoji">😶</span>表情が乏しい
+              </button>
+              <button class="mood-btn" data-mood="不明" onclick="selectMood(this)">
+                <span class="mood-emoji">🤷</span>不明
+              </button>
+            </div>
+            <div class="ai-hint-box" id="aiHintBox" style="display:none">
+              <div class="ai-hint-header">
+                <div class="ai-hint-dot"></div>
+                次に話しかけるヒント
+              </div>
+              <ul class="ai-hint-list" id="aiHintList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② タグ機能（NEW） -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <div class="form-card-icon">🏷️</div>
+            <div>
+              <div class="form-card-title">状況タグ</div>
+              <div class="form-card-sub">疲労の背景を分類します（複数選択可）</div>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="tag-grid" id="tagGrid">
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="夜勤明け">🌙 夜勤明け</button>
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="クレーム対応後">⚡ クレーム対応後</button>
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="人間関係の悩み">💬 人間関係の悩み</button>
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="ご家族対応">👨‍👩‍👧 ご家族対応</button>
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="体調不良">🤒 体調不良</button>
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="業務過多">📦 業務過多</button>
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="新人サポート中">🌱 新人サポート中</button>
+              <button class="tag-btn" onclick="toggleTag(this)" data-tag="残業続き">🕐 残業続き</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 対話内容 -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <div class="form-card-icon">💬</div>
+            <div>
+              <div class="form-card-title">対話の内容・気づき</div>
+              <div class="form-card-sub">書ける範囲で記録してください</div>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="field">
+              <label class="f-label" for="topicInput">話した内容</label>
+              <textarea class="f-textarea" id="topicInput" placeholder="仕事の悩みや状況、話題になったことなど…"></textarea>
+            </div>
+            <div class="field">
+              <label class="f-label" for="reflectionInput">あなたが感じたこと・気になった点</label>
+              <textarea class="f-textarea" id="reflectionInput" placeholder="少し元気がない印象だった、いつもより口数が少なかった…など"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ フォロー予定日・褒めポイント（NEW） -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <div class="form-card-icon">⭐</div>
+            <div>
+              <div class="form-card-title">フォローアップ設定</div>
+              <div class="form-card-sub">面談して終わり、にしないために</div>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="follow-row">
+              <div class="field">
+                <label class="f-label" for="followDateInput">次回フォロー予定日</label>
+                <input class="f-input" type="date" id="followDateInput">
+              </div>
+              <div class="field">
+                <label class="f-label" for="followNoteInput">声かけメモ</label>
+                <input class="f-input" type="text" id="followNoteInput" placeholder="例：夜勤後の体調確認">
+              </div>
+            </div>
+            <div class="field" style="margin-top: 4px;">
+              <label class="f-label" for="praiseInput">⭐ 褒めポイント貯金</label>
+              <div class="praise-area">
+                <textarea class="f-textarea" id="praiseInput" style="min-height:70px; padding-bottom: 28px;" placeholder="例：Bさんのご家族対応がとても丁寧だった。次回の面談で必ず伝えよう" maxlength="200" oninput="updatePraiseCount()"></textarea>
+                <span class="praise-counter" id="praiseCounter">0/200</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveLog()">📝 記録を保存する</button>
+          <button class="btn btn-outline" onclick="clearForm()">クリア</button>
+        </div>
+        <div class="trust-note" style="margin-top: 20px;">
+          ※ この記録は"職員を支える"目的のみで使用され、評価や査定には使われません。
+        </div>
+      </div>
+
+      <!-- ① 記録一覧（検索・タイムライン付き） -->
+      <div id="logsView">
+        <div class="page-header">
+          <div>
+            <div class="page-eyebrow">Log History</div>
+            <div class="page-title">記録一覧</div>
+          </div>
+        </div>
+
+        <!-- フォローアップ期限バナー -->
+        <div class="follow-alert-banner" id="followAlertBanner">
+          <div class="follow-alert-title">🔔 フォロー期限が近づいています</div>
+          <div id="followAlertList"></div>
+        </div>
+
+        <!-- 検索バー -->
+        <div class="search-bar-wrap">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input class="search-input" type="text" id="searchName" placeholder="職員名で検索…" oninput="filterLogs()">
+          </div>
+          <select class="search-select" id="searchMood" onchange="filterLogs()">
+            <option value="">すべての様子</option>
+            <option value="元気">😊 元気</option>
+            <option value="疲れている">😔 疲れている</option>
+            <option value="表情が乏しい">😶 表情が乏しい</option>
+            <option value="不明">🤷 不明</option>
+          </select>
+          <select class="search-select" id="searchTag" onchange="filterLogs()">
+            <option value="">すべてのタグ</option>
+            <option value="夜勤明け">🌙 夜勤明け</option>
+            <option value="クレーム対応後">⚡ クレーム対応後</option>
+            <option value="人間関係の悩み">💬 人間関係の悩み</option>
+            <option value="ご家族対応">👨‍👩‍👧 ご家族対応</option>
+            <option value="体調不良">🤒 体調不良</option>
+            <option value="業務過多">📦 業務過多</option>
+            <option value="新人サポート中">🌱 新人サポート中</option>
+            <option value="残業続き">🕐 残業続き</option>
+          </select>
+        </div>
+
+        <!-- タイムラインパネル -->
+        <div class="timeline-panel" id="timelinePanel">
+          <div class="timeline-title">📈 <span id="timelinePersonName"></span> の状態タイムライン（直近10件）</div>
+          <div class="timeline-chart" id="timelineChart"></div>
+          <div class="timeline-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>元気</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber2)"></div>疲れている</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div>表情が乏しい</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--slate2)"></div>不明</div>
+          </div>
+        </div>
+
+        <div class="stat-grid" id="statGrid"></div>
+        <div id="logsList"></div>
+      </div>
+
+      <!-- ガイドカード -->
+      <div id="guideView">
+        <div class="page-header">
+          <div>
+            <div class="page-eyebrow">Support Guide</div>
+            <div class="page-title">安心ガイドカード</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+          <div class="guide-card-preview">
+            <h3>🌿 あなたを支える対話サポートカード</h3>
+            <div class="guide-card-item"><span class="guide-card-check">✔</span>話したことは評価や査定には使われません</div>
+            <div class="guide-card-item"><span class="guide-card-check">✔</span>話したくないことは無理に話さなくて大丈夫です</div>
+            <div class="guide-card-item"><span class="guide-card-check">✔</span>記録は管理者の端末に保存され、外部には送られません</div>
+            <div class="guide-card-item"><span class="guide-card-check">✔</span>心の疲れに気づき、早めにサポートできるようにしています</div>
+            <div class="guide-card-item"><span class="guide-card-check">✔</span>「なんとなく辛い」も、立派なサインです</div>
+          </div>
+          <div style="flex: 1; min-width: 240px;">
+            <div class="trust-note" style="margin-bottom: 16px;">
+              <strong>🔎 心のお疲れ度チェック（参考）</strong><br><br>
+              最近「疲れてるかも」「笑顔が減った」と感じるときは、<br>
+              深呼吸して、無理をせず、近くの人に少し話してみてくださいね。
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="printGuide()">🖨️ カードを印刷する</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ④ セルフケアビュー（NEW） -->
+      <div id="selfcareView">
+        <div class="page-header">
+          <div>
+            <div class="page-eyebrow">Leader's Self Care</div>
+            <div class="page-title">セルフケア</div>
+          </div>
+        </div>
+
+        <div class="selfcare-header-card">
+          <div class="selfcare-header-title">💜 あなたを守るための記録です</div>
+          <div class="selfcare-header-sub">部下を支え続けるリーダーほど、消耗しやすいもの。<br>今日の疲れを正直に記録して、あなた自身を孤独にさせないでください。</div>
+        </div>
+
+        <!-- 疲れ度メーター -->
+        <div class="fatigue-card">
+          <div class="fatigue-title">🌡️ 今日の疲れ度（リーダー自身）</div>
+          <div class="fatigue-scale">
+            <button class="fatigue-btn" data-level="1" onclick="selectFatigue(this)">
+              <span class="fatigue-emoji">😊</span>余裕
+            </button>
+            <button class="fatigue-btn" data-level="2" onclick="selectFatigue(this)">
+              <span class="fatigue-emoji">🙂</span>まあまあ
+            </button>
+            <button class="fatigue-btn" data-level="3" onclick="selectFatigue(this)">
+              <span class="fatigue-emoji">😐</span>やや疲れ
+            </button>
+            <button class="fatigue-btn" data-level="4" onclick="selectFatigue(this)">
+              <span class="fatigue-emoji">😔</span>かなり疲れ
+            </button>
+            <button class="fatigue-btn" data-level="5" onclick="selectFatigue(this)">
+              <span class="fatigue-emoji">😩</span>限界に近い
+            </button>
+          </div>
+          <div class="fatigue-memo-wrap">
+            <label class="f-label" for="fatigueMemo">今日ひとことメモ（任意）</label>
+            <textarea class="f-textarea" id="fatigueMemo" style="min-height:70px" placeholder="今日は〇〇さんの相談が重かった。胸がつかえている感じ…など"></textarea>
+          </div>
+          <div class="fatigue-save-row">
+            <button class="btn btn-violet" onclick="saveFatigue()">💾 記録する</button>
+          </div>
+          <div class="fatigue-history" id="fatigueHistory"></div>
+        </div>
+
+        <!-- リーダーナレッジライブラリ -->
+        <div class="form-card" style="margin-top: 8px;">
+          <div class="form-card-header">
+            <div class="form-card-icon">🧠</div>
+            <div>
+              <div class="form-card-title">リーダーナレッジライブラリ</div>
+              <div class="form-card-sub">困った場面で使える「一言」と「考え方」をいつでも確認</div>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="knowledge-grid" id="knowledgeGrid"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── 知見詳細モーダル ── -->
+<div class="modal-overlay" id="knowledgeModal" onclick="closeModal('knowledgeModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title"  id="kModalTitle"></div>
+    <div class="modal-creator" id="kModalCreator"></div>
+    <div class="modal-section-label">使えるフレーズ</div>
+    <div class="modal-phrase"  id="kModalPhrase"></div>
+    <div class="modal-section-label">ポイント</div>
+    <div class="modal-point"   id="kModalPoint"></div>
+    <div class="modal-close-row">
+      <button class="btn btn-outline" onclick="closeModal('knowledgeModal')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── セルフケアモーダル（愚痴聞きボット案内）── -->
+<div class="modal-overlay" id="selfcareModal" onclick="closeModal('selfcareModal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">💜 ひとりで抱えないで</div>
+    <div class="modal-creator">survival_mam より、リーダーへ</div>
+    <div class="modal-section-label">今日の気持ち、話してみませんか</div>
+    <div class="modal-phrase">誰かに話を聞いてもらうだけで、心が軽くなることがあります。<br>survival_mamの愚痴聞きボットに、今日のしんどさをそのまま打ち明けてみてください。</div>
+    <div class="modal-section-label">アクセス</div>
+    <div class="modal-point">survival_mam 憩いの場（LINEコミュニティ）で、愚痴聞きボットをご利用いただけます。<br><br>あなたが誰かを支え続けられるのは、あなた自身が支えられているからです。</div>
+    <div class="modal-close-row">
+      <button class="btn" style="background:rgba(192,132,252,0.15);color:#e9d5ff;border:1px solid rgba(192,132,252,0.3);" onclick="closeModal('selfcareModal')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- トースト -->
+<div id="toast"></div>
+
+<script>
+/* ══════════ License Activation ══════════ */
+(function() {
+  const WORKER_URL  = 'https://cocolog-license.sr-g-solti.workers.dev/';
+  const TOKEN_KEY   = 'cocolog_license_token_v1';
+  const screen      = document.getElementById('pw-screen');
+  const appEl       = document.getElementById('app');
+  const input       = document.getElementById('pwInput');
+  const btn         = document.getElementById('pwBtn');
+  const errEl       = document.getElementById('pwError');
+  let unlocked      = false;
+
+  // デバイスIDを生成（なければ作って保存）
+  function getDeviceId() {
+    let id = localStorage.getItem('cocolog_device_id');
+    if (!id) {
+      id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem('cocolog_device_id', id);
+    }
+    return id;
+  }
+
+  // 保存済みトークンで自動ログイン
+  const saved = localStorage.getItem(TOKEN_KEY);
+  if (saved) {
+    try {
+      const t = JSON.parse(saved);
+      if (t.ok && t.expiry > Date.now()) {
+        unlocked = true;
+        screen.classList.add('hide');
+        appEl.classList.add('visible');
+        setTimeout(() => { screen.style.display = 'none'; initApp(); }, 650);
+        return;
+      }
+    } catch(e) {}
+    localStorage.removeItem(TOKEN_KEY);
+  }
+
+  function showError(msg) {
+    input.classList.add('error');
+    errEl.textContent = msg;
+    btn.disabled = false;
+    btn.textContent = 'システムにアクセス';
+    setTimeout(() => {
+      input.classList.remove('error');
+      input.value = '';
+      errEl.textContent = '';
+      input.focus();
+    }, 3000);
+  }
+
+  async function tryUnlock() {
+    if (unlocked) return;
+    const code = input.value.trim();
+    if (!code) { showError('アクティベーションコードを入力してください'); return; }
+
+    btn.disabled = true;
+    btn.textContent = '認証中…';
+    errEl.textContent = '';
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, deviceId: getDeviceId() }),
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        // 30日間有効なトークンを保存
+        localStorage.setItem(TOKEN_KEY, JSON.stringify({
+          ok: true,
+          plan: data.plan,
+          code: code,
+          expiry: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        }));
+        unlocked = true;
+        screen.classList.add('hide');
+        setTimeout(() => screen.style.display = 'none', 650);
+        appEl.classList.add('visible');
+        initApp();
+      } else {
+        if (data.error === 'invalid_code') {
+          showError('コードが正しくありません。ご確認ください。');
+        } else if (data.error === 'limit_reached') {
+          showError(`このコードの利用上限（${data.max}台）に達しています。法人プランをご検討ください。`);
+        } else {
+          showError('認証に失敗しました。時間をおいて再度お試しください。');
+        }
+      }
+    } catch(e) {
+      showError('通信エラーが発生しました。インターネット接続をご確認ください。');
+    }
+  }
+
+  btn.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+  // パスワード画面のラベルを変更
+  document.querySelector('.pw-subtitle').textContent = 'Activation Code Required';
+  document.querySelector('.pw-label').textContent = 'アクティベーションコード';
+  document.getElementById('pwInput').placeholder = 'ACT-XXXX-XXXX';
+})();
+
+/* ══════════ State ══════════ */
+const LOG_KEY       = 'cocolog_logs_v2';
+const USER_KEY      = 'cocolog_user_v1';
+const HIDE_GUIDE_KEY= 'cocolog_hideguide';
+const FATIGUE_KEY   = 'cocolog_fatigue_v1';
+
+let currentUser    = '';
+let currentMood    = '';
+let currentFatigue = 0;
+let selectedTags   = [];
+let logs = [];
+
+function getLogs()     { return JSON.parse(localStorage.getItem(LOG_KEY)    || '[]'); }
+function saveLogs()    { localStorage.setItem(LOG_KEY, JSON.stringify(logs)); }
+function getFatigue()  { return JSON.parse(localStorage.getItem(FATIGUE_KEY)|| '[]'); }
+function saveFatigueData(d){ localStorage.setItem(FATIGUE_KEY, JSON.stringify(d)); }
+
+/* ══════════ Init ══════════ */
+function initApp() {
+  logs = getLogs();
+
+  if (localStorage.getItem(HIDE_GUIDE_KEY) === 'true') {
+    const b = document.getElementById('guideBanner');
+    if (b) b.style.display = 'none';
+  }
+
+  const saved = localStorage.getItem(USER_KEY);
+  if (saved) {
+    currentUser = saved;
+    showLoggedIn();
+  }
+
+  const d = document.getElementById('dateInput');
+  if (d) d.value = new Date().toISOString().split('T')[0];
+
+  renderKnowledgeGrid();
+}
+
+/* ══════════ Guide banner ══════════ */
+function hideGuideForever() {
+  localStorage.setItem(HIDE_GUIDE_KEY, 'true');
+  document.getElementById('guideBanner').style.display = 'none';
+}
+
+/* ══════════ Login / Logout ══════════ */
+function login() {
+  const name = document.getElementById('usernameInput').value.trim();
+  if (!name) { showToast('管理者名を入力してください'); return; }
+  currentUser = name;
+  localStorage.setItem(USER_KEY, name);
+  showLoggedIn();
+}
+
+function showLoggedIn() {
+  document.getElementById('loginView').style.display   = 'none';
+  document.getElementById('formView').style.display    = 'block';
+  document.getElementById('sidebarUser').style.display = 'flex';
+  document.getElementById('sidebarUser').style.flexDirection = 'column';
+  document.getElementById('sidebarUsername').textContent = currentUser;
+  document.getElementById('sidebarAvatar').textContent   = currentUser.charAt(0);
+  showView('form');
+}
+
+function logout() {
+  if (!confirm('ログアウトしますか？')) return;
+  localStorage.removeItem(USER_KEY);
+  location.reload();
+}
+
+/* ══════════ View switching ══════════ */
+function showView(name) {
+  ['form','logs','guide','selfcare'].forEach(v => {
+    const el  = document.getElementById(v + 'View');
+    const nav = document.getElementById('nav-' + v);
+    if (el)  el.style.display = (v === name) ? 'block' : 'none';
+    if (nav) nav.classList.toggle('active', v === name);
+  });
+  if (name === 'logs') renderLogs();
+  if (name === 'selfcare') renderFatigueHistory();
+}
+
+/* ══════════ Mood selection ══════════ */
+const HINTS = {
+  '元気': [
+    '「最近、楽しいことや嬉しいことはありましたか？」',
+    '「仕事で得意だと感じる場面はどんなときですか？」',
+    '「今後やってみたいことや興味があることはありますか？」',
+  ],
+  '疲れている': [
+    '「最近、少し大変そうに見えますが、体調はどうですか？」',
+    '「もし何か負担になっていることがあれば、聞かせてもらえますか？」',
+    '「ゆっくり休めていますか？睡眠はとれていますか？」',
+  ],
+  '表情が乏しい': [
+    '「最近、何か気になっていることはありますか？無理に話さなくて大丈夫ですよ」',
+    '「ちょっと話せる時間、今日はありますか？」',
+    '「もし辛いことがあれば、一人で抱え込まないでほしいと思っています」',
+  ],
+  '不明': [
+    '「最近、仕事でどんなことが多いですか？」',
+    '「何かサポートできることがあれば教えてください」',
+    '「今日の調子はどうですか？」',
+  ],
+};
+
+function selectMood(btn) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.className = 'mood-btn');
+  const mood = btn.dataset.mood;
+  btn.classList.add(`sel-${mood}`);
+  currentMood = mood;
+  const box  = document.getElementById('aiHintBox');
+  const list = document.getElementById('aiHintList');
+  box.style.display = 'block';
+  list.innerHTML = HINTS[mood].map(h => `<li>${h}</li>`).join('');
+}
+
+/* ══════════ ② タグ ══════════ */
+function toggleTag(btn) {
+  const tag = btn.dataset.tag;
+  btn.classList.toggle('selected');
+  if (selectedTags.includes(tag)) {
+    selectedTags = selectedTags.filter(t => t !== tag);
+  } else {
+    selectedTags.push(tag);
+  }
+}
+
+/* ══════════ ③ 褒めポイントカウンター ══════════ */
+function updatePraiseCount() {
+  const val = document.getElementById('praiseInput').value.length;
+  document.getElementById('praiseCounter').textContent = val + '/200';
+}
+
+/* ══════════ Save log ══════════ */
+function saveLog() {
+  const date       = document.getElementById('dateInput').value;
+  const name       = document.getElementById('nameInput').value.trim();
+  const topic      = document.getElementById('topicInput').value.trim();
+  const reflection = document.getElementById('reflectionInput').value.trim();
+  const followDate = document.getElementById('followDateInput').value;
+  const followNote = document.getElementById('followNoteInput').value.trim();
+  const praise     = document.getElementById('praiseInput').value.trim();
+
+  if (!date)        { showToast('日付を入力してください'); return; }
+  if (!name)        { showToast('職員名を入力してください'); return; }
+  if (!currentMood) { showToast('相手の様子を選択してください'); return; }
+
+  const log = {
+    id:         Date.now(),
+    date, name,
+    mood:       currentMood,
+    tags:       [...selectedTags],
+    topic:      topic      || '（記録なし）',
+    reflection: reflection || '（記録なし）',
+    followDate: followDate || '',
+    followNote: followNote || '',
+    praise:     praise     || '',
+    manager:    currentUser,
+  };
+  logs.unshift(log);
+  saveLogs();
+  clearForm();
+  showToast(`${name}さんの記録を保存しました ✓`);
+}
+
+/* ══════════ Clear form ══════════ */
+function clearForm() {
+  document.getElementById('nameInput').value        = '';
+  document.getElementById('topicInput').value       = '';
+  document.getElementById('reflectionInput').value  = '';
+  document.getElementById('followDateInput').value  = '';
+  document.getElementById('followNoteInput').value  = '';
+  document.getElementById('praiseInput').value      = '';
+  document.getElementById('praiseCounter').textContent = '0/200';
+  document.querySelectorAll('.mood-btn').forEach(b => b.className = 'mood-btn');
+  document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
+  selectedTags = [];
+  currentMood  = '';
+  document.getElementById('aiHintBox').style.display = 'none';
+  document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
+}
+
+/* ══════════ ① Render logs（検索・タイムライン） ══════════ */
+function renderLogs() {
+  logs = getLogs();
+  renderStats(logs);
+  renderFollowAlerts(logs);
+  filterLogs();
+}
+
+function filterLogs() {
+  const nameQ = document.getElementById('searchName').value.trim().toLowerCase();
+  const moodQ = document.getElementById('searchMood').value;
+  const tagQ  = document.getElementById('searchTag').value;
+
+  const filtered = logs.filter(l => {
+    if (nameQ && !l.name.toLowerCase().includes(nameQ)) return false;
+    if (moodQ && l.mood !== moodQ) return false;
+    if (tagQ  && !(l.tags || []).includes(tagQ)) return false;
+    return true;
+  });
+
+  renderLogCards(filtered);
+
+  // 特定の職員名で絞り込んだ場合タイムライン表示
+  const panel = document.getElementById('timelinePanel');
+  if (nameQ.length >= 1) {
+    const personLogs = logs.filter(l => l.name.toLowerCase().includes(nameQ)).slice(0,10).reverse();
+    if (personLogs.length >= 2) {
+      renderTimeline(personLogs, personLogs[personLogs.length-1].name);
+      panel.style.display = 'block';
+    } else {
+      panel.style.display = 'none';
+    }
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function renderTimeline(personLogs, name) {
+  document.getElementById('timelinePersonName').textContent = name;
+  const moodColors = { '元気':'#4ade80','疲れている':'#e8b050','表情が乏しい':'#c85a4a','不明':'#8a9ab0' };
+  const moodHeight = { '元気':60,'疲れている':35,'表情が乏しい':15,'不明':45 };
+  const chart = document.getElementById('timelineChart');
+  chart.innerHTML = personLogs.map(l => `
+    <div class="timeline-bar-wrap">
+      <div class="timeline-bar" style="background:${moodColors[l.mood]||'#ccc'};height:${moodHeight[l.mood]||30}px;" title="${l.date} ${l.mood}"></div>
+      <div class="timeline-bar-label">${l.date.slice(5)}</div>
+    </div>
+  `).join('');
+}
+
+function renderLogCards(list) {
+  const el = document.getElementById('logsList');
+  if (!list.length) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <div class="empty-state-text">該当する記録がありません。</div>
+      </div>`;
+    return;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+
+  el.innerHTML = list.map(log => {
+    const tagsHtml = (log.tags||[]).length
+      ? `<div class="log-tags">${(log.tags||[]).map(t=>`<span class="log-tag-badge">${t}</span>`).join('')}</div>` : '';
+
+    let followHtml = '';
+    if (log.followDate) {
+      const overdue = log.followDate < today;
+      followHtml = `<span class="follow-badge${overdue?' overdue':''}">
+        ${overdue ? '⚠️ フォロー期限超過' : '📅 フォロー予定'}: ${log.followDate}${log.followNote?' — '+escHtml(log.followNote):''}
+      </span>`;
+    }
+
+    const praiseHtml = log.praise
+      ? `<div class="praise-badge">⭐ <span>${escHtml(log.praise)}</span></div>` : '';
+
+    return `
+    <div class="log-card" data-mood="${log.mood}" data-id="${log.id}">
+      <button class="log-delete-btn" onclick="deleteLog(${log.id})" title="削除">✕</button>
+      <div class="log-header">
+        <div class="log-name">${escHtml(log.name)}</div>
+        <div class="log-date">${log.date} ／ ${escHtml(log.manager)}</div>
+      </div>
+      <span class="log-mood-badge badge-${log.mood}">${moodEmoji(log.mood)} ${log.mood}</span>
+      ${tagsHtml}
+      ${followHtml}
+      ${praiseHtml}
+      <div class="log-section">
+        <div class="log-section-label">話した内容</div>
+        <div class="log-section-text">${escHtml(log.topic)}</div>
+      </div>
+      <div class="log-section">
+        <div class="log-section-label">感じたこと</div>
+        <div class="log-section-text">${escHtml(log.reflection)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderStats(list) {
+  const el    = document.getElementById('statGrid');
+  const names = [...new Set(list.map(l => l.name))];
+  const alert = list.filter(l => l.mood === '表情が乏しい' || l.mood === '疲れている').length;
+  el.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">記録総数</div>
+      <div class="stat-value">${list.length}</div>
+      <div class="stat-sub">件</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">記録済み職員</div>
+      <div class="stat-value">${names.length}</div>
+      <div class="stat-sub">名</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">要注目ログ</div>
+      <div class="stat-value" style="color:var(--coral)">${alert}</div>
+      <div class="stat-sub">件（疲れ・表情乏しい）</div>
+    </div>`;
+}
+
+/* ③ フォローアップ期限アラート */
+function renderFollowAlerts(list) {
+  const today    = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  const alerts   = list.filter(l => l.followDate && l.followDate <= tomorrow);
+  const banner   = document.getElementById('followAlertBanner');
+  const alertList= document.getElementById('followAlertList');
+  if (!alerts.length) { banner.classList.remove('show'); return; }
+  banner.classList.add('show');
+  alertList.innerHTML = alerts.map(l => {
+    const overdue = l.followDate < today;
+    return `<div style="margin-top:4px">
+      ${overdue?'⚠️':'📅'} <strong>${escHtml(l.name)}</strong> さん（${l.followDate}）${l.followNote?' — '+escHtml(l.followNote):''}
+    </div>`;
+  }).join('');
+}
+
+function deleteLog(id) {
+  if (!confirm('この記録を削除しますか？')) return;
+  logs = logs.filter(l => l.id !== id);
+  saveLogs();
+  renderLogs();
+  showToast('記録を削除しました');
+}
+
+/* ══════════ ④ Fatigue（セルフケア） ══════════ */
+function selectFatigue(btn) {
+  document.querySelectorAll('.fatigue-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  currentFatigue = parseInt(btn.dataset.level);
+}
+
+function saveFatigue() {
+  if (!currentFatigue) { showToast('疲れ度を選択してください'); return; }
+  const memo = document.getElementById('fatigueMemo').value.trim();
+  const data  = getFatigue();
+  data.unshift({
+    id:    Date.now(),
+    date:  new Date().toISOString().split('T')[0],
+    level: currentFatigue,
+    memo:  memo || '',
+  });
+  const trimmed = data.slice(0, 30);
+  saveFatigueData(trimmed);
+
+  document.querySelectorAll('.fatigue-btn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('fatigueMemo').value = '';
+  currentFatigue = 0;
+  renderFatigueHistory();
+  showToast('疲れ度を記録しました ✓');
+
+  // レベル5なら愚痴聞きボット案内
+  if (currentFatigue === 5) {
+    setTimeout(() => openModal('selfcareModal'), 600);
+  }
+}
+
+function renderFatigueHistory() {
+  const data = getFatigue();
+  const el   = document.getElementById('fatigueHistory');
+  if (!data.length) { el.innerHTML = '<div style="font-size:0.75rem;color:var(--ink4);margin-top:8px;">まだ記録がありません</div>'; return; }
+  const labels = ['','😊','🙂','😐','😔','😩'];
+  el.innerHTML = `
+    <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;margin-top:16px;">直近の記録</div>
+    ${data.slice(0,7).map(d => `
+    <div class="fatigue-hist-item">
+      <span>${d.date} ${labels[d.level] || ''}</span>
+      <span class="fatigue-hist-score">Lv.${d.level}</span>
+      ${d.memo ? `<span style="font-size:0.72rem;color:var(--ink3);flex:1;text-align:right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:180px;" title="${escHtml(d.memo)}">${escHtml(d.memo)}</span>` : ''}
+    </div>`).join('')}`;
+}
+
+/* ══════════ リーダーナレッジライブラリ ══════════ */
+const KNOWLEDGE = [
+  {
+    id: 1,
+    cat: '対人',
+    catLabel: '対人スキル',
+    title: '周りを味方につけて悪者にする人への対処',
+    summary: '裏で印象操作をしている「隠れた攻撃者」へのフレーズ。感謝を伝えつつ正論を公の場で突きつける。',
+    phrase: '「〇〇さんって、私のいないところですごく私の心配をしてくれてるみたいだね。ありがとう。でも、何かあったら直接言ってくれたほうが助かるな」',
+    point: '善意を装う攻撃者に対し、感謝を伝えながら「直接伝えるべき」という正論を周囲の前で突きつけることで逃げ道を塞ぎます。感情的にならず、静かに事実を返すのがポイントです。',
+    creator: 'ヒロ｜40代で人生の最盛期を作る',
+  },
+  {
+    id: 2,
+    cat: '対人',
+    catLabel: '対人スキル',
+    title: '指摘すると拗ねて黙る人が逃げられなくなる一言',
+    summary: '論点をずらして被害者のふりをする人を、建設的な対話の土俵に引き戻すフレーズ。',
+    phrase: '「これ、勝ち負けの話じゃなくて、解決策の話をしてるんだけど、伝わってるかな？」',
+    point: '相手が「攻撃されている」という被害者意識に逃げ込むのを防ぎ、「共通の課題を解決する」という方向へ引き戻します。冷静な目的の再確認として伝えることが重要です。',
+    creator: 'ヒロ｜40代で人生の最盛期を作る',
+  },
+  {
+    id: 3,
+    cat: '対人',
+    catLabel: '対人スキル',
+    title: '相談のふりで悪口を広める人を公の場で無効化する一言',
+    summary: '「心配してる」という形で周囲に悪口を広める攻撃者への対策フレーズ。',
+    phrase: '「〇〇さんって、私のいないところですごく私の心配をしてくれてるみたいだね。ありがとう。でも、何かあったら直接言ってくれたほうが助かるな」',
+    point: '公開の場で矛盾を突き、周囲に文脈を理解させながら攻撃を無効化します。「ありがとう」から始めることで感情的に見えない状態で主導権を取り戻せます。',
+    creator: 'ヒロ｜40代で人生の最盛期を作る',
+  },
+  {
+    id: 4,
+    cat: '感情',
+    catLabel: '感情マネジメント',
+    title: 'イライラを職場に持ち込まない技術',
+    summary: '上司のイライラは職場全体のパフォーマンスを下げる最大のコスト。感情と仕事を切り離す考え方。',
+    phrase: '「上司の機嫌が悪いのは、職場全体のパフォーマンスを下げる最大のコストである」という認識を持ち、「機嫌よくいること」を自分の仕事と定義する。',
+    point: '部下のミスでイライラしても、それを感情として出すのではなく「どうすれば改善できるか」という課題解決フェーズに即座に移行する。物理的に一旦席を外し、感情がフラットになるのを待ってからコミュニケーションをとるのが有効です。',
+    creator: 'ヨド@元人事部長の独り言',
+  },
+  {
+    id: 5,
+    cat: '感情',
+    catLabel: '感情マネジメント',
+    title: '指導と「自己満足の説教」を見分ける',
+    summary: '指導という名目で優越感を満たしている上司への自戒。真の指導かどうか確認する問い。',
+    phrase: '「これは部下の成長のためか、自分のスッキリのためか」を言葉を発する前に自問する。',
+    point: '部下が萎縮したり、ただ謝るだけになっている場合は「指導」ではなく「支配」になっている可能性があります。部下の反応を観察することがセルフチェックになります。',
+    creator: 'ヨド@元人事部長の独り言',
+  },
+  {
+    id: 6,
+    cat: 'マネジメント',
+    catLabel: 'マネジメント',
+    title: '上司がやるべきことを押さえる',
+    summary: 'あれこれ手を出す前に「絶対に外してはいけない急所」に集中する考え方。',
+    phrase: 'チームの目標達成に直結する「急所」を見極め、そこにリソースを集中させる。枝葉の細かい指示よりも「何のためにやるか」という目的の共有に注力する。',
+    point: '上司が現場の細かな作業に埋没すると、マネジメントの本質である「目的の達成」と「リソースの最適化」がおろそかになります。優先順位を明確にして急所だけを押さえることが成果につながります。',
+    creator: 'ヨド@元人事部長の独り言',
+  },
+  {
+    id: 7,
+    cat: 'マネジメント',
+    catLabel: 'マネジメント',
+    title: '部下のモチベーションは「上げようとしない」',
+    summary: 'モチベーションはプライベートに左右される不安定なもの。仕組みと意識改革で安定を作る。',
+    phrase: 'モチベーションに頼らず、仕組みや意識改革によって「プライベートに左右されにくい安定したパフォーマンス」を引き出す設計をする。',
+    point: '上司が無理にモチベーションを上げようとすると、それがプレッシャーになる場合があります。環境・仕組み・役割の明確化によって、モチベーションに依存しない安定した状態を作ることが本質的なマネジメントです。',
+    creator: 'ヨド@元人事部長の独り言',
+  },
+];
+
+function renderKnowledgeGrid() {
+  const grid = document.getElementById('knowledgeGrid');
+  if (!grid) return;
+  grid.innerHTML = KNOWLEDGE.map(k => `
+    <div class="knowledge-card cat-${k.cat}" onclick="openKnowledge(${k.id})">
+      <div class="knowledge-cat">${k.catLabel}</div>
+      <div class="knowledge-card-title">${escHtml(k.title)}</div>
+      <div class="knowledge-card-body">${escHtml(k.summary)}</div>
+      <span class="knowledge-tag">${k.creator}</span>
+    </div>
+  `).join('');
+}
+
+function openKnowledge(id) {
+  const k = KNOWLEDGE.find(x => x.id === id);
+  if (!k) return;
+  document.getElementById('kModalTitle').textContent   = k.title;
+  document.getElementById('kModalCreator').textContent = k.creator;
+  document.getElementById('kModalPhrase').innerHTML    = k.phrase.replace(/\n/g,'<br>');
+  document.getElementById('kModalPoint').innerHTML     = k.point.replace(/\n/g,'<br>');
+  openModal('knowledgeModal');
+}
+
+/* ══════════ Modal ══════════ */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ══════════ CSV export ══════════ */
+function downloadCSV() {
+  const data = getLogs();
+  if (!data.length) { showToast('記録がありません'); return; }
+  const header = ['日付','職員名','様子','タグ','話した内容','感じたこと','フォロー日','フォローメモ','褒めポイント','管理者'];
+  const rows = data.map(l => [
+    l.date, l.name, l.mood, (l.tags||[]).join('|'), l.topic, l.reflection,
+    l.followDate||'', l.followNote||'', l.praise||'', l.manager
+  ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv  = '\uFEFF' + [header.join(','), ...rows].join('\n');
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  a.download = `ここログ_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSVを書き出しました');
+}
+
+/* ══════════ Print guide ══════════ */
+function printGuide() {
+  const w = window.open('', '', 'width=620,height=850');
+  w.document.write(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<title>安心ガイドカード｜ここログ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+  body { font-family:'Noto Sans JP',sans-serif; background:#fff; padding: 0; margin: 0; }
+  .page { width: 100mm; min-height: 150mm; margin: 12mm auto; border: 1.5px solid #2d4a3e; border-radius: 6mm; padding: 8mm; box-sizing: border-box; }
+  .header { display: flex; align-items: center; gap: 4mm; margin-bottom: 6mm; padding-bottom: 4mm; border-bottom: 0.5mm solid #d4e8df; }
+  .logo { width: 10mm; height: 10mm; border-radius: 3mm; background: linear-gradient(135deg,#4e8068,#c8922a); display:flex; align-items:center; justify-content:center; font-size:5mm; }
+  h2 { font-family:'Noto Serif JP',serif; font-size:4.2mm; font-weight:700; color:#2d4a3e; margin:0; }
+  .item { display:flex; gap:3mm; padding: 2.5mm 0; border-bottom: 0.3mm solid #eef6f2; font-size:3.4mm; line-height:1.6; color:#3a4840; }
+  .item:last-of-type { border-bottom:none; }
+  .check { color:#4e8068; font-weight:700; flex-shrink:0; }
+  .note { margin-top:5mm; padding:3mm 4mm; background:#eef6f2; border-radius:3mm; font-size:3mm; color:#6a7870; line-height:1.6; }
+  .footer { text-align:center; margin-top:5mm; font-size:2.8mm; color:#a0aca8; }
+</style></head><body>
+<div class="page">
+  <div class="header"><div class="logo">🌿</div><h2>あなたを支える対話サポートカード</h2></div>
+  <div class="item"><span class="check">✔</span>話したことは評価や査定には使われません</div>
+  <div class="item"><span class="check">✔</span>話したくないことは無理に話さなくて大丈夫です</div>
+  <div class="item"><span class="check">✔</span>記録は管理者の端末に保存され、外部には送られません</div>
+  <div class="item"><span class="check">✔</span>心の疲れに気づき、早めにサポートできるようにしています</div>
+  <div class="item"><span class="check">✔</span>「なんとなく辛い」も、立派なサインです</div>
+  <div class="note"><strong>🔎 心のお疲れ度チェック（参考）</strong><br>最近「疲れてるかも」「笑顔が減った」と感じるときは、深呼吸して、無理をせず、近くの人に少し話してみてくださいね。</div>
+  <div class="footer">ここログ｜Care Dialogue System</div>
+</div>
+</body></html>`);
+  w.document.close();
+  w.print();
+}
+
+/* ══════════ Toast ══════════ */
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+/* ══════════ Helpers ══════════ */
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function moodEmoji(m) {
+  return { '元気':'😊','疲れている':'😔','表情が乏しい':'😶','不明':'🤷' }[m] || '';
+}
+</script>
+</body>
+</html>
