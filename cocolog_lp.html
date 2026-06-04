@@ -460,7 +460,7 @@
     /* ══ FEATURES ══ */
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 24px;
       margin-top: 56px;
     }
@@ -933,6 +933,11 @@
         <h3>離職の防止</h3>
         <p>超過アラートやタイムライン機能で事前介入。負の連鎖を未然に防ぐ、組織の防波堤として機能します。</p>
       </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <h3>個別期待値の言語化</h3>
+        <p>チーム全体への一律の期待ではなく、一人ひとりへの具体的な期待をメモで記録。「到底できない」という挫折を生まない、小さな目標設計を支援します。</p>
+      </div>
     </div>
   </div>
 </section>
@@ -986,6 +991,85 @@
       </div>
     </div>
     <p style="margin-top:32px; font-size:1rem; font-weight:700; color:rgba(255,255,255,0.8); text-align:center;" class="fade-in">マネジメント品質の均一化と、リーダー自身の心理的負担の軽減。</p>
+  </div>
+</section>
+
+<!-- ══ EXPECTATION MANAGEMENT ══ -->
+<section style="background: linear-gradient(160deg, #0d1f2a 0%, #0a1820 100%); padding:100px 24px;">
+  <div style="max-width:1000px; margin:0 auto;">
+    <div class="fade-in">
+      <span class="label">New Feature</span>
+      <h2>「辞めた理由は能力不足」──<br>その前提が、<em>組織を壊している</em></h2>
+      <p class="lead" style="margin-top:16px;">
+        期待値の設定が高すぎただけかもしれない。<br>もし少しずつ達成できる目標設定をしていたら、成長しながら活躍できた可能性があります。
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-top:56px;" class="fade-in">
+      <!-- 従来の問題 -->
+      <div style="background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.2); border-radius:16px; padding:36px 32px;">
+        <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:#e74c3c; margin-bottom:20px;">従来の落とし穴</div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="color:#e74c3c; font-size:1rem; flex-shrink:0; margin-top:2px;">✗</span>
+            <p style="font-size:0.88rem; color:rgba(255,255,255,0.65); line-height:1.7;">チーム全員に一律の期待値を課す。個人差を無視したマネジメント。</p>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="color:#e74c3c; font-size:1rem; flex-shrink:0; margin-top:2px;">✗</span>
+            <p style="font-size:0.88rem; color:rgba(255,255,255,0.65); line-height:1.7;">「到底できない」と感じた瞬間、人は黙って諦める。それが離職フラグになる。</p>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="color:#e74c3c; font-size:1rem; flex-shrink:0; margin-top:2px;">✗</span>
+            <p style="font-size:0.88rem; color:rgba(255,255,255,0.65); line-height:1.7;">退職後、「本人の能力不足」と片付ける。組織側の期待値設定の問題に気づかない。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ここログの解決策 -->
+      <div style="background:rgba(26,155,140,0.1); border:1px solid rgba(26,155,140,0.3); border-radius:16px; padding:36px 32px;">
+        <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--teal2); margin-bottom:20px;">ここログの解決策</div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="color:var(--teal2); font-size:1rem; flex-shrink:0; margin-top:2px;">✓</span>
+            <p style="font-size:0.88rem; color:rgba(255,255,255,0.8); line-height:1.7;"><strong style="color:white;">個別期待メモ</strong>──対話記録ごとに、この人への具体的な期待を言語化して保存できる専用欄。</p>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="color:var(--teal2); font-size:1rem; flex-shrink:0; margin-top:2px;">✓</span>
+            <p style="font-size:0.88rem; color:rgba(255,255,255,0.8); line-height:1.7;"><strong style="color:white;">ナレッジライブラリ</strong>──「期待値マネジメント」の考え方と具体的なフレーズを収録。上司自身が学べる。</p>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="color:var(--teal2); font-size:1rem; flex-shrink:0; margin-top:2px;">✓</span>
+            <p style="font-size:0.88rem; color:rgba(255,255,255,0.8); line-height:1.7;"><strong style="color:white;">CSVへの記録出力</strong>──個別期待メモも含めてエクスポート。本部での振り返りや引き継ぎにも活用できる。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ナレッジカード3枚イメージ -->
+    <div style="margin-top:56px;" class="fade-in">
+      <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:24px; text-align:center;">収録ナレッジ（期待値マネジメント）</p>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+        <div style="background:rgba(243,156,18,0.08); border:1px solid rgba(243,156,18,0.2); border-radius:12px; padding:24px 20px;">
+          <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">期待値マネジメント</div>
+          <div style="font-size:0.88rem; font-weight:700; color:rgba(255,255,255,0.9); line-height:1.5; margin-bottom:8px;">チーム全員に「同じ期待」をしていないか？</div>
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.5); line-height:1.6;">「みんな同じように頑張れるはず」は幻想。個人ごとに期待を言語化することが、人が育つ組織の出発点。</div>
+        </div>
+        <div style="background:rgba(243,156,18,0.08); border:1px solid rgba(243,156,18,0.2); border-radius:12px; padding:24px 20px;">
+          <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">期待値マネジメント</div>
+          <div style="font-size:0.88rem; font-weight:700; color:rgba(255,255,255,0.9); line-height:1.5; margin-bottom:8px;">「辞めた原因」は本人だけじゃないかもしれない</div>
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.5); line-height:1.6;">「能力不足で辞めた」と思いがちだが、期待値の設定が高すぎただけかもしれない。</div>
+        </div>
+        <div style="background:rgba(243,156,18,0.08); border:1px solid rgba(243,156,18,0.2); border-radius:12px; padding:24px 20px;">
+          <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">期待値マネジメント</div>
+          <div style="font-size:0.88rem; font-weight:700; color:rgba(255,255,255,0.9); line-height:1.5; margin-bottom:8px;">「期待を下回った」ではなく「ギャップが大きすぎた」</div>
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.5); line-height:1.6;">「到底できない」と感じて辞めていく人の多くは、能力がないのではなく、期待とのギャップに潰されている。</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:40px; font-size:1rem; font-weight:700; color:rgba(255,255,255,0.8); text-align:center;" class="fade-in">
+      離職を「個人の問題」で終わらせない。組織の関わり方を変える視点を、現場のリーダーに。
+    </p>
   </div>
 </section>
 
@@ -1053,6 +1137,11 @@
             <td>突然の離職、100万円超の損失、負の連鎖</td>
             <td>スタッフの定着、採用・育成コストの劇的な削減</td>
           </tr>
+          <tr>
+            <td>期待値の設定</td>
+            <td>全員一律の期待。「できない人＝能力不足」で終わる</td>
+            <td>個別期待メモで一人ひとりに合った目標設計。「到底できない」を起こさない</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -1071,6 +1160,10 @@
       <div class="cta-check">
         <div class="cta-check-icon">✓</div>
         <span>1人の離職から始まる「負の連鎖」を、確実なデータと対話で断ち切る。</span>
+      </div>
+      <div class="cta-check">
+        <div class="cta-check-icon">✓</div>
+        <span>「能力不足で辞めた」で終わらせない。期待値の設定から見直す、組織の体質改善。</span>
       </div>
     </div>
     <p>持続可能な組織運営のため、<br>『ここログ』の全社導入をご検討ください。</p>
