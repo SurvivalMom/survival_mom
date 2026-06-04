@@ -560,6 +560,8 @@
     .cat-マネジメント .knowledge-tag { background: var(--forest-xl); color: var(--forest2); border: 1px solid rgba(78,128,104,0.2); }
     .cat-感情 .knowledge-cat { color: var(--violet); }
     .cat-感情 .knowledge-tag { background: var(--violet-lt); color: var(--violet); border: 1px solid rgba(124,92,191,0.2); }
+    .cat-期待値 .knowledge-cat { color: var(--amber); }
+    .cat-期待値 .knowledge-tag { background: var(--amber-lt); color: var(--amber); border: 1px solid rgba(200,146,42,0.2); }
 
     /* フレーズ詳細モーダル */
     .modal-overlay {
@@ -868,6 +870,11 @@
                 <span class="praise-counter" id="praiseCounter">0/200</span>
               </div>
             </div>
+            <div class="field" style="margin-top: 4px;">
+              <label class="f-label" for="expectInput">🎯 この人への期待メモ（個別）</label>
+              <textarea class="f-textarea" id="expectInput" style="min-height:70px;" placeholder="例：今月は利用者への声かけを自分から1日1回できるようになること。まず小さな一歩から。"></textarea>
+              <div style="font-size:0.7rem;color:var(--ink4);margin-top:4px;line-height:1.6;">チーム全体への一律の期待ではなく、この人だけへの具体的な期待を言葉にしておく欄です。</div>
+            </div>
           </div>
         </div>
 
@@ -1017,7 +1024,7 @@
             <div class="form-card-icon">🧠</div>
             <div>
               <div class="form-card-title">リーダーナレッジライブラリ</div>
-              <div class="form-card-sub">困った場面で使える「一言」と「考え方」をいつでも確認</div>
+              <div class="form-card-sub">困った場面で使える「一言」と「考え方」をいつでも確認。期待値マネジメントの視点も収録。</div>
             </div>
           </div>
           <div class="form-card-body">
@@ -1310,6 +1317,7 @@ function saveLog() {
   const followDate = document.getElementById('followDateInput').value;
   const followNote = document.getElementById('followNoteInput').value.trim();
   const praise     = document.getElementById('praiseInput').value.trim();
+  const expect     = document.getElementById('expectInput').value.trim();
 
   if (!date)        { showToast('日付を入力してください'); return; }
   if (!name)        { showToast('職員名を入力してください'); return; }
@@ -1325,6 +1333,7 @@ function saveLog() {
     followDate: followDate || '',
     followNote: followNote || '',
     praise:     praise     || '',
+    expect:     expect     || '',
     manager:    currentUser,
   };
   logs.unshift(log);
@@ -1342,6 +1351,7 @@ function clearForm() {
   document.getElementById('followNoteInput').value  = '';
   document.getElementById('praiseInput').value      = '';
   document.getElementById('praiseCounter').textContent = '0/200';
+  document.getElementById('expectInput').value      = '';
   document.querySelectorAll('.mood-btn').forEach(b => b.className = 'mood-btn');
   document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('selected'));
   selectedTags = [];
@@ -1428,6 +1438,9 @@ function renderLogCards(list) {
     const praiseHtml = log.praise
       ? `<div class="praise-badge">⭐ <span>${escHtml(log.praise)}</span></div>` : '';
 
+    const expectHtml = log.expect
+      ? `<div class="praise-badge" style="background:var(--amber-lt);border-color:rgba(200,146,42,0.25);color:var(--amber);">🎯 <span>${escHtml(log.expect)}</span></div>` : '';
+
     return `
     <div class="log-card" data-mood="${log.mood}" data-id="${log.id}">
       <button class="log-delete-btn" onclick="deleteLog(${log.id})" title="削除">✕</button>
@@ -1439,6 +1452,7 @@ function renderLogCards(list) {
       ${tagsHtml}
       ${followHtml}
       ${praiseHtml}
+      ${expectHtml}
       <div class="log-section">
         <div class="log-section-label">話した内容</div>
         <div class="log-section-text">${escHtml(log.topic)}</div>
@@ -1617,6 +1631,36 @@ const KNOWLEDGE = [
     point: '上司が無理にモチベーションを上げようとすると、それがプレッシャーになる場合があります。環境・仕組み・役割の明確化によって、モチベーションに依存しない安定した状態を作ることが本質的なマネジメントです。',
     creator: 'ヨド@元人事部長の独り言',
   },
+  {
+    id: 8,
+    cat: '期待値',
+    catLabel: '期待値マネジメント',
+    title: 'チーム全員に「同じ期待」をしていないか？',
+    summary: '「みんな同じように頑張れるはず」は幻想。個人ごとに期待を言語化することが、人が育つ組織の出発点。',
+    phrase: '「この人に今、何を期待しているか」を一人ひとりについて言葉で書き出してみる。チーム全体への一律の期待は、誰にとっても刺さらない。',
+    point: '「うちのチームなら当然これくらいできる」という前提で動いていると、できない人は黙って傷つきます。\n\n期待は「全体への空気」として伝えるのではなく、「この人への言葉」として届けるほど効果が出ます。\n\n今日一人だけでも、名前を思い浮かべながら「この人に今期待していることは何か」を書いてみてください。',
+    creator: '期待値マネジメント｜ここログ',
+  },
+  {
+    id: 9,
+    cat: '期待値',
+    catLabel: '期待値マネジメント',
+    title: '「辞めた原因」は本人だけじゃないかもしれない',
+    summary: '「能力不足で辞めた」と思いがちだが、期待値の設定が高すぎただけかもしれない。退職は組織のサインでもある。',
+    phrase: '「もし最初から、少しずつ達成できる目標を設定していたら——この人は今も活躍していたかもしれない」という問いを、次の採用・育成に活かす。',
+    point: '人が辞めるとき、私たちはつい「本人の問題」にしてしまいます。\n\nでも本当に「能力不足」だったのか、それとも「最初から無理な期待を課されていた」だけなのか。\n\n小さな達成を積み上げられる目標設定をしていれば、成長しながら活躍できた可能性があります。\n\n退職者が出たとき、「自分の期待値の置き方はどうだったか」を振り返ることが、次の人を守ることになります。',
+    creator: '期待値マネジメント｜ここログ',
+  },
+  {
+    id: 10,
+    cat: '期待値',
+    catLabel: '期待値マネジメント',
+    title: '「期待を下回った」ではなく「ギャップが大きすぎた」',
+    summary: '「到底できない」と感じて辞めていく人の多くは、能力がないのではなく、期待とのギャップに潰されている。',
+    phrase: '「この目標は、この人が今の実力から半歩伸びれば届く設定になっているか？」を確認してから、目標を渡す。',
+    point: '期待を上回る人もいれば、下回る人もいます。\n\n問題なのは「下回ること」ではなく、「ギャップが大きすぎて、追いつけないと感じさせてしまうこと」です。\n\n「到底できない」と感じた瞬間、人は諦めます。そして多くの場合、それは黙って起きます。\n\n目標を渡す前に一度、「これはこの人にとってリアルに届く場所にあるか」を確認する習慣をつけることが、静かな離職を防ぐ最初の一手です。',
+    creator: '期待値マネジメント｜ここログ',
+  },
 ];
 
 function renderKnowledgeGrid() {
@@ -1650,10 +1694,10 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 function downloadCSV() {
   const data = getLogs();
   if (!data.length) { showToast('記録がありません'); return; }
-  const header = ['日付','職員名','様子','タグ','話した内容','感じたこと','フォロー日','フォローメモ','褒めポイント','管理者'];
+  const header = ['日付','職員名','様子','タグ','話した内容','感じたこと','フォロー日','フォローメモ','褒めポイント','期待メモ（個別）','管理者'];
   const rows = data.map(l => [
     l.date, l.name, l.mood, (l.tags||[]).join('|'), l.topic, l.reflection,
-    l.followDate||'', l.followNote||'', l.praise||'', l.manager
+    l.followDate||'', l.followNote||'', l.praise||'', l.expect||'', l.manager
   ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
   const csv  = '\uFEFF' + [header.join(','), ...rows].join('\n');
   const a    = document.createElement('a');
