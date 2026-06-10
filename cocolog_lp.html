@@ -1358,6 +1358,11 @@
     </div>
 
     <div class="fade-in" id="pricing-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+    <style>
+      @media(max-width:720px){
+        #pricing-grid { grid-template-columns: 1fr !important; }
+      }
+    </style>
 
       <!-- 個人プラン -->
       <div style="
@@ -1650,8 +1655,8 @@
         <button id="est-next" onclick="estNext()" disabled style="
           flex:1; padding:15px; background:var(--teal); border:none;
           border-radius:10px; color:white; font-size:0.95rem; font-weight:700;
-          cursor:pointer; font-family:inherit; letter-spacing:.02em;
-          transition:all .15s; opacity:.4;
+          cursor:default; font-family:inherit; letter-spacing:.02em;
+          transition:all .15s; opacity:.35;
         ">次へ →</button>
       </div>
 
@@ -1816,24 +1821,22 @@
 
   function enableNext() {
     const c = EST.cur;
-    let ok = false;
-    if (c === 3) ok = EST.sel[3].length > 0;
-    else ok = EST.sel[c] !== null;
+    const ok = (c === 3) ? EST.sel[3].length > 0 : EST.sel[c] !== null;
     const btn = document.getElementById('est-next');
     btn.disabled = !ok;
+    btn.style.opacity = ok ? '1' : '0.35';
+    btn.style.cursor = ok ? 'pointer' : 'default';
   }
 
   window.estNext = function() {
     if (EST.cur < 5) {
       document.getElementById('est-s' + EST.cur).style.display = 'none';
       EST.cur++;
-      const s = document.getElementById('est-s' + EST.cur);
-      s.style.display = 'block';
+      document.getElementById('est-s' + EST.cur).style.display = 'block';
       updateEstProgress();
       document.getElementById('est-back').style.display = 'inline-block';
-      document.getElementById('est-next').disabled = true;
-      enableNext();
-      if (EST.cur === 5) document.getElementById('est-next').textContent = '見積もりを見る →';
+      document.getElementById('est-next').textContent = EST.cur === 5 ? '見積もりを見る →' : '次へ →';
+      enableNext(); // 選択済みかどうかで正しく判定
     } else {
       showEstResult();
     }
@@ -1846,7 +1849,7 @@
       document.getElementById('est-s' + EST.cur).style.display = 'block';
       if (EST.cur === 1) document.getElementById('est-back').style.display = 'none';
       document.getElementById('est-next').textContent = EST.cur === 5 ? '見積もりを見る →' : '次へ →';
-      document.getElementById('est-next').disabled = false;
+      enableNext(); // 戻った先の選択状態を正しく反映
       updateEstProgress();
     }
   };
