@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>じこログ | 介護事故報告書 作成支援</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:         #f0f2f5;
+      --bg2:        #e8ebef;
+      --surface:    #ffffff;
+      --surface2:   #f8f9fb;
+
+      --navy:       #1e3a5f;
+      --navy2:      #2d5282;
+      --navy3:      #3b6fad;
+      --navy-lt:    #dde8f5;
+      --navy-xl:    #eef4fb;
+
+      --accent:     #2e7d99;
+      --accent2:    #3a9bbf;
+      --accent-lt:  #e0f2f8;
+      --accent-xl:  #f0fafd;
+
+      --warn:       #b83030;
+      --warn-lt:    #fdf0f0;
+      --warn-xl:    #fff5f5;
+
+      --amber:      #b7860b;
+      --amber-lt:   #fef3dc;
+      --amber-xl:   #fffbf2;
+
+      --ok:         #1e7a4a;
+      --ok-lt:      #e0f5ea;
+
+      --ink:        #1a2332;
+      --ink2:       #3d4f63;
+      --ink3:       #6b7d90;
+      --ink4:       #a0aebf;
+
+      --border:     rgba(30,58,95,0.12);
+      --border2:    rgba(30,58,95,0.07);
+
+      --shadow-sm:  0 1px 3px rgba(20,40,70,0.08);
+      --shadow:     0 4px 16px rgba(20,40,70,0.10), 0 1px 4px rgba(20,40,70,0.06);
+      --shadow-lg:  0 12px 40px rgba(20,40,70,0.13), 0 4px 12px rgba(20,40,70,0.07);
+
+      --r-xl: 18px;
+      --r-lg: 12px;
+      --r-md: 8px;
+      --r-sm: 5px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--ink);
+      line-height: 1.75;
+    }
+
+    /* ══════ HEADER ══════ */
+    .app-header {
+      background: var(--navy);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(10,20,40,0.25);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.05em;
+    }
+    .header-logo span {
+      color: var(--accent2);
+    }
+    .header-subtitle {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.08em;
+    }
+    /* シグネチャ要素：報告種別バッジ（常時表示） */
+    .report-type-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+    }
+    .badge-pill {
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Sora', sans-serif;
+      padding: 3px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      transition: background 0.3s;
+    }
+    .badge-pill.final { background: var(--warn); }
+    .badge-pill.interim { background: var(--amber); }
+
+    /* ══════ PROGRESS BAR ══════ */
+    .progress-bar-wrap {
+      background: var(--navy2);
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+    }
+    .progress-step {
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 11px;
+      font-family: 'Sora', sans-serif;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 3px solid transparent;
+      position: relative;
+    }
+    .progress-step .step-num {
+      display: block;
+      font-size: 10px;
+      margin-bottom: 2px;
+      letter-spacing: 0.06em;
+    }
+    .progress-step .step-name {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .progress-step.active {
+      color: #fff;
+      border-bottom-color: var(--accent2);
+    }
+    .progress-step.done {
+      color: rgba(255,255,255,0.7);
+      border-bottom-color: rgba(255,255,255,0.25);
+    }
+    .progress-step.done::after {
+      content: '✓';
+      position: absolute;
+      top: 8px;
+      right: calc(50% - 24px);
+      font-size: 10px;
+      color: var(--accent2);
+    }
+
+    /* ══════ MAIN ══════ */
+    .main-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    /* ══════ SECTION CARD ══════ */
+    .section-card {
+      background: var(--surface);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border2);
+    }
+    .card-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-lt);
+      padding: 3px 8px;
+      border-radius: var(--r-sm);
+      letter-spacing: 0.06em;
+    }
+    .card-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .card-body {
+      padding: 20px 24px;
+    }
+
+    /* ══════ FORM ELEMENTS ══════ */
+    .f-row {
+      margin-bottom: 18px;
+    }
+    .f-row:last-child { margin-bottom: 0; }
+
+    .f-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink2);
+      margin-bottom: 7px;
+      letter-spacing: 0.03em;
+    }
+    .f-required {
+      color: var(--warn);
+      margin-left: 3px;
+    }
+    .f-hint {
+      font-size: 11px;
+      color: var(--ink3);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(46,125,153,0.15);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.7;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7d90' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    .f-inline {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .f-inline input, .f-inline select {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    /* チェックグループ */
+    .check-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      padding: 8px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      transition: all 0.15s;
+      font-size: 13px;
+      color: var(--ink2);
+      user-select: none;
+    }
+    .check-item:hover {
+      border-color: var(--accent);
+      background: var(--accent-xl);
+    }
+    .check-item.selected {
+      border-color: var(--accent);
+      background: var(--accent-lt);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .check-item.warn-select.selected {
+      border-color: var(--warn);
+      background: var(--warn-lt);
+      color: var(--warn);
+    }
+    .check-item input[type="checkbox"],
+    .check-item input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* ラジオグループ（選択肢が少ない場合） */
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--ink2);
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .radio-item:hover { border-color: var(--accent); background: var(--accent-xl); }
+    .radio-item.selected {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #fff;
+      font-weight: 700;
+    }
+    .radio-item input[type="radio"] {
+      display: none;
+    }
+
+    /* 重症度ラジオ */
+    .severity-group {
+      display: flex;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      overflow: hidden;
+    }
+    .severity-item {
+      flex: 1;
+      text-align: center;
+      padding: 10px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      transition: all 0.15s;
+      user-select: none;
+      color: var(--ink3);
+    }
+    .severity-item:last-child { border-right: none; }
+    .severity-item:hover { background: var(--bg2); }
+    .severity-item.sel-minor { background: var(--ok-lt); color: var(--ok); }
+    .severity-item.sel-moderate { background: var(--amber-lt); color: var(--amber); }
+    .severity-item.sel-severe { background: var(--warn-lt); color: var(--warn); }
+    .severity-item.sel-death { background: var(--warn); color: #fff; }
+
+    /* テキストエリア + 音声入力 */
+    .textarea-wrap {
+      position: relative;
+    }
+    .voice-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: var(--accent-lt);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: var(--r-md);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .voice-btn:hover { background: var(--accent); color: #fff; }
+    .voice-btn.recording {
+      background: var(--warn);
+      border-color: var(--warn);
+      color: #fff;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.65; }
+    }
+    textarea.with-voice { padding-bottom: 50px; }
+
+    /* ══════ STEP PAGES ══════ */
+    .step-page { display: none; }
+    .step-page.active { display: block; }
+
+    .step-header {
+      margin-bottom: 24px;
+    }
+    .step-eyebrow {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .step-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--ink3);
+      margin-top: 6px;
+    }
+
+    /* ══════ NAVIGATION ══════ */
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 28px;
+    }
+    .btn {
+      padding: 12px 28px;
+      border-radius: var(--r-md);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink3);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--bg2); color: var(--ink2); }
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:hover { background: var(--navy2); box-shadow: var(--shadow); }
+    .btn-ai {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--navy2) 100%);
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+    .btn-ai:hover { opacity: 0.9; box-shadow: var(--shadow-lg); }
+    .btn-warn {
+      background: var(--warn);
+      color: #fff;
+    }
+    .btn-warn:hover { opacity: 0.88; }
+
+    /* ══════ AI 生成エリア ══════ */
+    .ai-section {
+      background: linear-gradient(135deg, var(--navy-xl) 0%, var(--accent-xl) 100%);
+      border: 1.5px solid var(--navy-lt);
+      border-radius: var(--r-xl);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .ai-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--navy2) 100%);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .ai-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .ai-sub {
+      font-size: 12px;
+      color: var(--ink3);
+      margin-left: auto;
+    }
+
+    .ai-hint-box {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--ink3);
+      margin-bottom: 14px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .ai-generating {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--surface);
+      border-radius: var(--r-md);
+      margin-bottom: 12px;
+    }
+    .ai-generating.show { display: flex; }
+    .ai-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--accent-lt);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ai-generating-text { font-size: 13px; color: var(--ink2); }
+
+    .ai-result-block {
+      margin-bottom: 16px;
+    }
+    .ai-result-block:last-child { margin-bottom: 0; }
+    .ai-result-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .axis-tag {
+      background: var(--accent-lt);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-size: 10px;
+    }
+
+    /* ══════ PREVIEW ══════ */
+    .preview-wrap {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .preview-toolbar {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .preview-toolbar-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .preview-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: var(--r-sm);
+    }
+
+    /* 印刷用プレビュー */
+    #report-preview {
+      padding: 32px;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #111;
+    }
+    .preview-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.15em;
+    }
+    .preview-style-note {
+      font-size: 10px;
+      color: #666;
+      margin-bottom: 16px;
+      text-align: right;
+    }
+    .preview-section {
+      margin-bottom: 14px;
+      border: 1px solid #aaa;
+    }
+    .preview-section-title {
+      background: #e8e8e8;
+      padding: 5px 10px;
+      font-weight: 700;
+      font-size: 12px;
+      border-bottom: 1px solid #aaa;
+    }
+    .preview-rows {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+    }
+    .preview-key {
+      padding: 6px 10px;
+      border-right: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      font-size: 11px;
+      color: #444;
+      background: #fafafa;
+    }
+    .preview-val {
+      padding: 6px 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .preview-key:last-of-type, .preview-val:last-of-type {
+      border-bottom: none;
+    }
+    .preview-full {
+      padding: 8px 10px;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      border-bottom: 1px solid #ddd;
+      grid-column: 1 / -1;
+    }
+    .preview-full:last-child { border-bottom: none; }
+
+    /* ══════ TOAST ══════ */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ══════ FACILITY PRESET ══════ */
+    .preset-bar {
+      background: var(--navy-xl);
+      border: 1.5px solid var(--navy-lt);
+      border-radius: var(--r-lg);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .preset-bar-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .preset-select {
+      flex: 1;
+      min-width: 180px;
+      padding: 8px 32px 8px 12px;
+      border: 1.5px solid var(--navy-lt);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      color: var(--ink);
+      background: var(--surface);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7d90' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      cursor: pointer;
+      -webkit-appearance: none;
+    }
+    .preset-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(46,125,153,0.15);
+    }
+    .preset-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn-preset {
+      padding: 7px 14px;
+      border-radius: var(--r-md);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .btn-preset-load {
+      background: var(--navy);
+      color: #fff;
+    }
+    .btn-preset-load:hover { background: var(--navy2); }
+    .btn-preset-save {
+      background: var(--accent-lt);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .btn-preset-save:hover { background: var(--accent); color: #fff; }
+    .btn-preset-del {
+      background: var(--warn-lt);
+      color: var(--warn);
+      border: 1px solid rgba(184,48,48,0.3);
+    }
+    .btn-preset-del:hover { background: var(--warn); color: #fff; }
+
+    /* 保存ダイアログ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,20,40,0.55);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-card {
+      background: var(--surface);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-lg);
+      padding: 28px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .modal-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .modal-sub {
+      font-size: 12px;
+      color: var(--ink3);
+      margin-bottom: 18px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ══════ PRINT ══════ */
+    @media print {
+      body > *:not(#print-target) { display: none !important; }
+      #print-target { display: block !important; }
+      #report-preview { padding: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .progress-step .step-name { font-size: 10px; }
+      .main-wrap { padding: 20px 14px 60px; }
+      .card-body { padding: 16px; }
+      .nav-row { flex-direction: column; }
+      .btn { justify-content: center; }
+      .preview-rows { grid-template-columns: 100px 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<!-- ログイン画面 -->
+<div id="login-screen" style="display:flex;position:fixed;inset:0;background:#f0f2f5;z-index:9999;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#fff;border-radius:18px;box-shadow:0 12px 40px rgba(20,40,70,0.13);padding:36px 28px;width:100%;max-width:400px;text-align:center;">
+    <div style="font-size:36px;margin-bottom:10px;">📋</div>
+    <div style="font-family:'Noto Serif JP',serif;font-size:20px;font-weight:700;color:#1e3a5f;margin-bottom:6px;">じこログ</div>
+    <div style="font-size:13px;color:#6b7d90;margin-bottom:24px;line-height:1.7;">施設のアクセスコードを入力してください。<br>コードは購入時のメールに記載されています。</div>
+    <input type="text" id="login-code" placeholder="例：JKL-ABCD1234"
+      style="width:100%;padding:13px;border:2px solid rgba(30,58,95,0.15);border-radius:9px;font-size:16px;text-align:center;letter-spacing:0.08em;color:#1a2332;margin-bottom:12px;box-sizing:border-box;"
+      oninput="this.value=this.value.toUpperCase()">
+    <div id="login-error" style="color:#b83030;font-size:13px;margin-bottom:10px;display:none;"></div>
+    <button onclick="doLogin()"
+      style="width:100%;padding:13px;background:#1e3a5f;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
+      ログイン
+    </button>
+    <div style="margin-top:18px;padding:12px;background:#fffbf2;border-radius:8px;font-size:11px;color:#6b7d90;line-height:1.7;text-align:left;">
+      ⚠️ 本サービスはCloudflare Workers KVを使用しています。読み取り上限10万回/日・書き込み上限1,000回/日があります。通常の施設利用では問題ありません。
+    </div>
+  </div>
+</div>
+
+<header class="app-header">
+  <div class="header-left">
+    <div>
+      <div class="header-logo">じこ<span>ログ</span></div>
+      <div class="header-subtitle">介護事故報告書 作成支援システム</div>
+    </div>
+  </div>
+  <div class="report-type-badge">
+    <span class="badge-label">報告種別</span>
+    <span class="badge-pill" id="header-badge">未選択</span>
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap">
+  <div class="progress-step active" data-step="1" onclick="goStep(1)">
+    <span class="step-num">STEP 1</span>
+    <span class="step-name">基本情報</span>
+  </div>
+  <div class="progress-step" data-step="2" onclick="goStep(2)">
+    <span class="step-num">STEP 2</span>
+    <span class="step-name">事故概要</span>
+  </div>
+  <div class="progress-step" data-step="3" onclick="goStep(3)">
+    <span class="step-num">STEP 3</span>
+    <span class="step-name">対応記録</span>
+  </div>
+  <div class="progress-step" data-step="4" onclick="goStep(4)">
+    <span class="step-num">STEP 4</span>
+    <span class="step-name">分析・出力</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main-wrap">
+
+  <!-- ══════ STEP 1: 基本情報 ══════ -->
+  <div class="step-page active" id="step-1">
+    <div class="step-header">
+      <div class="step-eyebrow">STEP 1 / 4</div>
+      <div class="step-title">基本情報の入力</div>
+      <div class="step-desc">報告種別・事業所情報・対象者情報を入力してください。</div>
+    </div>
+
+    <!-- 報告種別 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 報告</span>
+        <span class="card-title">報告の種別</span>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">報告種別 <span class="f-required">*</span></div>
+          <div class="radio-group" id="report-type-group">
+            <label class="radio-item" onclick="selectRadio('report-type-group', this, updateBadge)">
+              <input type="radio" name="reportType" value="first">第１報
+            </label>
+            <label class="radio-item" onclick="selectRadio('report-type-group', this, updateBadge)">
+              <input type="radio" name="reportType" value="interim">第２報以降
+            </label>
+            <label class="radio-item" onclick="selectRadio('report-type-group', this, updateBadge)">
+              <input type="radio" name="reportType" value="final">最終報告
+            </label>
+          </div>
+        </div>
+        <div class="f-row" id="nth-report-row" style="display:none;">
+          <div class="f-label">第何報か <span class="f-required">*</span></div>
+          <input type="number" id="reportNum" min="2" max="99" placeholder="例：2" style="max-width:120px;">
+        </div>
+        <div class="f-row">
+          <div class="f-label">提出日 <span class="f-required">*</span></div>
+          <input type="date" id="submitDate" style="max-width:200px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 事故状況の程度 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 1</span>
+        <span class="card-title">事故状況の程度</span>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="severity-group">
+            <div class="severity-item" onclick="selectSeverity(this,'sel-minor','minor')">応急処置・外来受診</div>
+            <div class="severity-item" onclick="selectSeverity(this,'sel-moderate','hospitalized')">入院</div>
+            <div class="severity-item" onclick="selectSeverity(this,'sel-severe','other')">その他</div>
+            <div class="severity-item" onclick="selectSeverity(this,'sel-death','death')">死亡</div>
+          </div>
+        </div>
+        <div class="f-row" id="death-date-row" style="display:none;">
+          <div class="f-label">死亡年月日</div>
+          <input type="date" id="deathDate" style="max-width:200px;">
+        </div>
+        <div class="f-row" id="severity-other-row" style="display:none;">
+          <div class="f-label">その他の内容</div>
+          <input type="text" id="severityOther" placeholder="内容を入力">
+        </div>
+      </div>
+    </div>
+
+    <!-- 事業所情報 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 2</span>
+        <span class="card-title">事業所の概要</span>
+      </div>
+      <div class="card-body">
+
+        <!-- プリセットバー -->
+        <div class="preset-bar">
+          <div class="preset-bar-label">🏢 事業所プリセット</div>
+          <select class="preset-select" id="preset-select">
+            <option value="">— 保存済みの事業所を選択 —</option>
+          </select>
+          <div class="preset-actions">
+            <button class="btn-preset btn-preset-load" onclick="loadPreset()">読み込む</button>
+            <button class="btn-preset btn-preset-save" onclick="openSaveModal()">＋ 現在の内容を保存</button>
+            <button class="btn-preset btn-preset-del" onclick="deletePreset()" title="選択中のプリセットを削除">✕</button>
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">法人名</div>
+          <input type="text" id="corpName" placeholder="例：社会福祉法人〇〇会">
+        </div>
+        <div class="f-row">
+          <div class="f-label">事業所（施設）名 <span class="f-required">*</span></div>
+          <input type="text" id="facilityName" placeholder="例：特別養護老人ホーム〇〇">
+        </div>
+        <div class="f-row">
+          <div class="f-label">事業所番号</div>
+          <input type="text" id="facilityNum" placeholder="例：1234567890" style="max-width:220px;">
+        </div>
+        <div class="f-row">
+          <div class="f-label">サービス種別 <span class="f-required">*</span></div>
+          <select id="serviceType">
+            <option value="">選択してください</option>
+            <option>介護老人福祉施設</option>
+            <option>介護老人保健施設</option>
+            <option>介護医療院</option>
+            <option>地域密着型介護老人福祉施設入所者生活介護</option>
+            <option>特定施設入居者生活介護</option>
+            <option>小規模多機能型居宅介護</option>
+            <option>認知症対応型共同生活介護</option>
+            <option>地域密着型特定施設入居者生活介護</option>
+            <option>看護小規模多機能型居宅介護</option>
+            <option>養護老人ホーム</option>
+            <option>軽費老人ホーム</option>
+            <option>有料老人ホーム</option>
+            <option>サービス付き高齢者向け住宅</option>
+            <option>通所介護</option>
+            <option>訪問介護</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div class="f-row">
+          <div class="f-label">所在地</div>
+          <input type="text" id="facilityAddr" placeholder="都道府県・市区町村・番地">
+        </div>
+      </div>
+    </div>
+
+    <!-- 対象者 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 3</span>
+        <span class="card-title">対象者</span>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-inline">
+            <div style="flex:2">
+              <div class="f-label">氏名 <span class="f-required">*</span></div>
+              <input type="text" id="userName" placeholder="例：山田 太郎">
+            </div>
+            <div style="flex:1">
+              <div class="f-label">年齢</div>
+              <input type="number" id="userAge" placeholder="例：82" min="0" max="120">
+            </div>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">性別 <span class="f-required">*</span></div>
+          <div class="radio-group" id="gender-group">
+            <label class="radio-item" onclick="selectRadio('gender-group', this)">
+              <input type="radio" name="gender" value="男性">男性
+            </label>
+            <label class="radio-item" onclick="selectRadio('gender-group', this)">
+              <input type="radio" name="gender" value="女性">女性
+            </label>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">サービス提供開始日</div>
+          <input type="date" id="serviceStartDate" style="max-width:200px;">
+        </div>
+        <div class="f-row">
+          <div class="f-label">保険者</div>
+          <input type="text" id="insurer" placeholder="例：〇〇市" style="max-width:240px;">
+        </div>
+        <div class="f-row">
+          <div class="f-label">要介護度</div>
+          <div class="check-group" id="care-level-group">
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="要支援1">要支援1
+            </label>
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="要支援2">要支援2
+            </label>
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="要介護1">要介護1
+            </label>
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="要介護2">要介護2
+            </label>
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="要介護3">要介護3
+            </label>
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="要介護4">要介護4
+            </label>
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="要介護5">要介護5
+            </label>
+            <label class="check-item" onclick="selectCheck('care-level-group', this)">
+              <input type="radio" name="careLevel" value="自立">自立
+            </label>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">認知症高齢者 日常生活自立度</div>
+          <div class="check-group" id="dementia-group">
+            <label class="check-item" onclick="selectCheck('dementia-group', this)">
+              <input type="radio" name="dementia" value="Ⅰ">Ⅰ
+            </label>
+            <label class="check-item" onclick="selectCheck('dementia-group', this)">
+              <input type="radio" name="dementia" value="Ⅱa">Ⅱa
+            </label>
+            <label class="check-item" onclick="selectCheck('dementia-group', this)">
+              <input type="radio" name="dementia" value="Ⅱb">Ⅱb
+            </label>
+            <label class="check-item" onclick="selectCheck('dementia-group', this)">
+              <input type="radio" name="dementia" value="Ⅲa">Ⅲa
+            </label>
+            <label class="check-item" onclick="selectCheck('dementia-group', this)">
+              <input type="radio" name="dementia" value="Ⅲb">Ⅲb
+            </label>
+            <label class="check-item" onclick="selectCheck('dementia-group', this)">
+              <input type="radio" name="dementia" value="Ⅳ">Ⅳ
+            </label>
+            <label class="check-item" onclick="selectCheck('dementia-group', this)">
+              <input type="radio" name="dementia" value="M">M
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-primary" onclick="goStep(2)">次へ：事故概要 →</button>
+    </div>
+  </div><!-- /step-1 -->
+
+
+  <!-- ══════ STEP 2: 事故概要 ══════ -->
+  <div class="step-page" id="step-2">
+    <div class="step-header">
+      <div class="step-eyebrow">STEP 2 / 4</div>
+      <div class="step-title">事故の概要</div>
+      <div class="step-desc">いつ、どこで、何が起きたかを記録します。</div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 4</span>
+        <span class="card-title">事故の概要</span>
+      </div>
+      <div class="card-body">
+
+        <div class="f-row">
+          <div class="f-label">発生日時 <span class="f-required">*</span></div>
+          <div class="f-inline">
+            <input type="date" id="incidentDate" style="flex:2">
+            <input type="time" id="incidentTime" style="flex:1" placeholder="00:00">
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">発生場所 <span class="f-required">*</span></div>
+          <div class="check-group" id="location-group">
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="居室（個室）">居室（個室）
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="居室（多床室）">居室（多床室）
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="トイレ">トイレ
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="廊下">廊下
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="食堂等共用部">食堂等共用部
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="浴室・脱衣室">浴室・脱衣室
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="機能訓練室">機能訓練室
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="施設敷地内の建物外">敷地内・建物外
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this)">
+              <input type="radio" name="location" value="敷地外">敷地外
+            </label>
+            <label class="check-item" onclick="selectCheck('location-group', this, true)">
+              <input type="radio" name="location" value="その他">その他
+            </label>
+          </div>
+          <div id="location-other-row" style="display:none; margin-top:8px;">
+            <input type="text" id="locationOther" placeholder="発生場所を入力">
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">事故の種別 <span class="f-required">*</span></div>
+          <div class="check-group" id="incident-type-group">
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="incidentType" value="転倒">転倒
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="incidentType" value="転落">転落
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="incidentType" value="誤嚥・窒息">誤嚥・窒息
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="incidentType" value="異食">異食
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="incidentType" value="誤薬・与薬もれ等">誤薬・与薬もれ等
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="incidentType" value="医療処置関連">医療処置関連
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="incidentType" value="不明">不明
+            </label>
+            <label class="check-item" onclick="toggleCheck(this, true)">
+              <input type="checkbox" name="incidentType" value="その他">その他
+            </label>
+          </div>
+          <div id="incident-type-other-row" style="display:none; margin-top:8px;">
+            <input type="text" id="incidentTypeOther" placeholder="事故種別を入力（自由記載）">
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">発生時状況・事故内容の詳細 <span class="f-required">*</span></div>
+          <div class="f-hint">いつ・誰が・何をしていたとき・何が起きたかを具体的に記述してください</div>
+          <div class="textarea-wrap">
+            <textarea class="with-voice" id="incidentDetail" rows="5" placeholder="例：14時30分頃、〇〇職員が巡視中に居室内で対象者が床に倒れているのを発見した。ベッドから転落した様子で…"></textarea>
+            <button class="voice-btn" onclick="toggleVoice('incidentDetail', this)">🎤 音声入力</button>
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">その他 特記すべき事項</div>
+          <textarea id="incidentNote" rows="3" placeholder="必要に応じて記入"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 戻る</button>
+      <button class="btn btn-primary" onclick="goStep(3)">次へ：対応記録 →</button>
+    </div>
+  </div><!-- /step-2 -->
+
+
+  <!-- ══════ STEP 3: 対応記録 ══════ -->
+  <div class="step-page" id="step-3">
+    <div class="step-header">
+      <div class="step-eyebrow">STEP 3 / 4</div>
+      <div class="step-title">対応記録</div>
+      <div class="step-desc">事故発生時の対応と、その後の状況を記録します。</div>
+    </div>
+
+    <!-- 発生時の対応 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 5</span>
+        <span class="card-title">事故発生時の対応</span>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">発生時の対応内容</div>
+          <div class="textarea-wrap">
+            <textarea class="with-voice" id="responseDetail" rows="4" placeholder="例：直ちにバイタル確認を行い、施設内看護師に連絡。〇〇病院に救急搬送を依頼した。"></textarea>
+            <button class="voice-btn" onclick="toggleVoice('responseDetail', this)">🎤 音声入力</button>
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">受診方法</div>
+          <div class="radio-group" id="treatment-method-group">
+            <label class="radio-item" onclick="selectRadio('treatment-method-group', this)">
+              <input type="radio" name="treatmentMethod" value="施設内医師が対応">施設内医師が対応
+            </label>
+            <label class="radio-item" onclick="selectRadio('treatment-method-group', this)">
+              <input type="radio" name="treatmentMethod" value="受診（外来・往診）">外来・往診
+            </label>
+            <label class="radio-item" onclick="selectRadio('treatment-method-group', this)">
+              <input type="radio" name="treatmentMethod" value="救急搬送">救急搬送
+            </label>
+            <label class="radio-item" onclick="selectRadio('treatment-method-group', this)">
+              <input type="radio" name="treatmentMethod" value="その他">その他
+            </label>
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-inline">
+            <div style="flex:2">
+              <div class="f-label">受診先（医療機関名）</div>
+              <input type="text" id="hospitalName" placeholder="例：〇〇病院">
+            </div>
+            <div style="flex:1">
+              <div class="f-label">連絡先（電話）</div>
+              <input type="text" id="hospitalTel" placeholder="000-0000-0000">
+            </div>
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">診断名</div>
+          <input type="text" id="diagnosis" placeholder="例：右大腿骨頸部骨折">
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">診断内容</div>
+          <div class="check-group" id="diagnosis-type-group">
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="diagnosisType" value="切傷・擦過傷">切傷・擦過傷
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="diagnosisType" value="打撲・捻挫・脱臼">打撲・捻挫・脱臼
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="diagnosisType" value="骨折">骨折
+            </label>
+            <label class="check-item" onclick="toggleCheck(this, true)">
+              <input type="checkbox" name="diagnosisType" value="その他">その他
+            </label>
+          </div>
+          <div id="diagnosis-other-row" style="display:none; margin-top:8px;">
+            <div class="f-inline">
+              <input type="text" id="fracturePart" placeholder="骨折部位（例：右大腿骨）">
+              <input type="text" id="diagnosisOther" placeholder="その他の内容">
+            </div>
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">検査・処置等の概要</div>
+          <textarea id="treatmentSummary" rows="3" placeholder="例：X線撮影の結果、右大腿骨頸部骨折と診断。手術適応の判断待ち。"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 事故発生後の状況 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 6</span>
+        <span class="card-title">事故発生後の状況</span>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">利用者の現在の状況</div>
+          <textarea id="currentStatus" rows="3" placeholder="例：入院中。〇〇病院の整形外科に入院し、術後経過を観察中。意識清明。"></textarea>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">報告した家族等の続柄</div>
+          <div class="check-group" id="family-type-group">
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="familyType" value="配偶者">配偶者
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="familyType" value="子・子の配偶者">子・子の配偶者
+            </label>
+            <label class="check-item" onclick="toggleCheck(this, true)">
+              <input type="checkbox" name="familyType" value="その他">その他
+            </label>
+          </div>
+          <div id="family-other-row" style="display:none; margin-top:8px;">
+            <input type="text" id="familyOther" placeholder="続柄を入力">
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">家族への報告年月日</div>
+          <input type="date" id="familyReportDate" style="max-width:200px;">
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">連絡した関係機関（連絡した場合のみ）</div>
+          <div class="check-group" id="agency-group">
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="agency" value="自治体">自治体
+            </label>
+            <label class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="agency" value="警察">警察
+            </label>
+            <label class="check-item" onclick="toggleCheck(this, true)">
+              <input type="checkbox" name="agency" value="その他">その他
+            </label>
+          </div>
+          <div id="agency-detail-row" style="display:none; margin-top:8px;">
+            <div class="f-inline">
+              <input type="text" id="agencyGovName" placeholder="自治体名">
+              <input type="text" id="agencyPolice" placeholder="警察署名">
+              <input type="text" id="agencyOther" placeholder="その他の機関名">
+            </div>
+          </div>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">本人・家族・関係先等への追加対応予定</div>
+          <textarea id="followupPlan" rows="3" placeholder="例：担当ケアマネへ翌日中に連絡予定。家族への面談を〇月〇日に設定。"></textarea>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">その他 特記事項（独自項目）</div>
+          <textarea id="postNote" rows="2" placeholder="必要に応じて記入"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goStep(2)">← 戻る</button>
+      <button class="btn btn-primary" onclick="goStep(4)">次へ：分析・出力 →</button>
+    </div>
+  </div><!-- /step-3 -->
+
+
+  <!-- ══════ STEP 4: 分析・出力 ══════ -->
+  <div class="step-page" id="step-4">
+    <div class="step-header">
+      <div class="step-eyebrow">STEP 4 / 4</div>
+      <div class="step-title">原因分析・再発防止策</div>
+      <div class="step-desc">AIが入力内容をもとに下書きを生成します。内容を確認・編集して完成させてください。</div>
+    </div>
+
+    <!-- AI生成エリア -->
+    <div class="ai-section">
+      <div class="ai-header">
+        <div class="ai-icon">✦</div>
+        <div class="ai-title">AI 分析アシスト</div>
+        <div class="ai-sub">Anthropic Claude</div>
+      </div>
+      <div class="ai-hint-box">
+        事故の詳細・対象者情報・対応記録をもとに、「本人要因・職員要因・環境要因」の3軸で原因分析と再発防止策の下書きを生成します。生成後は必ず内容を確認・修正してください。
+      </div>
+      <button class="btn btn-ai" onclick="generateAnalysis()" id="ai-gen-btn">
+        ✦ AI で原因分析・再発防止策を生成する
+      </button>
+
+      <div class="ai-generating" id="ai-generating">
+        <div class="ai-spinner"></div>
+        <div class="ai-generating-text">事故情報を分析しています…</div>
+      </div>
+    </div>
+
+    <!-- 原因分析 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 7</span>
+        <span class="card-title">事故の原因分析</span>
+      </div>
+      <div class="card-body">
+        <div class="f-hint" style="margin-bottom:12px;">本人要因・職員要因・環境要因に分けて、できるだけ具体的に記載してください</div>
+
+        <div class="f-row">
+          <div class="f-label">
+            <span class="axis-tag">本人要因</span>
+            対象者本人に関する要因
+          </div>
+          <textarea id="causeUser" rows="4" placeholder="例：認知症による判断力低下があり、就寝中に一人でトイレへ行こうとしたと推測される。ベッド柵の使用方法を理解できていなかった可能性がある。"></textarea>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">
+            <span class="axis-tag" style="background:var(--amber-lt);color:var(--amber)">職員要因</span>
+            職員・ケアに関する要因
+          </div>
+          <textarea id="causeStaff" rows="4" placeholder="例：夜間帯の巡視間隔が30分おきであり、転落のタイミングを発見できなかった。転倒リスクに関するアセスメントが直近で更新されていなかった。"></textarea>
+        </div>
+
+        <div class="f-row">
+          <div class="f-label">
+            <span class="axis-tag" style="background:var(--navy-lt);color:var(--navy)">環境要因</span>
+            施設・環境に関する要因
+          </div>
+          <textarea id="causeEnv" rows="4" placeholder="例：居室のベッド高さ調整が最低設定になっていなかった。床面に段差があり夜間の視認性が低かった。"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 再発防止策 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 8</span>
+        <span class="card-title">再発防止策</span>
+      </div>
+      <div class="card-body">
+        <div class="f-hint" style="margin-bottom:12px;">手順変更・環境変更・その他の対応、再発防止策の評価時期および結果等</div>
+        <div class="textarea-wrap">
+          <textarea class="with-voice" id="prevention" rows="7" placeholder="例：&#10;【手順変更】夜間巡視を15分おきとし、当該利用者にはセンサーマットを設置する。&#10;【環境変更】ベッドを最低位置に設定し直し、床頭台を固定した。&#10;【評価時期】〇月末に再アセスメントを実施し、防止策の効果を確認する。"></textarea>
+          <button class="voice-btn" onclick="toggleVoice('prevention', this)">🎤 音声入力</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- その他特記事項 -->
+    <div class="section-card">
+      <div class="card-header">
+        <span class="card-num">様式1 — 9</span>
+        <span class="card-title">その他 特記すべき事項</span>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <textarea id="finalNote" rows="3" placeholder="必要に応じて記入"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- プレビュー -->
+    <div class="preview-wrap">
+      <div class="preview-toolbar">
+        <div class="preview-toolbar-title">📄 報告書プレビュー</div>
+        <div class="preview-actions">
+          <button class="btn btn-ghost btn-sm" onclick="refreshPreview()">🔄 更新</button>
+          <button class="btn btn-primary btn-sm" onclick="window.print()">🖨 印刷</button>
+        </div>
+      </div>
+      <div id="report-preview">
+        <div style="text-align:center;padding:40px;color:#aaa;font-size:14px;">
+          「🔄 更新」をクリックするとプレビューが表示されます
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goStep(3)">← 戻る</button>
+      <button class="btn btn-primary" onclick="refreshPreview()">🔄 プレビュー更新</button>
+      <button class="btn btn-ai" onclick="saveToCloud()" id="save-cloud-btn">☁️ クラウド保存</button>
+    </div>
+  </div><!-- /step-4 -->
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+
+<!-- 事業所プリセット保存ダイアログ -->
+<div class="modal-overlay" id="save-modal">
+  <div class="modal-card">
+    <div class="modal-title">🏢 事業所プリセットとして保存</div>
+    <div class="modal-sub">現在入力中の事業所情報を名前をつけて保存します。<br>同法人の別事業所は別名で保存できます。</div>
+    <div class="f-row">
+      <div class="f-label">プリセット名 <span class="f-required">*</span></div>
+      <input type="text" id="preset-name-input" placeholder="例：〇〇特養、〇〇デイサービス" maxlength="40">
+    </div>
+    <div id="preset-preview" style="background:var(--surface2);border-radius:var(--r-md);padding:12px 14px;font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.9;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="padding:9px 20px;font-size:13px;" onclick="closeSaveModal()">キャンセル</button>
+      <button class="btn btn-primary" style="padding:9px 20px;font-size:13px;" onclick="savePreset()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let currentStep = 1;
+let accessCode   = '';
+let selectedSeverity = '';
+let mediaRecognition = null;
+let isRecording = false;
+
+/* ══════════════════════════════════════
+   STEP NAVIGATION
+══════════════════════════════════════ */
+function goStep(n) {
+  document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+
+  document.querySelectorAll('.progress-step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i + 1 < n) s.classList.add('done');
+    if (i + 1 === n) s.classList.add('active');
+  });
+
+  currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════
+   UI HELPERS
+══════════════════════════════════════ */
+function selectRadio(groupId, el, callback) {
+  document.querySelectorAll('#' + groupId + ' .radio-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  if (callback) callback();
+
+  // 第2報以降 → 報告番号入力欄
+  if (groupId === 'report-type-group') {
+    const val = el.querySelector('input').value;
+    document.getElementById('nth-report-row').style.display = val === 'interim' ? 'block' : 'none';
+  }
+}
+
+function selectCheck(groupId, el, showOther = false) {
+  // ラジオ的に動作（1つだけ選択）
+  document.querySelectorAll('#' + groupId + ' .check-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  const input = el.querySelector('input');
+  document.querySelectorAll('input[name="' + input.name + '"]').forEach(i => i.checked = false);
+  input.checked = true;
+
+  if (showOther) {
+    const otherRow = document.getElementById(groupId.replace('-group', '-other-row'))
+                  || document.getElementById('location-other-row');
+    if (otherRow) otherRow.style.display = 'block';
+  }
+}
+
+function toggleCheck(el, showOther = false) {
+  el.classList.toggle('selected');
+  el.querySelector('input').checked = el.classList.contains('selected');
+
+  if (showOther) {
+    // 動的に対応するother-row を探す
+    const parentGroup = el.closest('.check-group');
+    const groupId = parentGroup ? parentGroup.id : '';
+    const otherRowId = groupId.replace('-group', '-other-row');
+    const otherRow = document.getElementById(otherRowId);
+    const checked = el.classList.contains('selected');
+    if (otherRow) otherRow.style.display = checked ? 'block' : 'none';
+  }
+}
+
+function selectSeverity(el, cls, val) {
+  document.querySelectorAll('.severity-item').forEach(i => {
+    i.className = 'severity-item';
+  });
+  el.classList.add(cls);
+  selectedSeverity = val;
+
+  document.getElementById('death-date-row').style.display = val === 'death' ? 'block' : 'none';
+  document.getElementById('severity-other-row').style.display = val === 'other' ? 'block' : 'none';
+}
+
+function updateBadge() {
+  const selected = document.querySelector('input[name="reportType"]:checked');
+  const badge = document.getElementById('header-badge');
+  if (!selected) return;
+  const map = { first: '第１報', interim: '第２報以降', final: '最終報告' };
+  badge.textContent = map[selected.value] || '未選択';
+  badge.className = 'badge-pill';
+  if (selected.value === 'final') badge.classList.add('final');
+  if (selected.value === 'interim') badge.classList.add('interim');
+}
+
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+/* ══════════════════════════════════════
+   VOICE INPUT
+══════════════════════════════════════ */
+function toggleVoice(textareaId, btn) {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('このブラウザは音声入力に対応していません');
+    return;
+  }
+
+  if (isRecording) {
+    if (mediaRecognition) mediaRecognition.stop();
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤 音声入力';
+    return;
+  }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  mediaRecognition = new SR();
+  mediaRecognition.lang = 'ja-JP';
+  mediaRecognition.continuous = true;
+  mediaRecognition.interimResults = true;
+
+  const textarea = document.getElementById(textareaId);
+  let baseText = textarea.value;
+
+  mediaRecognition.onresult = (e) => {
+    let interim = '';
+    let final = baseText;
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        final += e.results[i][0].transcript;
+        baseText = final;
+      } else {
+        interim += e.results[i][0].transcript;
+      }
+    }
+    textarea.value = final + interim;
+  };
+
+  mediaRecognition.onend = () => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤 音声入力';
+  };
+
+  mediaRecognition.onerror = (e) => {
+    showToast('音声認識エラー: ' + e.error);
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤 音声入力';
+  };
+
+  mediaRecognition.start();
+  isRecording = true;
+  btn.classList.add('recording');
+  btn.textContent = '⏹ 停止';
+}
+
+/* ══════════════════════════════════════
+   DATA COLLECTION
+══════════════════════════════════════ */
+function collectData() {
+  const g = (id) => (document.getElementById(id) || {}).value || '';
+  const checked = (name) => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value).join('、');
+  const reportTypeEl = document.querySelector('input[name="reportType"]:checked');
+
+  return {
+    // 報告
+    reportType: reportTypeEl ? reportTypeEl.value : '',
+    reportTypeLabel: reportTypeEl ? { first:'第１報', interim:'第２報以降', final:'最終報告' }[reportTypeEl.value] : '',
+    reportNum: g('reportNum'),
+    submitDate: g('submitDate'),
+
+    // 1. 事故状況
+    severity: selectedSeverity,
+    deathDate: g('deathDate'),
+    severityOther: g('severityOther'),
+
+    // 2. 事業所
+    corpName: g('corpName'),
+    facilityName: g('facilityName'),
+    facilityNum: g('facilityNum'),
+    serviceType: g('serviceType'),
+    facilityAddr: g('facilityAddr'),
+
+    // 3. 対象者
+    userName: g('userName'),
+    userAge: g('userAge'),
+    gender: checked('gender'),
+    serviceStartDate: g('serviceStartDate'),
+    insurer: g('insurer'),
+    careLevel: checked('careLevel'),
+    dementia: checked('dementia'),
+
+    // 4. 事故概要
+    incidentDate: g('incidentDate'),
+    incidentTime: g('incidentTime'),
+    location: checked('location'),
+    locationOther: g('locationOther'),
+    incidentTypes: checked('incidentType'),
+    incidentTypeOther: g('incidentTypeOther'),
+    incidentDetail: g('incidentDetail'),
+    incidentNote: g('incidentNote'),
+
+    // 5. 対応
+    responseDetail: g('responseDetail'),
+    treatmentMethod: checked('treatmentMethod'),
+    hospitalName: g('hospitalName'),
+    hospitalTel: g('hospitalTel'),
+    diagnosis: g('diagnosis'),
+    diagnosisTypes: checked('diagnosisType'),
+    fracturePart: g('fracturePart'),
+    diagnosisOther: g('diagnosisOther'),
+    treatmentSummary: g('treatmentSummary'),
+
+    // 6. 発生後
+    currentStatus: g('currentStatus'),
+    familyTypes: checked('familyType'),
+    familyOther: g('familyOther'),
+    familyReportDate: g('familyReportDate'),
+    agencies: checked('agency'),
+    agencyGovName: g('agencyGovName'),
+    agencyPolice: g('agencyPolice'),
+    agencyOther: g('agencyOther'),
+    followupPlan: g('followupPlan'),
+    postNote: g('postNote'),
+
+    // 7-9. 分析
+    causeUser: g('causeUser'),
+    causeStaff: g('causeStaff'),
+    causeEnv: g('causeEnv'),
+    prevention: g('prevention'),
+    finalNote: g('finalNote'),
+  };
+}
+
+/* ══════════════════════════════════════
+   AI GENERATION
+══════════════════════════════════════ */
+async function generateAnalysis() {
+  const d = collectData();
+  if (!d.incidentDetail) {
+    showToast('STEP2の「事故内容の詳細」を先に入力してください');
+    return;
+  }
+
+  document.getElementById('ai-gen-btn').disabled = true;
+  document.getElementById('ai-generating').classList.add('show');
+
+  const severityMap = { minor:'応急処置・外来受診', hospitalized:'入院', death:'死亡', other:'その他' };
+
+  const prompt = `あなたは介護施設の安全管理・事故分析の専門家です。
+以下の介護事故情報をもとに、国の標準様式（様式1）に記載する「原因分析」と「再発防止策」の下書きを作成してください。
+
+【事故情報】
+- 対象者：${d.userName || '不明'}（${d.userAge ? d.userAge + '歳' : '年齢不明'}・${d.gender || '性別不明'}）
+- 要介護度：${d.careLevel || '不明'}
+- 認知症自立度：${d.dementia || '不明'}
+- 事故の程度：${severityMap[d.severity] || '不明'}
+- 発生日時：${d.incidentDate} ${d.incidentTime}
+- 発生場所：${d.location}${d.locationOther ? '（' + d.locationOther + '）' : ''}
+- 事故の種別：${d.incidentTypes}${d.incidentTypeOther ? '（' + d.incidentTypeOther + '）' : ''}
+- 診断名：${d.diagnosis || '不明'}
+
+【事故内容の詳細】
+${d.incidentDetail}
+
+【発生時の対応】
+${d.responseDetail || '（未記入）'}
+
+【指示】
+以下の形式でJSON形式のみで返答してください。余分なテキストやMarkdownは不要です。
+
+{
+  "causeUser": "本人要因の分析（3〜5文、具体的に）",
+  "causeStaff": "職員要因の分析（3〜5文、具体的に）",
+  "causeEnv": "環境要因の分析（3〜5文、具体的に）",
+  "prevention": "再発防止策（手順変更・環境変更・評価時期を含む5〜8文）"
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+
+    document.getElementById('causeUser').value = result.causeUser || '';
+    document.getElementById('causeStaff').value = result.causeStaff || '';
+    document.getElementById('causeEnv').value = result.causeEnv || '';
+    document.getElementById('prevention').value = result.prevention || '';
+
+    showToast('✓ AI下書きを生成しました。内容を確認・修正してください。', 4000);
+  } catch (e) {
+    showToast('生成に失敗しました。内容を手動で入力してください。');
+    console.error(e);
+  } finally {
+    document.getElementById('ai-gen-btn').disabled = false;
+    document.getElementById('ai-generating').classList.remove('show');
+  }
+}
+
+
+/* ══════════════════════════════════════
+   CLOUD SAVE（じこログ報告書保存）
+══════════════════════════════════════ */
+async function saveToCloud() {
+  if (!accessCode) { showToast('ログインが必要です'); return; }
+  const d = collectData();
+  if (!d.incidentDetail) { showToast('STEP2の事故内容を入力してください'); return; }
+
+  const btn = document.getElementById('save-cloud-btn');
+  btn.textContent = '保存中...'; btn.disabled = true;
+
+  try {
+    const r = await saveReportToCloud(d);
+    if (r.ok) {
+      showToast('✓ クラウドに保存しました（施設全体で共有されます）', 4000);
+    } else {
+      showToast('保存に失敗しました。通信を確認してください。');
+    }
+  } catch {
+    showToast('通信エラーが発生しました。');
+  }
+  btn.textContent = '☁️ クラウド保存'; btn.disabled = false;
+}
+
+/* ══════════════════════════════════════
+   PREVIEW GENERATION
+══════════════════════════════════════ */
+function refreshPreview() {
+  const d = collectData();
+
+  const severityMap = { minor:'受診（外来・往診）／応急処置', hospitalized:'入院', death:'死亡', other:'その他' };
+  const loc = d.location + (d.locationOther ? '（' + d.locationOther + '）' : '');
+  const types = d.incidentTypes + (d.incidentTypeOther ? '（' + d.incidentTypeOther + '）' : '');
+  const dTypes = d.diagnosisTypes + (d.fracturePart ? '・骨折部位：' + d.fracturePart : '') + (d.diagnosisOther ? '・' + d.diagnosisOther : '');
+  const families = d.familyTypes + (d.familyOther ? '（' + d.familyOther + '）' : '');
+  const agencies = d.agencies + (d.agencyGovName ? '（' + d.agencyGovName + '）' : '') + (d.agencyPolice ? '警察署：' + d.agencyPolice : '') + (d.agencyOther ? 'その他：' + d.agencyOther : '');
+
+  const row = (k, v) => `<div class="preview-key">${k}</div><div class="preview-val">${v || '—'}</div>`;
+  const full = (v) => `<div class="preview-full">${v || '—'}</div>`;
+
+  document.getElementById('report-preview').innerHTML = `
+    <div class="preview-title">事　故　報　告　書</div>
+    <div class="preview-style-note">様式１（国標準様式準拠）</div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">報告種別</div>
+      <div class="preview-rows">
+        ${row('報告種別', d.reportTypeLabel + (d.reportNum ? '（第' + d.reportNum + '報）' : ''))}
+        ${row('提出日', d.submitDate)}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">１ 事故状況</div>
+      <div class="preview-rows">
+        ${row('事故状況の程度', severityMap[d.severity] || '')}
+        ${d.severity === 'death' ? row('死亡年月日', d.deathDate) : ''}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">２ 事業所の概要</div>
+      <div class="preview-rows">
+        ${row('法人名', d.corpName)}
+        ${row('事業所名', d.facilityName)}
+        ${row('事業所番号', d.facilityNum)}
+        ${row('サービス種別', d.serviceType)}
+        ${row('所在地', d.facilityAddr)}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">３ 対象者</div>
+      <div class="preview-rows">
+        ${row('氏名', d.userName)}
+        ${row('年齢・性別', (d.userAge ? d.userAge + '歳' : '') + '　' + d.gender)}
+        ${row('サービス開始日', d.serviceStartDate)}
+        ${row('保険者', d.insurer)}
+        ${row('要介護度', d.careLevel)}
+        ${row('認知症自立度', d.dementia)}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">４ 事故の概要</div>
+      <div class="preview-rows">
+        ${row('発生日時', d.incidentDate + '　' + d.incidentTime)}
+        ${row('発生場所', loc)}
+        ${row('事故の種別', types)}
+      </div>
+      <div class="preview-rows">
+        <div class="preview-key">発生時状況・詳細</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.incidentDetail || '—'}</div>
+      </div>
+      ${d.incidentNote ? `<div class="preview-rows"><div class="preview-key">特記事項</div><div class="preview-val">${d.incidentNote}</div></div>` : ''}
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">５ 事故発生時の対応</div>
+      <div class="preview-rows">
+        <div class="preview-key">発生時の対応</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.responseDetail || '—'}</div>
+      </div>
+      <div class="preview-rows">
+        ${row('受診方法', d.treatmentMethod)}
+        ${row('受診先', d.hospitalName + (d.hospitalTel ? '　TEL:' + d.hospitalTel : ''))}
+        ${row('診断名', d.diagnosis)}
+        ${row('診断内容', dTypes)}
+      </div>
+      <div class="preview-rows">
+        <div class="preview-key">検査・処置等</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.treatmentSummary || '—'}</div>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">６ 事故発生後の状況</div>
+      <div class="preview-rows">
+        <div class="preview-key">利用者の状況</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.currentStatus || '—'}</div>
+      </div>
+      <div class="preview-rows">
+        ${row('家族報告（続柄）', families)}
+        ${row('家族報告日', d.familyReportDate)}
+        ${row('連絡した関係機関', agencies)}
+      </div>
+      <div class="preview-rows">
+        <div class="preview-key">追加対応予定</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.followupPlan || '—'}</div>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">７ 事故の原因分析</div>
+      <div class="preview-rows">
+        <div class="preview-key">本人要因</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.causeUser || '—'}</div>
+      </div>
+      <div class="preview-rows">
+        <div class="preview-key">職員要因</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.causeStaff || '—'}</div>
+      </div>
+      <div class="preview-rows">
+        <div class="preview-key">環境要因</div>
+        <div class="preview-val" style="white-space:pre-wrap">${d.causeEnv || '—'}</div>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-section-title">８ 再発防止策</div>
+      <div class="preview-rows">
+        ${full(d.prevention)}
+      </div>
+    </div>
+
+    ${d.finalNote ? `
+    <div class="preview-section">
+      <div class="preview-section-title">９ その他 特記すべき事項</div>
+      <div class="preview-rows">
+        ${full(d.finalNote)}
+      </div>
+    </div>` : ''}
+  `;
+
+  showToast('✓ プレビューを更新しました');
+
+  setTimeout(() => {
+    document.getElementById('report-preview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+/* ══════════════════════════════════════
+   FACILITY PRESET — localStorage管理
+   key: jikolog_presets → [{name, corpName, facilityName, facilityNum, serviceType, facilityAddr}]
+   key: jikolog_last_preset → name (前回使用プリセット自動復元用)
+══════════════════════════════════════ */
+
+const PRESET_KEY = 'jikolog_presets';
+const LAST_PRESET_KEY = 'jikolog_last_preset';
+
+function getPresets() {
+  try { return JSON.parse(localStorage.getItem(PRESET_KEY)) || []; }
+  catch { return []; }
+}
+function savePresets(arr) {
+  localStorage.setItem(PRESET_KEY, JSON.stringify(arr));
+}
+
+// セレクトボックスを再描画
+function renderPresetSelect(selectName) {
+  const sel = document.getElementById('preset-select');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— 保存済みの事業所を選択 —</option>';
+  getPresets().forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.name;
+    opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+  // 選択を復元
+  if (selectName && sel.querySelector(`option[value="${selectName}"]`)) {
+    sel.value = selectName;
+  } else if (current && sel.querySelector(`option[value="${current}"]`)) {
+    sel.value = current;
+  }
+}
+
+// フォームに流し込む
+function loadPreset() {
+  const name = document.getElementById('preset-select').value;
+  if (!name) { showToast('読み込む事業所プリセットを選択してください'); return; }
+  const preset = getPresets().find(p => p.name === name);
+  if (!preset) return;
+
+  document.getElementById('corpName').value     = preset.corpName     || '';
+  document.getElementById('facilityName').value = preset.facilityName || '';
+  document.getElementById('facilityNum').value  = preset.facilityNum  || '';
+  document.getElementById('facilityAddr').value = preset.facilityAddr || '';
+
+  const sel = document.getElementById('serviceType');
+  sel.value = preset.serviceType || '';
+
+  localStorage.setItem(LAST_PRESET_KEY, name);
+  showToast(`✓「${name}」を読み込みました`);
+}
+
+// 保存モーダルを開く
+function openSaveModal() {
+  const corpName     = document.getElementById('corpName').value.trim();
+  const facilityName = document.getElementById('facilityName').value.trim();
+  if (!facilityName) { showToast('事業所名を入力してから保存してください'); return; }
+
+  // プレビュー表示
+  const serviceType  = document.getElementById('serviceType').value;
+  const facilityNum  = document.getElementById('facilityNum').value.trim();
+  const facilityAddr = document.getElementById('facilityAddr').value.trim();
+  document.getElementById('preset-preview').innerHTML =
+    `<b>法人名：</b>${corpName || '（未入力）'}<br>` +
+    `<b>事業所名：</b>${facilityName}<br>` +
+    `<b>事業所番号：</b>${facilityNum || '（未入力）'}<br>` +
+    `<b>サービス種別：</b>${serviceType || '（未選択）'}<br>` +
+    `<b>所在地：</b>${facilityAddr || '（未入力）'}`;
+
+  // 既存プリセットと同じ施設名があれば初期値に
+  const nameInput = document.getElementById('preset-name-input');
+  nameInput.value = facilityName;
+  nameInput.select();
+
+  document.getElementById('save-modal').classList.add('show');
+}
+
+function closeSaveModal() {
+  document.getElementById('save-modal').classList.remove('show');
+}
+
+// 実際に保存
+function savePreset() {
+  const name = document.getElementById('preset-name-input').value.trim();
+  if (!name) { showToast('プリセット名を入力してください'); return; }
+
+  const data = {
+    name,
+    corpName:     document.getElementById('corpName').value.trim(),
+    facilityName: document.getElementById('facilityName').value.trim(),
+    facilityNum:  document.getElementById('facilityNum').value.trim(),
+    serviceType:  document.getElementById('serviceType').value,
+    facilityAddr: document.getElementById('facilityAddr').value.trim(),
+  };
+
+  const presets = getPresets().filter(p => p.name !== name); // 同名上書き
+  presets.push(data);
+  savePresets(presets);
+  renderPresetSelect(name);
+  localStorage.setItem(LAST_PRESET_KEY, name);
+  closeSaveModal();
+  showToast(`✓「${name}」として保存しました`);
+}
+
+// 選択中のプリセットを削除
+function deletePreset() {
+  const name = document.getElementById('preset-select').value;
+  if (!name) { showToast('削除するプリセットを選択してください'); return; }
+  if (!confirm(`「${name}」を削除しますか？`)) return;
+
+  const presets = getPresets().filter(p => p.name !== name);
+  savePresets(presets);
+  renderPresetSelect('');
+  showToast(`「${name}」を削除しました`);
+}
+
+// モーダル外クリックで閉じる
+document.getElementById('save-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSaveModal();
+});
+
+/* ══════════════════════════════════════
+   WORKER / CLOUD STORAGE
+══════════════════════════════════════ */
+const WORKER_URL  = 'https://cocolog-license.sr-g-solti.workers.dev';
+const CODE_KEY    = 'jikolog_access_code';
+const RCACHE_KEY  = 'jikolog_reports_cache';
+let accessCode    = '';
+
+function getCachedReports()    { try { return JSON.parse(localStorage.getItem(RCACHE_KEY)) || []; } catch { return []; } }
+function setCachedReports(arr) { localStorage.setItem(RCACHE_KEY, JSON.stringify(arr)); }
+
+async function apiCall(payload) {
+  const res = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+async function doLogin() {
+  const code  = document.getElementById('login-code').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!code) { errEl.textContent = 'コードを入力してください'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  const btn = document.querySelector('#login-screen button');
+  btn.textContent = '確認中...'; btn.disabled = true;
+  try {
+    const res  = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, deviceId: 'facility', app: 'jikolog' }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      accessCode = code;
+      localStorage.setItem(CODE_KEY, code);
+      document.getElementById('login-screen').style.display = 'none';
+      await loadReports();
+    } else {
+      const msgs = { invalid_code:'コードが正しくありません', expired:'有効期限切れです' };
+      errEl.textContent = msgs[data.error] || '認証に失敗しました';
+      errEl.style.display = 'block';
+    }
+  } catch {
+    errEl.textContent = '通信エラーが発生しました。';
+    errEl.style.display = 'block';
+  }
+  btn.textContent = 'ログイン'; btn.disabled = false;
+}
+
+async function loadReports() {
+  const r = await apiCall({ action:'data_read', app:'kizuki', code:accessCode, limit:100 });
+  if (r.ok && r.items) setCachedReports(r.items);
+}
+
+async function saveReportToCloud(reportData) {
+  const r = await apiCall({ action:'data_write', app:'jikolog', code:accessCode, id:reportData.id, payload:reportData });
+  if (r.ok) {
+    // キャッシュ更新
+    const reports = getCachedReports();
+    const idx = reports.findIndex(x => x.id === r.id);
+    reportData.id = r.id;
+    if (idx >= 0) reports[idx] = reportData;
+    else reports.unshift(reportData);
+    setCachedReports(reports);
+  }
+  return r;
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('submitDate').value = today;
+  document.getElementById('incidentDate').value = today;
+
+  // プリセットセレクト描画
+  renderPresetSelect('');
+
+  // 前回使用したプリセットを自動復元
+  const lastPresetName = localStorage.getItem(LAST_PRESET_KEY);
+  if (lastPresetName) {
+    const preset = getPresets().find(p => p.name === lastPresetName);
+    if (preset) {
+      document.getElementById('preset-select').value = lastPresetName;
+      document.getElementById('corpName').value     = preset.corpName     || '';
+      document.getElementById('facilityName').value = preset.facilityName || '';
+      document.getElementById('facilityNum').value  = preset.facilityNum  || '';
+      document.getElementById('facilityAddr').value = preset.facilityAddr || '';
+      const sel = document.getElementById('serviceType');
+      sel.value = preset.serviceType || '';
+    }
+  }
+
+  // 保存済みコードがあれば自動ログイン
+  const savedCode = localStorage.getItem(CODE_KEY);
+  if (savedCode) {
+    accessCode = savedCode;
+    document.getElementById('login-screen').style.display = 'none';
+    await loadReports();
+  }
+  document.getElementById('login-code')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+</script>
+</body>
+</html>
