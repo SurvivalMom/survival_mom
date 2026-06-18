@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>介護安全管理スイート | 現場を守る3つのツール</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:    #0f1f3d;
+      --navy2:   #1a3460;
+      --ice:     #f5f8fa;
+      --ice2:    #eaf0f6;
+      --white:   #ffffff;
+      --ink:     #0f1f3d;
+      --ink2:    #3d5270;
+      --ink3:    #7a90b0;
+      --border:  rgba(15,31,61,0.10);
+      --green:   #3a6b47;
+      --green-lt:#e8f4eb;
+      --blue:    #1e3a5f;
+      --blue-lt: #e0eaf5;
+      --plum:    #4a3570;
+      --plum-lt: #ede8f8;
+      --gold:    #c07a2a;
+      --gold-lt: #fdf0dc;
+      --shadow:  0 4px 24px rgba(15,31,61,0.10);
+      --shadow-lg:0 12px 48px rgba(15,31,61,0.15);
+      --r: 16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--ink);line-height:1.75;}
+
+    /* NAV */
+    nav{position:sticky;top:0;z-index:100;background:rgba(15,31,61,0.97);backdrop-filter:blur(12px);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+    .nav-logo{font-family:'Noto Serif JP',serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:0.04em;}
+    .nav-links{display:flex;gap:24px;align-items:center;}
+    .nav-links a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;}
+    .nav-links a:hover{color:#fff;}
+    .nav-cta{background:var(--gold)!important;color:#fff!important;padding:8px 20px;border-radius:100px;font-weight:700!important;}
+
+    /* HERO */
+    .hero{background:linear-gradient(160deg,#070f1f 0%,var(--navy) 55%,#1a2d5a 100%);padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(192,122,42,0.2) 0%,transparent 55%);}
+    .hero-eyebrow{font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:20px;}
+    .hero h1{font-family:'Noto Serif JP',serif;font-size:clamp(26px,5vw,50px);font-weight:700;color:#fff;line-height:1.4;margin-bottom:22px;}
+    .hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--gold) 0%,#e8a84a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .hero-desc{font-size:16px;color:rgba(255,255,255,0.72);max-width:540px;margin:0 auto 44px;line-height:1.9;}
+    .hero-cta-group{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+    .btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#fff;padding:16px 36px;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 28px rgba(192,122,42,0.45);}
+    .btn-primary:hover{opacity:0.9;transform:translateY(-2px);}
+    .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:rgba(255,255,255,0.75);border:1.5px solid rgba(255,255,255,0.28);padding:15px 28px;border-radius:100px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s;}
+    .btn-ghost:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    .hero-saving{margin-top:20px;font-size:12px;color:rgba(255,255,255,0.45);}
+
+    section{padding:80px 24px;}
+    .container{max-width:960px;margin:0 auto;}
+    .eyebrow{font-family:'Sora',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:12px;}
+    .section-title{font-family:'Noto Serif JP',serif;font-size:clamp(22px,4vw,36px);font-weight:700;line-height:1.4;margin-bottom:18px;}
+    .section-desc{font-size:15px;color:var(--ink2);line-height:1.85;max-width:620px;}
+
+    /* REALITY CHECK — 感情トリガーセクション */
+    .reality-section{background:var(--ice);}
+    .reality-lead{font-family:'Noto Serif JP',serif;font-size:clamp(18px,3vw,26px);font-weight:700;color:var(--ink);line-height:1.6;margin-bottom:36px;max-width:680px;}
+    .voice-list{display:flex;flex-direction:column;gap:14px;margin-bottom:40px;}
+    .voice-item{display:flex;gap:16px;align-items:flex-start;}
+    .voice-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+    .voice-text{font-size:15px;color:var(--ink);line-height:1.75;}
+    .voice-text strong{color:var(--ink);font-weight:700;}
+    .reality-note{font-family:'Noto Serif JP',serif;font-size:18px;font-weight:700;color:var(--ink2);line-height:1.7;padding:24px 28px;background:var(--white);border-left:4px solid var(--gold);border-radius:0 var(--r) var(--r) 0;}
+
+    /* ANSWER SECTION */
+    .answer-section{background:var(--white);}
+    .answer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px;}
+    .answer-card{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--border);box-shadow:var(--shadow);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;color:inherit;display:flex;flex-direction:column;}
+    .answer-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+    .answer-head{padding:24px 22px 18px;display:flex;flex-direction:column;gap:10px;}
+    .answer-card.green .answer-head{background:linear-gradient(135deg,#2d5a3a 0%,#3a6b47 100%);}
+    .answer-card.blue  .answer-head{background:linear-gradient(135deg,#0f2240 0%,#1e3a5f 100%);}
+    .answer-card.plum  .answer-head{background:linear-gradient(135deg,#2a1850 0%,#4a3570 100%);}
+    .answer-icon{width:40px;height:40px;background:rgba(255,255,255,0.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+    .answer-problem{font-size:11px;color:rgba(255,255,255,0.6);font-family:'Sora',sans-serif;letter-spacing:0.06em;}
+    .answer-name{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:#fff;}
+    .answer-tag{font-size:11px;color:rgba(255,255,255,0.65);}
+    .answer-body{padding:18px 22px;flex:1;background:var(--white);}
+    .answer-features{list-style:none;margin-bottom:18px;}
+    .answer-features li{font-size:13px;color:var(--ink2);padding:6px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;line-height:1.6;}
+    .answer-features li:last-child{border-bottom:none;}
+    .answer-features li::before{content:'✓';font-weight:700;flex-shrink:0;margin-top:1px;}
+    .answer-card.green .answer-features li::before{color:var(--green);}
+    .answer-card.blue  .answer-features li::before{color:var(--blue);}
+    .answer-card.plum  .answer-features li::before{color:var(--plum);}
+    .answer-price{display:flex;align-items:baseline;gap:6px;margin-bottom:14px;}
+    .price-num{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;color:var(--ink);}
+    .price-note{font-size:11px;color:var(--ink3);}
+    .btn-app{display:block;text-align:center;padding:11px;border-radius:9px;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.15s;margin-bottom:8px;}
+    .answer-card.green .btn-app{background:var(--green);color:#fff;}
+    .answer-card.blue  .btn-app{background:var(--blue);color:#fff;}
+    .answer-card.plum  .btn-app{background:var(--plum);color:#fff;}
+    .btn-app:hover{opacity:0.88;}
+    .btn-detail{display:block;text-align:center;padding:9px;border-radius:9px;font-size:12px;font-weight:500;text-decoration:none;border:1.5px solid var(--border);color:var(--ink3);transition:all 0.15s;}
+    .btn-detail:hover{background:var(--ice);color:var(--ink);}
+
+    /* SUITE — 購入セクション */
+    .suite-section{background:linear-gradient(160deg,#070f1f 0%,var(--navy) 100%);position:relative;overflow:hidden;}
+    .suite-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(192,122,42,0.15) 0%,transparent 55%);}
+    .suite-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+    .suite-left .eyebrow{color:var(--gold);}
+    .suite-title{font-family:'Noto Serif JP',serif;font-size:clamp(22px,4vw,34px);font-weight:700;color:#fff;line-height:1.45;margin-bottom:20px;}
+    .suite-desc{font-size:15px;color:rgba(255,255,255,0.7);line-height:1.85;margin-bottom:28px;}
+    .suite-merit-list{display:flex;flex-direction:column;gap:10px;}
+    .suite-merit{display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:13px 16px;font-size:14px;color:rgba(255,255,255,0.88);}
+    .suite-merit-icon{font-size:18px;flex-shrink:0;}
+    .suite-box{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:20px;padding:36px;text-align:center;}
+    .suite-apps{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+    .suite-app-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border-radius:8px;padding:10px 14px;font-size:13px;color:rgba(255,255,255,0.85);}
+    .suite-price-label{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+    .suite-price{font-family:'Sora',sans-serif;font-size:52px;font-weight:700;color:#fff;line-height:1;margin-bottom:4px;}
+    .suite-price-sub{font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px;}
+    .suite-saving{display:inline-block;background:var(--gold);color:#fff;font-size:12px;font-weight:700;padding:6px 18px;border-radius:100px;margin-bottom:24px;}
+    .btn-suite{display:block;background:var(--gold);color:#fff;padding:16px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 24px rgba(192,122,42,0.4);margin-bottom:10px;}
+    .btn-suite:hover{opacity:0.9;transform:translateY(-2px);}
+    .suite-note{font-size:11px;color:rgba(255,255,255,0.38);line-height:1.8;}
+
+    /* HOW */
+    .how-section{background:var(--ice);}
+    .how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative;}
+    .how-steps::before{content:'';position:absolute;top:27px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,var(--green),var(--blue),var(--plum),var(--gold));}
+    .how-step{text-align:center;padding:0 14px;}
+    .how-num{width:54px;height:54px;border-radius:50%;background:var(--white);border:3px solid;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:'Sora',sans-serif;font-size:17px;font-weight:700;position:relative;z-index:1;}
+    .how-step:nth-child(1) .how-num{border-color:var(--green);color:var(--green);}
+    .how-step:nth-child(2) .how-num{border-color:var(--blue);color:var(--blue);}
+    .how-step:nth-child(3) .how-num{border-color:var(--plum);color:var(--plum);}
+    .how-step:nth-child(4) .how-num{border-color:var(--gold);color:var(--gold);}
+    .how-title{font-weight:700;font-size:14px;margin-bottom:7px;}
+    .how-body{font-size:12px;color:var(--ink2);line-height:1.7;}
+
+    /* FINAL CTA */
+    .final-cta-section{background:var(--gold-lt);border-top:3px solid var(--gold);text-align:center;padding:80px 24px;}
+    .final-cta-lead{font-family:'Noto Serif JP',serif;font-size:clamp(20px,3.5vw,30px);font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:12px;}
+    .final-cta-sub{font-size:15px;color:var(--ink2);margin-bottom:36px;line-height:1.8;}
+    .final-price{font-family:'Sora',sans-serif;font-size:52px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:4px;}
+    .final-price-note{font-size:13px;color:var(--ink3);margin-bottom:10px;}
+    .final-saving{display:inline-block;background:var(--gold);color:#fff;font-size:13px;font-weight:700;padding:7px 22px;border-radius:100px;margin-bottom:32px;}
+    .final-btn{display:inline-block;background:var(--gold);color:#fff;padding:18px 52px;border-radius:100px;font-size:17px;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 28px rgba(192,122,42,0.4);}
+    .final-btn:hover{opacity:0.9;transform:translateY(-2px);}
+    .final-note{margin-top:20px;font-size:12px;color:var(--ink3);line-height:1.8;}
+
+    .kv-note{background:#f0f2f5;border-top:1px solid var(--border);padding:18px 24px;text-align:center;font-size:12px;color:var(--ink3);line-height:1.7;}
+
+    footer{background:var(--navy);padding:48px 24px;text-align:center;}
+    .footer-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;}
+    .footer-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
+    .footer-links a:hover{color:#fff;}
+    .footer-copy{font-size:12px;color:rgba(255,255,255,0.28);}
+
+    @media(max-width:768px){
+      .answer-grid{grid-template-columns:1fr;}
+      .suite-inner{grid-template-columns:1fr;gap:32px;}
+      .how-steps{grid-template-columns:repeat(2,1fr);gap:28px;}
+      .how-steps::before{display:none;}
+      .nav-links{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">介護安全管理スイート</div>
+  <div class="nav-links">
+    <a href="#reality">現場の現実</a>
+    <a href="#apps">3つのツール</a>
+    <a href="#suite">セット購入</a>
+    <a href="https://buy.stripe.com/00wfZjd7ocSS96G7K773G0f" class="nav-cta">今すぐ購入</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">介護現場のリーダー・管理者・施設長へ</div>
+    <h1>あなたが一人で<br>抱えすぎているだけで、<br><em>あなたのせいじゃない。</em></h1>
+    <p class="hero-desc">
+      ヒヤリハットが出ない。事故報告書に夜中まで残る。<br>
+      クレームのたびに胃が痛い——<br>
+      それは意識の問題でも、職員の問題でもない。<br>
+      <strong style="color:#fff;">「書けない仕組み」が問題</strong>なんです。
+    </p>
+    <div class="hero-cta-group">
+      <a href="https://buy.stripe.com/00wfZjd7ocSS96G7K773G0f" class="btn-primary">✦ 3本セット ¥7,800 で購入する</a>
+      <a href="#apps" class="btn-ghost">各アプリを見る</a>
+    </div>
+    <div class="hero-saving">単体合計¥8,940 → ¥1,140お得 ／ 買い切り・月額なし</div>
+  </div>
+</section>
+
+<!-- REALITY CHECK -->
+<section class="reality-section" id="reality">
+  <div class="container">
+    <div class="eyebrow" style="color:var(--ink3);">これ、あなただけじゃなかった</div>
+    <div class="reality-lead">
+      「なんでうちの施設はうまくいかないんだろう」<br>
+      そう思ったことがあるなら、読んでください。<br>
+      <span style="font-size:0.85em;color:var(--ink2);font-family:'Noto Sans JP',sans-serif;font-weight:400;">全国の介護施設のリーダーが、同じことで消耗しています。</span>
+    </div>
+    <div class="voice-list">
+      <div class="voice-item">
+        <div class="voice-icon">😔</div>
+        <div class="voice-text">
+          <strong>「ヒヤリハット、また誰も出してない。」</strong><br>
+          書かせようとすると嫌がられる。でも出なければ、次の事故を防げない。評価を気にして隠してしまう職員を責めることもできない。
+        </div>
+      </div>
+      <div class="voice-item">
+        <div class="voice-icon">📝</div>
+        <div class="voice-text">
+          <strong>「事故報告書、今夜中に仕上げなきゃ。」</strong><br>
+          事故が起きた日の夜が一番つらい。利用者さんのケアもしながら、原因分析を書かないといけない。「何を書けばいいか」がそもそもわからない。
+        </div>
+      </div>
+      <div class="voice-item">
+        <div class="voice-icon">📞</div>
+        <div class="voice-text">
+          <strong>「あのクレーム、誰がどう対応したんだっけ。」</strong><br>
+          記録が残っていない。担当者が変わるたびに経緯を説明させてしまう。同じ家族から何度も苦情が来て、また謝る。
+        </div>
+      </div>
+    </div>
+    <div class="reality-note">
+      あなたがダメなんじゃない。職員が悪いわけでもない。<br>
+      <strong>「書きにくい仕組み」のまま、頑張り続けることに無理があった</strong>だけです。<br>
+      <span style="font-size:0.9em;font-weight:400;">——それを、3つのツールが変えます。</span>
+    </div>
+  </div>
+</section>
+
+<!-- APPS -->
+<section class="answer-section" id="apps">
+  <div class="container">
+    <div class="eyebrow" style="color:var(--ink3);">3つの答え</div>
+    <h2 class="section-title">それぞれの「しょうがない」に、<br>具体的な答えがあります。</h2>
+    <div class="answer-grid">
+
+      <!-- 気づきメモ -->
+      <div class="answer-card green">
+        <div class="answer-head">
+          <div class="answer-icon">🌿</div>
+          <div class="answer-problem">問題01 ヒヤリハットが集まらない</div>
+          <div class="answer-name">気づきメモ</div>
+          <div class="answer-tag">30秒で書けるヒヤリハット共有</div>
+        </div>
+        <div class="answer-body">
+          <ul class="answer-features">
+            <li>匿名投稿デフォルトON（評価への恐怖をゼロに）</li>
+            <li>タップ選択＋音声入力で30秒</li>
+            <li>全職員でリアルタイム共有</li>
+            <li>管理者が後追い対応を記録</li>
+            <li>カルテ転記用テキスト出力</li>
+          </ul>
+          <div class="answer-price">
+            <span class="price-num">¥2,980</span>
+            <span class="price-note">施設ライセンス・買い切り</span>
+          </div>
+          <a href="https://buy.stripe.com/dRm28t4AS8CCbeO1lJ73G0c" class="btn-app">気づきメモを購入する</a>
+          <a href="kizuki.html" class="btn-detail">詳しく見る →</a>
+        </div>
+      </div>
+
+      <!-- じこログ -->
+      <div class="answer-card blue">
+        <div class="answer-head">
+          <div class="answer-icon">📋</div>
+          <div class="answer-problem">問題02 事故報告書に何時間もかかる</div>
+          <div class="answer-name">じこログ</div>
+          <div class="answer-tag">国の標準様式に対応した事故報告書</div>
+        </div>
+        <div class="answer-body">
+          <ul class="answer-features">
+            <li>4ステップのガイド入力（迷わない）</li>
+            <li>AIが原因分析・再発防止策を下書き</li>
+            <li>類似ヒヤリハットを自動表示（気づきメモ連携）</li>
+            <li>事業所情報をプリセット保存</li>
+            <li>印刷対応プレビュー</li>
+          </ul>
+          <div class="answer-price">
+            <span class="price-num">¥2,980</span>
+            <span class="price-note">施設ライセンス・買い切り</span>
+          </div>
+          <a href="https://buy.stripe.com/5kQ8wR0kCdWWdmW8Ob73G0d" class="btn-app">じこログを購入する</a>
+          <a href="jikolog.html" class="btn-detail">詳しく見る →</a>
+        </div>
+      </div>
+
+      <!-- クレームログ -->
+      <div class="answer-card plum">
+        <div class="answer-head">
+          <div class="answer-icon">📞</div>
+          <div class="answer-problem">問題03 クレーム対応の記録が残らない</div>
+          <div class="answer-name">クレームログ</div>
+          <div class="answer-tag">苦情対応を施設全体で管理</div>
+        </div>
+        <div class="answer-body">
+          <ul class="answer-features">
+            <li>受付から解決まで一元管理</li>
+            <li>AIが対応方針・連絡文案を下書き</li>
+            <li>対応経緯をスレッド形式で記録</li>
+            <li>ステータス管理・エスカレーション対応</li>
+            <li>分類別統計グラフ</li>
+          </ul>
+          <div class="answer-price">
+            <span class="price-num">¥2,980</span>
+            <span class="price-note">施設ライセンス・買い切り</span>
+          </div>
+          <a href="https://buy.stripe.com/7sY14pebsdWWdmWd4r73G0e" class="btn-app">クレームログを購入する</a>
+          <a href="claimlog.html" class="btn-detail">詳しく見る →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SUITE -->
+<section class="suite-section" id="suite">
+  <div class="container">
+    <div class="suite-inner">
+      <div class="suite-left">
+        <div class="eyebrow">安全管理スイート</div>
+        <h2 class="suite-title">3つがひとつのコードで<br>つながるとき、<br>施設が変わる。</h2>
+        <p class="suite-desc">
+          気づきメモで積み上げたヒヤリハットが、事故が起きたときじこログに自動連携されます。「この事故の前兆が、30日前に3件あった」——その事実が、原因分析に深みをもたらします。
+        </p>
+        <div class="suite-merit-list">
+          <div class="suite-merit">
+            <div class="suite-merit-icon">🔗</div>
+            <div>3アプリのデータが自動連携。ヒヤリハットと事故報告がつながる</div>
+          </div>
+          <div class="suite-merit">
+            <div class="suite-merit-icon">🔑</div>
+            <div>1つのアクセスコードで3アプリ使用可。職員への共有がシンプル</div>
+          </div>
+          <div class="suite-merit">
+            <div class="suite-merit-icon">💰</div>
+            <div>単体3本より¥1,140お得。月額なし・買い切り</div>
+          </div>
+        </div>
+      </div>
+      <div class="suite-box">
+        <div class="suite-apps">
+          <div class="suite-app-row"><span>🌿</span> 気づきメモ — ヒヤリハット共有</div>
+          <div class="suite-app-row"><span>📋</span> じこログ — 事故報告書作成</div>
+          <div class="suite-app-row"><span>📞</span> クレームログ — 苦情対応記録</div>
+        </div>
+        <div class="suite-price-label">安全管理スイート</div>
+        <div class="suite-price">¥7,800</div>
+        <div class="suite-price-sub">施設ライセンス・3アプリ・買い切り</div>
+        <div class="suite-saving">単体合計¥8,940 → ¥1,140お得</div>
+        <a href="https://buy.stripe.com/00wfZjd7ocSS96G7K773G0f" class="btn-suite">✦ スイートを購入する</a>
+        <div class="suite-note">
+          購入後、施設アクセスコードをメールでお送りします。<br>
+          インストール不要・ブラウザで即日利用開始。<br>
+          月額費用なし・買い切り。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how-section">
+  <div class="container">
+    <div class="eyebrow" style="color:var(--ink3);">使い方</div>
+    <h2 class="section-title">購入から導入まで、<br>最短5分。インストール不要。</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-title">購入する</div>
+        <div class="how-body">Stripeの決済ページでクレジットカード決済。即時完了。</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-title">コードが届く</div>
+        <div class="how-body">購入完了後すぐに、施設アクセスコードがメールで届きます。</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-title">職員に共有する</div>
+        <div class="how-body">施設内LINEやチャットでコードを共有。アプリのインストールは不要。</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">4</div>
+        <div class="how-title">今日から使い始める</div>
+        <div class="how-body">アプリを開いてコードを入力するだけ。全職員のデータが即座に共有されます。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta-section">
+  <div class="container">
+    <h2 class="final-cta-lead">
+      「今夜は、定時に帰れた。」<br>
+      そんな夜が、来てもいい。
+    </h2>
+    <p class="final-cta-sub">
+      ヒヤリハットが自然と集まる。事故報告書が今日中に終わる。<br>
+      クレームの電話が、もう怖くない。<br>
+      そういう施設は、特別じゃない。<strong>仕組みがあるだけ</strong>です。
+    </p>
+    <div class="final-price">¥7,800</div>
+    <div class="final-price-note">安全管理スイート 施設ライセンス・3アプリ・買い切り</div>
+    <div class="final-saving">単体合計¥8,940 → ¥1,140お得</div><br>
+    <a href="https://buy.stripe.com/00wfZjd7ocSS96G7K773G0f" class="final-btn">✦ 今すぐ購入する</a>
+    <div class="final-note">
+      購入後、施設アクセスコードをメールでお送りします。<br>
+      インストール不要・ブラウザで即日利用開始・月額費用なし。
+    </div>
+  </div>
+</section>
+
+<div class="kv-note">
+  ※ 本サービスはCloudflare KVを使用しています。読み取り上限：10万回/日、書き込み上限：1,000回/日（無料プラン）。大規模施設でのご利用はお問い合わせください。
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="kizuki.html">気づきメモ</a>
+    <a href="jikolog.html">じこログ</a>
+    <a href="claimlog.html">クレームログ</a>
+  </div>
+  <div class="footer-copy">© 2026 survival_mam / Sena Mam</div>
+</footer>
+
+</body>
+</html>
