@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クレームログ | 苦情対応記録システム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#f3f2f8;--surface:#fff;--surface2:#f8f7fc;--bg2:#eae9f0;
+      --plum:#4a3570;--plum2:#6248a0;--plum3:#8468c8;--plum-lt:#e0d8f5;--plum-xl:#f0ecfd;
+      --teal:#2a7080;--teal-lt:#d8eff3;
+      --amber:#c07a2a;--amber-lt:#fdf0dc;
+      --rose:#b83060;--rose-lt:#fce8f0;
+      --ok:#2a7a4a;--ok-lt:#e0f5ea;
+      --ink:#1a1628;--ink2:#3d3558;--ink3:#6b6088;--ink4:#a098b8;
+      --border:rgba(74,53,112,0.13);--border2:rgba(74,53,112,0.07);
+      --shadow:0 4px 18px rgba(40,20,80,0.10),0 1px 4px rgba(40,20,80,0.06);
+      --shadow-lg:0 12px 40px rgba(40,20,80,0.14);
+      --r-xl:20px;--r-lg:14px;--r-md:9px;--r-sm:5px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);min-height:100vh;color:var(--ink);}
+
+    .app-header{background:var(--plum);height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(20,10,50,0.28);}
+    .header-brand{display:flex;align-items:center;gap:10px;}
+    .header-icon{width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:17px;}
+    .header-logo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:#fff;}
+    .header-tagline{font-size:10px;color:rgba(255,255,255,0.55);}
+    .open-count{background:rgba(255,255,255,0.15);color:#fff;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;}
+
+    .tab-nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 16px;position:sticky;top:54px;z-index:90;box-shadow:0 1px 4px rgba(40,20,80,0.08);}
+    .tab-btn{padding:13px 18px;font-size:13px;font-weight:500;color:var(--ink3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.18s;display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:inherit;}
+    .tab-btn:hover{color:var(--plum);}
+    .tab-btn.active{color:var(--plum);font-weight:700;border-bottom-color:var(--plum);}
+    .tab-count{background:var(--plum-lt);color:var(--plum);font-family:'Sora',sans-serif;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;}
+
+    .main-wrap{max-width:720px;margin:0 auto;padding:24px 16px 80px;}
+    .tab-page{display:none;}.tab-page.active{display:block;}
+
+    .section-card{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow);border:1.5px solid var(--border2);overflow:hidden;margin-bottom:20px;}
+    .card-header{background:var(--surface2);border-bottom:1px solid var(--border);padding:15px 22px;display:flex;align-items:center;gap:10px;}
+    .card-num{font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:var(--plum);background:var(--plum-lt);padding:3px 9px;border-radius:var(--r-sm);}
+    .card-title{font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:var(--plum);}
+    .card-body{padding:20px 22px;}
+
+    .f-row{margin-bottom:16px;}.f-row:last-child{margin-bottom:0;}
+    .f-label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:7px;}
+    .f-required{color:var(--rose);margin-left:3px;}
+    .f-inline{display:flex;gap:10px;flex-wrap:wrap;}.f-inline>*{flex:1;min-width:120px;}
+
+    input[type="text"],input[type="date"],input[type="time"],select,textarea{
+      width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r-md);
+      font-family:inherit;font-size:14px;color:var(--ink);background:var(--surface);
+      transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--plum);box-shadow:0 0 0 3px rgba(74,53,112,0.12);}
+    textarea{resize:vertical;min-height:88px;line-height:1.75;}
+    select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6088' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;}
+
+    .chip-group{display:flex;flex-wrap:wrap;gap:7px;}
+    .chip{padding:7px 14px;border:1.5px solid var(--border);border-radius:100px;font-size:13px;color:var(--ink2);background:var(--surface);cursor:pointer;transition:all 0.14s;user-select:none;font-family:inherit;}
+    .chip:hover{border-color:var(--plum);background:var(--plum-xl);}
+    .chip.selected{border-color:var(--plum);background:var(--plum);color:#fff;font-weight:700;}
+
+    .submit-btn{width:100%;padding:14px;background:var(--plum);color:#fff;border:none;border-radius:var(--r-lg);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow);}
+    .submit-btn:hover{background:var(--plum2);box-shadow:var(--shadow-lg);transform:translateY(-1px);}
+
+    /* STATUS */
+    .st-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;font-family:'Sora',sans-serif;white-space:nowrap;}
+    .st-open{background:#f0f0f0;color:#888;}
+    .st-progress{background:var(--teal-lt);color:var(--teal);}
+    .st-pending{background:var(--amber-lt);color:var(--amber);}
+    .st-resolved{background:var(--ok-lt);color:var(--ok);}
+    .st-escalate{background:var(--rose-lt);color:var(--rose);}
+
+    /* CLAIM CARD */
+    .claim-card{background:var(--surface);border-radius:var(--r-lg);border:1.5px solid var(--border2);padding:18px 20px;margin-bottom:14px;box-shadow:0 1px 4px rgba(40,20,80,0.08);transition:box-shadow 0.18s;cursor:pointer;}
+    .claim-card:hover{box-shadow:var(--shadow);}
+    .claim-card.urgent{border-left:4px solid var(--rose);}
+    .claim-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+    .claim-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+    .claim-type-badge{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;}
+    .type-verbal{background:var(--amber-lt);color:var(--amber);}
+    .type-written{background:var(--plum-lt);color:var(--plum);}
+    .type-repeat{background:var(--rose-lt);color:var(--rose);}
+    .type-consult{background:var(--teal-lt);color:var(--teal);}
+    .claim-person{font-size:11px;color:var(--ink3);background:var(--bg);padding:2px 9px;border-radius:100px;}
+    .claim-date{font-size:11px;color:var(--ink4);white-space:nowrap;font-family:'Sora',sans-serif;}
+    .claim-subject{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+    .claim-body{font-size:13px;color:var(--ink2);line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .claim-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;}
+    .claim-staff{font-size:11px;color:var(--ink4);}
+
+    /* DETAIL PANEL */
+    .detail-overlay{display:none;position:fixed;inset:0;background:rgba(20,10,50,0.5);z-index:200;}
+    .detail-overlay.show{display:block;}
+    .detail-panel{position:fixed;right:0;top:0;bottom:0;width:min(480px,100vw);background:var(--surface);box-shadow:var(--shadow-lg);overflow-y:auto;z-index:201;display:flex;flex-direction:column;}
+    .detail-header{background:var(--plum);padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;}
+    .detail-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+    .detail-title{font-size:15px;font-weight:700;color:#fff;flex:1;}
+    .detail-body{padding:20px;flex:1;}
+    .detail-section{margin-bottom:20px;}
+    .detail-section-title{font-size:11px;font-weight:700;color:var(--plum);letter-spacing:0.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+    .detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
+    .detail-key{color:var(--ink3);flex-shrink:0;width:90px;}
+    .detail-val{color:var(--ink);}
+
+    .followup-thread{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+    .followup-item{background:var(--surface2);border-left:3px solid var(--plum3);border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 14px;font-size:13px;}
+    .followup-meta{font-size:11px;color:var(--ink4);margin-bottom:4px;display:flex;gap:8px;flex-wrap:wrap;}
+    .followup-add{display:flex;flex-direction:column;gap:8px;}
+    .followup-input{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r-md);font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);}
+    .followup-input:focus{outline:none;border-color:var(--plum);box-shadow:0 0 0 3px rgba(74,53,112,0.1);}
+    .followup-row{display:flex;gap:8px;}
+    .status-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-md);font-size:12px;font-family:inherit;color:var(--ink2);background:var(--surface);cursor:pointer;flex:1;}
+    .followup-submit{padding:9px 18px;background:var(--plum);color:#fff;border:none;border-radius:var(--r-md);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;}
+    .followup-submit:hover{background:var(--plum2);}
+
+    /* AI */
+    .ai-section{background:linear-gradient(135deg,var(--plum-xl) 0%,#f8f6ff 100%);border:1.5px solid var(--plum-lt);border-radius:var(--r-lg);padding:18px;margin-bottom:16px;}
+    .ai-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .ai-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--plum) 0%,var(--plum2) 100%);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:14px;}
+    .ai-title{font-size:13px;font-weight:700;color:var(--plum);}
+    .btn-ai{padding:9px 18px;background:linear-gradient(135deg,var(--plum) 0%,var(--plum2) 100%);color:#fff;border:none;border-radius:var(--r-md);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;}
+    .btn-ai:hover{opacity:0.88;}
+    .ai-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* STATS */
+    .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px;}
+    .stat-card{background:var(--surface);border-radius:var(--r-lg);padding:18px;border:1.5px solid var(--border2);box-shadow:0 1px 4px rgba(40,20,80,0.08);text-align:center;}
+    .stat-num{font-family:'Sora',sans-serif;font-size:30px;font-weight:700;color:var(--plum);line-height:1;margin-bottom:4px;}
+    .stat-label{font-size:12px;color:var(--ink3);}
+    .stat-card.warn .stat-num{color:var(--amber);}
+    .stat-card.danger .stat-num{color:var(--rose);}
+    .chart-section{background:var(--surface);border-radius:var(--r-lg);padding:18px;border:1.5px solid var(--border2);margin-bottom:12px;}
+    .chart-title{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:12px;}
+    .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+    .bar-key{font-size:12px;color:var(--ink3);width:100px;flex-shrink:0;text-align:right;}
+    .bar-track{flex:1;height:16px;background:var(--bg2);border-radius:100px;overflow:hidden;}
+    .bar-fill{height:100%;border-radius:100px;background:var(--plum3);transition:width 0.6s ease;}
+    .bar-val{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--ink2);width:28px;}
+
+    .controls-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
+    .filter-chip{padding:6px 14px;border:1.5px solid var(--border);border-radius:100px;font-size:12px;font-weight:500;color:var(--ink3);background:var(--surface);cursor:pointer;transition:all 0.14s;font-family:inherit;}
+    .filter-chip:hover{border-color:var(--plum);color:var(--plum);}
+    .filter-chip.active{background:var(--plum);border-color:var(--plum);color:#fff;font-weight:700;}
+
+    .empty-state{text-align:center;padding:48px 20px;color:var(--ink4);}
+    .empty-icon{font-size:44px;margin-bottom:12px;}
+    .empty-title{font-size:15px;font-weight:700;color:var(--ink3);margin-bottom:6px;}
+    .empty-sub{font-size:13px;line-height:1.7;}
+
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 24px;border-radius:100px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:9999;transition:transform 0.3s;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+
+    @media(max-width:520px){.main-wrap{padding:16px 12px 80px;}.card-body{padding:16px;}.stats-grid{grid-template-columns:repeat(2,1fr);}}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#4a3570 0%,#2a1850 100%);display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px;">
+  <div style="background:#fff;border-radius:20px;padding:36px 28px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:36px;margin-bottom:8px;">📞</div>
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:#4a3570;">クレームログ</div>
+      <div style="font-size:12px;color:#6b6088;margin-top:4px;">苦情・相談対応記録システム</div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:12px;font-weight:700;color:#3d3558;margin-bottom:7px;">施設アクセスコード</label>
+      <input id="login-code" type="text" placeholder="例：CLM-ABC-DEF-GHI"
+        style="width:100%;padding:12px 16px;border:2px solid #e0d8f5;border-radius:10px;font-size:15px;font-family:inherit;letter-spacing:0.06em;text-transform:uppercase;"
+        onkeydown="if(event.key==='Enter')doLogin()">
+      <div id="login-error" style="display:none;color:#b83060;font-size:12px;margin-top:6px;"></div>
+    </div>
+    <button onclick="doLogin()" style="width:100%;padding:14px;background:#4a3570;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;"
+      onmouseover="this.style.background='#6248a0'" onmouseout="this.style.background='#4a3570'">ログイン</button>
+    <p style="font-size:11px;color:#a098b8;text-align:center;margin-top:16px;line-height:1.6;">
+      施設アクセスコードは購入時にメールでお送りします。<br>施設内の全端末で同じコードを共有してください。
+    </p>
+    <p style="font-size:10px;color:#c0b8d8;text-align:center;margin-top:8px;line-height:1.6;">
+      ※ Cloudflare KV使用。読み取り上限：10万回/日、書き込み上限：1,000回/日（無料プラン）
+    </p>
+  </div>
+</div>
+
+<header class="app-header">
+  <div class="header-brand">
+    <div class="header-icon">📞</div>
+    <div><div class="header-logo">クレームログ</div><div class="header-tagline">苦情・相談対応記録</div></div>
+  </div>
+  <div class="open-count">対応中 <span id="open-count">0</span> 件</div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('new',this)">✏️ 新規記録</button>
+  <button class="tab-btn" onclick="switchTab('list',this)">📋 一覧 <span class="tab-count" id="list-badge">0</span></button>
+  <button class="tab-btn" onclick="switchTab('stats',this)">📊 統計</button>
+</nav>
+
+<main class="main-wrap">
+
+  <!-- 新規記録 -->
+  <div class="tab-page active" id="tab-new">
+    <div class="section-card">
+      <div class="card-header"><span class="card-num">基本情報</span><span class="card-title">苦情・相談の概要</span></div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">受付日時 <span class="f-required">*</span></div>
+          <div class="f-inline">
+            <input type="date" id="recv-date">
+            <input type="time" id="recv-time">
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">対応種別 <span class="f-required">*</span></div>
+          <div class="chip-group" id="claim-type-group">
+            <div class="chip" onclick="selectChip('claim-type-group',this)" data-val="verbal">口頭（来訪・電話）</div>
+            <div class="chip" onclick="selectChip('claim-type-group',this)" data-val="written">書面</div>
+            <div class="chip" onclick="selectChip('claim-type-group',this)" data-val="repeat">繰り返しクレーム</div>
+            <div class="chip" onclick="selectChip('claim-type-group',this)" data-val="consult">相談・要望</div>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">苦情・相談の分類 <span class="f-required">*</span></div>
+          <div class="chip-group" id="category-group">
+            <div class="chip" onclick="selectChip('category-group',this)" data-val="care">ケア内容</div>
+            <div class="chip" onclick="selectChip('category-group',this)" data-val="staff">職員対応・態度</div>
+            <div class="chip" onclick="selectChip('category-group',this)" data-val="facility">施設環境・設備</div>
+            <div class="chip" onclick="selectChip('category-group',this)" data-val="accident">事故・怪我</div>
+            <div class="chip" onclick="selectChip('category-group',this)" data-val="billing">請求・費用</div>
+            <div class="chip" onclick="selectChip('category-group',this)" data-val="other">その他</div>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">件名（タイトル） <span class="f-required">*</span></div>
+          <input type="text" id="claim-subject" placeholder="例：入浴介助時の対応について家族から苦情">
+        </div>
+        <div class="f-row">
+          <div class="f-label">申出人（ご家族・利用者本人等）</div>
+          <div class="f-inline">
+            <input type="text" id="complainant-name" placeholder="例：山田様のご長男">
+            <select id="complainant-rel">
+              <option value="">続柄</option>
+              <option>本人</option><option>配偶者</option><option>子</option>
+              <option>子の配偶者</option><option>その他親族</option>
+              <option>ケアマネ</option><option>匿名</option>
+            </select>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">対象の利用者様（いる場合）</div>
+          <input type="text" id="target-user" placeholder="例：山田様">
+        </div>
+        <div class="f-row">
+          <div class="f-label">受付担当者 <span class="f-required">*</span></div>
+          <input type="text" id="staff-name" placeholder="例：田中">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-header"><span class="card-num">内容</span><span class="card-title">苦情・相談の詳細内容</span></div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">申し出の内容（詳細） <span class="f-required">*</span></div>
+          <textarea id="claim-detail" rows="5" placeholder="例：〇月〇日の入浴介助時、職員の対応が乱暴だったとご長男から電話があった…"></textarea>
+        </div>
+        <div class="f-row">
+          <div class="f-label">申出人が求めていること（要望）</div>
+          <textarea id="claim-demand" rows="3" placeholder="例：担当職員への指導、再発防止策の説明を求めている。"></textarea>
+        </div>
+        <div class="f-row">
+          <div class="f-label">重要度</div>
+          <div class="chip-group" id="urgency-group">
+            <div class="chip" onclick="selectChip('urgency-group',this)" data-val="low">低（通常対応）</div>
+            <div class="chip" onclick="selectChip('urgency-group',this)" data-val="mid">中（優先対応）</div>
+            <div class="chip" onclick="selectChip('urgency-group',this)" data-val="high">高（即日対応）</div>
+            <div class="chip" onclick="selectChip('urgency-group',this)" data-val="escalate">要エスカレーション</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-header"><span class="card-num">初期対応</span><span class="card-title">受付時の対応内容</span></div>
+      <div class="card-body">
+        <div class="f-row">
+          <textarea id="initial-response" rows="3" placeholder="例：電話にて受付。謝罪し、翌日に折り返し連絡する旨を伝えた。"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-section">
+      <div class="ai-header">
+        <div class="ai-icon">✦</div>
+        <div class="ai-title">AI 対応サポート — 対応方針・連絡文案の下書きを生成</div>
+      </div>
+      <p style="font-size:12px;color:var(--ink3);margin-bottom:12px;">入力内容をもとに、対応方針・確認事項と申出人への連絡文案の下書きを生成します。</p>
+      <button class="btn-ai" onclick="generateResponse()" id="ai-btn">✦ AI で対応方針を生成する</button>
+      <div id="ai-loading" style="display:none;margin-top:10px;font-size:13px;color:var(--ink3);align-items:center;gap:8px;">
+        <div class="ai-spinner"></div> 生成中…
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-header"><span class="card-num">対応方針</span><span class="card-title">対応内容・方針</span></div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">対応方針・確認事項</div>
+          <textarea id="response-policy" rows="4" placeholder="AIで生成するか、手入力してください"></textarea>
+        </div>
+        <div class="f-row">
+          <div class="f-label">申出人への連絡文案</div>
+          <textarea id="response-message" rows="4" placeholder="家族・申出人への連絡・回答文案"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitClaim()">📞 記録を保存する</button>
+  </div><!-- /tab-new -->
+
+  <!-- 一覧 -->
+  <div class="tab-page" id="tab-list">
+    <div class="controls-row">
+      <button class="filter-chip active" onclick="filterList('all',this)">すべて</button>
+      <button class="filter-chip" onclick="filterList('open',this)">未対応</button>
+      <button class="filter-chip" onclick="filterList('progress',this)">対応中</button>
+      <button class="filter-chip" onclick="filterList('resolved',this)">解決済み</button>
+      <button class="filter-chip" onclick="filterList('escalate',this)">要エスカレ</button>
+      <span style="margin-left:auto;font-size:12px;color:var(--ink3);" id="list-total">0 件</span>
+    </div>
+    <div id="claim-list"></div>
+  </div>
+
+  <!-- 統計 -->
+  <div class="tab-page" id="tab-stats">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="st-total">0</div><div class="stat-label">総件数</div></div>
+      <div class="stat-card warn"><div class="stat-num" id="st-open">0</div><div class="stat-label">未対応・対応中</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-month">0</div><div class="stat-label">今月</div></div>
+      <div class="stat-card danger"><div class="stat-num" id="st-escalate">0</div><div class="stat-label">エスカレーション</div></div>
+    </div>
+    <div class="chart-section"><div class="chart-title">📂 分類別 件数</div><div id="cat-chart"></div></div>
+    <div class="chart-section"><div class="chart-title">📋 種別 件数</div><div id="type-chart"></div></div>
+  </div>
+
+</main>
+
+<!-- DETAIL -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="detail-header">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div class="detail-title" id="dp-title">詳細</div>
+    <span class="st-badge" id="dp-status-badge"></span>
+  </div>
+  <div class="detail-body" id="detail-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WORKER_URL = 'https://cocolog-license.sr-g-solti.workers.dev';
+const CODE_KEY   = 'claim_access_code';
+const CACHE_KEY  = 'claim_cache';
+let accessCode   = '';
+let currentFilter = 'all';
+let currentClaims = [];
+
+const STATUS_DEF = {
+  open:     { cls:'st-open',     label:'未対応' },
+  progress: { cls:'st-progress', label:'対応中' },
+  pending:  { cls:'st-pending',  label:'回答待ち' },
+  resolved: { cls:'st-resolved', label:'解決済み' },
+  escalate: { cls:'st-escalate', label:'要エスカレ' },
+};
+const TYPE_CLS   = { verbal:'type-verbal', written:'type-written', repeat:'type-repeat', consult:'type-consult' };
+const TYPE_LABEL = { verbal:'口頭', written:'書面', repeat:'繰返', consult:'相談' };
+const CAT_LABEL  = { care:'ケア', staff:'職員対応', facility:'施設環境', accident:'事故', billing:'請求', other:'その他' };
+const URG_LABEL  = { low:'低', mid:'中', high:'高', escalate:'要エスカレ' };
+
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function getCached()    { try { return JSON.parse(localStorage.getItem(CACHE_KEY))||[]; } catch { return []; } }
+function setCached(arr) { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)); }
+
+async function apiPost(payload) {
+  const res = await fetch(WORKER_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  return res.json();
+}
+
+function getClaims() {
+  apiPost({ action:'data_read', app:'claim', code:accessCode, limit:200 }).then(r => {
+    if(r.ok && r.items){ setCached(r.items); currentClaims=r.items; updateBadges(); }
+  }).catch(()=>{});
+  const c=getCached(); currentClaims=c; return c;
+}
+
+async function getClaimsForce() {
+  try {
+    const r=await apiPost({ action:'data_read', app:'claim', code:accessCode, limit:200 });
+    if(r.ok && r.items){ setCached(r.items); currentClaims=r.items; return r.items; }
+  } catch(e){}
+  const c=getCached(); currentClaims=c; return c;
+}
+
+async function doLogin() {
+  const input=document.getElementById('login-code');
+  const errEl=document.getElementById('login-error');
+  const code=input.value.trim().toUpperCase();
+  if(!code){ showErr('コードを入力してください'); return; }
+  input.disabled=true; errEl.style.display='none';
+  try {
+    const r=await fetch(WORKER_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ code, deviceId:'facility', app:'claim' }) });
+    const data=await r.json();
+    if(data.ok){ accessCode=code; localStorage.setItem(CODE_KEY,code); document.getElementById('login-screen').style.display='none'; await getClaimsForce(); updateBadges(); }
+    else { const msgs={ invalid_code:'コードが正しくありません', expired:'コードの有効期限が切れています' }; showErr(msgs[data.error]||'ログインに失敗しました'); }
+  } catch(e){ showErr('通信エラーが発生しました'); }
+  input.disabled=false;
+  function showErr(m){ errEl.textContent=m; errEl.style.display='block'; input.style.borderColor='#b83060'; }
+}
+
+function switchTab(name,btn) {
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='list') renderList();
+  if(name==='stats') renderStats();
+}
+
+function selectChip(groupId,el) {
+  document.querySelectorAll('#'+groupId+' .chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function submitClaim() {
+  const type    =document.querySelector('#claim-type-group .chip.selected')?.dataset.val;
+  const category=document.querySelector('#category-group .chip.selected')?.dataset.val;
+  const subject =document.getElementById('claim-subject').value.trim();
+  const detail  =document.getElementById('claim-detail').value.trim();
+  const staff   =document.getElementById('staff-name').value.trim();
+  if(!type)    { showToast('対応種別を選択してください'); return; }
+  if(!category){ showToast('分類を選択してください'); return; }
+  if(!subject) { showToast('件名を入力してください'); return; }
+  if(!detail)  { showToast('詳細内容を入力してください'); return; }
+  if(!staff)   { showToast('受付担当者を入力してください'); return; }
+
+  const urgency=document.querySelector('#urgency-group .chip.selected')?.dataset.val||'low';
+  const claim={
+    id:Date.now().toString(), type, category, subject, detail,
+    demand:          document.getElementById('claim-demand').value.trim(),
+    complainantName: document.getElementById('complainant-name').value.trim(),
+    complainantRel:  document.getElementById('complainant-rel').value,
+    targetUser:      document.getElementById('target-user').value.trim(),
+    staff, urgency,
+    recvDate: document.getElementById('recv-date').value,
+    recvTime: document.getElementById('recv-time').value,
+    initialResponse: document.getElementById('initial-response').value.trim(),
+    responsePolicy:  document.getElementById('response-policy').value.trim(),
+    responseMessage: document.getElementById('response-message').value.trim(),
+    status: urgency==='escalate' ? 'escalate' : 'open',
+    followups:[], createdAt:new Date().toISOString(),
+  };
+
+  try {
+    const r=await apiPost({ action:'data_write', app:'claim', code:accessCode, id:claim.id, payload:claim });
+    if(!r.ok){ showToast('保存に失敗しました'); return; }
+  } catch(e){ showToast('通信エラーが発生しました'); return; }
+
+  const cached=getCached(); cached.unshift(claim); setCached(cached); currentClaims=cached; updateBadges();
+  document.querySelectorAll('.chip.selected').forEach(c=>c.classList.remove('selected'));
+  ['claim-subject','claim-detail','claim-demand','complainant-name','target-user','staff-name','initial-response','response-policy','response-message'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('complainant-rel').value='';
+  showToast('✓ 記録を保存しました');
+}
+
+async function generateResponse() {
+  const subject  =document.getElementById('claim-subject').value.trim();
+  const detail   =document.getElementById('claim-detail').value.trim();
+  const demand   =document.getElementById('claim-demand').value.trim();
+  const category =document.querySelector('#category-group .chip.selected')?.dataset.val;
+  const urgency  =document.querySelector('#urgency-group .chip.selected')?.dataset.val;
+  if(!detail){ showToast('詳細内容を入力してからAI生成してください'); return; }
+
+  const btn=document.getElementById('ai-btn');
+  const loading=document.getElementById('ai-loading');
+  btn.disabled=true; loading.style.display='flex';
+
+  const catLabel={ care:'ケア内容', staff:'職員対応・態度', facility:'施設環境', accident:'事故・怪我', billing:'請求・費用', other:'その他' };
+  const urgLabel={ low:'低', mid:'中', high:'高', escalate:'要エスカレーション' };
+
+  const prompt=`あなたは介護施設の苦情対応専門家です。以下の苦情・相談内容をもとに、施設側の対応方針と申出人への連絡文案を作成してください。
+
+【苦情・相談情報】
+件名：${subject||'（未入力）'}
+分類：${catLabel[category]||'不明'}
+重要度：${urgLabel[urgency]||'不明'}
+内容：${detail}
+要望：${demand||'（未記載）'}
+
+以下の形式でJSONのみ返答してください（説明文不要）：
+{"policy":"対応方針・確認事項（3〜5項目、具体的に）","message":"申出人への連絡文案（敬語・謝罪を含む実用的な文章、200字程度）"}`;
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'';
+    const result=JSON.parse(text.replace(/```json|```/g,'').trim());
+    document.getElementById('response-policy').value =result.policy||'';
+    document.getElementById('response-message').value=result.message||'';
+    showToast('✓ AI下書きを生成しました。内容を確認・修正してください。');
+  } catch(e){ showToast('生成に失敗しました。手動で入力してください。'); }
+  btn.disabled=false; loading.style.display='none';
+}
+
+function renderList() {
+  const claims=currentClaims.length>0?currentClaims:getClaims();
+  const filtered=currentFilter==='all'?claims
+    :currentFilter==='escalate'?claims.filter(c=>c.status==='escalate'||c.urgency==='escalate')
+    :claims.filter(c=>c.status===currentFilter);
+  document.getElementById('list-total').textContent=filtered.length+' 件';
+  const list=document.getElementById('claim-list');
+  if(filtered.length===0){ list.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">該当する記録がありません</div></div>`; return; }
+  list.innerHTML=filtered.map(c=>{
+    const st=STATUS_DEF[c.status]||STATUS_DEF.open;
+    const dt=[c.recvDate?.replace(/-/g,'/'),c.recvTime].filter(Boolean).join(' ');
+    const isUrgent=c.urgency==='high'||c.urgency==='escalate'||c.status==='escalate';
+    return `<div class="claim-card${isUrgent?' urgent':''}" onclick="openDetail('${c.id}')">
+      <div class="claim-top">
+        <div class="claim-meta">
+          <span class="claim-type-badge ${TYPE_CLS[c.type]||''}">${TYPE_LABEL[c.type]||c.type}</span>
+          <span class="claim-person">📂 ${CAT_LABEL[c.category]||c.category}</span>
+          ${c.targetUser?`<span class="claim-person">👤 ${escHtml(c.targetUser)}</span>`:''}
+          <span class="st-badge ${st.cls}">${st.label}</span>
+        </div>
+        <span class="claim-date">${dt}</span>
+      </div>
+      <div class="claim-subject">${escHtml(c.subject)}</div>
+      <div class="claim-body">${escHtml(c.detail)}</div>
+      <div class="claim-footer">
+        <span class="claim-staff">担当：${escHtml(c.staff)}</span>
+        ${c.followups?.length>0?`<span style="font-size:11px;color:var(--plum3);">💬 ${c.followups.length}件の経緯</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterList(val,btn) {
+  currentFilter=val;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function openDetail(id) {
+  const c=currentClaims.find(c=>c.id===id); if(!c) return;
+  const st=STATUS_DEF[c.status]||STATUS_DEF.open;
+  document.getElementById('dp-title').textContent=c.subject;
+  const badge=document.getElementById('dp-status-badge');
+  badge.className=`st-badge ${st.cls}`; badge.textContent=st.label;
+  const followupsHtml=(c.followups||[]).map(f=>`
+    <div class="followup-item">
+      <div class="followup-meta">
+        <span class="st-badge ${STATUS_DEF[f.status||'open'].cls}">${STATUS_DEF[f.status||'open'].label}に変更</span>
+        <span>${escHtml(f.by||'担当者')}</span><span>${f.at||''}</span>
+      </div>
+      ${f.comment?`<div>${escHtml(f.comment)}</div>`:''}
+    </div>`).join('');
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-section">
+      <div class="detail-section-title">基本情報</div>
+      <div class="detail-row"><span class="detail-key">受付日時</span><span class="detail-val">${[c.recvDate,c.recvTime].filter(Boolean).join(' ')}</span></div>
+      <div class="detail-row"><span class="detail-key">種別</span><span class="detail-val">${TYPE_LABEL[c.type]||c.type} / ${CAT_LABEL[c.category]||c.category}</span></div>
+      <div class="detail-row"><span class="detail-key">申出人</span><span class="detail-val">${escHtml(c.complainantName||'—')} ${c.complainantRel?`（${c.complainantRel}）`:''}</span></div>
+      <div class="detail-row"><span class="detail-key">対象利用者</span><span class="detail-val">${escHtml(c.targetUser||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">担当者</span><span class="detail-val">${escHtml(c.staff)}</span></div>
+      <div class="detail-row"><span class="detail-key">重要度</span><span class="detail-val">${URG_LABEL[c.urgency]||'—'}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">申し出内容</div>
+      <p style="font-size:13px;color:var(--ink);line-height:1.75;white-space:pre-wrap;">${escHtml(c.detail)}</p>
+      ${c.demand?`<div style="margin-top:10px;"><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:4px;">要望</div><p style="font-size:13px;line-height:1.75;">${escHtml(c.demand)}</p></div>`:''}
+    </div>
+    ${c.initialResponse||c.responsePolicy||c.responseMessage?`
+    <div class="detail-section">
+      <div class="detail-section-title">対応内容</div>
+      ${c.initialResponse?`<div style="margin-bottom:10px;"><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:4px;">初期対応</div><p style="font-size:13px;line-height:1.75;white-space:pre-wrap;">${escHtml(c.initialResponse)}</p></div>`:''}
+      ${c.responsePolicy?`<div style="margin-bottom:10px;"><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:4px;">対応方針</div><p style="font-size:13px;line-height:1.75;white-space:pre-wrap;">${escHtml(c.responsePolicy)}</p></div>`:''}
+      ${c.responseMessage?`<div><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:4px;">連絡文案</div><p style="font-size:13px;line-height:1.75;white-space:pre-wrap;">${escHtml(c.responseMessage)}</p></div>`:''}
+    </div>`:''}
+    <div class="detail-section">
+      <div class="detail-section-title">対応経緯・ステータス更新</div>
+      <div class="followup-thread">${followupsHtml||'<p style="font-size:12px;color:var(--ink4);">まだ経緯の記録はありません</p>'}</div>
+      <div class="followup-add">
+        <textarea class="followup-input" id="fu-comment-${c.id}" placeholder="経緯・対応内容を入力（任意）" rows="3"></textarea>
+        <div class="followup-row">
+          <select class="status-select" id="fu-status-${c.id}">
+            <option value="open" ${(c.status||'open')==='open'?'selected':''}>未対応</option>
+            <option value="progress" ${c.status==='progress'?'selected':''}>対応中</option>
+            <option value="pending"  ${c.status==='pending'?'selected':''}>回答待ち</option>
+            <option value="resolved" ${c.status==='resolved'?'selected':''}>解決済み</option>
+            <option value="escalate" ${c.status==='escalate'?'selected':''}>要エスカレーション</option>
+          </select>
+          <button class="followup-submit" onclick="addFollowup('${c.id}')">記録する</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('detail-overlay').classList.add('show');
+}
+
+function closeDetail() { document.getElementById('detail-overlay').classList.remove('show'); }
+
+async function addFollowup(id) {
+  const c=currentClaims.find(c=>c.id===id); if(!c) return;
+  const status =document.getElementById(`fu-status-${id}`).value;
+  const comment=document.getElementById(`fu-comment-${id}`).value.trim();
+  const now=new Date();
+  const at=`${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  if(!c.followups) c.followups=[];
+  c.followups.push({ status, comment, by:'担当者', at });
+  c.status=status;
+  setCached(currentClaims);
+  await apiPost({ action:'data_write', app:'claim', code:accessCode, id:c.id, payload:c }).catch(()=>{});
+  updateBadges();
+  openDetail(id);
+  showToast('✓ 経緯を記録しました');
+}
+
+function renderStats() {
+  const claims=currentClaims;
+  const now=new Date();
+  const monthC=claims.filter(c=>{ const d=new Date(c.createdAt); return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth(); });
+  document.getElementById('st-total').textContent   =claims.length;
+  document.getElementById('st-open').textContent    =claims.filter(c=>c.status==='open'||c.status==='progress').length;
+  document.getElementById('st-month').textContent   =monthC.length;
+  document.getElementById('st-escalate').textContent=claims.filter(c=>c.status==='escalate'||c.urgency==='escalate').length;
+  const catMap={},typMap={};
+  claims.forEach(c=>{ catMap[CAT_LABEL[c.category]||c.category]=(catMap[CAT_LABEL[c.category]||c.category]||0)+1; });
+  claims.forEach(c=>{ typMap[TYPE_LABEL[c.type]||c.type]=(typMap[TYPE_LABEL[c.type]||c.type]||0)+1; });
+  renderBar('cat-chart',catMap); renderBar('type-chart',typMap);
+}
+
+function renderBar(id,data) {
+  const el=document.getElementById(id);
+  const entries=Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){ el.innerHTML='<p style="font-size:12px;color:var(--ink4);padding:8px;">データがありません</p>'; return; }
+  const max=entries[0][1];
+  el.innerHTML=entries.map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-key">${escHtml(k)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
+      <div class="bar-val">${v}</div>
+    </div>`).join('');
+}
+
+function updateBadges() {
+  const claims=currentClaims;
+  document.getElementById('open-count').textContent=claims.filter(c=>c.status==='open'||c.status==='progress').length;
+  document.getElementById('list-badge').textContent=claims.length;
+}
+
+function showToast(msg,d=3200) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),d);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('recv-date').value=today;
+  const now=new Date();
+  document.getElementById('recv-time').value=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const savedCode=localStorage.getItem(CODE_KEY);
+  if(savedCode){
+    try {
+      const r=await fetch(WORKER_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ code:savedCode, deviceId:'facility', app:'claim' }) });
+      const data=await r.json();
+      if(data.ok){ accessCode=savedCode; document.getElementById('login-screen').style.display='none'; await getClaimsForce(); updateBadges(); }
+      else{ localStorage.removeItem(CODE_KEY); }
+    } catch(e){
+      if(savedCode){ accessCode=savedCode; document.getElementById('login-screen').style.display='none'; currentClaims=getCached(); updateBadges(); }
+    }
+  }
+});
+</script>
+</body>
+</html>

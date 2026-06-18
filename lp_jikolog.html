@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>じこログ | 事故報告書を、今日中に終わらせる。</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:    #1e3a5f;
+      --blue2:   #2d5282;
+      --blue3:   #3b6fad;
+      --blue-lt: #e0eaf5;
+      --blue-xl: #f0f5fb;
+      --gold:    #c07a2a;
+      --warn:    #b83030;
+      --white:   #ffffff;
+      --ice:     #f3f6fa;
+      --ink:     #1a2840;
+      --ink2:    #3d5270;
+      --ink3:    #7a90b0;
+      --border:  rgba(30,58,95,0.12);
+      --shadow:  0 4px 24px rgba(15,31,61,0.10);
+      --shadow-lg: 0 12px 48px rgba(15,31,61,0.14);
+      --r: 16px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: var(--white); color: var(--ink); line-height: 1.75; }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15,31,61,0.97); backdrop-filter: blur(12px);
+      padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-back { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; }
+    .nav-back:hover { color: #fff; }
+    .nav-cta { background: var(--blue2); color: #fff; padding: 8px 20px; border-radius: 100px; font-size: 13px; font-weight: 700; text-decoration: none; }
+    .nav-cta:hover { opacity: 0.88; }
+
+    .hero {
+      background: linear-gradient(160deg, #0a1628 0%, var(--blue) 100%);
+      padding: 80px 24px 60px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(192,122,42,0.12) 0%, transparent 60%);
+    }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); border-radius: 100px; padding: 6px 18px; font-size: 12px; color: rgba(255,255,255,0.85); margin-bottom: 24px; font-family: 'Sora', sans-serif; }
+    .hero h1 { font-family: 'Noto Serif JP', serif; font-size: clamp(26px, 5vw, 48px); font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 20px; }
+    .hero h1 em { font-style: normal; background: linear-gradient(90deg, var(--gold) 0%, #e8a84a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { font-size: 15px; color: rgba(255,255,255,0.75); max-width: 520px; margin: 0 auto 40px; line-height: 1.85; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: #fff; padding: 16px 40px; border-radius: 100px; font-size: 16px; font-weight: 700; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 24px rgba(192,122,42,0.4); }
+    .hero-cta:hover { opacity: 0.9; transform: translateY(-2px); }
+    .hero-price { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.5); }
+
+    section { padding: 72px 24px; }
+    .container { max-width: 860px; margin: 0 auto; }
+    .eyebrow { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--blue2); margin-bottom: 12px; }
+    .section-title { font-family: 'Noto Serif JP', serif; font-size: clamp(22px, 4vw, 34px); font-weight: 700; line-height: 1.4; margin-bottom: 16px; }
+    .section-desc { font-size: 15px; color: var(--ink2); line-height: 1.85; max-width: 600px; }
+
+    /* EMPATHY */
+    .empathy-section { background: var(--ice); }
+    .voice-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 36px; }
+    .voice-card { background: var(--white); border-radius: var(--r); padding: 22px 26px; border-left: 4px solid var(--blue); box-shadow: var(--shadow); }
+    .voice-text { font-family: 'Noto Serif JP', serif; font-size: 16px; font-weight: 600; color: var(--ink); line-height: 1.65; margin-bottom: 8px; }
+    .voice-context { font-size: 13px; color: var(--ink3); }
+
+    /* STEPS */
+    .steps-section { background: var(--white); }
+    .steps { display: flex; flex-direction: column; gap: 0; margin-top: 44px; position: relative; }
+    .steps::before { content: ''; position: absolute; left: 27px; top: 56px; bottom: 56px; width: 2px; background: linear-gradient(180deg, var(--blue-lt), var(--blue)); }
+    .step { display: flex; gap: 24px; padding: 0 0 32px 0; }
+    .step:last-child { padding-bottom: 0; }
+    .step-num { width: 56px; height: 56px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; flex-shrink: 0; position: relative; z-index: 1; }
+    .step-content { padding-top: 12px; flex: 1; }
+    .step-title { font-weight: 700; font-size: 17px; color: var(--ink); margin-bottom: 8px; }
+    .step-body { font-size: 14px; color: var(--ink2); line-height: 1.8; }
+    .step-badge { display: inline-block; background: var(--blue-lt); color: var(--blue); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; margin-bottom: 6px; font-family: 'Sora', sans-serif; }
+
+    /* AI FEATURE */
+    .ai-section {
+      background: linear-gradient(160deg, #0a1628 0%, var(--blue) 100%);
+    }
+    .ai-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .ai-title { font-family: 'Noto Serif JP', serif; font-size: clamp(20px, 3.5vw, 30px); font-weight: 700; color: #fff; line-height: 1.45; margin-bottom: 16px; }
+    .ai-body { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.85; margin-bottom: 20px; }
+    .ai-points { display: flex; flex-direction: column; gap: 10px; }
+    .ai-point { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: rgba(255,255,255,0.9); display: flex; align-items: flex-start; gap: 10px; }
+    .ai-screen { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 20px; }
+    .ai-screen-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; margin-bottom: 14px; }
+    .ai-axis { margin-bottom: 12px; }
+    .ai-axis-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+    .ai-axis-bar { height: 6px; border-radius: 100px; background: rgba(255,255,255,0.1); overflow: hidden; }
+    .ai-axis-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--gold), #e8a84a); }
+
+    /* INTEGRATION */
+    .integration-section { background: var(--ice); }
+    .integration-card { background: var(--white); border-radius: var(--r); padding: 28px; border: 1.5px solid var(--border); box-shadow: var(--shadow); display: flex; gap: 20px; align-items: flex-start; }
+    .integration-icon { font-size: 32px; flex-shrink: 0; }
+    .integration-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+    .integration-body { font-size: 14px; color: var(--ink2); line-height: 1.8; }
+
+    /* CTA */
+    .cta-section { background: var(--white); text-align: center; }
+    .cta-box { background: var(--ice); border-radius: 20px; padding: 48px 40px; box-shadow: var(--shadow); border: 1.5px solid var(--border); max-width: 520px; margin: 0 auto; }
+    .cta-price { font-family: 'Sora', sans-serif; font-size: 48px; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: 6px; }
+    .cta-price-note { font-size: 13px; color: var(--ink3); margin-bottom: 28px; }
+    .btn-buy { display: block; background: var(--blue); color: #fff; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 20px rgba(30,58,95,0.3); margin-bottom: 12px; }
+    .btn-buy:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-suite-link { display: block; color: var(--blue); font-size: 14px; font-weight: 700; text-decoration: none; padding: 12px; border: 1.5px solid var(--blue); border-radius: 12px; transition: all 0.15s; margin-bottom: 20px; }
+    .btn-suite-link:hover { background: var(--blue-lt); }
+    .cta-note { font-size: 12px; color: var(--ink3); line-height: 1.7; }
+
+    .kv-note { background: #f0f3f7; border-top: 1px solid var(--border); padding: 16px 24px; text-align: center; font-size: 12px; color: var(--ink3); line-height: 1.7; }
+    footer { background: var(--ink); padding: 40px 24px; text-align: center; }
+    .footer-links { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+    .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; }
+    .footer-links a:hover { color: #fff; }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
+
+    @media (max-width: 640px) {
+      .ai-inner { grid-template-columns: 1fr; gap: 28px; }
+      .integration-card { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-back">← 一覧に戻る</a>
+  <a href="https://buy.stripe.com/5kQ8wR0kCdWWdmW8Ob73G0d" class="nav-cta">¥2,980 で購入</a>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">📋 じこログ — 介護事故報告書 作成支援</div>
+    <h1>事故報告書を、<br><em>今日中に</em><br>終わらせる。</h1>
+    <p class="hero-sub">
+      国の標準様式に対応した4ステップ入力と、AIによる原因分析の下書き生成。「何を書けばいいかわからない」をなくします。
+    </p>
+    <a href="https://buy.stripe.com/5kQ8wR0kCdWWdmW8Ob73G0d" class="hero-cta">
+      📋 じこログを購入する
+    </a>
+    <div class="hero-price">¥2,980 施設ライセンス・買い切り</div>
+  </div>
+</section>
+
+<!-- EMPATHY -->
+<section class="empathy-section">
+  <div class="container">
+    <div class="eyebrow">現場の声</div>
+    <h2 class="section-title">事故が起きた日の夜、<br>あなたは何時まで残っていましたか。</h2>
+    <div class="voice-cards">
+      <div class="voice-card">
+        <div class="voice-text">「原因分析の欄、毎回何を書いていいかわからなくて。結局コピペになっちゃうんですよね。」</div>
+        <div class="voice-context">— 特養相談員 / 経験10年</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-text">「事故が起きた日の残業が一番つらい。利用者さんのケアもしながら、報告書も書かないといけない。」</div>
+        <div class="voice-context">— 介護主任 / 経験7年</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-text">「書式がバラバラで、新人に教えるのも大変。施設全体で統一したいけど、何から始めればいいか。」</div>
+        <div class="voice-context">— サービス提供責任者 / 経験12年</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="steps-section">
+  <div class="container">
+    <div class="eyebrow">使い方</div>
+    <h2 class="section-title">4つのステップで<br>国の様式が完成する。</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-badge">STEP 1</div>
+          <div class="step-title">基本情報をタップ入力</div>
+          <div class="step-body">報告種別・事業所情報・対象者情報をタップ選択。事業所情報は一度保存すれば次回から自動入力されます。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-badge">STEP 2</div>
+          <div class="step-title">事故概要を記録</div>
+          <div class="step-body">発生日時・場所・種別はタップ選択。状況の詳細は音声入力にも対応。このとき、気づきメモの類似ヒヤリハットが自動表示されます。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-badge">STEP 3</div>
+          <div class="step-title">対応内容を記録</div>
+          <div class="step-body">受診方法・診断内容・家族への報告・関係機関への連絡をチェックリスト形式で記録します。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-badge">STEP 4</div>
+          <div class="step-title">AIが原因分析を下書き生成</div>
+          <div class="step-body">「本人要因・職員要因・環境要因」の3軸で原因分析と再発防止策の下書きを自動生成。確認・修正してプレビュー印刷まで完了。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI FEATURE -->
+<section class="ai-section">
+  <div class="container">
+    <div class="ai-inner">
+      <div>
+        <div class="eyebrow" style="color:var(--gold);">AI機能</div>
+        <h2 class="ai-title">「何を書けばいいか<br>わからない」を<br>なくすAI下書き。</h2>
+        <p class="ai-body">原因分析・再発防止策は、事故報告書の中で最も書くのが難しい部分。AIが事故情報を読み取り、3軸で下書きを生成します。あとは確認して修正するだけ。</p>
+        <div class="ai-points">
+          <div class="ai-point">✦ 本人要因・職員要因・環境要因の3軸で自動分析</div>
+          <div class="ai-point">✦ 再発防止策の具体的な提案まで生成</div>
+          <div class="ai-point">✦ 生成結果は必ず確認・修正して使用</div>
+        </div>
+      </div>
+      <div class="ai-screen">
+        <div class="ai-screen-title">AI 原因分析 — 生成例</div>
+        <div class="ai-axis">
+          <div class="ai-axis-label">本人要因</div>
+          <div class="ai-axis-bar"><div class="ai-axis-fill" style="width:85%"></div></div>
+        </div>
+        <div class="ai-axis">
+          <div class="ai-axis-label">職員要因</div>
+          <div class="ai-axis-bar"><div class="ai-axis-fill" style="width:60%"></div></div>
+        </div>
+        <div class="ai-axis">
+          <div class="ai-axis-label">環境要因</div>
+          <div class="ai-axis-bar"><div class="ai-axis-fill" style="width:70%"></div></div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:rgba(255,255,255,0.06);border-radius:8px;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.7;">
+          認知症による判断力低下があり、就寝中に一人でトイレへ行こうとしたと推測される。夜間巡視の間隔が30分おきであり…
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATION -->
+<section class="integration-section">
+  <div class="container">
+    <div class="eyebrow">気づきメモとの連携</div>
+    <h2 class="section-title">「この事故の前に、<br>兆候があった。」</h2>
+    <p class="section-desc" style="margin-bottom:28px;">事故が起きたとき、振り返れば前兆があることが多い。じこログはSTEP2で発生場所・事故種別を入力した瞬間、気づきメモの類似ヒヤリハットを自動で表示します。</p>
+    <div class="integration-card">
+      <div class="integration-icon">🌿</div>
+      <div>
+        <div class="integration-title">類似ヒヤリハットの自動表示</div>
+        <div class="integration-body">「転倒」「居室」と入力すると、気づきメモから同じ場所・同じ種別の記録を自動検索。「この事故の30日前に3件の類似ヒヤリハットがあった」という事実が、原因分析に深みをもたらします。<br><br>スイート購入なら、データが自動連携されます。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box">
+      <div class="eyebrow" style="text-align:center;color:var(--blue);">じこログ 施設ライセンス</div>
+      <div class="cta-price">¥2,980</div>
+      <div class="cta-price-note">買い切り・施設内全職員で利用可能</div>
+      <a href="https://buy.stripe.com/5kQ8wR0kCdWWdmW8Ob73G0d" class="btn-buy">
+        📋 じこログを購入する
+      </a>
+      <a href="https://buy.stripe.com/00wfZjd7ocSS96G7K773G0f" class="btn-suite-link">
+        ✦ 気づきメモ・クレームログとのセット（¥7,800）を見る
+      </a>
+      <div class="cta-note">
+        購入後、施設アクセスコードをメールでお送りします。<br>
+        インストール不要・ブラウザで即日利用開始。<br>
+        月額費用なし・買い切りのためランニングコストゼロ。
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="kv-note">
+  ※ Cloudflare KV使用。読み取り上限：10万回/日、書き込み上限：1,000回/日（無料プラン）。大規模施設はお問い合わせください。
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">トップ</a>
+    <a href="kizuki.html">気づきメモ</a>
+    <a href="claimlog.html">クレームログ</a>
+    <a href="suite.html">スイート</a>
+  </div>
+  <div class="footer-copy">© 2026 survival_mam / Sena Mam</div>
+</footer>
+
+</body>
+</html>
