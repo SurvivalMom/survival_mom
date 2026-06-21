@@ -1,0 +1,63 @@
+name: Instagram - Publish on Approval
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  publish:
+    if: |
+      contains(github.event.issue.labels.*.name, 'instagram-draft') &&
+      (github.event.comment.body == 'approve' || github.event.comment.body == 'reject')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r instagram/requirements.txt
+
+      - name: Extract draft dir from issue body
+        id: extract
+        run: |
+          DRAFT_DIR=$(echo "${{ github.event.issue.body }}" | grep -oP 'draft_dir: `\K[^`]+')
+          if [ -z "$DRAFT_DIR" ]; then
+            echo "Could not find draft_dir in issue body" >&2
+            exit 1
+          fi
+          echo "draft_dir=$DRAFT_DIR" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Instagram
+        if: github.event.comment.body == 'approve'
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: |
+          DRAFT_DIR="${{ steps.extract.outputs.draft_dir }}"
+          IMAGE_PATH=$(python -c "import json,pathlib; print(json.loads(pathlib.Path('$DRAFT_DIR/draft.json').read_text())['image_path'])")
+          IMAGE_URL="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.event.repository.default_branch }}/$IMAGE_PATH"
+          python instagram/scripts/publish_instagram.py "$DRAFT_DIR" --image-url "$IMAGE_URL"
+
+      - name: Archive draft and comment result
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          DRAFT_DIR="${{ steps.extract.outputs.draft_dir }}"
+          DEST_DIR="instagram/$([ '${{ github.event.comment.body }}' = 'approve' ] && echo published || echo rejected)/$(basename "$DRAFT_DIR")"
+          git mv "$DRAFT_DIR" "$DEST_DIR"
+          git commit -m "$([ '${{ github.event.comment.body }}' = 'approve' ] && echo 'Publish' || echo 'Reject') Instagram draft: $DRAFT_DIR"
+          git push
+          if [ "${{ github.event.comment.body }}" = "approve" ]; then
+            gh issue close ${{ github.event.issue.number }} --comment "✅ Instagramに投稿しました"
+          else
+            gh issue close ${{ github.event.issue.number }} --comment "❌ ドラフトを却下しました"
+          fi

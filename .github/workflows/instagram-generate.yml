@@ -1,0 +1,60 @@
+name: Instagram - Generate Draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Specific landing page HTML file to use (optional, e.g. futoukou.html)"
+        required: false
+  schedule:
+    # 毎週月・木 朝10:00 JST (UTC 01:00). 必要に応じて変更してください。
+    - cron: "0 1 * * 1,4"
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r instagram/requirements.txt
+
+      - name: Generate draft
+        id: generate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.source }}" ]; then
+            python instagram/scripts/generate_post.py --source "${{ github.event.inputs.source }}"
+          else
+            python instagram/scripts/generate_post.py
+          fi
+
+      - name: Commit draft
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add instagram/pending instagram/state.json
+          git commit -m "Add Instagram draft: ${{ steps.generate.outputs.draft_dir }}" || echo "No changes to commit"
+          git push
+
+      - name: Create approval issue
+        id: issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python instagram/scripts/create_approval_issue.py "${{ steps.generate.outputs.draft_dir }}"
+
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          python instagram/scripts/notify_discord.py "${{ steps.generate.outputs.draft_dir }}" --issue-url "${{ steps.issue.outputs.issue_url }}"
