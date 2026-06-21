@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""Generate an Instagram post draft (caption + image) from a survival_mom landing page.
+"""Generate an Instagram Reels draft (caption + short vertical video) from a
+survival_mom landing page.
 
 Usage:
     python generate_post.py [--source FILE.html] [--dry-run]
 
 Writes a draft directory under instagram/pending/<timestamp>-<slug>/ containing
-draft.json (caption + metadata) and image.png.
+draft.json (caption + metadata) and video.mp4 (9:16 vertical, ~8 seconds).
 """
 import argparse
 import json
 import os
 import re
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -101,38 +103,55 @@ def build_caption(content: dict) -> str:
     ).strip()
 
 
-def generate_image(content: dict, out_path: Path) -> None:
-    """Generate a post image with Gemini's Imagen model, falling back to a template render."""
+VIDEO_POLL_INTERVAL_SECONDS = 10
+VIDEO_POLL_TIMEOUT_SECONDS = 600
+
+
+def generate_video(content: dict, out_path: Path) -> None:
+    """Generate a short vertical Reels video with Veo 3, falling back to a template render."""
     prompt = (
-        f"Instagram用の正方形の告知画像。商品名「{content['title']}」。"
-        "やさしい色合いで、悩んでいる保護者を励ますイラスト風デザイン。"
-        "テキストは入れない。写実的な人物の顔は描かない。"
+        f"Instagram Reels用の縦長(9:16)動画、約8秒。商品名「{content['title']}」。"
+        f"テーマ: {content['description']}。"
+        "やさしい色合いで、悩んでいる保護者を励ますような、温かみのあるイラスト風の短い映像。"
+        "テキストは映像内に入れない。写実的な人物の顔は描かない。"
     )
     try:
         from google import genai
         from google.genai import types
 
         client = genai.Client()
-        result = client.models.generate_images(
-            model="imagen-4.0-generate-001",
+        operation = client.models.generate_videos(
+            model="veo-3.0-generate-001",
             prompt=prompt,
-            config=types.GenerateImagesConfig(number_of_images=1),
+            config=types.GenerateVideosConfig(aspect_ratio="9:16"),
         )
-        image_bytes = result.generated_images[0].image.image_bytes
-        out_path.write_bytes(image_bytes)
+
+        elapsed = 0
+        while not operation.done:
+            if elapsed >= VIDEO_POLL_TIMEOUT_SECONDS:
+                raise TimeoutError("Veo video generation timed out")
+            time.sleep(VIDEO_POLL_INTERVAL_SECONDS)
+            elapsed += VIDEO_POLL_INTERVAL_SECONDS
+            operation = client.operations.get(operation)
+
+        generated_video = operation.response.generated_videos[0]
+        client.files.download(file=generated_video.video)
+        generated_video.video.save(str(out_path))
         return
     except Exception as exc:  # noqa: BLE001 - fall back on any SDK/network error
-        print(f"[generate_post] Gemini image generation failed, using fallback: {exc}", file=sys.stderr)
+        print(f"[generate_post] Veo video generation failed, using fallback: {exc}", file=sys.stderr)
 
-    render_fallback_image(content, out_path)
+    render_fallback_video(content, out_path)
 
 
-def render_fallback_image(content: dict, out_path: Path) -> None:
-    """A simple text-card image used when no AI image-generation API is configured."""
+def render_fallback_video(content: dict, out_path: Path, duration_seconds: int = 5, fps: int = 24) -> None:
+    """A simple static text-card video used when no AI video-generation API is configured."""
+    import imageio
+    import numpy as np
     from PIL import Image, ImageDraw, ImageFont
 
-    size = 1080
-    img = Image.new("RGB", (size, size), color=(255, 246, 230))
+    width, height = 1088, 1920  # divisible by 16, required by the libx264 encoder
+    img = Image.new("RGB", (width, height), color=(255, 246, 230))
     draw = ImageDraw.Draw(img)
 
     font_paths = (
@@ -140,16 +159,23 @@ def render_fallback_image(content: dict, out_path: Path) -> None:
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
     )
     try:
-        font_title = ImageFont.truetype(font_paths[0], 56)
-        font_body = ImageFont.truetype(font_paths[1], 32)
+        font_title = ImageFont.truetype(font_paths[0], 64)
+        font_body = ImageFont.truetype(font_paths[1], 36)
     except OSError:
         font_title = ImageFont.load_default()
         font_body = ImageFont.load_default()
 
     margin = 80
-    draw.text((margin, 320), content["title"], fill=(60, 40, 30), font=font_title)
-    draw.text((margin, 440), content["description"][:80], fill=(80, 60, 50), font=font_body)
-    img.save(out_path)
+    draw.text((margin, 760), content["title"], fill=(60, 40, 30), font=font_title)
+    draw.text((margin, 900), content["description"][:80], fill=(80, 60, 50), font=font_body)
+
+    frame = np.array(img)
+    writer = imageio.get_writer(str(out_path), fps=fps, codec="libx264", format="FFMPEG")
+    try:
+        for _ in range(duration_seconds * fps):
+            writer.append_data(frame)
+    finally:
+        writer.close()
 
 
 def write_github_output(name: str, value: str) -> None:
@@ -182,19 +208,19 @@ def main() -> None:
     draft_dir = PENDING_DIR / f"{timestamp}-{slug}"
     draft_dir.mkdir(parents=True, exist_ok=True)
 
-    image_path = draft_dir / "image.png"
+    video_path = draft_dir / "video.mp4"
     if args.dry_run:
         caption = f"[DRY RUN] {content['title']}\n\n{content['description']}\n\n#dryrun"
-        render_fallback_image(content, image_path)
+        render_fallback_video(content, video_path)
     else:
         caption = build_caption(content)
-        generate_image(content, image_path)
+        generate_video(content, video_path)
 
     draft = {
         "source_file": source_name,
         "title": content["title"],
         "caption": caption,
-        "image_path": str(image_path.relative_to(REPO_ROOT)),
+        "video_path": str(video_path.relative_to(REPO_ROOT)),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "status": "pending",
     }

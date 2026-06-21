@@ -36,11 +36,11 @@ def main() -> None:
 
     draft_dir_path = REPO_ROOT / args.draft_dir
     draft = json.loads((draft_dir_path / "draft.json").read_text(encoding="utf-8"))
-    raw_image_url = f"https://raw.githubusercontent.com/{repo}/{branch}/{draft['image_path']}"
+    raw_video_url = f"https://raw.githubusercontent.com/{repo}/{branch}/{draft['video_path']}"
 
     body = (
         f"**元ページ**: `{draft['source_file']}`\n\n"
-        f"![draft image]({raw_image_url})\n\n"
+        f"**動画**: {raw_video_url}\n\n"
         f"**キャプション案:**\n\n{draft['caption']}\n\n"
         "---\n"
         "承認する場合はこのIssueに `approve` とコメントしてください。\n"
@@ -51,7 +51,7 @@ def main() -> None:
     response = requests.post(
         f"{API_ROOT}/repos/{repo}/issues",
         headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
-        json={"title": f"[Instagram draft] {draft['title']}", "body": body, "labels": ["instagram-draft"]},
+        json={"title": f"[Instagram Reels draft] {draft['title']}", "body": body, "labels": ["instagram-draft"]},
         timeout=30,
     )
     response.raise_for_status()

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish an approved draft to Instagram via the Instagram Graph API.
+"""Publish an approved draft to Instagram as a Reel via the Instagram Graph API.
 
 Requires IG_ACCESS_TOKEN and IG_USER_ID environment variables. See
 instagram/README.md for how to obtain these (a Facebook Page-linked
@@ -15,6 +15,9 @@ import requests
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GRAPH_API_VERSION = "v21.0"
+# Reels video processing takes longer than image processing.
+STATUS_POLL_INTERVAL_SECONDS = 10
+STATUS_POLL_ATTEMPTS = 30
 
 
 def write_github_output(name: str, value: str) -> None:
@@ -29,9 +32,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("draft_dir", help="Path (relative to repo root) to the draft directory")
     parser.add_argument(
-        "--image-url",
+        "--video-url",
         required=True,
-        help="Publicly accessible URL of the draft image (Instagram fetches it server-side)",
+        help="Publicly accessible URL of the draft video (Instagram fetches it server-side)",
     )
     args = parser.parse_args()
 
@@ -45,22 +48,30 @@ def main() -> None:
 
     container = requests.post(
         f"{base_url}/media",
-        data={"image_url": args.image_url, "caption": draft["caption"], "access_token": access_token},
+        data={
+            "media_type": "REELS",
+            "video_url": args.video_url,
+            "caption": draft["caption"],
+            "access_token": access_token,
+        },
         timeout=60,
     )
     container.raise_for_status()
     creation_id = container.json()["id"]
 
-    for _ in range(10):
+    for _ in range(STATUS_POLL_ATTEMPTS):
         status = requests.get(
             f"https://graph.facebook.com/{GRAPH_API_VERSION}/{creation_id}",
             params={"fields": "status_code", "access_token": access_token},
             timeout=30,
         )
         status.raise_for_status()
-        if status.json().get("status_code") == "FINISHED":
+        status_code = status.json().get("status_code")
+        if status_code == "FINISHED":
             break
-        time.sleep(3)
+        if status_code == "ERROR":
+            raise SystemExit(f"Instagram failed to process video container {creation_id}")
+        time.sleep(STATUS_POLL_INTERVAL_SECONDS)
     else:
         raise SystemExit(f"Timed out waiting for media container {creation_id} to finish processing")
 

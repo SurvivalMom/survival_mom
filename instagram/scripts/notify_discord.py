@@ -28,16 +28,16 @@ def main() -> None:
 
     draft_dir = REPO_ROOT / args.draft_dir
     draft = json.loads((draft_dir / "draft.json").read_text(encoding="utf-8"))
-    image_path = REPO_ROOT / draft["image_path"]
+    video_path = REPO_ROOT / draft["video_path"]
 
-    content_lines = [f"**新しいInstagram投稿ドラフト**: {draft['title']}", "", draft["caption"]]
+    content_lines = [f"**新しいInstagram Reelsドラフト**: {draft['title']}", "", draft["caption"]]
     if args.issue_url:
         content_lines += ["", f"承認/却下はこちら: {args.issue_url}"]
 
     payload = {"content": "\n".join(content_lines)[:2000]}
     files = None
-    if image_path.exists():
-        files = {"file": (image_path.name, image_path.read_bytes(), "image/png")}
+    if video_path.exists():
+        files = {"file": (video_path.name, video_path.read_bytes(), "video/mp4")}
 
     response = requests.post(
         webhook_url,

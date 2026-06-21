@@ -41,9 +41,9 @@ jobs:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
         run: |
           DRAFT_DIR="${{ steps.extract.outputs.draft_dir }}"
-          IMAGE_PATH=$(python -c "import json,pathlib; print(json.loads(pathlib.Path('$DRAFT_DIR/draft.json').read_text())['image_path'])")
-          IMAGE_URL="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.event.repository.default_branch }}/$IMAGE_PATH"
-          python instagram/scripts/publish_instagram.py "$DRAFT_DIR" --image-url "$IMAGE_URL"
+          VIDEO_PATH=$(python -c "import json,pathlib; print(json.loads(pathlib.Path('$DRAFT_DIR/draft.json').read_text())['video_path'])")
+          VIDEO_URL="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.event.repository.default_branch }}/$VIDEO_PATH"
+          python instagram/scripts/publish_instagram.py "$DRAFT_DIR" --video-url "$VIDEO_URL"
 
       - name: Archive draft and comment result
         env:
