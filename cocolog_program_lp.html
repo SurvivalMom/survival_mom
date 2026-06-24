@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ここログ実践型リーダー育成プログラム｜4週間で「気にかける文化」を仕組み化する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #0d1b2a;
+    --navy2:   #1a2e42;
+    --teal:    #1a9b8c;
+    --teal2:   #22c5b3;
+    --teal-lt: #e8f8f6;
+    --red:     #c0392b;
+    --red2:    #e74c3c;
+    --gold:    #f39c12;
+    --white:   #ffffff;
+    --off:     #f5f3ef;
+    --ink:     #1c1c1c;
+    --ink2:    #4a4a4a;
+    --ink3:    #7a7a7a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    line-height: 1.7;
+  }
+
+  /* ══ HERO ══ */
+  .hero {
+    min-height: 92vh;
+    background: linear-gradient(160deg, #0a1520 0%, #0d1b2a 40%, #12253a 100%);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; position: relative; overflow: hidden; padding: 90px 24px;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 60%, rgba(26,155,140,0.14) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 20% 80%, rgba(243,156,18,0.08) 0%, transparent 60%);
+  }
+  .hero-inner { position: relative; max-width: 900px; }
+  .hero-sub {
+    font-size: 0.74rem; font-weight: 700; letter-spacing: 0.3em;
+    color: var(--teal2); text-transform: uppercase; margin-bottom: 26px; display: block;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif JP', serif; font-size: clamp(1.9rem, 4.6vw, 3.1rem);
+    font-weight: 700; line-height: 1.45; margin-bottom: 26px; letter-spacing: -0.01em;
+  }
+  .hero h1 em { font-style: normal; color: var(--teal2); }
+  .hero-desc { font-size: 1.02rem; color: rgba(255,255,255,0.65); max-width: 600px; margin: 0 auto 20px; line-height: 1.85; }
+  .hero-badge-row { display: flex; justify-content: center; gap: 12px; margin-top: 40px; flex-wrap: wrap; }
+  .hero-badge {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 100px; padding: 10px 22px; font-size: 0.8rem; color: rgba(255,255,255,0.75);
+  }
+
+  /* ══ SECTION BASE ══ */
+  .section-dark { background: var(--navy2); padding: 100px 24px; }
+  .section-darker { background: #0a1118; padding: 100px 24px; }
+  .section-light { background: var(--off); color: var(--ink); padding: 100px 24px; }
+  .section-teal { background: linear-gradient(135deg, #0f4d45, #1a6b60); padding: 100px 24px; }
+  .section-inner { max-width: 1020px; margin: 0 auto; }
+
+  .label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal2); margin-bottom: 16px; display: block;
+  }
+  h2 {
+    font-family: 'Noto Serif JP', serif; font-size: clamp(1.5rem, 3.2vw, 2.3rem);
+    font-weight: 700; line-height: 1.45; margin-bottom: 20px;
+  }
+  h2 em { font-style: normal; color: var(--teal2); }
+  h2.dark { color: var(--ink); }
+  h2.dark em { color: var(--teal); }
+  .lead { font-size: 1.02rem; line-height: 1.9; color: rgba(255,255,255,0.7); max-width: 700px; }
+  .lead-dark { color: var(--ink2); }
+
+  /* ══ PROBLEM GRID ══ */
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 48px; }
+  @media (max-width: 640px) { .problem-grid { grid-template-columns: 1fr; } }
+  .problem-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 30px;
+  }
+  .problem-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; color: rgba(255,255,255,0.9); }
+  .problem-card p { font-size: 0.88rem; color: rgba(255,255,255,0.55); line-height: 1.8; }
+
+  /* ══ WHY A PROGRAM ══ */
+  .why-flow { display: flex; align-items: center; justify-content: center; gap: 0; margin-top: 56px; flex-wrap: wrap; }
+  .why-item {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 22px 26px; text-align: center; font-size: 0.85rem; line-height: 1.55; min-width: 160px;
+  }
+  .why-arrow { font-size: 1.3rem; color: var(--teal2); padding: 0 10px; flex-shrink: 0; }
+  .why-note {
+    margin-top: 32px; background: rgba(26,155,140,0.12); border: 1px solid rgba(26,155,140,0.3);
+    border-radius: 10px; padding: 22px 28px; text-align: center; font-size: 0.92rem; color: rgba(255,255,255,0.85);
+  }
+
+  /* ══ CURRICULUM ══ */
+  .week-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 18px; padding: 36px 32px; margin-top: 24px;
+    display: grid; grid-template-columns: 140px 1fr; gap: 28px;
+  }
+  @media (max-width: 680px) { .week-card { grid-template-columns: 1fr; gap: 16px; } }
+  .week-num {
+    font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; color: var(--teal2);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .week-num .big { font-size: 2.4rem; font-weight: 700; color: white; line-height: 1; letter-spacing: 0; }
+  .week-theme { font-size: 1.15rem; font-weight: 700; color: white; margin-bottom: 6px; }
+  .week-goal { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 18px; line-height: 1.7; }
+  .week-tasks { display: flex; flex-direction: column; gap: 10px; }
+  .week-task { display: flex; align-items: flex-start; gap: 10px; font-size: 0.86rem; color: rgba(255,255,255,0.75); line-height: 1.65; }
+  .week-task .dot { color: var(--teal2); font-weight: 700; flex-shrink: 0; }
+  .week-feature-tag {
+    display: inline-block; margin-top: 16px; padding: 4px 12px; border-radius: 100px;
+    background: rgba(26,155,140,0.15); border: 1px solid rgba(26,155,140,0.3);
+    font-size: 0.7rem; color: var(--teal2); font-weight: 600;
+  }
+
+  /* ══ DELIVERY FORMAT ══ */
+  .format-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+  @media (max-width: 700px) { .format-grid { grid-template-columns: 1fr; } }
+  .format-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 30px 26px; }
+  .format-icon { font-size: 1.9rem; margin-bottom: 14px; display: block; }
+  .format-card h3 { font-size: 0.98rem; font-weight: 700; margin-bottom: 8px; color: white; }
+  .format-card p { font-size: 0.82rem; color: rgba(255,255,255,0.55); line-height: 1.75; }
+
+  /* ══ BEFORE / AFTER ══ */
+  .ba-grid { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0; margin-top: 48px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); }
+  @media (max-width: 640px) { .ba-grid { grid-template-columns: 1fr; } .ba-grid .center { display: none; } }
+  .ba-col { padding: 32px 28px; }
+  .ba-col.left { background: #edecea; color: var(--ink); }
+  .ba-col.center { background: #d9d6d2; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+  .ba-col.right { background: var(--teal); color: white; }
+  .ba-col h3 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 18px; opacity: 0.6; }
+  .ba-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: 0.87rem; line-height: 1.6; }
+  .ba-item .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-top: 7px; flex-shrink: 0; opacity: 0.5; }
+
+  /* ══ PRICING ══ */
+  .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 56px; }
+  @media (max-width: 720px) { .price-grid { grid-template-columns: 1fr; } }
+  .price-card {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px; padding: 40px 36px; position: relative;
+  }
+  .price-card.featured { border: 2px solid var(--teal2); background: rgba(26,155,140,0.08); }
+  .price-ribbon {
+    position: absolute; top: -14px; right: 28px; background: var(--teal2); color: var(--navy);
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; padding: 6px 16px; border-radius: 100px;
+  }
+  .price-plan-name { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 16px; }
+  .price-value { font-family: 'Oswald', sans-serif; font-size: 2.5rem; font-weight: 700; color: white; line-height: 1; letter-spacing: -0.02em; }
+  .price-unit { font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 6px; }
+  .price-desc { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin: 18px 0 22px; line-height: 1.75; }
+  .price-list { display: flex; flex-direction: column; gap: 11px; }
+  .price-list-item { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.8); line-height: 1.65; }
+  .price-list-item .check { color: var(--teal2); flex-shrink: 0; margin-top: 1px; }
+
+  /* ══ FAQ ══ */
+  .faq-item { border-bottom: 1px solid rgba(0,0,0,0.08); padding: 26px 0; }
+  .faq-q { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 10px; display: flex; gap: 12px; }
+  .faq-q .qmark { color: var(--teal); flex-shrink: 0; }
+  .faq-a { font-size: 0.86rem; color: var(--ink2); line-height: 1.8; padding-left: 24px; }
+
+  /* ══ CTA ══ */
+  .cta-section { background: linear-gradient(160deg, #0a1e1c 0%, #0d2a26 50%, #0f1e18 100%); padding: 120px 24px; text-align: center; }
+  .cta-inner { max-width: 720px; margin: 0 auto; }
+  .cta-section h2 { font-family: 'Noto Serif JP', serif; font-size: clamp(1.5rem, 3.6vw, 2.4rem); font-weight: 700; line-height: 1.45; margin-bottom: 24px; }
+  .cta-section p { font-size: 0.98rem; color: rgba(255,255,255,0.6); line-height: 1.85; margin-bottom: 44px; }
+  .btn-cta {
+    display: inline-block; background: linear-gradient(135deg, var(--teal), #14c4b2); color: white;
+    font-size: 1rem; font-weight: 700; padding: 20px 56px; border-radius: 100px; text-decoration: none;
+    letter-spacing: 0.05em; box-shadow: 0 8px 32px rgba(26,155,140,0.4); transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(26,155,140,0.55); }
+  .cta-note { margin-top: 24px; font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+
+  .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner fade-in">
+    <span class="hero-sub">ここログ実践型・チームリーダー育成プログラム</span>
+    <h1>ツールを配るだけでは、<br>現場は変わらない。<br><em>4週間で「気にかける型」を体に入れる。</em></h1>
+    <p class="hero-desc">対話記録システム『ここログ』を教材に、察知・対話・介入・定着の4ステップを毎週1テーマずつ実践。読むだけの研修ではなく、自分の現場で記録をつけながら身につける、実践型リーダー育成プログラムです。</p>
+    <div class="hero-badge-row">
+      <span class="hero-badge">📅 4週間・週1テーマ</span>
+      <span class="hero-badge">🌿 ここログ法人ライセンス込み</span>
+      <span class="hero-badge">🎯 介護・福祉・チームリーダー向け</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROBLEM ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label">The Problem</span>
+      <h2>「ここログを導入したのに、<br>結局誰も使わなくなった」</h2>
+      <p class="lead">ツール単体の導入でよく起きる失敗です。記録の仕方も、声のかけ方も、誰も教わっていない。<br>使い方の「型」がないまま配られたツールは、3週間後には開かれなくなります。</p>
+    </div>
+    <div class="problem-grid fade-in">
+      <div class="problem-card">
+        <h3>📦 配って終わりの導入</h3>
+        <p>マニュアルだけ渡して「使ってください」。現場のリーダーは何をどう記録すればいいか分からず、結局自己流に戻ってしまう。</p>
+      </div>
+      <div class="problem-card">
+        <h3>🌀 1回の研修では定着しない</h3>
+        <p>単発のセミナーは聞いた直後は納得しても、翌週には忘れる。行動として根づくまで、現場で繰り返す期間が必要です。</p>
+      </div>
+      <div class="problem-card">
+        <h3>🙅 リーダーごとにバラバラ</h3>
+        <p>声のかけ方も、フォローのタイミングも担当者の感覚次第。同じ事業所の中でケアの質に差が出てしまう。</p>
+      </div>
+      <div class="problem-card">
+        <h3>🔄 仕組み化されない</h3>
+        <p>「いい取り組み」が個人の頑張りで終わり、チームの文化にならない。リーダーが変わると元に戻ってしまう。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHY A PROGRAM ══ -->
+<section class="section-darker">
+  <div style="max-width:1020px; margin:0 auto;">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label">Why a Program, Not Just a Tool</span>
+      <h2 style="text-align:center;">行動が変わるまでには、<br><em>型と継続</em>が必要です</h2>
+    </div>
+    <div class="why-flow fade-in">
+      <div class="why-item">📖<br>知る<br><span style="opacity:0.5;font-size:0.75rem;">(座学・単発研修)</span></div>
+      <div class="why-arrow">→</div>
+      <div class="why-item">✍️<br>やってみる<br><span style="opacity:0.5;font-size:0.75rem;">(現場で記録をつける)</span></div>
+      <div class="why-arrow">→</div>
+      <div class="why-item">🔁<br>振り返る<br><span style="opacity:0.5;font-size:0.75rem;">(週1回の点検と修正)</span></div>
+      <div class="why-arrow">→</div>
+      <div class="why-item" style="background:rgba(26,155,140,0.2); border-color:rgba(26,155,140,0.4); color:#7ee8d8;">🌱<br><strong>文化になる</strong></div>
+    </div>
+    <p class="why-note fade-in">この「やってみる→振り返る」のサイクルを最低4週間続けることで、感覚に頼っていたマネジメントが、誰でも再現できる型に変わります。</p>
+  </div>
+</section>
+
+<!-- ══ CURRICULUM ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label">Curriculum</span>
+      <h2 style="text-align:center;">4週間で身につける<br><em>「察知・対話・介入・定着」</em>の型</h2>
+      <p class="lead" style="margin:0 auto; text-align:center;">ここログの機能ひとつひとつを、週ごとのテーマに対応させて実践します。</p>
+    </div>
+
+    <div class="week-card fade-in">
+      <div class="week-num">WEEK<span class="big">1</span></div>
+      <div>
+        <div class="week-theme">察知 ── 感覚を記録に変える</div>
+        <div class="week-goal">「大丈夫です」の奥にあるサインを、毎日30秒の記録で可視化する習慣をつくる週。</div>
+        <div class="week-tasks">
+          <div class="week-task"><span class="dot">→</span>毎日1人以上、状態タグ付きで対話を記録する</div>
+          <div class="week-task"><span class="dot">→</span>「元気」「疲れている」など印象だけで判断していた自分の癖に気づく</div>
+          <div class="week-task"><span class="dot">→</span>状況タグ（夜勤明け・クレーム対応後など）で疲労の背景を分類する</div>
+        </div>
+        <span class="week-feature-tag">使用機能：状況タグ／対話記録フォーム</span>
+      </div>
+    </div>
+
+    <div class="week-card fade-in">
+      <div class="week-num">WEEK<span class="big">2</span></div>
+      <div>
+        <div class="week-theme">対話 ── AIヒントを使って声をかける</div>
+        <div class="week-goal">「何を話せばいいか分からない」を解消し、寄り添いモードのヒントを実際の声かけに変換する週。</div>
+        <div class="week-tasks">
+          <div class="week-task"><span class="dot">→</span>AIヒント機能を毎回確認し、提案されたフレーズを実際に使ってみる</div>
+          <div class="week-task"><span class="dot">→</span>個別期待メモを1人につき1件、具体的な言葉で書く</div>
+          <div class="week-task"><span class="dot">→</span>褒めポイント貯金を記録し、次回面談で必ず1つ伝える</div>
+        </div>
+        <span class="week-feature-tag">使用機能：AIヒント／寄り添いモード／個別期待メモ</span>
+      </div>
+    </div>
+
+    <div class="week-card fade-in">
+      <div class="week-num">WEEK<span class="big">3</span></div>
+      <div>
+        <div class="week-theme">介入 ── フォローと報告される文化</div>
+        <div class="week-goal">「面談して終わり」をやめ、フォローの予定化と、ヒヤリハットが安心して報告される対応を体に入れる週。</div>
+        <div class="week-tasks">
+          <div class="week-task"><span class="dot">→</span>フォロー予定日を全員分設定し、超過アラートをゼロにする</div>
+          <div class="week-task"><span class="dot">→</span>インシデント後モードを使い、「ありがとう」から始める対話を1件以上実践する</div>
+          <div class="week-task"><span class="dot">→</span>Q1〜Q3の階段設計で、部下の「詰まっている粒」を1つ特定する</div>
+        </div>
+        <span class="week-feature-tag">使用機能：フォロー日設定／インシデント後モード／階段設計</span>
+      </div>
+    </div>
+
+    <div class="week-card fade-in">
+      <div class="week-num">WEEK<span class="big">4</span></div>
+      <div>
+        <div class="week-theme">定着 ── 仕組み化とリーダー自身の点検</div>
+        <div class="week-goal">4週間の記録をチームの仕組みに落とし込み、リーダー自身も振り返りを習慣化する週。</div>
+        <div class="week-tasks">
+          <div class="week-task"><span class="dot">→</span>週1リーダー自己点検の7つの問いに答え、自分の関わり方を見直す</div>
+          <div class="week-task"><span class="dot">→</span>CSV出力した4週間分の記録を振り返り、チームの傾向を確認する</div>
+          <div class="week-task"><span class="dot">→</span>来月以降に「誰が・いつ・何を記録するか」をチームルールとして言語化する</div>
+        </div>
+        <span class="week-feature-tag">使用機能：週1自己点検／CSV書き出し／育成モード</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FORMAT ══ -->
+<section class="section-darker">
+  <div style="max-width:1020px; margin:0 auto;">
+    <div class="fade-in">
+      <span class="label">Delivery</span>
+      <h2>提供形式</h2>
+      <p class="lead">読んで終わりにしないための3つのサポートです。</p>
+    </div>
+    <div class="format-grid fade-in">
+      <div class="format-card">
+        <span class="format-icon">🌿</span>
+        <h3>ここログ法人ライセンス</h3>
+        <p>プログラム期間中、ここログ法人プランを利用できます。記録はすべて端末内保存、外部送信なしのまま実践できます。</p>
+      </div>
+      <div class="format-card">
+        <span class="format-icon">📋</span>
+        <h3>週次ワークシート</h3>
+        <p>各週のテーマに沿った実践課題と振り返りシートをPDFで配布。チェック形式で「やったか・やれなかったか」を可視化します。</p>
+      </div>
+      <div class="format-card">
+        <span class="format-icon">💬</span>
+        <h3>週1回の進捗フォロー</h3>
+        <p>4週間で計4回、記録データをもとにしたフィードバックを実施。詰まっている箇所を次の週までに具体的に解消します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BEFORE / AFTER ══ -->
+<section class="section-light">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label" style="color:var(--teal);">Before / After</span>
+      <h2 class="dark">4週間で、リーダーの<em>関わり方</em>が変わる</h2>
+    </div>
+    <div class="ba-grid fade-in">
+      <div class="ba-col left">
+        <h3>プログラム前</h3>
+        <div class="ba-item"><span class="dot"></span>「大丈夫です」を言葉どおりに受け取っていた</div>
+        <div class="ba-item"><span class="dot"></span>面談して終わり、フォローの予定がない</div>
+        <div class="ba-item"><span class="dot"></span>声のかけ方が感覚と気分に依存していた</div>
+        <div class="ba-item"><span class="dot"></span>ヒヤリハットの報告が現場に上がってこない</div>
+      </div>
+      <div class="ba-col center">→</div>
+      <div class="ba-col right">
+        <h3>プログラム後</h3>
+        <div class="ba-item"><span class="dot"></span>状態タグと記録で、疲労のサインに早く気づける</div>
+        <div class="ba-item"><span class="dot"></span>フォロー予定日が全員分設定され、抜け漏れがない</div>
+        <div class="ba-item"><span class="dot"></span>AIヒントを軸に、誰でも一定水準の声かけができる</div>
+        <div class="ba-item"><span class="dot"></span>「ありがとう」から始まる対話で、報告が増える</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section class="section-teal">
+  <div class="section-inner">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label" style="color:white;">Pricing</span>
+      <h2 style="text-align:center;">4週間育成プログラム<br><em>2つのプラン</em></h2>
+    </div>
+    <div class="price-grid fade-in">
+      <div class="price-card">
+        <div class="price-plan-name">個人受講プラン</div>
+        <div class="price-value">¥148,000</div>
+        <div class="price-unit">（リーダー1名・税込）</div>
+        <div class="price-desc">ご自身のチームで実践しながら、4週間で「気にかける型」を身につけたいリーダー向け。</div>
+        <div class="price-list">
+          <div class="price-list-item"><span class="check">✔</span>ここログ法人ライセンス（プログラム期間中）</div>
+          <div class="price-list-item"><span class="check">✔</span>週次ワークシート（PDF・4週分）</div>
+          <div class="price-list-item"><span class="check">✔</span>週1回の進捗フォロー（計4回）</div>
+          <div class="price-list-item"><span class="check">✔</span>4週間分の記録をもとにした最終振り返り</div>
+        </div>
+      </div>
+      <div class="price-card featured">
+        <div class="price-ribbon">法人・複数名向け</div>
+        <div class="price-plan-name">チーム育成プラン</div>
+        <div class="price-value">¥398,000</div>
+        <div class="price-unit">（リーダー最大5名・税込）</div>
+        <div class="price-desc">事業所単位でリーダー複数名を同時に育成し、チーム全体の関わり方を統一したい法人向け。</div>
+        <div class="price-list">
+          <div class="price-list-item"><span class="check">✔</span>ここログ法人ライセンス5台分（プログラム期間中）</div>
+          <div class="price-list-item"><span class="check">✔</span>週次ワークシート（PDF・4週分・チーム共有版）</div>
+          <div class="price-list-item"><span class="check">✔</span>週1回の進捗フォロー＋チーム合同振り返り会（計4回）</div>
+          <div class="price-list-item"><span class="check">✔</span>4週間終了後、チームルール策定の壁打ち1回</div>
+          <div class="price-list-item"><span class="check">✔</span>研修費としての御見積書・請求書発行に対応</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="section-light">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label" style="color:var(--teal);">FAQ</span>
+      <h2 class="dark">よくあるご質問</h2>
+    </div>
+    <div class="fade-in">
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">Q.</span>すでにここログを個人プランで使っています。併用できますか？</div>
+        <div class="faq-a">A. はい。既存の記録データはそのまま引き継いでご利用いただけます。プログラム期間中は法人ライセンスへの切り替えをサポートします。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">Q.</span>4週間、毎日何時間くらい必要ですか？</div>
+        <div class="faq-a">A. 1日の記録自体は1人あたり30秒〜数分です。週次の振り返りシートの記入と進捗フォローを合わせて、週30分程度を目安にしてください。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">Q.</span>研修費として経費処理できますか？</div>
+        <div class="faq-a">A. チーム育成プランでは御見積書・請求書の発行に対応しています。人材育成・研修費としての計上についてはお客様の会計方針に従ってご確認ください。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">Q.</span>4週間で効果が出なかった場合のフォローはありますか？</div>
+        <div class="faq-a">A. 進捗フォローの中で記録データをもとに都度ペースを調整します。チームプランでは最終回に追加の壁打ちもご用意しています。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="cta-inner fade-in">
+    <h2>「配って終わり」の研修から、<br><em style="color:var(--teal2);">使い続けられる仕組み</em>へ。</h2>
+    <p>ここログという記録ツールを軸に、4週間かけて「気にかける」関わり方をチームの型に変えていきます。</p>
+    <a href="#" class="btn-cta">プログラムの詳細を相談する</a>
+    <div class="cta-note">※ お申し込み前に、現状の課題をヒアリングする無料相談を承っています</div>
+  </div>
+</section>
+
+<script>
+  const els = document.querySelectorAll('.fade-in');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  els.forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
