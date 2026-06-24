@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>育成ログ | 4週間で部下を育てる、リーダーのための育成記録ツール</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f3f0; --surface: #ffffff; --surface2: #faf9f7;
+    --forest: #2d4a3e; --forest2: #3d6452; --forest3: #4e8068; --forest-lt: #d4e8df; --forest-xl: #eef6f2;
+    --amber: #c8922a; --amber2: #e8b050; --amber-lt: #fdf3e0; --amber-xl: #fffbf3;
+    --coral: #c85a4a; --coral-lt: #fde8e5;
+    --slate: #6b7a8d; --slate-lt: #edf1f5;
+    --gold: #b8860b; --gold-lt: #fff8e8;
+    --ink: #1c2420; --ink2: #3a4840; --ink3: #6a7870; --ink4: #a0aca8;
+    --border: rgba(28,36,32,0.10); --border2: rgba(28,36,32,0.06);
+    --shadow-sm: 0 1px 3px rgba(28,36,32,0.07);
+    --shadow: 0 4px 20px rgba(28,36,32,0.09), 0 1px 4px rgba(28,36,32,0.05);
+    --shadow-lg: 0 12px 48px rgba(28,36,32,0.12), 0 4px 14px rgba(28,36,32,0.06);
+    --r-xl: 20px; --r-lg: 14px; --r-md: 9px; --r-sm: 5px;
+  }
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP','Sora',sans-serif; background: var(--bg); color: var(--ink); line-height: 1.75; min-height: 100vh; }
+
+  .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+  .sidebar { background: var(--forest); min-height: 100vh; padding: 32px 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-logo-icon { width: 40px; height: 40px; border-radius: 11px; background: linear-gradient(135deg, var(--forest3), var(--gold)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .sidebar-logo-name { font-family: 'Noto Serif JP', serif; font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.92); }
+  .sidebar-logo-sub { font-size: 0.6rem; color: rgba(255,255,255,0.38); letter-spacing: 0.16em; text-transform: uppercase; }
+  .sidebar-section-label { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin: 22px 0 8px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r-md); cursor: pointer; color: rgba(255,255,255,0.55); font-size: 0.82rem; font-weight: 500; margin-bottom: 2px; transition: background .15s, color .15s; }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.95); }
+  .nav-item-icon { width: 20px; text-align: center; flex-shrink: 0; }
+  .member-quicklist { margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
+  .member-quick { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--r-md); cursor: pointer; color: rgba(255,255,255,0.5); font-size: 0.78rem; }
+  .member-quick:hover, .member-quick.active { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+  .member-quick-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+  .main { padding: 36px 40px 80px; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .page-eyebrow { font-family: 'Sora', sans-serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--forest3); margin-bottom: 6px; }
+  .page-title { font-family: 'Noto Serif JP', serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); }
+
+  .btn { padding: 11px 20px; border-radius: var(--r-md); border: none; font-size: 0.82rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: linear-gradient(135deg, var(--forest2), var(--forest)); color: white; box-shadow: 0 4px 14px rgba(45,74,62,.3); }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), var(--amber2)); color: white; box-shadow: 0 4px 14px rgba(184,134,11,.3); }
+  .btn-outline { background: var(--surface); color: var(--ink2); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--forest3); color: var(--forest); }
+  .btn-sm { padding: 7px 14px; font-size: 0.74rem; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl); box-shadow: var(--shadow); padding: 26px 28px; margin-bottom: 20px; }
+  .card-title { font-size: 0.92rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .card-sub { font-size: 0.74rem; color: var(--ink3); margin-bottom: 18px; }
+
+  .field { margin-bottom: 16px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .f-label { font-family: 'Sora', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); display: block; margin-bottom: 6px; }
+  .f-input, .f-select, .f-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--r-md); font-family: inherit; font-size: 0.86rem; color: var(--ink); background: var(--surface2); outline: none; }
+  .f-input:focus, .f-select:focus, .f-textarea:focus { border-color: var(--forest3); box-shadow: 0 0 0 3px rgba(78,128,104,.12); background: var(--surface); }
+  .f-textarea { resize: vertical; min-height: 70px; }
+
+  /* メンバー一覧 */
+  .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
+  .member-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px 22px; box-shadow: var(--shadow-sm); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .member-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .member-card-name { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .member-card-role { font-size: 0.72rem; color: var(--ink4); margin-bottom: 14px; }
+  .week-dots { display: flex; gap: 6px; margin-bottom: 10px; }
+  .week-dot { flex: 1; height: 8px; border-radius: 4px; background: var(--border2); }
+  .week-dot.done-大きく成長 { background: #4ade80; }
+  .week-dot.done-順調 { background: var(--forest3); }
+  .week-dot.done-つまずき { background: var(--coral); }
+  .week-dot.done-様子見 { background: var(--slate); }
+  .member-card-goal { font-size: 0.78rem; color: var(--ink3); line-height: 1.6; }
+
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--ink4); }
+  .empty-state-icon { font-size: 2.6rem; margin-bottom: 12px; opacity: .5; }
+
+  /* 育成目標 */
+  .goal-q { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+  .goal-q-num { font-family: 'Sora', sans-serif; font-weight: 700; color: var(--forest3); flex-shrink: 0; padding-top: 10px; }
+
+  /* 週次タブ */
+  .week-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .week-tab { padding: 9px 18px; border-radius: 100px; border: 1.5px solid var(--border); background: var(--surface2); cursor: pointer; font-size: 0.8rem; font-weight: 700; color: var(--ink3); transition: all .15s; }
+  .week-tab:hover { border-color: var(--forest3); color: var(--forest); }
+  .week-tab.active { border-color: var(--forest3); background: var(--forest-xl); color: var(--forest2); }
+  .week-tab .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-left: 6px; }
+
+  .status-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 18px; }
+  .status-btn { padding: 14px 8px; border-radius: var(--r-md); border: 2px solid var(--border); background: var(--surface2); cursor: pointer; font-size: 0.74rem; font-weight: 700; color: var(--ink3); text-align: center; transition: all .15s; }
+  .status-btn:hover { border-color: var(--forest3); }
+  .status-emoji { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+  .status-btn.sel-大きく成長 { border-color: #4ade80; background: #f0fdf4; color: #166534; }
+  .status-btn.sel-順調 { border-color: var(--forest3); background: var(--forest-xl); color: var(--forest2); }
+  .status-btn.sel-つまずき { border-color: var(--coral); background: var(--coral-lt); color: var(--coral); }
+  .status-btn.sel-様子見 { border-color: var(--slate); background: var(--slate-lt); color: var(--slate); }
+
+  .ai-hint-box { background: linear-gradient(135deg, var(--forest-xl), #f0faf5); border: 1.5px solid rgba(78,128,104,.25); border-radius: var(--r-lg); padding: 16px 18px; margin-top: 8px; margin-bottom: 18px; display: none; }
+  .ai-hint-header { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--forest3); margin-bottom: 8px; }
+  .ai-hint-list { list-style: none; }
+  .ai-hint-list li { font-size: 0.8rem; color: var(--ink2); line-height: 1.6; padding: 4px 0; display: flex; gap: 8px; }
+  .ai-hint-list li::before { content: '→'; color: var(--forest3); font-weight: 700; flex-shrink: 0; }
+
+  /* タイムライン */
+  .timeline-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 10px; position: relative; }
+  .timeline-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 4px 0 0 4px; }
+  .timeline-card[data-status="大きく成長"]::before { background: #4ade80; }
+  .timeline-card[data-status="順調"]::before { background: var(--forest3); }
+  .timeline-card[data-status="つまずき"]::before { background: var(--coral); }
+  .timeline-card[data-status="様子見"]::before { background: var(--slate); }
+  .timeline-week-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; color: var(--ink4); text-transform: uppercase; margin-bottom: 4px; }
+  .timeline-status-badge { display: inline-flex; padding: 3px 10px; border-radius: 100px; font-size: 0.68rem; font-weight: 700; margin-bottom: 8px; }
+  .badge-大きく成長 { background: #f0fdf4; color: #166534; border: 1px solid #4ade80; }
+  .badge-順調 { background: var(--forest-xl); color: var(--forest2); border: 1px solid var(--forest3); }
+  .badge-つまずき { background: var(--coral-lt); color: var(--coral); border: 1px solid var(--coral); }
+  .badge-様子見 { background: var(--slate-lt); color: var(--slate); border: 1px solid var(--slate); }
+  .timeline-text { font-size: 0.82rem; color: var(--ink2); line-height: 1.6; margin-top: 4px; }
+  .timeline-text-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink4); margin-top: 10px; margin-bottom: 2px; }
+
+  /* 成長グラフ */
+  .growth-chart { display: flex; align-items: flex-end; gap: 14px; height: 90px; margin: 20px 0 8px; }
+  .growth-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+  .growth-bar { width: 100%; border-radius: 5px 5px 0 0; min-height: 8px; transition: height .4s ease; }
+  .growth-bar-label { font-size: 0.62rem; color: var(--ink4); font-family: 'Sora', sans-serif; }
+
+  /* サマリーテーブル */
+  .summary-table { width: 100%; border-collapse: collapse; }
+  .summary-table th { text-align: left; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink4); padding: 10px 12px; border-bottom: 2px solid var(--border); }
+  .summary-table td { padding: 12px; font-size: 0.84rem; color: var(--ink2); border-bottom: 1px solid var(--border2); }
+
+  /* 認定カード */
+  .cert-card { background: linear-gradient(135deg, var(--forest), var(--forest2)); border-radius: var(--r-xl); padding: 48px 40px; text-align: center; color: white; max-width: 520px; box-shadow: var(--shadow-lg); border: 2px solid var(--gold); }
+  .cert-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber2); margin-bottom: 18px; }
+  .cert-title { font-family: 'Noto Serif JP', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+  .cert-name { font-family: 'Noto Serif JP', serif; font-size: 1.8rem; font-weight: 700; margin: 18px 0; color: var(--amber2); }
+  .cert-desc { font-size: 0.85rem; color: rgba(255,255,255,0.75); line-height: 1.8; margin-bottom: 18px; }
+  .cert-sign { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 28px; }
+
+  #toast { position: fixed; bottom: 28px; right: 28px; z-index: 500; background: var(--ink); color: rgba(255,255,255,0.92); padding: 13px 20px; border-radius: var(--r-md); font-size: 0.82rem; font-weight: 600; box-shadow: var(--shadow-lg); transform: translateY(20px) scale(.96); opacity: 0; transition: all .3s; pointer-events: none; }
+  #toast.show { transform: translateY(0) scale(1); opacity: 1; }
+
+  [data-view] { display: none; }
+  [data-view].active { display: block; }
+
+  @media (max-width: 720px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .main { padding: 24px 18px 48px; }
+    .field-row { grid-template-columns: 1fr; }
+    .status-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🌱</div>
+      <div>
+        <div class="sidebar-logo-name">育成ログ</div>
+        <div class="sidebar-logo-sub">4-Week Growth Program</div>
+      </div>
+    </div>
+
+    <div class="nav-item active" data-nav="members" onclick="showView('members')">
+      <span class="nav-item-icon">👥</span> メンバー一覧
+    </div>
+    <div class="nav-item" data-nav="summary" onclick="showView('summary')">
+      <span class="nav-item-icon">📊</span> 育成サマリー
+    </div>
+
+    <div class="sidebar-section-label">育成中のメンバー</div>
+    <div class="member-quicklist" id="memberQuicklist"></div>
+
+    <div class="sidebar-section-label">ツール</div>
+    <div class="nav-item" onclick="downloadCSV()">
+      <span class="nav-item-icon">⬇️</span> CSVで書き出す
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ══ メンバー一覧 ══ -->
+    <div data-view="members" class="active">
+      <div class="page-header">
+        <div>
+          <div class="page-eyebrow">Team Members</div>
+          <div class="page-title">育成中のメンバー</div>
+        </div>
+        <button class="btn btn-gold" onclick="openNewMemberForm()">＋ 新しく育成を始める</button>
+      </div>
+
+      <div class="card" id="newMemberCard" style="display:none;">
+        <div class="card-title">新しいメンバーの育成を開始</div>
+        <div class="card-sub">名前と役割、今日からの4週間でどんな粒(課題)を一緒に乗り越えるかを言語化します。</div>
+        <div class="field-row">
+          <div class="field">
+            <label class="f-label">名前 <span style="color:var(--coral)">*</span></label>
+            <input class="f-input" id="newMemberName" placeholder="例：佐藤さん">
+          </div>
+          <div class="field">
+            <label class="f-label">役割・ポジション</label>
+            <input class="f-input" id="newMemberRole" placeholder="例：新人ヘルパー / 主任候補">
+          </div>
+        </div>
+        <div class="goal-q">
+          <div class="goal-q-num">Q1</div>
+          <div style="flex:1">
+            <label class="f-label">うまくいっていない場面はどこか？(1つだけ)</label>
+            <input class="f-input" id="newMemberQ1" placeholder="例：利用者への声かけが業務連絡だけになっている">
+          </div>
+        </div>
+        <div class="goal-q">
+          <div class="goal-q-num">Q2</div>
+          <div style="flex:1">
+            <label class="f-label">その場面のどのステップで手が止まっているか？</label>
+            <input class="f-input" id="newMemberQ2" placeholder="例：話しかけるきっかけが見つからず黙ってしまう">
+          </div>
+        </div>
+        <div class="goal-q">
+          <div class="goal-q-num">Q3</div>
+          <div style="flex:1">
+            <label class="f-label">4週間後にできるようになっている「1つだけ」のことは？</label>
+            <input class="f-input" id="newMemberQ3" placeholder="例：1日1回、自分から利用者に世間話を振れるようになる">
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:8px;">
+          <button class="btn btn-primary" onclick="createMember()">育成をスタートする</button>
+          <button class="btn btn-outline" onclick="closeNewMemberForm()">キャンセル</button>
+        </div>
+      </div>
+
+      <div class="member-grid" id="memberGrid"></div>
+    </div>
+
+    <!-- ══ メンバー詳細 ══ -->
+    <div data-view="detail">
+      <div class="page-header">
+        <div>
+          <div class="page-eyebrow" id="detailEyebrow">Growth Record</div>
+          <div class="page-title" id="detailName">—</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="showView('members')">← メンバー一覧へ</button>
+          <button class="btn btn-outline btn-sm" style="color:var(--coral); border-color:rgba(200,90,74,.3);" onclick="deleteMember()">削除</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎯 今月の育成目標</div>
+        <div id="detailGoal" style="font-size:0.85rem; color:var(--ink2); line-height:1.8;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📈 成長タイムライン</div>
+        <div class="growth-chart" id="growthChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">週次記録</div>
+        <div class="card-sub">毎週、取り組みと様子を記録します。記録に応じて次の一手のヒントが表示されます。</div>
+        <div class="week-tabs" id="weekTabs"></div>
+
+        <div class="status-grid" id="statusGrid">
+          <button class="status-btn" data-status="大きく成長" onclick="selectStatus(this)"><span class="status-emoji">🌟</span>大きく成長</button>
+          <button class="status-btn" data-status="順調" onclick="selectStatus(this)"><span class="status-emoji">🙂</span>順調</button>
+          <button class="status-btn" data-status="つまずき" onclick="selectStatus(this)"><span class="status-emoji">😣</span>つまずき</button>
+          <button class="status-btn" data-status="様子見" onclick="selectStatus(this)"><span class="status-emoji">🤔</span>様子見</button>
+        </div>
+
+        <div class="ai-hint-box" id="aiHintBox">
+          <div class="ai-hint-header">次の一手のヒント</div>
+          <ul class="ai-hint-list" id="aiHintList"></ul>
+        </div>
+
+        <div class="field">
+          <label class="f-label">この週の取り組み・できごと</label>
+          <textarea class="f-textarea" id="weekTopic" placeholder="今週、本人が実際にやったこと・挑戦したこと"></textarea>
+        </div>
+        <div class="field">
+          <label class="f-label">あなたが感じたこと・気づき</label>
+          <textarea class="f-textarea" id="weekReflection" placeholder="観察して感じた変化、まだ難しそうな点など"></textarea>
+        </div>
+        <div class="field">
+          <label class="f-label">⭐ 褒めポイント（次回必ず伝える）</label>
+          <input class="f-input" id="weekPraise" placeholder="例：はじめて自分から声をかけられていた">
+        </div>
+        <div class="field">
+          <label class="f-label">次週までの「1つだけ」のチャレンジ</label>
+          <input class="f-input" id="weekNextAction" placeholder="例：来週は2回、自分から話しかけてみる">
+        </div>
+        <button class="btn btn-primary" onclick="saveWeekRecord()">この週の記録を保存する</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">記録の振り返り</div>
+        <div id="timelineList"></div>
+      </div>
+
+      <div class="card" id="certSection" style="display:none;">
+        <div class="card-title">🏅 4週間の育成が完了しました</div>
+        <div class="card-sub">認定カードを発行して、本人にフィードバックしましょう。</div>
+        <button class="btn btn-gold" onclick="showCert()">認定カードを見る</button>
+      </div>
+    </div>
+
+    <!-- ══ サマリー ══ -->
+    <div data-view="summary">
+      <div class="page-header">
+        <div>
+          <div class="page-eyebrow">Overview</div>
+          <div class="page-title">育成サマリー</div>
+        </div>
+      </div>
+      <div class="card">
+        <table class="summary-table">
+          <thead>
+            <tr><th>メンバー</th><th>役割</th><th>進捗</th><th>直近の様子</th><th>今月のゴール</th></tr>
+          </thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+        <div id="summaryEmpty" class="empty-state" style="display:none;">
+          <div class="empty-state-icon">📭</div>
+          まだ育成中のメンバーがいません。
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 認定カード ══ -->
+    <div data-view="cert">
+      <div class="page-header">
+        <div>
+          <div class="page-eyebrow">Certificate</div>
+          <div class="page-title">育成完了カード</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="showView('detail')">← 詳細に戻る</button>
+          <button class="btn btn-primary btn-sm" onclick="window.print()">🖨️ 印刷する</button>
+        </div>
+      </div>
+      <div class="cert-card" id="certCard">
+        <div class="cert-eyebrow">4 Week Growth Program</div>
+        <div class="cert-title">育成完了認定</div>
+        <div class="cert-name" id="certName">—</div>
+        <div class="cert-desc" id="certDesc"></div>
+        <div class="cert-sign">育成ログ ｜ survival_mom</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'ikuseilog_v1';
+let members = [];
+let currentMemberId = null;
+let currentWeek = 1;
+let currentStatus = '';
+
+function getMembers() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+function saveMembers() { localStorage.setItem(STORAGE_KEY, JSON.stringify(members)); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function showView(name) {
+  document.querySelectorAll('[data-view]').forEach(v => v.classList.remove('active'));
+  document.querySelector(`[data-view="${name}"]`).classList.add('active');
+  document.querySelectorAll('.nav-item[data-nav]').forEach(n => n.classList.toggle('active', n.dataset.nav === name));
+  if (name === 'members') renderMemberGrid();
+  if (name === 'summary') renderSummary();
+}
+
+function openNewMemberForm() { document.getElementById('newMemberCard').style.display = 'block'; }
+function closeNewMemberForm() {
+  document.getElementById('newMemberCard').style.display = 'none';
+  ['newMemberName','newMemberRole','newMemberQ1','newMemberQ2','newMemberQ3'].forEach(id => document.getElementById(id).value = '');
+}
+
+function createMember() {
+  const name = document.getElementById('newMemberName').value.trim();
+  if (!name) { toast('名前を入力してください'); return; }
+  const member = {
+    id: 'm_' + Date.now(),
+    name,
+    role: document.getElementById('newMemberRole').value.trim(),
+    q1: document.getElementById('newMemberQ1').value.trim(),
+    q2: document.getElementById('newMemberQ2').value.trim(),
+    q3: document.getElementById('newMemberQ3').value.trim(),
+    startDate: new Date().toISOString().slice(0,10),
+    records: []
+  };
+  members.push(member);
+  saveMembers();
+  closeNewMemberForm();
+  renderMemberGrid();
+  renderQuicklist();
+  toast('育成をスタートしました');
+}
+
+function deleteMember() {
+  if (!confirm('このメンバーの育成記録を削除しますか？')) return;
+  members = members.filter(m => m.id !== currentMemberId);
+  saveMembers();
+  renderQuicklist();
+  showView('members');
+}
+
+function renderMemberGrid() {
+  const grid = document.getElementById('memberGrid');
+  if (!members.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🌱</div>まだメンバーが登録されていません。「＋ 新しく育成を始める」から最初のメンバーを追加してください。</div>`;
+    return;
+  }
+  grid.innerHTML = members.map(m => {
+    const dots = [1,2,3,4].map(w => {
+      const rec = m.records.find(r => r.week === w);
+      return `<div class="week-dot ${rec ? 'done-' + rec.status : ''}"></div>`;
+    }).join('');
+    return `
+      <div class="member-card" onclick="openMember('${m.id}')">
+        <div class="member-card-name">${escapeHtml(m.name)}</div>
+        <div class="member-card-role">${escapeHtml(m.role || '役割未設定')}</div>
+        <div class="week-dots">${dots}</div>
+        <div class="member-card-goal">🎯 ${escapeHtml(m.q3 || '今月のゴール未設定')}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderQuicklist() {
+  const el = document.getElementById('memberQuicklist');
+  el.innerHTML = members.map(m => `<div class="member-quick ${m.id===currentMemberId?'active':''}" onclick="openMember('${m.id}')"><span class="member-quick-dot"></span>${escapeHtml(m.name)}</div>`).join('');
+}
+
+function openMember(id) {
+  currentMemberId = id;
+  const m = members.find(x => x.id === id);
+  currentWeek = Math.min(4, m.records.length + 1);
+  showView('detail');
+  renderDetail();
+  renderQuicklist();
+}
+
+function renderDetail() {
+  const m = members.find(x => x.id === currentMemberId);
+  if (!m) { showView('members'); return; }
+  document.getElementById('detailName').textContent = m.name;
+  document.getElementById('detailGoal').innerHTML = `
+    <strong>Q1．詰まっている場面：</strong>${escapeHtml(m.q1 || '—')}<br>
+    <strong>Q2．止まっているステップ：</strong>${escapeHtml(m.q2 || '—')}<br>
+    <strong>Q3．4週間後のゴール：</strong>${escapeHtml(m.q3 || '—')}`;
+
+  // Week tabs
+  const tabs = document.getElementById('weekTabs');
+  tabs.innerHTML = [1,2,3,4].map(w => {
+    const rec = m.records.find(r => r.week === w);
+    const dotColor = rec ? ({'大きく成長':'#4ade80','順調':'#4e8068','つまずき':'#c85a4a','様子見':'#6b7a8d'})[rec.status] : 'transparent';
+    return `<button class="week-tab ${w===currentWeek?'active':''}" onclick="switchWeek(${w})">Week ${w}<span class="status-dot" style="background:${dotColor}"></span></button>`;
+  }).join('');
+
+  loadWeekForm(m);
+  renderGrowthChart(m);
+  renderTimelineList(m);
+
+  const certSection = document.getElementById('certSection');
+  certSection.style.display = m.records.length >= 4 ? 'block' : 'none';
+}
+
+function switchWeek(w) {
+  currentWeek = w;
+  const m = members.find(x => x.id === currentMemberId);
+  document.querySelectorAll('.week-tab').forEach((t,i) => t.classList.toggle('active', i+1===w));
+  loadWeekForm(m);
+}
+
+function loadWeekForm(m) {
+  const rec = m.records.find(r => r.week === currentWeek);
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove(...['大きく成長','順調','つまずき','様子見'].map(s=>'sel-'+s)));
+  currentStatus = rec ? rec.status : '';
+  if (rec) {
+    document.querySelector(`.status-btn[data-status="${rec.status}"]`).classList.add('sel-' + rec.status);
+  }
+  document.getElementById('weekTopic').value = rec ? rec.topic : '';
+  document.getElementById('weekReflection').value = rec ? rec.reflection : '';
+  document.getElementById('weekPraise').value = rec ? rec.praise : '';
+  document.getElementById('weekNextAction').value = rec ? rec.nextAction : '';
+  renderAiHint(currentStatus);
+}
+
+function selectStatus(btn) {
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove(...['大きく成長','順調','つまずき','様子見'].map(s=>'sel-'+s)));
+  currentStatus = btn.dataset.status;
+  btn.classList.add('sel-' + currentStatus);
+  renderAiHint(currentStatus);
+}
+
+const HINTS = {
+  '大きく成長': [
+    'できたことを具体的に言葉で伝える（「丁寧だったね」より「さっきの声かけ、自然だったね」）',
+    '次のレベルの「もう1段」を一緒に決める。難易度を急に上げすぎない',
+    '本人に「なぜできたと思う？」と聞き、再現できる形に言語化させる'
+  ],
+  '順調': [
+    '今のペースを維持できているか確認し、無理に負荷を上げない',
+    '小さな変化でも見つけたら、その場で一言フィードバックする',
+    '次週のチャレンジは「今までの延長」で1つだけ設定する'
+  ],
+  'つまずき': [
+    '責めずに「何が難しかったか」を一緒に分解する（Q1〜Q3に戻る）',
+    'できなかったことより、試したこと自体を認める',
+    '次週のチャレンジを今より小さく・具体的に再設定する'
+  ],
+  '様子見': [
+    'まずは「最近どう？」と軽く聞くことから始める',
+    '評価ではなく観察期間と捉え、次週は記録だけでもよいと伝える',
+    '本人が話しやすいタイミング（業務後など）を探る'
+  ]
+};
+
+function renderAiHint(status) {
+  const box = document.getElementById('aiHintBox');
+  if (!status) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  document.getElementById('aiHintList').innerHTML = HINTS[status].map(h => `<li>${h}</li>`).join('');
+}
+
+function saveWeekRecord() {
+  if (!currentStatus) { toast('今週の様子を選択してください'); return; }
+  const m = members.find(x => x.id === currentMemberId);
+  const data = {
+    week: currentWeek,
+    date: new Date().toISOString().slice(0,10),
+    status: currentStatus,
+    topic: document.getElementById('weekTopic').value.trim(),
+    reflection: document.getElementById('weekReflection').value.trim(),
+    praise: document.getElementById('weekPraise').value.trim(),
+    nextAction: document.getElementById('weekNextAction').value.trim()
+  };
+  const idx = m.records.findIndex(r => r.week === currentWeek);
+  if (idx >= 0) m.records[idx] = data; else m.records.push(data);
+  saveMembers();
+  renderDetail();
+  renderMemberGrid();
+  toast('Week ' + currentWeek + ' の記録を保存しました');
+}
+
+function renderGrowthChart(m) {
+  const colors = {'大きく成長':'#4ade80','順調':'#4e8068','つまずき':'#c85a4a','様子見':'#6b7a8d'};
+  const heights = {'大きく成長':90,'順調':60,'つまずき':30,'様子見':15};
+  const chart = document.getElementById('growthChart');
+  chart.innerHTML = [1,2,3,4].map(w => {
+    const rec = m.records.find(r => r.week === w);
+    const h = rec ? heights[rec.status] : 6;
+    const c = rec ? colors[rec.status] : '#e5e3df';
+    return `<div class="growth-bar-wrap"><div class="growth-bar" style="height:${h}px; background:${c};"></div><div class="growth-bar-label">Week${w}</div></div>`;
+  }).join('');
+}
+
+function renderTimelineList(m) {
+  const list = document.getElementById('timelineList');
+  if (!m.records.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div>まだ記録がありません。</div>`;
+    return;
+  }
+  const sorted = [...m.records].sort((a,b) => a.week - b.week);
+  list.innerHTML = sorted.map(r => `
+    <div class="timeline-card" data-status="${r.status}">
+      <div class="timeline-week-label">Week ${r.week} · ${r.date}</div>
+      <div class="timeline-status-badge badge-${r.status}">${r.status}</div>
+      ${r.topic ? `<div class="timeline-text-label">取り組み</div><div class="timeline-text">${escapeHtml(r.topic)}</div>` : ''}
+      ${r.reflection ? `<div class="timeline-text-label">気づき</div><div class="timeline-text">${escapeHtml(r.reflection)}</div>` : ''}
+      ${r.praise ? `<div class="timeline-text-label">⭐ 褒めポイント</div><div class="timeline-text">${escapeHtml(r.praise)}</div>` : ''}
+      ${r.nextAction ? `<div class="timeline-text-label">次のチャレンジ</div><div class="timeline-text">${escapeHtml(r.nextAction)}</div>` : ''}
+    </div>`).join('');
+}
+
+function showCert() {
+  const m = members.find(x => x.id === currentMemberId);
+  document.getElementById('certName').textContent = m.name;
+  document.getElementById('certDesc').textContent =
+    `${m.startDate} から4週間、「${m.q3 || '設定したゴール'}」に向けて取り組み、見事に育成プログラムを完了しました。`;
+  showView('cert');
+}
+
+function renderSummary() {
+  const body = document.getElementById('summaryBody');
+  const empty = document.getElementById('summaryEmpty');
+  if (!members.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  body.innerHTML = members.map(m => {
+    const latest = [...m.records].sort((a,b) => b.week - a.week)[0];
+    return `<tr>
+      <td><strong>${escapeHtml(m.name)}</strong></td>
+      <td>${escapeHtml(m.role || '—')}</td>
+      <td>${m.records.length} / 4週</td>
+      <td>${latest ? `<span class="timeline-status-badge badge-${latest.status}">${latest.status}</span>` : '—'}</td>
+      <td>${escapeHtml(m.q3 || '—')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function downloadCSV() {
+  if (!members.length) { toast('まだ記録がありません'); return; }
+  let rows = [['メンバー名','役割','開始日','週','日付','様子','取り組み','気づき','褒めポイント','次のチャレンジ']];
+  members.forEach(m => {
+    if (!m.records.length) { rows.push([m.name, m.role, m.startDate, '', '', '', '', '', '', '']); return; }
+    [...m.records].sort((a,b)=>a.week-b.week).forEach(r => {
+      rows.push([m.name, m.role, m.startDate, r.week, r.date, r.status, r.topic, r.reflection, r.praise, r.nextAction]);
+    });
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '育成ログ_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* Init */
+members = getMembers();
+renderMemberGrid();
+renderQuicklist();
+</script>
+</body>
+</html>
