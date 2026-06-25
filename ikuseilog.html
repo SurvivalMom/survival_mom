@@ -24,6 +24,73 @@
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans JP','Sora',sans-serif; background: var(--bg); color: var(--ink); line-height: 1.75; min-height: 100vh; }
 
+  /* ── ライセンス認証画面 ── */
+  #pw-screen {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: var(--forest);
+    transition: opacity 0.6s ease, visibility 0.6s;
+  }
+  #pw-screen::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 30%, rgba(78,128,104,0.3), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 70%, rgba(184,134,11,0.15), transparent 55%);
+  }
+  #pw-screen.hide { opacity: 0; visibility: hidden; }
+
+  .pw-card {
+    position: relative; z-index: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: var(--r-xl);
+    padding: 48px 40px 44px;
+    max-width: 400px; width: 100%;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    text-align: center;
+  }
+  .pw-logo {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--forest3), var(--forest2));
+    border: 1.5px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .pw-title { font-family: 'Noto Serif JP', serif; font-size: 1.5rem; font-weight: 700; color: rgba(255,255,255,0.95); margin-bottom: 4px; letter-spacing: 0.04em; }
+  .pw-subtitle { font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 36px; }
+  .pw-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); display: block; text-align: left; margin-bottom: 8px; }
+  .pw-input {
+    width: 100%; padding: 14px 18px;
+    background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.16);
+    border-radius: var(--r-md); font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1rem; color: rgba(255,255,255,0.9); outline: none;
+    text-align: center; letter-spacing: 0.18em;
+    transition: border-color 0.2s, background 0.2s; margin-bottom: 14px;
+  }
+  .pw-input:focus  { border-color: var(--amber2); background: rgba(255,255,255,0.12); }
+  .pw-input.error  { border-color: #f87171; animation: pwShake 0.35s; }
+  .pw-input::placeholder { color: rgba(255,255,255,0.25); letter-spacing: 0.05em; }
+  .pw-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--gold), var(--amber2));
+    color: var(--forest); border: none; border-radius: var(--r-md);
+    font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 700;
+    letter-spacing: 0.06em; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(184,134,11,0.35);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  }
+  .pw-btn:hover  { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(184,134,11,0.4); }
+  .pw-btn:active { transform: translateY(1px); opacity: 0.9; }
+  .pw-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+  .pw-error { margin-top: 12px; font-size: 0.78rem; color: #fca5a5; min-height: 18px; }
+  @keyframes pwShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+  #app-root { opacity: 0; transform: translateY(16px); transition: opacity 0.55s ease 0.1s, transform 0.55s ease 0.1s; }
+  #app-root.visible { opacity: 1; transform: translateY(0); }
+
   .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
   .sidebar { background: var(--forest); min-height: 100vh; padding: 32px 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
   .sidebar-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
@@ -159,6 +226,20 @@
 </head>
 <body>
 
+<!-- ══════════ ライセンス認証画面 ══════════ -->
+<div id="pw-screen">
+  <div class="pw-card">
+    <div class="pw-logo">🌱</div>
+    <div class="pw-title">育成ログ</div>
+    <div class="pw-subtitle">Activation Code Required</div>
+    <label class="pw-label" for="pwInput">アクティベーションコード</label>
+    <input class="pw-input" type="text" id="pwInput" placeholder="ACT-XXXX-XXXX" autocomplete="off">
+    <button class="pw-btn" id="pwBtn">システムにアクセス</button>
+    <div class="pw-error" id="pwError"></div>
+  </div>
+</div>
+
+<div id="app-root">
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-logo">
@@ -356,10 +437,109 @@
 
   </main>
 </div>
+</div>
 
 <div id="toast"></div>
 
 <script>
+/* ══════════ License Activation ══════════ */
+(function() {
+  const WORKER_URL  = 'https://cocolog-license.sr-g-solti.workers.dev/';
+  const TOKEN_KEY   = 'ikuseilog_license_token_v1';
+  const DEVICE_KEY  = 'ikuseilog_device_id';
+  const PRODUCT     = 'ikuseilog';
+  const screen      = document.getElementById('pw-screen');
+  const appRoot     = document.getElementById('app-root');
+  const input       = document.getElementById('pwInput');
+  const btn         = document.getElementById('pwBtn');
+  const errEl       = document.getElementById('pwError');
+  let unlocked      = false;
+
+  function getDeviceId() {
+    let id = localStorage.getItem(DEVICE_KEY);
+    if (!id) {
+      id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(DEVICE_KEY, id);
+    }
+    return id;
+  }
+
+  function unlock() {
+    unlocked = true;
+    screen.classList.add('hide');
+    setTimeout(() => screen.style.display = 'none', 650);
+    appRoot.classList.add('visible');
+    initApp();
+  }
+
+  // 保存済みトークンで自動ログイン
+  const saved = localStorage.getItem(TOKEN_KEY);
+  if (saved) {
+    try {
+      const t = JSON.parse(saved);
+      if (t.ok && t.expiry > Date.now()) { unlock(); return; }
+    } catch(e) {}
+    localStorage.removeItem(TOKEN_KEY);
+  }
+
+  function showError(msg) {
+    input.classList.add('error');
+    errEl.textContent = msg;
+    btn.disabled = false;
+    btn.textContent = 'システムにアクセス';
+    setTimeout(() => {
+      input.classList.remove('error');
+      input.value = '';
+      errEl.textContent = '';
+      input.focus();
+    }, 3000);
+  }
+
+  async function tryUnlock() {
+    if (unlocked) return;
+    const code = input.value.trim();
+    if (!code) { showError('アクティベーションコードを入力してください'); return; }
+
+    btn.disabled = true;
+    btn.textContent = '認証中…';
+    errEl.textContent = '';
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, deviceId: getDeviceId(), product: PRODUCT }),
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        localStorage.setItem(TOKEN_KEY, JSON.stringify({
+          ok: true,
+          plan: data.plan,
+          code: code,
+          expiry: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        }));
+        unlock();
+      } else {
+        if (data.error === 'invalid_code') {
+          showError('コードが正しくありません。ご確認ください。');
+        } else if (data.error === 'limit_reached') {
+          showError(`このコードの利用上限（${data.max}台）に達しています。法人プランをご検討ください。`);
+        } else if (data.error === 'wrong_product') {
+          showError('このコードは育成ログでは利用できません。ご確認ください。');
+        } else {
+          showError('認証に失敗しました。時間をおいて再度お試しください。');
+        }
+      }
+    } catch(e) {
+      showError('通信エラーが発生しました。インターネット接続をご確認ください。');
+    }
+  }
+
+  btn.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+})();
+
 const STORAGE_KEY = 'ikuseilog_v1';
 let members = [];
 let currentMemberId = null;
@@ -634,9 +814,11 @@ function escapeHtml(s) {
 }
 
 /* Init */
-members = getMembers();
-renderMemberGrid();
-renderQuicklist();
+function initApp() {
+  members = getMembers();
+  renderMemberGrid();
+  renderQuicklist();
+}
 </script>
 </body>
 </html>
