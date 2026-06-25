@@ -508,7 +508,7 @@
       const res = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, deviceId: getDeviceId(), product: PRODUCT }),
+        body: JSON.stringify({ code, deviceId: getDeviceId(), app: PRODUCT }),
       });
       const data = await res.json();
 
