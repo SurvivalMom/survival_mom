@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自分を責めない夜の過ごし方｜ワークシート</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --cream2: #f3ede3;
+    --terra: #c4814a;
+    --terra-light: #e8a87c;
+    --terra-deep: #9c5e30;
+    --navy: #1a1410;
+    --navy-mid: #3d2e22;
+    --muted: #8a7060;
+    --muted-light: #b8a090;
+    --border: rgba(196,129,74,0.18);
+    --shadow: 0 2px 24px rgba(26,20,16,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--navy);
+    min-height: 100vh;
+    line-height: 1.8;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 0 0 60px; }
+
+  header {
+    background: linear-gradient(135deg, #9c5e30, #c4814a);
+    padding: 30px 20px 26px;
+    text-align: center;
+  }
+  header .eyebrow {
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+  header p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 8px;
+  }
+
+  .section { display: none; padding: 24px 18px; }
+  .section.active { display: block; }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 18px 20px;
+    box-shadow: var(--shadow);
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .intro-card strong { color: var(--terra-deep); font-weight: 500; }
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--terra);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .start-btn:hover { background: var(--terra-deep); }
+  .start-btn:active { transform: scale(0.99); }
+
+  /* ── STEP CARD ── */
+  .step-counter {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--terra);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .step-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+  }
+  .step-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--terra-deep);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  .step-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.8;
+  }
+
+  textarea.step-input {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--navy);
+    background: var(--cream2);
+    resize: none;
+    outline: none;
+    line-height: 1.8;
+    transition: border-color 0.2s;
+  }
+  textarea.step-input:focus { border-color: var(--terra-light); background: #fff; }
+  textarea.step-input::placeholder { color: var(--muted-light); }
+
+  .reframe-box {
+    background: linear-gradient(135deg, #f7ede0 0%, #fdf5ec 100%);
+    border: 1px solid rgba(196,129,74,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--navy-mid);
+    line-height: 1.9;
+  }
+  .reframe-box .rb-title {
+    font-size: 11px;
+    color: var(--terra-deep);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .nav-row { display: flex; gap: 10px; margin-top: 4px; }
+  .nav-btn {
+    flex: 1;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+  .nav-btn.next { background: var(--terra); color: #fff; }
+  .nav-btn.next:hover { background: var(--terra-deep); }
+  .nav-btn.prev { background: var(--cream2); color: var(--muted); border: 1px solid var(--border); }
+  .nav-btn:active { transform: scale(0.98); }
+
+  /* ── DONE ── */
+  .done-badge {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  .done-badge .icon {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #e8a87c, var(--terra-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+  }
+  .done-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--terra-deep);
+    margin-bottom: 6px;
+  }
+  .done-sub { font-size: 12px; color: var(--muted); }
+
+  .summary-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+  }
+  .summary-item { margin-bottom: 16px; }
+  .summary-item:last-child { margin-bottom: 0; }
+  .summary-label {
+    font-size: 11px;
+    color: var(--terra-deep);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .summary-text {
+    font-size: 13px;
+    color: var(--navy-mid);
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .summary-text.empty { color: var(--muted-light); }
+
+  .closing-text {
+    background: linear-gradient(135deg, #f7ede0 0%, var(--cream2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 13px;
+    color: var(--navy-mid);
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+
+  .cta-card {
+    background: linear-gradient(135deg, #3d2e22, #1a1410);
+    border-radius: 16px;
+    padding: 22px 20px;
+    text-align: center;
+  }
+  .cta-card p {
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .cta-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 14px;
+    background: var(--terra);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+  .cta-sub {
+    margin-top: 14px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .retry-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--muted-light);
+    cursor: pointer;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: var(--muted-light);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">survival_mom_diary</div>
+  <h1>自分を責めない<br>夜の過ごし方</h1>
+  <p>今日も花丸。3分のワークシートです</p>
+</header>
+
+<div class="wrap">
+
+  <!-- ── INTRO ── -->
+  <div id="sec-intro" class="section active">
+    <div class="intro-card">
+      <strong>不登校・発達グレー・きょうだい児育児で、<br>もう限界なあなたへ。</strong><br><br>
+      綺麗事は言いません。でも、自分を責めなくていい理由はあります。<br><br>
+      今日あった「責めたくなった瞬間」を書き出して、ちょっとだけ視点を変えるワークです。
+    </div>
+    <button class="start-btn" onclick="startWork()">ワークシートを始める</button>
+  </div>
+
+  <!-- ── STEPS ── -->
+  <div id="sec-steps" class="section">
+    <div class="step-counter" id="stepCounter">STEP 1 / 3</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="step-card">
+      <div class="step-title" id="stepTitle"></div>
+      <div class="step-hint" id="stepHint"></div>
+      <textarea class="step-input" id="stepInput" placeholder=""></textarea>
+      <div class="reframe-box" id="reframeBox" style="display:none">
+        <div class="rb-title">ひとこと</div>
+        <div id="reframeText"></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn prev" id="prevBtn" onclick="prevStep()" style="display:none">戻る</button>
+      <button class="nav-btn next" id="nextBtn" onclick="nextStep()">次へ</button>
+    </div>
+  </div>
+
+  <!-- ── DONE ── -->
+  <div id="sec-done" class="section">
+    <div class="done-badge">
+      <div class="icon">🌙</div>
+      <div class="done-title">今日も花丸。</div>
+      <div class="done-sub">よく書けましたね。お疲れさまでした</div>
+    </div>
+
+    <div class="summary-card" id="summaryCard"></div>
+
+    <div class="closing-text">
+      今日責めたくなった瞬間は、あなたが手を抜いたからじゃありません。<br>
+      ひとりで、ちゃんとやろうとしたから生まれた瞬間です。<br>
+      また今度しんどい夜が来たら、ここに戻ってきてください。
+    </div>
+
+    <div class="cta-card">
+      <p>不登校・発達グレー・きょうだい児育児のリアルと、<br>自分を責めなくていい理由を発信しています。</p>
+      <a class="cta-btn" href="https://www.instagram.com/survival_mom_diary/" target="_blank" rel="noopener">@survival_mom_diary をフォローする</a>
+      <div class="cta-sub">ひとりで抱えきれないと感じたら、個別相談も承っています</div>
+    </div>
+
+    <span class="retry-link" onclick="restart()">もう一度書いてみる</span>
+  </div>
+
+</div>
+
+<footer>survival_mom_diary ｜ 自分を責めない夜の過ごし方ワークシート</footer>
+
+<script>
+const STEPS = [
+  {
+    title: "今日、責めたくなった瞬間を書いてみてください",
+    hint: "子どものこと、自分のこと、何でも構いません。3つまで書けたら十分です。",
+    placeholder: "例：また学校に行けなかった。私の育て方が悪いのかな…と思った。"
+  },
+  {
+    title: "それ、本当に「あなたのせい」でしょうか？",
+    hint: "もし友達が同じことで悩んでいたら、あなたは何と声をかけますか？",
+    placeholder: "例：友達には「よく頑張ってるよ」って言うと思う。自分にだけ厳しくしてるかも。"
+  },
+  {
+    title: "今日のあなたに、ひとことかけるなら",
+    hint: "完璧じゃなくて大丈夫です。今日生き延びたこと自体が、もう花丸です。",
+    placeholder: "例：今日もよく頑張った。明日もきっと、できることをやればいい。"
+  }
+];
+
+const REFRAMES = [
+  "",
+  "綺麗事じゃなく言います。あなたのせいにしないでいいことが、世の中にはたくさんあります。",
+  "今日も生き延びた。それだけで、もう十分すぎる一日です。"
+];
+
+let answers = ["", "", ""];
+let current = 0;
+
+function startWork() {
+  current = 0;
+  switchSection('steps');
+  renderStep();
+}
+
+function renderStep() {
+  document.getElementById('stepCounter').textContent = `STEP ${current+1} / ${STEPS.length}`;
+  document.getElementById('progressFill').style.width = `${(current/STEPS.length)*100}%`;
+  document.getElementById('stepTitle').textContent = STEPS[current].title;
+  document.getElementById('stepHint').textContent = STEPS[current].hint;
+  const input = document.getElementById('stepInput');
+  input.placeholder = STEPS[current].placeholder;
+  input.value = answers[current];
+
+  const reframeBox = document.getElementById('reframeBox');
+  if (REFRAMES[current]) {
+    reframeBox.style.display = 'block';
+    document.getElementById('reframeText').textContent = REFRAMES[current];
+  } else {
+    reframeBox.style.display = 'none';
+  }
+
+  document.getElementById('prevBtn').style.display = current > 0 ? 'block' : 'none';
+  document.getElementById('nextBtn').textContent = current === STEPS.length - 1 ? '書き終える' : '次へ';
+}
+
+function saveCurrentInput() {
+  answers[current] = document.getElementById('stepInput').value;
+}
+
+function nextStep() {
+  saveCurrentInput();
+  if (current === STEPS.length - 1) {
+    showDone();
+  } else {
+    current++;
+    renderStep();
+  }
+}
+
+function prevStep() {
+  saveCurrentInput();
+  if (current === 0) return;
+  current--;
+  renderStep();
+}
+
+function switchSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`sec-${name}`).classList.add('active');
+}
+
+function showDone() {
+  document.getElementById('progressFill').style.width = '100%';
+  const card = document.getElementById('summaryCard');
+  card.innerHTML = STEPS.map((s, i) => `
+    <div class="summary-item">
+      <div class="summary-label">${s.title}</div>
+      <div class="summary-text ${answers[i] ? '' : 'empty'}">${escapeHtml(answers[i]) || '（未入力）'}</div>
+    </div>
+  `).join('');
+  switchSection('done');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function restart() {
+  answers = ["", "", ""];
+  current = 0;
+  switchSection('intro');
+}
+</script>
+</body>
+</html>
