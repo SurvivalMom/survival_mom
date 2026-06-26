@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>個別相談｜survival_log_biz</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7f9;
+    --card: #ffffff;
+    --navy: #1c2b3a;
+    --navy-mid: #2e4256;
+    --teal: #2f7d6e;
+    --teal-light: #4fa193;
+    --teal-deep: #1f5c50;
+    --amber: #c98a2c;
+    --muted: #6b7a87;
+    --muted-light: #9aa7b1;
+    --border: rgba(28,43,58,0.10);
+    --shadow: 0 2px 24px rgba(28,43,58,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--navy);
+    min-height: 100vh;
+    line-height: 1.8;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 0 0 60px; }
+
+  header {
+    background: var(--navy);
+    padding: 36px 20px 30px;
+    text-align: center;
+  }
+  header .eyebrow {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 21px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+  header p {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 10px;
+  }
+
+  section { padding: 26px 18px 0; }
+
+  .lead-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    font-size: 13.5px;
+    color: var(--navy-mid);
+    margin-bottom: 4px;
+  }
+  .lead-card strong { color: var(--teal-deep); font-weight: 500; }
+
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--teal-deep);
+    letter-spacing: 0.04em;
+    margin: 28px 0 14px;
+  }
+
+  .check-list {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 6px 18px;
+  }
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--navy-mid);
+  }
+  .check-row:last-child { border: none; }
+  .check-mark {
+    color: var(--teal);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .flow-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+  .flow-step {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+  }
+  .flow-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .flow-text strong {
+    display: block;
+    font-size: 13.5px;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+  .flow-text span {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .flow-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 0 42px;
+  }
+
+  .offer-card {
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    border-radius: 16px;
+    padding: 24px 20px;
+    color: #fff;
+  }
+  .offer-card .offer-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .offer-card .offer-price {
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 16px;
+    line-height: 1.9;
+  }
+  .offer-price strong {
+    font-size: 18px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .faq-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+  }
+  .faq-q {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--teal-deep);
+    margin-bottom: 6px;
+  }
+  .faq-a {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .cta-fixed {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg);
+    padding: 14px 18px 18px;
+    margin-top: 30px;
+  }
+  .cta-btn {
+    display: block;
+    width: 100%;
+    padding: 17px;
+    background: var(--teal);
+    color: #fff;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 20px rgba(47,125,110,0.35);
+  }
+  .cta-btn:active { transform: scale(0.99); }
+  .cta-note {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted-light);
+    margin-top: 10px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 10px 20px 30px;
+    font-size: 11px;
+    color: var(--muted-light);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">survival_log_biz</div>
+  <h1>個別相談<br>30分・無料</h1>
+  <p>崩壊寸前の現場でも、チームを保つ方法はあります</p>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <div class="lead-card">
+      <strong>組織の健康度セルフチェック、ここログの見積もり診断。</strong><br><br>
+      ここまで見えてきた課題を、一人で抱え込まずに話してみませんか。
+      理想論ではなく、あなたの現場の規模・体制に合わせて、今すぐできる一手を一緒に整理します。
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">こんな方におすすめです</div>
+    <div class="check-list">
+      <div class="check-row"><span class="check-mark">✓</span>セルフチェックで「要注意」「崩壊リスク」と出た</div>
+      <div class="check-row"><span class="check-mark">✓</span>メンバーの本音が見えず、孤独な意思決定が続いている</div>
+      <div class="check-row"><span class="check-mark">✓</span>事故やヒヤリハットの再発を、仕組みで防ぎたい</div>
+      <div class="check-row"><span class="check-mark">✓</span>ここログ・安全管理スイートが自分の現場に合うか知りたい</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">相談の流れ</div>
+    <div class="flow-card">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-text">
+          <strong>現状ヒアリング（10分）</strong>
+          <span>チーム規模・体制・今困っていることを伺います</span>
+        </div>
+      </div>
+      <div class="flow-divider"></div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-text">
+          <strong>課題の整理（10分）</strong>
+          <span>診断結果をもとに、何から手をつけるべきか一緒に見ていきます</span>
+        </div>
+      </div>
+      <div class="flow-divider"></div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-text">
+          <strong>具体的な一手のご提案（10分）</strong>
+          <span>ここログ・安全管理スイート導入の有無を含め、無理のない提案をします</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">料金</div>
+    <div class="offer-card">
+      <div class="offer-title">初回個別相談</div>
+      <div class="offer-price">オンライン（Zoom）／30分<br><strong>無料</strong></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.8;">
+        相談だけで終わっても構いません。<br>
+        強引な勧誘は一切行いません。
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">よくある質問</div>
+    <div class="faq-item">
+      <div class="faq-q">Q. 押し売りされませんか？</div>
+      <div class="faq-a">A. いたしません。話すだけで終わる方も多くいらっしゃいます。まずは現状を整理する場として使ってください。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Q. まだ診断（セルフチェック）をしていませんが大丈夫ですか？</div>
+      <div class="faq-a">A. 問題ありません。相談の中で一緒に現状を確認します。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Q. どんな業種でも相談できますか？</div>
+      <div class="faq-a">A. 介護・医療・福祉現場のプレイングマネージャーの方を中心にお話を伺っています。</div>
+    </div>
+  </section>
+
+  <div class="cta-fixed">
+    <a class="cta-btn" href="https://lin.ee/uoE7MLK" target="_blank" rel="noopener" id="consultCtaBtn">無料相談を予約する</a>
+    <div class="cta-note">LINEから日程調整のご連絡をします</div>
+  </div>
+
+</div>
+
+<footer>survival_log_biz ｜ 個別相談</footer>
+
+</body>
+</html>
