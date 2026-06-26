@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>組織の健康度セルフチェック｜3分診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7f9;
+    --card: #ffffff;
+    --navy: #1c2b3a;
+    --navy-mid: #2e4256;
+    --teal: #2f7d6e;
+    --teal-light: #4fa193;
+    --teal-deep: #1f5c50;
+    --amber: #c98a2c;
+    --red: #c0503f;
+    --muted: #6b7a87;
+    --muted-light: #9aa7b1;
+    --border: rgba(28,43,58,0.10);
+    --shadow: 0 2px 24px rgba(28,43,58,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--navy);
+    min-height: 100vh;
+    line-height: 1.75;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 0 0 60px; }
+
+  header {
+    background: var(--navy);
+    padding: 28px 20px 24px;
+    text-align: center;
+  }
+  header .eyebrow {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 19px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+  header p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 8px;
+  }
+
+  .section { display: none; padding: 24px 18px; }
+  .section.active { display: block; }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 18px 20px;
+    box-shadow: var(--shadow);
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .intro-card strong { color: var(--teal-deep); font-weight: 500; }
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .start-btn:hover { background: var(--teal-deep); }
+  .start-btn:active { transform: scale(0.99); }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+  .q-counter {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+  }
+  .q-text {
+    font-size: 15px;
+    color: var(--navy);
+    line-height: 1.9;
+    font-weight: 500;
+  }
+
+  .ans-row { display: flex; gap: 12px; }
+  .ans-btn {
+    flex: 1;
+    padding: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--navy-mid);
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.15s;
+  }
+  .ans-btn:active { transform: scale(0.97); }
+  .ans-btn.yes:hover { border-color: var(--teal); color: var(--teal-deep); background: rgba(47,125,110,0.06); }
+  .ans-btn.no:hover { border-color: var(--muted-light); }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--muted-light);
+    cursor: pointer;
+  }
+
+  /* ── RESULT ── */
+  .result-badge {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .result-badge .ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 38px;
+    color: #fff;
+  }
+  .ring-good { background: linear-gradient(135deg, #3a9484, var(--teal-deep)); }
+  .ring-warn { background: linear-gradient(135deg, #d99f44, var(--amber)); }
+  .ring-risk { background: linear-gradient(135deg, #cf6a58, var(--red)); }
+  .ring small { font-size: 13px; display:block; margin-top:2px; }
+
+  .result-label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .result-label.good { color: var(--teal-deep); }
+  .result-label.warn { color: var(--amber); }
+  .result-label.risk { color: var(--red); }
+
+  .result-sub { font-size: 12px; color: var(--muted); }
+
+  .result-text {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    font-size: 13.5px;
+    color: var(--navy-mid);
+    line-height: 1.9;
+    margin: 20px 0;
+    white-space: pre-wrap;
+  }
+
+  .weak-points {
+    margin: 18px 0;
+  }
+  .weak-points .wp-title {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .wp-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .wp-item:last-child { border: none; }
+  .wp-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .cta-card {
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    border-radius: 16px;
+    padding: 22px 20px;
+    text-align: center;
+    margin-top: 22px;
+  }
+  .cta-card p {
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .cta-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 14px;
+    background: var(--teal);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+  .cta-sub {
+    margin-top: 14px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .retry-link {
+    display: block;
+    text-align: center;
+    margin-top: 22px;
+    font-size: 12px;
+    color: var(--muted-light);
+    cursor: pointer;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: var(--muted-light);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">survival_log_biz</div>
+  <h1>組織の健康度<br>セルフチェック</h1>
+  <p>3分で、今のチームの"本当の状態"がわかります</p>
+</header>
+
+<div class="wrap">
+
+  <!-- ── INTRO ── -->
+  <div id="sec-intro" class="section active">
+    <div class="intro-card">
+      <strong>こんなプレイングマネージャーへ。</strong><br><br>
+      理想論じゃなく、崩壊寸前の現場で、それでもチームを保つために。<br><br>
+      7つの質問に「はい／いいえ」で答えるだけ。今のチームの信頼・仕組み・あなた自身の負荷を、3分で見える形にします。
+    </div>
+    <button class="start-btn" onclick="startQuiz()">セルフチェックを始める</button>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div id="sec-quiz" class="section">
+    <div class="q-counter" id="qCounter">Q1 / 7</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="q-card">
+      <div class="q-text" id="qText"></div>
+    </div>
+    <div class="ans-row">
+      <button class="ans-btn yes" onclick="answer(true)">はい</button>
+      <button class="ans-btn no" onclick="answer(false)">いいえ</button>
+    </div>
+    <span class="back-link" id="backLink" onclick="goBack()" style="display:none">← ひとつ前の質問に戻る</span>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="sec-result" class="section">
+    <div class="result-badge">
+      <div class="ring" id="resultRing">
+        <span id="resultScore"></span>
+      </div>
+      <div class="result-label" id="resultLabel"></div>
+      <div class="result-sub" id="resultSub"></div>
+    </div>
+
+    <div class="result-text" id="resultText"></div>
+
+    <div class="weak-points" id="weakPoints" style="display:none">
+      <div class="wp-title">特に気になったポイント</div>
+      <div id="weakList"></div>
+    </div>
+
+    <div class="cta-card">
+      <p>「崩壊寸前の現場で、それでもチームを保つ方法」を、現場のリアルな事例とともに発信しています。<br>しんどくなったら、またここに。</p>
+      <a class="cta-btn" href="https://www.instagram.com/survival_log_biz/" target="_blank" rel="noopener">@survival_log_biz をフォローする</a>
+      <div class="cta-sub">一人で抱えきれないと感じたら、個別相談も承っています</div>
+    </div>
+
+    <span class="retry-link" onclick="restart()">もう一度診断する</span>
+  </div>
+
+</div>
+
+<footer>survival_log_biz ｜ 組織の健康度セルフチェック</footer>
+
+<script>
+const QUESTIONS = [
+  "メンバーは、ミスをしたときあなたに自分から報告してくる",
+  "1on1や面談で、業務以外の悩みも話してもらえている",
+  "誰か一人が休んでも、現場が回る仕組みがある",
+  "「忙しいから後で」と部下の話を流すことが、今月なかった",
+  "メンバーの退職を、直前まで気づけなかったことがない",
+  "あなた自身が「しんどい」と誰かに言える相手がいる",
+  "このチームを、1年後も今のメンバーで続けたいと思える"
+];
+
+let answers = [];
+let current = 0;
+
+function startQuiz() {
+  answers = [];
+  current = 0;
+  switchSection('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  document.getElementById('qCounter').textContent = `Q${current+1} / ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${(current/QUESTIONS.length)*100}%`;
+  document.getElementById('qText').textContent = QUESTIONS[current];
+  document.getElementById('backLink').style.display = current > 0 ? 'block' : 'none';
+}
+
+function answer(val) {
+  answers[current] = val;
+  current++;
+  if (current >= QUESTIONS.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function goBack() {
+  if (current === 0) return;
+  current--;
+  renderQuestion();
+}
+
+function switchSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`sec-${name}`).classList.add('active');
+}
+
+function showResult() {
+  document.getElementById('progressFill').style.width = '100%';
+  const score = answers.filter(Boolean).length;
+
+  const ring = document.getElementById('resultRing');
+  const label = document.getElementById('resultLabel');
+  const sub = document.getElementById('resultSub');
+  const text = document.getElementById('resultText');
+  const weakWrap = document.getElementById('weakPoints');
+  const weakList = document.getElementById('weakList');
+
+  document.getElementById('resultScore').innerHTML = `${score}<small>/ ${QUESTIONS.length}</small>`;
+
+  if (score >= 6) {
+    ring.className = 'ring ring-good';
+    label.className = 'result-label good';
+    label.textContent = '健全ゾーン';
+    sub.textContent = '今のチームには「言える空気」があります';
+    text.textContent = "今のチームには「言える空気」があります。\nただし、健全な組織ほど“無自覚な綻び”が見落とされがちです。\n月1回、このチェックを習慣にしてみてください。";
+  } else if (score >= 3) {
+    ring.className = 'ring ring-warn';
+    label.className = 'result-label warn';
+    label.textContent = '要注意ゾーン';
+    sub.textContent = '水面下でヒビが入り始めているサイン';
+    text.textContent = "表面上は機能していても、水面下で信頼にヒビが入り始めているサインです。\n特に「いいえ」がついた項目から、今週1つだけ手をつけてみてください。";
+  } else {
+    ring.className = 'ring ring-risk';
+    label.className = 'result-label risk';
+    label.textContent = '崩壊リスクゾーン';
+    sub.textContent = 'あなた一人で支えている状態かもしれません';
+    text.textContent = "あなた一人で支えている状態かもしれません。\nこれは“あなたの能力不足”ではなく、“仕組みがない”ことが原因です。\nまずは自分自身が抱えている重さを、誰かに話すところから始めてください。";
+  }
+
+  const noIdx = answers.map((a,i) => a === false ? i : -1).filter(i => i >= 0);
+  if (noIdx.length) {
+    weakWrap.style.display = 'block';
+    weakList.innerHTML = noIdx.map(i => `
+      <div class="wp-item">
+        <div class="wp-dot"></div>
+        <div>${QUESTIONS[i]}</div>
+      </div>
+    `).join('');
+  } else {
+    weakWrap.style.display = 'none';
+  }
+
+  switchSection('result');
+}
+
+function restart() {
+  switchSection('intro');
+}
+</script>
+</body>
+</html>
