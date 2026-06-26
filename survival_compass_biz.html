@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サバイバル・コンパス | 現場継続診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Zen+Kaku+Gothic+New:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c2b3a;
+    --cream: #f5f7f9;
+    --warm: #eaf0ee;
+    --accent: #2f7d6e;
+    --accent2: #3a7dc9;
+    --gold: #c98a2c;
+    --shadow: rgba(28,43,58,0.12);
+    --card-bg: #ffffff;
+    --progress-h: 3px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(47,125,110,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 90%, rgba(58,125,201,0.05) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  #app {
+    position: relative; z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    padding: 0 20px 40px;
+  }
+
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 0 16px;
+  }
+  .logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px; letter-spacing: 0.18em;
+    color: var(--accent); font-weight: 700;
+    text-transform: uppercase;
+  }
+  .step-label {
+    font-size: 11px; color: #999; letter-spacing: 0.1em;
+    font-weight: 300;
+  }
+
+  .progress-wrap {
+    height: var(--progress-h);
+    background: rgba(28,43,58,0.08);
+    border-radius: 99px; margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .screen { display: none; flex-direction: column; flex: 1; animation: fadeUp 0.45s ease forwards; }
+  .screen.active { display: flex; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(18px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .start-eyebrow {
+    font-size: 11px; letter-spacing: 0.22em; color: var(--accent);
+    text-transform: uppercase; font-weight: 700; margin-bottom: 14px;
+  }
+  .start-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 27px; line-height: 1.45; font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .start-title span { color: var(--accent); }
+  .start-lead {
+    font-size: 14px; line-height: 1.85; color: #555;
+    margin-bottom: 32px;
+  }
+
+  .compass-wrap {
+    display: flex; justify-content: center;
+    margin: 8px 0 36px;
+  }
+  .compass-svg { width: 120px; height: 120px; }
+
+  .btn-primary {
+    display: block; width: 100%;
+    background: var(--accent);
+    color: #fff; border: none; border-radius: 4px;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 15px; font-weight: 700;
+    padding: 18px 24px; cursor: pointer;
+    letter-spacing: 0.08em;
+    position: relative; overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 18px rgba(47,125,110,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(47,125,110,0.38); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary::after {
+    content:''; position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .btn-primary:hover::after { transform: translateX(100%); }
+
+  .btn-secondary {
+    background: transparent; border: 1.5px solid var(--ink);
+    color: var(--ink); border-radius: 4px;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 13px; padding: 12px 20px; cursor: pointer;
+    letter-spacing: 0.06em; width: 100%;
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { background: var(--ink); color: var(--cream); }
+
+  .q-meta {
+    font-size: 11px; letter-spacing: 0.18em; color: var(--gold);
+    text-transform: uppercase; font-weight: 700; margin-bottom: 12px;
+  }
+  .q-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 20px; line-height: 1.65; font-weight: 700;
+    margin-bottom: 8px;
+    white-space: pre-line;
+  }
+  .q-sub {
+    font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 32px;
+  }
+
+  .choices { display: flex; flex-direction: column; gap: 14px; }
+
+  .choice-card {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(28,43,58,0.1);
+    border-radius: 8px; padding: 20px 20px 20px 56px;
+    cursor: pointer; position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+  .choice-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 6px 20px rgba(47,125,110,0.16);
+    transform: translateY(-2px);
+  }
+  .choice-card.selected {
+    border-color: var(--accent);
+    background: rgba(47,125,110,0.05);
+  }
+
+  .choice-icon {
+    position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+    font-size: 22px; line-height: 1;
+  }
+  .choice-label {
+    font-size: 15px; line-height: 1.6; font-weight: 700; margin-bottom: 4px;
+  }
+  .choice-desc {
+    font-size: 12px; color: #888; line-height: 1.55; font-weight: 300;
+  }
+
+  #screen-loading {
+    align-items: center; justify-content: center;
+    text-align: center; flex: 1;
+  }
+  .loading-compass {
+    width: 80px; height: 80px; margin: 0 auto 28px;
+    animation: spin 2s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px; font-weight: 700; margin-bottom: 10px;
+  }
+  .loading-sub { font-size: 13px; color: #999; }
+
+  .result-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+    padding: 6px 14px; border-radius: 99px; margin-bottom: 20px;
+  }
+
+  .result-type-icon { font-size: 48px; margin-bottom: 16px; }
+
+  .result-type-name {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 24px; font-weight: 700; line-height: 1.45;
+    margin-bottom: 6px;
+    white-space: pre-line;
+  }
+  .result-type-sub {
+    font-size: 13px; color: var(--accent); font-weight: 700;
+    letter-spacing: 0.1em; margin-bottom: 24px;
+  }
+
+  .result-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(28,43,58,0.08);
+    border-radius: 12px; padding: 24px;
+    box-shadow: 0 4px 20px var(--shadow);
+    margin-bottom: 16px;
+  }
+  .result-card-title {
+    font-size: 11px; letter-spacing: 0.18em; font-weight: 700;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .result-state {
+    font-size: 14px; line-height: 1.8; color: #444; margin-bottom: 0;
+  }
+  .result-advice {
+    font-size: 15px; line-height: 1.85; font-weight: 700;
+    color: var(--ink);
+  }
+  .result-advice span { color: var(--accent); }
+
+  .cta-wrap { margin-top: 8px; display: flex; flex-direction: column; gap: 12px; }
+
+  .cta-label {
+    font-size: 11px; color: #999; letter-spacing: 0.1em;
+    text-align: center; margin-bottom: 4px;
+  }
+
+  .score-bars { display: flex; flex-direction: column; gap: 12px; margin: 4px 0; }
+  .score-row { display: flex; align-items: center; gap: 12px; }
+  .score-row-label { font-size: 12px; color: #666; width: 80px; flex-shrink: 0; }
+  .score-bar-bg {
+    flex: 1; height: 6px; background: rgba(28,43,58,0.08); border-radius: 99px; overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.3s;
+  }
+  .score-val { font-size: 12px; font-weight: 700; color: var(--accent); width: 28px; text-align: right; }
+
+  .restart-link {
+    text-align: center; margin-top: 24px;
+    font-size: 12px; color: #bbb; cursor: pointer;
+    text-decoration: underline;
+  }
+  .restart-link:hover { color: var(--ink); }
+
+  .footer-note {
+    font-size: 11px; color: #ccc; text-align: center;
+    margin-top: 32px; line-height: 1.6;
+  }
+
+  .mt-auto { margin-top: auto; }
+  .mb-16 { margin-bottom: 16px; }
+  .divider {
+    height: 1px; background: rgba(28,43,58,0.08);
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="header">
+    <div class="logo">Survival Compass</div>
+    <div class="step-label" id="step-label"></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <!-- ── スタート ── -->
+  <div id="screen-start" class="screen active">
+    <div class="start-eyebrow">現場継続診断</div>
+    <div class="start-title">今の現場、<br><span>本当に</span>続けていける？</div>
+    <div class="start-lead">
+      「毎日なんとか乗り切ってる」<br>
+      「でも、このままでいいのかな…」<br><br>
+      5問でわかる、<strong>あなただけのサバイバル戦略</strong>。<br>
+      正解はありません。今の気持ちに正直に答えてください。
+    </div>
+
+    <div class="compass-wrap">
+      <svg class="compass-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="54" stroke="rgba(47,125,110,0.18)" stroke-width="2"/>
+        <circle cx="60" cy="60" r="44" stroke="rgba(47,125,110,0.28)" stroke-width="1"/>
+        <circle cx="60" cy="60" r="6" fill="var(--accent)" opacity="0.9"/>
+        <text x="60" y="18" text-anchor="middle" fill="var(--accent)" font-family="Noto Serif JP" font-size="11" font-weight="700">N</text>
+        <text x="60" y="108" text-anchor="middle" fill="#bbb" font-family="Noto Serif JP" font-size="10">S</text>
+        <text x="12" y="64" text-anchor="middle" fill="#bbb" font-family="Noto Serif JP" font-size="10">W</text>
+        <text x="110" y="64" text-anchor="middle" fill="#bbb" font-family="Noto Serif JP" font-size="10">E</text>
+        <polygon points="60,24 56,60 60,54 64,60" fill="var(--accent)"/>
+        <polygon points="60,96 56,60 60,66 64,60" fill="#ccc"/>
+        <line x1="60" y1="10" x2="60" y2="16" stroke="rgba(47,125,110,0.45)" stroke-width="1.5"/>
+        <line x1="60" y1="104" x2="60" y2="110" stroke="rgba(28,43,58,0.15)" stroke-width="1"/>
+        <line x1="10" y1="60" x2="16" y2="60" stroke="rgba(28,43,58,0.15)" stroke-width="1"/>
+        <line x1="104" y1="60" x2="110" y2="60" stroke="rgba(28,43,58,0.15)" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="mt-auto">
+      <button class="btn-primary" onclick="startQuiz()">診断スタート →</button>
+      <div class="footer-note" style="margin-top:16px;">所要時間 約2分 ・ 全5問</div>
+    </div>
+  </div>
+
+  <!-- ── 質問 ── -->
+  <div id="screen-question" class="screen">
+    <div class="q-meta" id="q-meta">Q1 / 5</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-sub" id="q-sub"></div>
+    <div class="choices" id="choices-wrap"></div>
+    <div class="footer-note" style="margin-top:28px;">直感で選んで大丈夫です</div>
+  </div>
+
+  <!-- ── ローディング ── -->
+  <div id="screen-loading" class="screen">
+    <svg class="loading-compass" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="36" stroke="rgba(47,125,110,0.25)" stroke-width="1.5"/>
+      <circle cx="40" cy="40" r="4" fill="var(--accent)"/>
+      <polygon points="40,8 37,40 40,34 43,40" fill="var(--accent)"/>
+      <polygon points="40,72 37,40 40,46 43,40" fill="#ccc"/>
+      <path d="M40 8 A32 32 0 0 1 72 40" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="loading-text">あなたの方位を分析中…</div>
+    <div class="loading-sub">5つの回答から、最適な戦略を導きます</div>
+  </div>
+
+  <!-- ── 結果 ── -->
+  <div id="screen-result" class="screen">
+    <div id="result-content"></div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    meta: "Q1 / 5",
+    text: "出勤前、最初に浮かぶ感情は\nどっちに近い？",
+    sub: "正直な気持ちを選んでください",
+    choices: [
+      { icon: "😤", label: "今日も乗り切ろう", desc: "大変だけど、なんとかやれてる感覚", val: "A" },
+      { icon: "😩", label: "行きたくない…胃が痛い", desc: "体が「NO」と言ってる。それが毎朝の現実", val: "B" }
+    ]
+  },
+  {
+    meta: "Q2 / 5",
+    text: "シフトの相談や有給の希望を\n伝える時のハードルは？",
+    sub: "今の現場の空気感を思い浮かべて",
+    choices: [
+      { icon: "😅", label: "言いづらいけど、なんとかなる", desc: "嫌味は言われないし、調整もできる環境", val: "A" },
+      { icon: "😰", label: "言い出せない。または全部自分で抱える", desc: "人手不足で誰にも頼れない空気がある", val: "B" }
+    ]
+  },
+  {
+    meta: "Q3 / 5",
+    text: "今の現場での\n「5年後の自分」を想像できる？",
+    sub: "パッと浮かんだ感覚で選んで",
+    choices: [
+      { icon: "🤔", label: "想像できるけど、モヤモヤする", desc: "やりがいや評価に納得できていない部分がある", val: "A" },
+      { icon: "😶", label: "全然想像できない。したくもない", desc: "キャリアの未来が真っ暗。思考停止気味", val: "B" }
+    ]
+  },
+  {
+    meta: "Q4 / 5",
+    text: "上司・施設長との関係性を\n一言で表すと？",
+    sub: "「直属の上司」を思い浮かべて",
+    choices: [
+      { icon: "🕳️", label: "悪い人じゃないが、サポートがない", desc: "具体的な指示・支援がなく、現場に放置されている感覚", val: "A" },
+      { icon: "🔥", label: "話が通じない。または孤独", desc: "意思疎通が不可能・自分が一番上で孤独な現場", val: "B" }
+    ]
+  },
+  {
+    meta: "Q5 / 5",
+    text: "今、一番「守りたいもの」は？",
+    sub: "本音で選んでください",
+    choices: [
+      { icon: "⚖️", label: "この現場でのキャリアと働き方", desc: "今の職場でやりがいを見つけたい", val: "A" },
+      { icon: "🫀", label: "自分の心と体の健康", desc: "正直、今は仕事より「自分が壊れないこと」が最優先", val: "B" }
+    ]
+  }
+];
+
+const results = {
+  shield: {
+    icon: "🛡️",
+    badge: "タイプ1",
+    name: "孤軍奮闘の\n「防弾シールド」タイプ",
+    sub: "現場環境は悪くない。でも、消耗している",
+    state: "現場の環境自体は壊れていない。でも、上司のマネジメント不足で、あなたが全部抱え込んでいる。評価もされず、助けも来ない。あなたの頑張りは「当たり前」にされてきた。",
+    advice: "あなたはまだ、今の現場で<span>戦えます</span>。\n足りないのは気合いじゃなくて、\n「現場を仕組みで動かす型」です。",
+    cta1_text: "📋 ここログで「報告の仕組み」を作る →",
+    cta1_link: "https://survivalmom.github.io/survival_mom/kokoLog_lp.html",
+    cta2_text: "組織の健康度セルフチェックをする",
+    cta2_link: "https://survivalmom.github.io/survival_mom/orgcheck.html",
+    scores: [70, 50, 80]
+  },
+  bird: {
+    icon: "🕊️",
+    badge: "タイプ2",
+    name: "戦略的撤退の\n「渡り鳥」タイプ",
+    sub: "今の現場は、あなたの居場所ではない",
+    state: "現場の体制が破綻している、または上司との関係が完全に崩れている。HPがゼロ寸前なのに、「逃げたら負け」という呪いで動けずにいる。",
+    advice: "今ここで踏ん張るのは<span>戦略的撤退の選択肢も含めて</span>考える時です。\n一人で判断しなくていい。まず話すだけでいい。",
+    cta1_text: "💬 個別相談で今の状況を話す →",
+    cta1_link: "https://survivalmom.github.io/survival_mom/orgconsult.html",
+    cta2_text: "組織の健康度セルフチェックをする",
+    cta2_link: "https://survivalmom.github.io/survival_mom/orgcheck.html",
+    scores: [85, 60, 40]
+  },
+  balancer: {
+    icon: "⚖️",
+    badge: "タイプ3",
+    name: "板挟みの\n「バランサー」タイプ",
+    sub: "現場をまわすために、自分を削っている",
+    state: "中間管理職や現場リーダーとして、部下と上層部の間で消耗している。「私がやった方が早い」という呪いで、仕組み化が後回しになり続けている。",
+    advice: "属人化を排除して、<span>仕組みで現場をまわす</span>時です。\nあなたの「現場感覚」をシステムに落とし込めば、\n自分が楽になり、チームも育ちます。",
+    cta1_text: "🛟 介護安全管理スイートを見る →",
+    cta1_link: "https://survivalmom.github.io/survival_mom/lp_index.html",
+    cta2_text: "ここログのカスタマイズ見積もり診断",
+    cta2_link: "https://survivalmom.github.io/survival_mom/cocolog_estimate.html",
+    scores: [60, 70, 70]
+  },
+  burnout: {
+    icon: "🔥",
+    badge: "タイプ4",
+    name: "燃え尽き寸前の\n「灰の戦士」タイプ",
+    sub: "今は、現場よりあなた自身の回復が最優先",
+    state: "人手不足・責任過多が積み重なり、心と体がすでに限界に近い。「自分が抜けたら現場が回らない」という思いが、あなたを縛り続けている。",
+    advice: "現場より先に、<span>あなた自身が壊れたら終わり</span>です。\nまずは今の状態を誰かに話すところから始めてください。",
+    cta1_text: "💬 個別相談で今の状況を話す →",
+    cta1_link: "https://survivalmom.github.io/survival_mom/orgconsult.html",
+    cta2_text: "組織の健康度セルフチェックをする",
+    cta2_link: "https://survivalmom.github.io/survival_mom/orgcheck.html",
+    scores: [90, 65, 35]
+  }
+};
+
+let answers = [];
+let currentQ = 0;
+
+function setProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + id);
+  el.classList.add('active');
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+}
+
+function startQuiz() {
+  answers = [];
+  currentQ = 0;
+  showScreen('question');
+  setProgress(0);
+  renderQuestion(0);
+}
+
+function renderQuestion(idx) {
+  const q = questions[idx];
+  document.getElementById('q-meta').textContent = q.meta;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-sub').textContent = q.sub;
+  document.getElementById('step-label').textContent = `${idx + 1} / 5`;
+  setProgress(((idx) / 5) * 100);
+
+  const wrap = document.getElementById('choices-wrap');
+  wrap.innerHTML = '';
+  q.choices.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'choice-card';
+    card.innerHTML = `<div class="choice-icon">${c.icon}</div>
+      <div class="choice-label">${c.label}</div>
+      <div class="choice-desc">${c.desc}</div>`;
+    card.onclick = () => selectAnswer(c.val, card, idx);
+    wrap.appendChild(card);
+  });
+}
+
+function selectAnswer(val, card, idx) {
+  document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  answers.push(val);
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < questions.length) {
+      renderQuestion(currentQ);
+      showScreen('question');
+    } else {
+      showLoading();
+    }
+  }, 400);
+}
+
+function showLoading() {
+  showScreen('loading');
+  document.getElementById('step-label').textContent = '';
+  setProgress(100);
+  setTimeout(showResult, 2000);
+}
+
+function calcType() {
+  const bCount = answers.filter(a => a === 'B').length;
+  const q4 = answers[3];
+  const q5 = answers[4];
+
+  if (q5 === 'B' && bCount >= 4) return 'burnout';
+  if (bCount >= 4) return 'bird';
+  if (q4 === 'A' && bCount <= 2) return 'balancer';
+  if (bCount >= 3) return 'bird';
+  return 'shield';
+}
+
+function showResult() {
+  const type = calcType();
+  const r = results[type];
+
+  const html = `
+    <div class="result-badge">🧭 診断完了 · ${r.badge}</div>
+    <div class="result-type-icon">${r.icon}</div>
+    <div class="result-type-name">${r.name}</div>
+    <div class="result-type-sub">${r.sub}</div>
+
+    <div class="result-card">
+      <div class="result-card-title">Now · あなたの今の状態</div>
+      <div class="result-state">${r.state}</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">Strategy · あなたへのメッセージ</div>
+      <div class="result-advice">${r.advice.replace(/\n/g,'<br>')}</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">Score · サバイバル指標</div>
+      <div class="score-bars">
+        <div class="score-row">
+          <div class="score-row-label">消耗度</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-w="${r.scores[0]}%"></div></div>
+          <div class="score-val">${r.scores[0]}</div>
+        </div>
+        <div class="score-row">
+          <div class="score-row-label">環境の危険度</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-w="${r.scores[1]}%"></div></div>
+          <div class="score-val">${r.scores[1]}</div>
+        </div>
+        <div class="score-row">
+          <div class="score-row-label">行動余地</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-w="${r.scores[2]}%"></div></div>
+          <div class="score-val">${r.scores[2]}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-label">あなたに合ったネクストステップ</div>
+    <div class="cta-wrap">
+      <a href="${r.cta1_link}" target="_blank" rel="noopener" class="btn-primary" style="text-decoration:none; text-align:center; display:block;">${r.cta1_text}</a>
+      <a href="${r.cta2_link}" target="_blank" rel="noopener" class="btn-secondary" style="text-decoration:none; text-align:center; display:block;">${r.cta2_text}</a>
+    </div>
+
+    <div class="divider"></div>
+    <div class="restart-link" onclick="restart()">← もう一度診断する</div>
+    <div class="footer-note">survival_log_biz</div>
+  `;
+
+  document.getElementById('result-content').innerHTML = html;
+  showScreen('result');
+  document.getElementById('step-label').textContent = '結果';
+
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.w;
+    });
+  }, 200);
+}
+
+function restart() {
+  answers = [];
+  currentQ = 0;
+  document.getElementById('step-label').textContent = '';
+  setProgress(0);
+  showScreen('start');
+}
+</script>
+</body>
+</html>
