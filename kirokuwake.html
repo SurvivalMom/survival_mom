@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>きろくわけ | 気づきをみんなの記録にする</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:        #f2f5f0;
+      --bg2:       #e8ede5;
+      --surface:   #ffffff;
+      --surface2:  #f7f9f6;
+
+      --moss:      #3a6b47;
+      --moss2:     #4e8a5f;
+      --moss3:     #6aaa7a;
+      --moss-lt:   #d4e8d8;
+      --moss-xl:   #edf5ee;
+
+      --sage:      #7fa882;
+      --sage-lt:   #e8f2e9;
+
+      --amber:     #c07a2a;
+      --amber-lt:  #fdf0dc;
+      --amber-xl:  #fffbf4;
+
+      --clay:      #b85c3a;
+      --clay-lt:   #fceee9;
+
+      --blue:      #3a6b8a;
+      --blue-lt:   #e8f0f5;
+
+      --ink:       #1e2d1f;
+      --ink2:      #3d5240;
+      --ink3:      #6b826e;
+      --ink4:      #9ab09d;
+
+      --border:    rgba(58,107,71,0.14);
+      --border2:   rgba(58,107,71,0.08);
+
+      --shadow-sm: 0 1px 4px rgba(20,50,25,0.08);
+      --shadow:    0 4px 18px rgba(20,50,25,0.10), 0 1px 4px rgba(20,50,25,0.06);
+      --shadow-lg: 0 12px 40px rgba(20,50,25,0.13);
+
+      --r-xl: 20px;
+      --r-lg: 14px;
+      --r-md: 9px;
+      --r-sm: 5px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--ink);
+    }
+
+    /* ══════ LOGIN ══════ */
+    .login-screen {
+      position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .login-screen.hidden { display: none; }
+    .login-card {
+      background: var(--surface); border-radius: var(--r-xl); box-shadow: var(--shadow-lg);
+      padding: 36px 28px; width: 100%; max-width: 400px; text-align: center;
+    }
+    .login-icon { font-size: 40px; margin-bottom: 12px; }
+    .login-title { font-family:'Sora',sans-serif; font-size: 22px; font-weight: 700; color: var(--moss); margin-bottom: 6px; }
+    .login-sub { font-size: 13px; color: var(--ink3); margin-bottom: 28px; line-height: 1.7; }
+    .login-input {
+      width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: var(--r-md);
+      font-size: 16px; font-family: inherit; text-align: center; letter-spacing: 0.08em;
+      color: var(--ink); background: var(--surface); margin-bottom: 14px;
+    }
+    .login-input:focus { outline:none; border-color: var(--moss); box-shadow: 0 0 0 4px rgba(58,107,71,0.15); }
+    .login-error { color: var(--clay); font-size: 13px; margin-bottom: 10px; min-height: 16px; }
+    .login-btn {
+      width: 100%; padding: 14px; background: var(--moss); color: #fff; border: none;
+      border-radius: var(--r-lg); font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .login-btn:hover { background: var(--moss2); }
+    .login-btn:disabled { background: var(--ink4); cursor: not-allowed; }
+    .login-note {
+      margin-top: 20px; padding: 12px; background: var(--amber-xl); border-radius: var(--r-md);
+      font-size: 11px; color: var(--ink3); line-height: 1.7; text-align: left;
+    }
+
+    /* ══════ HEADER ══════ */
+    .app-header {
+      background: var(--moss); padding: 0 20px; height: 54px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(10,30,15,0.25);
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+    .header-icon {
+      width: 32px; height: 32px; background: rgba(255,255,255,0.18); border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+    }
+    .header-logo { font-family:'Sora',sans-serif; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.04em; }
+    .header-tagline { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .count-badge {
+      background: rgba(255,255,255,0.18); color: #fff; font-family:'Sora',sans-serif;
+      font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 100px;
+    }
+    .logout-btn {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
+      font-size: 11px; font-family: inherit; padding: 4px 10px; border-radius: var(--r-sm); cursor: pointer;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+
+    /* ══════ TAB NAV ══════ */
+    .tab-nav {
+      background: var(--surface); border-bottom: 1px solid var(--border); display: flex; padding: 0 12px;
+      position: sticky; top: 54px; z-index: 90; box-shadow: var(--shadow-sm); overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 13px 16px; font-family:'Zen Kaku Gothic New',sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--ink3); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent;
+      transition: all 0.18s; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--moss); }
+    .tab-btn.active { color: var(--moss); font-weight: 700; border-bottom-color: var(--moss); }
+    .tab-count {
+      background: var(--moss-lt); color: var(--moss); font-family:'Sora',sans-serif; font-size: 10px;
+      font-weight: 700; padding: 2px 7px; border-radius: 100px;
+    }
+
+    /* ══════ MAIN ══════ */
+    .main-wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 80px; }
+    .tab-page { display: none; }
+    .tab-page.active { display: block; }
+
+    .card {
+      background: var(--surface); border-radius: var(--r-xl); box-shadow: var(--shadow);
+      border: 1.5px solid var(--border2); overflow: hidden; margin-bottom: 20px;
+    }
+    .card-header {
+      background: linear-gradient(135deg, var(--moss-xl) 0%, var(--sage-lt) 100%);
+      padding: 18px 22px 16px; border-bottom: 1px solid var(--border);
+    }
+    .card-title { font-size: 16px; font-weight: 700; color: var(--moss); margin-bottom: 4px; }
+    .card-sub { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+    .card-body { padding: 20px 22px; }
+
+    .f-row { margin-bottom: 16px; }
+    .f-row:last-child { margin-bottom: 0; }
+    .f-label { display: block; font-size: 12px; font-weight: 700; color: var(--ink2); margin-bottom: 7px; }
+
+    input[type="text"] {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-family: inherit; font-size: 14px; color: var(--ink); background: var(--surface);
+    }
+    input[type="text"]:focus { outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(58,107,71,0.12); }
+
+    .textarea-wrap { position: relative; }
+    textarea {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-family: inherit; font-size: 14px; color: var(--ink); background: var(--surface);
+      resize: vertical; min-height: 100px; line-height: 1.75;
+    }
+    textarea:focus { outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(58,107,71,0.12); }
+    textarea.has-voice { padding-bottom: 48px; }
+    .voice-btn {
+      position: absolute; bottom: 10px; right: 10px; background: var(--moss-lt); border: 1px solid var(--moss3);
+      color: var(--moss); border-radius: var(--r-md); padding: 6px 12px; font-size: 12px; font-family: inherit;
+      cursor: pointer; transition: all 0.14s;
+    }
+    .voice-btn:hover { background: var(--moss); color: #fff; }
+    .voice-btn.recording { background: var(--clay); border-color: var(--clay); color: #fff; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      flex: 1; padding: 14px; border: none; border-radius: var(--r-lg); font-family: inherit; font-size: 14px;
+      font-weight: 700; cursor: pointer; transition: all 0.18s; display: flex; align-items: center;
+      justify-content: center; gap: 6px; white-space: nowrap;
+    }
+    .btn-primary { background: var(--moss); color: #fff; box-shadow: var(--shadow); }
+    .btn-primary:hover { background: var(--moss2); }
+    .btn-secondary { background: var(--surface2); color: var(--ink2); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg2); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 分類チップ */
+    .classify-box {
+      margin-top: 18px; padding: 16px; background: var(--moss-xl); border: 1.5px solid var(--moss-lt);
+      border-radius: var(--r-lg); display: none;
+    }
+    .classify-box.show { display: block; }
+    .classify-label { font-size: 12px; font-weight: 700; color: var(--moss); margin-bottom: 10px; }
+    .cat-chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cat-chip {
+      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 100px; font-size: 13px;
+      font-weight: 600; color: var(--ink2); background: var(--surface); cursor: pointer; transition: all 0.14s;
+      user-select: none;
+    }
+    .cat-chip:hover { border-color: var(--moss); }
+    .cat-chip.selected.cat-kaigo  { background: var(--moss);  border-color: var(--moss);  color: #fff; }
+    .cat-chip.selected.cat-kango  { background: var(--blue);  border-color: var(--blue);  color: #fff; }
+    .cat-chip.selected.cat-moushi { background: var(--amber); border-color: var(--amber); color: #fff; }
+    .cat-chip.selected.cat-hiyari { background: var(--clay);  border-color: var(--clay);  color: #fff; }
+    .cat-chip.selected.cat-sonota { background: var(--ink3);  border-color: var(--ink3);  color: #fff; }
+
+    .badge { display:inline-flex; align-items:center; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+    .badge.cat-kaigo  { background: var(--moss-lt);  color: var(--moss); }
+    .badge.cat-kango  { background: var(--blue-lt);  color: var(--blue); }
+    .badge.cat-moushi { background: var(--amber-lt); color: var(--amber); }
+    .badge.cat-hiyari { background: var(--clay-lt);  color: var(--clay); }
+    .badge.cat-sonota { background: #eee;            color: var(--ink3); }
+
+    /* ══════ 一覧 ══════ */
+    .controls-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+    .filter-chip {
+      padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 100px; font-size: 12px;
+      font-weight: 500; color: var(--ink3); background: var(--surface); cursor: pointer; font-family: inherit;
+    }
+    .filter-chip:hover { border-color: var(--moss); color: var(--moss); }
+    .filter-chip.active { background: var(--moss); border-color: var(--moss); color: #fff; font-weight: 700; }
+    .list-count { margin-left: auto; font-size: 12px; color: var(--ink3); }
+
+    .rec-card {
+      background: var(--surface); border-radius: var(--r-lg); border: 1.5px solid var(--border2);
+      padding: 16px 18px; margin-bottom: 12px; box-shadow: var(--shadow-sm); position: relative;
+    }
+    .rec-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .rec-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .rec-date { font-size: 11px; color: var(--ink4); white-space: nowrap; font-family:'Sora',sans-serif; }
+    .rec-body { font-size: 14px; color: var(--ink); line-height: 1.75; margin-bottom: 8px; white-space: pre-wrap; word-break: break-word; }
+    .rec-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--ink4); }
+    .rec-sent { display: inline-flex; align-items: center; gap: 4px; color: var(--moss); font-weight: 700; }
+
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--ink4); }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-title { font-size: 15px; font-weight: 700; color: var(--ink3); margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; line-height: 1.7; }
+
+    /* ══════ 申し送り ══════ */
+    .handover-item {
+      display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: var(--surface);
+      border: 1.5px solid var(--border2); border-radius: var(--r-md); margin-bottom: 8px;
+    }
+    .handover-check {
+      width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px;
+      background: var(--surface); margin-top: 2px;
+    }
+    .handover-check.on { border-color: var(--amber); background: var(--amber); color: #fff; }
+    .handover-body { flex: 1; font-size: 13px; line-height: 1.6; }
+    .handover-event {
+      background: var(--moss-xl); border: 1.5px solid var(--moss-lt); border-radius: var(--r-md);
+      padding: 12px 14px; margin-bottom: 8px; font-size: 12px; color: var(--ink2);
+    }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--ink); color: #fff; padding: 12px 24px; border-radius: 100px; font-size: 13px;
+      font-weight: 500; box-shadow: var(--shadow-lg); z-index: 9999; transition: transform 0.3s ease; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .app-footer {
+      text-align: center; padding: 20px; font-size: 10px; color: var(--ink4); line-height: 1.8;
+      border-top: 1px solid var(--border2); margin-top: 20px;
+    }
+
+    @media (max-width: 520px) {
+      .main-wrap { padding: 16px 12px 80px; }
+      .card-body, .card-header { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">📝</div>
+    <div class="login-title">きろくわけ</div>
+    <div class="login-sub">気づいたことを書くだけで、介護記録・看護記録・申し送り・ヒヤリハットに自動で振り分けます。<br>施設のアクセスコードを入力してください。</div>
+    <input type="text" id="login-code" placeholder="例：KRW-ABCD1234"
+      oninput="this.value=this.value.toUpperCase()"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-error" id="login-error"></div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">入室する</button>
+    <div class="login-note">
+      ⚠️ 本サービスはCloudflare Workers KVを使用しています。読み取り上限10万回/日・書き込み上限1,000回/日。<br>
+      自動分類はキーワードに基づく下書きです。最終的な分類は職員が確認・修正してください。
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="header-icon">📝</div>
+    <div>
+      <div class="header-logo">きろくわけ</div>
+      <div class="header-tagline">気づきをみんなの記録にする</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="count-badge">本日 <span id="today-count">0</span> 件</div>
+    <button class="logout-btn" onclick="logout()">ログアウト</button>
+  </div>
+</header>
+
+<!-- TAB NAV -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('write', event)">✏️ 記録する</button>
+  <button class="tab-btn" onclick="switchTab('list', event)">📋 一覧 <span class="tab-count" id="list-count-badge">0</span></button>
+  <button class="tab-btn" onclick="switchTab('handover', event)">📤 申し送り <span class="tab-count" id="handover-count-badge">0</span></button>
+</nav>
+
+<main class="main-wrap">
+
+  <!-- ══════ 記録する ══════ -->
+  <div class="tab-page active" id="tab-write">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">気づいたことを書く</div>
+        <div class="card-sub">短いメモでOKです。マイクで話しても入力できます。書いたら「分類する」を押してください。</div>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">内容</div>
+          <div class="textarea-wrap">
+            <textarea class="has-voice" id="rec-body" rows="4"
+              placeholder="例：◯◯様、昼食時にむせ込みあり。様子見が必要。夜勤の方に注意して見てほしい。"></textarea>
+            <button class="voice-btn" onclick="toggleVoice('rec-body', this)">🎤 音声入力</button>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-label">記録者名</div>
+          <input type="text" id="rec-author" placeholder="例：田中（夜勤）">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="runClassify()">🔎 分類する</button>
+        </div>
+
+        <div class="classify-box" id="classify-box">
+          <div class="classify-label">分類の下書き（タップして選び直せます。複数選択できます）</div>
+          <div class="cat-chip-group" id="cat-chip-group"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top:18px;">
+          <button class="btn btn-primary" onclick="submitRecord()">💾 保存する</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tab-write -->
+
+  <!-- ══════ 一覧 ══════ -->
+  <div class="tab-page" id="tab-list">
+    <div class="controls-row">
+      <button class="filter-chip active" onclick="filterList('all', event)">すべて</button>
+      <button class="filter-chip" onclick="filterList('kaigo', event)">介護記録</button>
+      <button class="filter-chip" onclick="filterList('kango', event)">看護記録</button>
+      <button class="filter-chip" onclick="filterList('moushi', event)">申し送り</button>
+      <button class="filter-chip" onclick="filterList('hiyari', event)">ヒヤリハット</button>
+      <button class="filter-chip" onclick="filterList('sonota', event)">その他</button>
+      <span class="list-count" id="list-total">0 件</span>
+    </div>
+    <div id="rec-list"></div>
+  </div><!-- /tab-list -->
+
+  <!-- ══════ 申し送り ══════ -->
+  <div class="tab-page" id="tab-handover">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">本日の申し送りを送信する</div>
+        <div class="card-sub">「申し送り」に分類された記録のうち、まだ送信していないものが一覧に出ます。<br>勤務終了のタイミングで、送りたい項目を選んで送信してください。複数の職員が押しても構いません。</div>
+      </div>
+      <div class="card-body">
+        <div id="handover-pending"></div>
+        <div class="f-row" style="margin-top:14px;">
+          <div class="f-label">送信者名</div>
+          <input type="text" id="handover-author" placeholder="例：田中（夜勤）">
+        </div>
+        <div class="btn-row" style="margin-top:14px;">
+          <button class="btn btn-primary" onclick="sendHandover()">📤 選んだ項目を申し送り送信</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">送信履歴</div>
+        <div class="card-sub">これまでに誰がいつ申し送りを送信したかの記録です。</div>
+      </div>
+      <div class="card-body">
+        <div id="handover-history"></div>
+      </div>
+    </div>
+  </div><!-- /tab-handover -->
+
+</main>
+
+<footer class="app-footer">
+  ※ 本アプリのデータ同期はCloudflare Workers KVを使用しています。<br>
+  無料プランの上限：読み取り 100,000回/日・書き込み 1,000回/日。上限超過時はデータの取得・送信ができなくなる場合があります。<br>
+  自動分類はキーワードに基づく下書きです。判断の最終責任は職員にあります。<br>
+  © きろくわけ — 介護・看護記録支援ツール
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════
+   STORAGE / WORKER
+   key: kirokuwake_cache → [{id, body, author, categories[], sent, createdAt}]
+   handover events:        [{id, type:'handover_event', itemIds[], author, createdAt}]
+══════════════════════════════════════ */
+const CODE_KEY   = 'kirokuwake_access_code';
+const CACHE_KEY  = 'kirokuwake_cache';
+const WORKER_URL = 'https://cocolog-license.sr-g-solti.workers.dev';
+const APP_NAME   = 'kirokuwake';
+
+let accessCode = '';
+let currentFilter = 'all';
+let pendingCategories = [];
+
+function getCached()    { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || []; } catch { return []; } }
+function setCached(arr) { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)); }
+
+async function apiPost(payload) {
+  const res = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
+
+async function getRecordsForce() {
+  try {
+    const r = await apiPost({ action: 'data_read', app: APP_NAME, code: accessCode, limit: 500 });
+    if (r.ok && r.items) { setCached(r.items); return r.items; }
+  } catch (e) {}
+  return getCached();
+}
+
+/* ══════════════════════════════════════
+   LOGIN
+══════════════════════════════════════ */
+async function doLogin() {
+  const code = document.getElementById('login-code').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!code) { errEl.textContent = 'コードを入力してください'; return; }
+
+  errEl.textContent = '';
+  const btn = document.getElementById('login-btn');
+  btn.textContent = '確認中...'; btn.disabled = true;
+
+  try {
+    const data = await apiPost({ code, deviceId: 'facility', app: APP_NAME });
+    if (data.ok) {
+      accessCode = code;
+      localStorage.setItem(CODE_KEY, code);
+      document.getElementById('login-screen').classList.add('hidden');
+      await refreshAll();
+    } else {
+      const msgs = { invalid_code: 'コードが正しくありません', expired: 'コードの有効期限が切れています' };
+      errEl.textContent = msgs[data.error] || '認証に失敗しました';
+    }
+  } catch {
+    errEl.textContent = '通信エラーが発生しました。接続を確認してください。';
+  }
+  btn.textContent = '入室する'; btn.disabled = false;
+}
+
+function logout() {
+  localStorage.removeItem(CODE_KEY);
+  accessCode = '';
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+async function refreshAll() {
+  await getRecordsForce();
+  renderAll();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(CODE_KEY);
+  if (saved) {
+    accessCode = saved;
+    document.getElementById('login-screen').classList.add('hidden');
+    refreshAll();
+  }
+});
+
+/* ══════════════════════════════════════
+   TAB
+══════════════════════════════════════ */
+function switchTab(name, evt) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (evt) evt.currentTarget.classList.add('active');
+  renderAll();
+}
+
+/* ══════════════════════════════════════
+   VOICE INPUT
+══════════════════════════════════════ */
+let isRecording = false;
+let mediaRecog = null;
+function toggleVoice(textareaId, btn) {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showToast('このブラウザは音声入力に対応していません');
+    return;
+  }
+  if (isRecording) { if (mediaRecog) mediaRecog.stop(); return; }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  mediaRecog = new SR();
+  mediaRecog.lang = 'ja-JP';
+  mediaRecog.continuous = true;
+  mediaRecog.interimResults = true;
+
+  const ta = document.getElementById(textareaId);
+  let base = ta.value;
+
+  mediaRecog.onresult = e => {
+    let fin = base, int = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) { fin += e.results[i][0].transcript; base = fin; }
+      else int += e.results[i][0].transcript;
+    }
+    ta.value = fin + int;
+  };
+  mediaRecog.onend = () => { isRecording = false; btn.classList.remove('recording'); btn.innerHTML = '🎤 音声入力'; };
+  mediaRecog.onerror = () => { isRecording = false; btn.classList.remove('recording'); btn.innerHTML = '🎤 音声入力'; };
+  mediaRecog.start();
+  isRecording = true;
+  btn.classList.add('recording');
+  btn.innerHTML = '⏹ 停止';
+}
+
+/* ══════════════════════════════════════
+   CLASSIFY ENGINE（キーワード辞書による下書き分類）
+   ※ AI APIを使わず、施設側に追加コストが発生しない設計
+══════════════════════════════════════ */
+const CATEGORY_DEFS = {
+  kaigo:  { label: '介護記録',     cls: 'cat-kaigo' },
+  kango:  { label: '看護記録',     cls: 'cat-kango' },
+  moushi: { label: '申し送り',     cls: 'cat-moushi' },
+  hiyari: { label: 'ヒヤリハット', cls: 'cat-hiyari' },
+  sonota: { label: 'その他',       cls: 'cat-sonota' },
+};
+
+const KEYWORD_DICT = {
+  kaigo: ['食事','配膳','下膳','入浴','清拭','排泄','トイレ','失禁','おむつ','オムツ','移乗','移動','車椅子',
+          '歩行','体位変換','更衣','着替え','整容','洗面','口腔ケア','水分補給','飲水','レクリエーション','レク',
+          '離床','臥床','着座','清掃'],
+  kango: ['体温','血圧','脈拍','SpO2','酸素','呼吸','服薬','内服','薬を','点滴','注射','処置','褥瘡','創部',
+          '医師','往診','受診','痰','吸引','嘔吐','下痢','発熱','咳','疼痛','痛みを訴え','バイタル','むせ込み','むせ'],
+  moushi: ['申し送り','引き継ぎ','引継ぎ','次の勤務','夜勤の方','日勤の方','お願いします','よろしくお願い',
+           '様子を見て','様子見','継続して観察','確認してください','報告します'],
+  hiyari: ['ヒヤリ','ヒヤッ','転倒','転落','誤嚥','誤薬','異食','ぶつかった','落ちた','間違え','間違って',
+           'ミスがあった','危なかった','事故','怪我','けが','インシデント'],
+};
+
+function classifyText(text) {
+  const hits = [];
+  for (const [cat, words] of Object.entries(KEYWORD_DICT)) {
+    if (words.some(w => text.includes(w))) hits.push(cat);
+  }
+  if (hits.length === 0) hits.push('sonota');
+  return hits;
+}
+
+function runClassify() {
+  const body = document.getElementById('rec-body').value.trim();
+  if (!body) { showToast('内容を入力してください'); return; }
+  pendingCategories = classifyText(body);
+  renderCatChips();
+  document.getElementById('classify-box').classList.add('show');
+}
+
+function renderCatChips() {
+  const group = document.getElementById('cat-chip-group');
+  group.innerHTML = Object.entries(CATEGORY_DEFS).map(([key, def]) => {
+    const selected = pendingCategories.includes(key) ? ' selected' : '';
+    return `<div class="cat-chip ${def.cls}${selected}" onclick="toggleCatChip('${key}')">${def.label}</div>`;
+  }).join('');
+}
+
+function toggleCatChip(key) {
+  const idx = pendingCategories.indexOf(key);
+  if (idx >= 0) pendingCategories.splice(idx, 1);
+  else pendingCategories.push(key);
+  renderCatChips();
+}
+
+/* ══════════════════════════════════════
+   SUBMIT RECORD
+══════════════════════════════════════ */
+async function submitRecord() {
+  const body = document.getElementById('rec-body').value.trim();
+  const author = document.getElementById('rec-author').value.trim() || '匿名';
+  if (!body) { showToast('内容を入力してください'); return; }
+  if (pendingCategories.length === 0) runClassify();
+  if (pendingCategories.length === 0) pendingCategories = ['sonota'];
+
+  const record = {
+    id: Date.now().toString(),
+    body, author,
+    categories: [...pendingCategories],
+    sent: false,
+    createdAt: new Date().toISOString(),
+  };
+
+  try {
+    const r = await apiPost({ action: 'data_write', app: APP_NAME, code: accessCode, id: record.id, payload: record });
+    if (!r.ok) { showToast('保存に失敗しました。通信を確認してください。'); return; }
+  } catch {
+    showToast('通信エラーが発生しました。'); return;
+  }
+
+  const cached = getCached();
+  cached.unshift(record);
+  setCached(cached);
+
+  document.getElementById('rec-body').value = '';
+  document.getElementById('classify-box').classList.remove('show');
+  pendingCategories = [];
+
+  renderAll();
+  showToast('✓ 保存しました');
+}
+
+/* ══════════════════════════════════════
+   RENDER
+══════════════════════════════════════ */
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDateTime(iso) {
+  const d = new Date(iso);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function isToday(iso) {
+  const d = new Date(iso), now = new Date();
+  return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate();
+}
+
+function renderAll() {
+  const all = getCached();
+  const records = all.filter(r => r.categories);
+  const events  = all.filter(r => r.type === 'handover_event');
+
+  document.getElementById('today-count').textContent = records.filter(r => isToday(r.createdAt)).length;
+  renderList(records);
+  renderHandover(records, events);
+}
+
+function filterList(cat, evt) {
+  currentFilter = cat;
+  document.querySelectorAll('#tab-list .filter-chip').forEach(c => c.classList.remove('active'));
+  if (evt) evt.currentTarget.classList.add('active');
+  renderAll();
+}
+
+function recCardHtml(r) {
+  const tags = r.categories.map(c => `<span class="badge ${CATEGORY_DEFS[c].cls}">${CATEGORY_DEFS[c].label}</span>`).join(' ');
+  const sentTag = r.sent ? `<span class="rec-sent">📤 送信済み</span>` : '';
+  return `<div class="rec-card">
+    <div class="rec-top">
+      <div class="rec-meta">${tags}</div>
+      <span class="rec-date">${fmtDateTime(r.createdAt)}</span>
+    </div>
+    <div class="rec-body">${escHtml(r.body)}</div>
+    <div class="rec-footer">
+      <span>👤 ${escHtml(r.author || 'スタッフ')}</span>
+      ${sentTag}
+    </div>
+  </div>`;
+}
+
+function renderList(records) {
+  const filtered = currentFilter === 'all' ? records : records.filter(r => r.categories.includes(currentFilter));
+  document.getElementById('list-count-badge').textContent = records.length;
+  document.getElementById('list-total').textContent = filtered.length + ' 件';
+
+  const list = document.getElementById('rec-list');
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">まだ記録がありません</div>
+      <div class="empty-sub">「記録する」タブから最初の一件を書いてみましょう。</div>
+    </div>`;
+    return;
+  }
+  list.innerHTML = filtered
+    .slice()
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .map(recCardHtml)
+    .join('');
+}
+
+let handoverSelected = new Set();
+function renderHandover(records, events) {
+  const pending = records.filter(r => r.categories.includes('moushi') && !r.sent)
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+  document.getElementById('handover-count-badge').textContent = pending.length;
+
+  // 初回は全件選択状態にする
+  if (handoverSelected.size === 0) pending.forEach(r => handoverSelected.add(r.id));
+
+  const pendingEl = document.getElementById('handover-pending');
+  if (pending.length === 0) {
+    pendingEl.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">✅</div>
+      <div class="empty-title">未送信の申し送りはありません</div>
+      <div class="empty-sub">「申し送り」に分類された記録があると、ここに表示されます。</div>
+    </div>`;
+  } else {
+    pendingEl.innerHTML = pending.map(r => `
+      <div class="handover-item">
+        <div class="handover-check${handoverSelected.has(r.id)?' on':''}" onclick="toggleHandoverSelect('${r.id}')">✓</div>
+        <div class="handover-body">
+          <div style="color:var(--ink4);font-size:11px;margin-bottom:3px;">${fmtDateTime(r.createdAt)} ・ ${escHtml(r.author||'スタッフ')}</div>
+          ${escHtml(r.body)}
+        </div>
+      </div>`).join('');
+  }
+
+  const historyEl = document.getElementById('handover-history');
+  const sortedEvents = events.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  if (sortedEvents.length === 0) {
+    historyEl.innerHTML = `<div class="empty-state" style="padding:24px;">
+      <div class="empty-sub">送信履歴はまだありません</div>
+    </div>`;
+  } else {
+    historyEl.innerHTML = sortedEvents.map(ev => `
+      <div class="handover-event">
+        📤 <b>${escHtml(ev.author||'スタッフ')}</b> が ${fmtDateTime(ev.createdAt)} に ${ev.itemIds.length} 件を送信
+      </div>`).join('');
+  }
+}
+
+function toggleHandoverSelect(id) {
+  if (handoverSelected.has(id)) handoverSelected.delete(id);
+  else handoverSelected.add(id);
+  renderAll();
+}
+
+async function sendHandover() {
+  const author = document.getElementById('handover-author').value.trim() || '匿名';
+  const itemIds = [...handoverSelected];
+  if (itemIds.length === 0) { showToast('送信する項目を選んでください'); return; }
+
+  const all = getCached();
+  const targets = all.filter(r => itemIds.includes(r.id));
+
+  // 各記録を「送信済み」にして保存し直す
+  for (const r of targets) {
+    r.sent = true;
+    try { await apiPost({ action: 'data_write', app: APP_NAME, code: accessCode, id: r.id, payload: r }); }
+    catch {}
+  }
+
+  // 申し送り送信イベントを記録（全体のシートに残る部分）
+  const event = {
+    id: Date.now().toString() + '-ev',
+    type: 'handover_event',
+    itemIds, author,
+    createdAt: new Date().toISOString(),
+  };
+  try { await apiPost({ action: 'data_write', app: APP_NAME, code: accessCode, id: event.id, payload: event }); }
+  catch {}
+
+  // ローカルキャッシュも即時更新（再取得が失敗してもUIに反映されるように）
+  all.unshift(event);
+  setCached(all);
+
+  handoverSelected = new Set();
+  getRecordsForce().then(renderAll); // バックグラウンドで最新化（失敗してもローカル反映済み）
+  renderAll();
+  showToast('✓ 申し送りを送信しました');
+}
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>
