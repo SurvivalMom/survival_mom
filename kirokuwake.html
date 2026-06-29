@@ -275,6 +275,43 @@
       .main-wrap { padding: 16px 12px 80px; }
       .card-body, .card-header { padding: 16px; }
     }
+
+    /* ══════ 印刷タブ ══════ */
+    .print-field-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 14px; }
+    .print-field { flex: 1; min-width: 160px; }
+    input[type="month"], input[type="date"], select {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--r-md);
+      font-family: inherit; font-size: 14px; color: var(--ink); background: var(--surface);
+    }
+    input[type="month"]:focus, input[type="date"]:focus, select:focus {
+      outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(58,107,71,0.12);
+    }
+    .print-preview-note { font-size: 12px; color: var(--ink3); line-height: 1.7; margin-bottom: 14px; }
+
+    /* 印刷専用エリア（画面上は隠す） */
+    #print-area { display: none; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { display: block; position: absolute; top: 0; left: 0; width: 100%; }
+      @page { size: A4; margin: 14mm 12mm; }
+
+      .print-sheet { page-break-after: always; }
+      .print-sheet:last-child { page-break-after: auto; }
+      .print-title { font-size: 18px; font-weight: 700; color: #000; margin-bottom: 4px; }
+      .print-sub { font-size: 12px; color: #333; margin-bottom: 14px; }
+      .print-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+      .print-table th, .print-table td {
+        border: 1px solid #999; padding: 6px 8px; text-align: left; vertical-align: top;
+      }
+      .print-table th { background: #eee; }
+      .print-col-date  { width: 70px; white-space: nowrap; }
+      .print-col-cat   { width: 90px; }
+      .print-col-author{ width: 70px; }
+      .print-col-target{ width: 90px; }
+      .print-empty { font-size: 12px; color: #555; padding: 20px 0; }
+    }
   </style>
 </head>
 <body>
@@ -317,6 +354,7 @@
   <button class="tab-btn active" onclick="switchTab('write', event)">✏️ 記録する</button>
   <button class="tab-btn" onclick="switchTab('list', event)">📋 一覧 <span class="tab-count" id="list-count-badge">0</span></button>
   <button class="tab-btn" onclick="switchTab('handover', event)">📤 申し送り <span class="tab-count" id="handover-count-badge">0</span></button>
+  <button class="tab-btn" onclick="switchTab('print', event)">🖨 印刷</button>
 </nav>
 
 <main class="main-wrap">
@@ -340,6 +378,11 @@
         <div class="f-row">
           <div class="f-label">記録者名</div>
           <input type="text" id="rec-author" placeholder="例：田中（夜勤）">
+        </div>
+        <div class="f-row">
+          <div class="f-label">対象の利用者名（任意）</div>
+          <input type="text" id="rec-target" list="target-name-list" placeholder="例：山田 太郎様">
+          <datalist id="target-name-list"></datalist>
         </div>
 
         <div class="btn-row">
@@ -402,7 +445,59 @@
     </div>
   </div><!-- /tab-handover -->
 
+  <!-- ══════ 印刷 ══════ -->
+  <div class="tab-page" id="tab-print">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">全体の一覧を月ごとに印刷</div>
+        <div class="card-sub">選んだ月の全記録を、A4サイズで印刷できる形にまとめます。</div>
+      </div>
+      <div class="card-body">
+        <div class="print-field-row">
+          <div class="print-field">
+            <div class="f-label">対象月</div>
+            <input type="month" id="print-month" oninput="updateMonthPreview()">
+          </div>
+        </div>
+        <div class="print-preview-note" id="print-month-preview">対象月の件数を確認するには月を選んでください。</div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="printMonthly()">🖨 この月を印刷する</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">利用者別の一覧を印刷</div>
+        <div class="card-sub">選んだ利用者の記録だけを、A4サイズで印刷できる形にまとめます。期間は省略すると全期間になります。</div>
+      </div>
+      <div class="card-body">
+        <div class="f-row">
+          <div class="f-label">利用者名</div>
+          <input type="text" id="print-target" list="target-name-list" placeholder="例：山田 太郎様" oninput="updateTargetPreview()">
+        </div>
+        <div class="print-field-row">
+          <div class="print-field">
+            <div class="f-label">期間（開始・任意）</div>
+            <input type="date" id="print-target-from" oninput="updateTargetPreview()">
+          </div>
+          <div class="print-field">
+            <div class="f-label">期間（終了・任意）</div>
+            <input type="date" id="print-target-to" oninput="updateTargetPreview()">
+          </div>
+        </div>
+        <div class="print-preview-note" id="print-target-preview">利用者名を入力すると件数を確認できます。</div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="printByTarget()">🖨 この利用者の一覧を印刷する</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tab-print -->
+
 </main>
+
+<!-- 印刷専用エリア（画面表示はなし。window.print() 実行時のみ見える） -->
+<div id="print-area"></div>
 
 <footer class="app-footer">
   ※ 本アプリのデータ同期はCloudflare Workers KVを使用しています。<br>
@@ -607,13 +702,14 @@ function toggleCatChip(key) {
 async function submitRecord() {
   const body = document.getElementById('rec-body').value.trim();
   const author = document.getElementById('rec-author').value.trim() || '匿名';
+  const target = document.getElementById('rec-target').value.trim() || null;
   if (!body) { showToast('内容を入力してください'); return; }
   if (pendingCategories.length === 0) runClassify();
   if (pendingCategories.length === 0) pendingCategories = ['sonota'];
 
   const record = {
     id: Date.now().toString(),
-    body, author,
+    body, author, target,
     categories: [...pendingCategories],
     sent: false,
     createdAt: new Date().toISOString(),
@@ -631,6 +727,7 @@ async function submitRecord() {
   setCached(cached);
 
   document.getElementById('rec-body').value = '';
+  document.getElementById('rec-target').value = '';
   document.getElementById('classify-box').classList.remove('show');
   pendingCategories = [];
 
@@ -661,6 +758,7 @@ function renderAll() {
   document.getElementById('today-count').textContent = records.filter(r => isToday(r.createdAt)).length;
   renderList(records);
   renderHandover(records, events);
+  populateTargetDatalist(records);
 }
 
 function filterList(cat, evt) {
@@ -673,6 +771,7 @@ function filterList(cat, evt) {
 function recCardHtml(r) {
   const tags = r.categories.map(c => `<span class="badge ${CATEGORY_DEFS[c].cls}">${CATEGORY_DEFS[c].label}</span>`).join(' ');
   const sentTag = r.sent ? `<span class="rec-sent">📤 送信済み</span>` : '';
+  const targetTag = r.target ? `<span style="color:var(--ink3);">🧑 ${escHtml(r.target)}</span>` : '';
   return `<div class="rec-card">
     <div class="rec-top">
       <div class="rec-meta">${tags}</div>
@@ -680,10 +779,16 @@ function recCardHtml(r) {
     </div>
     <div class="rec-body">${escHtml(r.body)}</div>
     <div class="rec-footer">
-      <span>👤 ${escHtml(r.author || 'スタッフ')}</span>
+      <span>👤 ${escHtml(r.author || 'スタッフ')} ${targetTag}</span>
       ${sentTag}
     </div>
   </div>`;
+}
+
+function populateTargetDatalist(records) {
+  const names = [...new Set(records.map(r => r.target).filter(Boolean))].sort();
+  document.getElementById('target-name-list').innerHTML =
+    names.map(n => `<option value="${escHtml(n)}"></option>`).join('');
 }
 
 function renderList(records) {
@@ -788,6 +893,112 @@ async function sendHandover() {
   getRecordsForce().then(renderAll); // バックグラウンドで最新化（失敗してもローカル反映済み）
   renderAll();
   showToast('✓ 申し送りを送信しました');
+}
+
+/* ══════════════════════════════════════
+   印刷（月ごと一覧 / 利用者別一覧）
+══════════════════════════════════════ */
+function getAllRecords() {
+  return getCached().filter(r => r.categories);
+}
+
+function printDateLabel(iso) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function buildPrintRows(records) {
+  if (records.length === 0) {
+    return `<div class="print-empty">該当する記録はありません。</div>`;
+  }
+  const sorted = records.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  const rows = sorted.map(r => `
+    <tr>
+      <td class="print-col-date">${printDateLabel(r.createdAt)}</td>
+      <td class="print-col-cat">${r.categories.map(c => CATEGORY_DEFS[c].label).join('、')}</td>
+      <td class="print-col-target">${escHtml(r.target || '')}</td>
+      <td class="print-col-author">${escHtml(r.author || '')}</td>
+      <td>${escHtml(r.body)}</td>
+    </tr>`).join('');
+  return `<table class="print-table">
+    <thead><tr>
+      <th class="print-col-date">日時</th>
+      <th class="print-col-cat">分類</th>
+      <th class="print-col-target">利用者</th>
+      <th class="print-col-author">記録者</th>
+      <th>内容</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderPrintArea(title, subtitle, records) {
+  const area = document.getElementById('print-area');
+  area.innerHTML = `<div class="print-sheet">
+    <div class="print-title">${escHtml(title)}</div>
+    <div class="print-sub">${escHtml(subtitle)}</div>
+    ${buildPrintRows(records)}
+  </div>`;
+}
+
+function recordsInMonth(records, yyyymm) {
+  return records.filter(r => r.createdAt.slice(0, 7) === yyyymm);
+}
+
+function updateMonthPreview() {
+  const month = document.getElementById('print-month').value;
+  const el = document.getElementById('print-month-preview');
+  if (!month) { el.textContent = '対象月の件数を確認するには月を選んでください。'; return; }
+  const count = recordsInMonth(getAllRecords(), month).length;
+  el.textContent = `${month.replace('-', '年')}月の記録：${count} 件`;
+}
+
+function printMonthly() {
+  const month = document.getElementById('print-month').value;
+  if (!month) { showToast('対象月を選んでください'); return; }
+  const records = recordsInMonth(getAllRecords(), month);
+  const [y, m] = month.split('-');
+  renderPrintArea(
+    `全体の記録一覧（${y}年${m}月）`,
+    `印刷日：${printDateLabel(new Date().toISOString())} ／ 件数：${records.length} 件`,
+    records
+  );
+  window.print();
+}
+
+function recordsForTarget(records, name, from, to) {
+  return records.filter(r => {
+    if ((r.target || '') !== name) return false;
+    const day = r.createdAt.slice(0, 10);
+    if (from && day < from) return false;
+    if (to && day > to) return false;
+    return true;
+  });
+}
+
+function updateTargetPreview() {
+  const name = document.getElementById('print-target').value.trim();
+  const from = document.getElementById('print-target-from').value;
+  const to   = document.getElementById('print-target-to').value;
+  const el = document.getElementById('print-target-preview');
+  if (!name) { el.textContent = '利用者名を入力すると件数を確認できます。'; return; }
+  const count = recordsForTarget(getAllRecords(), name, from, to).length;
+  el.textContent = `${name} さんの記録：${count} 件`;
+}
+
+function printByTarget() {
+  const name = document.getElementById('print-target').value.trim();
+  if (!name) { showToast('利用者名を入力してください'); return; }
+  const from = document.getElementById('print-target-from').value;
+  const to   = document.getElementById('print-target-to').value;
+  const records = recordsForTarget(getAllRecords(), name, from, to);
+  const periodLabel = (from || to) ? `期間：${from || '〜'} 〜 ${to || '〜'}` : '期間：全期間';
+  renderPrintArea(
+    `利用者別 記録一覧（${name}）`,
+    `${periodLabel} ／ 印刷日：${printDateLabel(new Date().toISOString())} ／ 件数：${records.length} 件`,
+    records
+  );
+  window.print();
 }
 
 /* ══════════════════════════════════════
