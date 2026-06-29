@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>通所介護 勤務表作成 | 従業者の勤務の体制及び勤務形態一覧表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --bg:#f2f4f7; --surface:#fff; --surface2:#f7f8fa;
+    --teal:#1f6f64; --teal-lt:#dff0ec; --teal-xl:#f1f9f7;
+    --ink:#1c2430; --ink2:#3d4654; --ink3:#7a8494; --ink4:#b3bac4;
+    --border:#dde1e6; --warn:#b8501a; --warn-lt:#fdecdf;
+    --bad:#b8284a; --bad-lt:#fde4ea;
+    --ok:#1e7a4a; --ok-lt:#dff3e6;
+    --r:10px;
+    --shadow:0 2px 10px rgba(20,30,40,.06), 0 1px 3px rgba(20,30,40,.05);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+  .topbar{background:var(--teal);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .topbar h1{font-size:16px;font-weight:700;}
+  .topbar .sub{font-size:11px;opacity:.85;margin-top:2px;}
+  .topbar-actions{display:flex;gap:8px;align-items:center;}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:7px;padding:8px 14px;font-size:13px;font-weight:600;}
+  .btn-primary{background:#fff;color:var(--teal);}
+  .btn-primary:hover{background:#eaf6f3;}
+  .btn-ghost{background:rgba(255,255,255,.15);color:#fff;}
+  .btn-ghost:hover{background:rgba(255,255,255,.25);}
+  .btn-sm{background:var(--teal-lt);color:var(--teal);padding:5px 10px;font-size:12px;}
+  .btn-sm:hover{background:#cfe9e2;}
+  .btn-del{background:var(--bad-lt);color:var(--bad);padding:4px 8px;font-size:12px;border-radius:6px;}
+  .btn-del:hover{background:#fad0db;}
+  main{max-width:1400px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:16px;}
+  .card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px;}
+  .card h2{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--ink2);display:flex;align-items:center;gap:8px;}
+  .card h2 .num{background:var(--teal);color:#fff;border-radius:5px;font-size:11px;padding:2px 6px;}
+  .formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+  .field label{display:block;font-size:11px;color:var(--ink3);margin-bottom:3px;font-weight:600;}
+  .field input,.field select{width:100%;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#fff;}
+  .field input:focus,.field select:focus{outline:2px solid var(--teal);outline-offset:-1px;}
+  .field.two{display:flex;gap:6px;align-items:center;}
+  .field.two input{flex:1;}
+  .hint{font-size:11px;color:var(--ink4);margin-top:6px;}
+  table.symtable{width:100%;border-collapse:collapse;font-size:12px;}
+  table.symtable th{background:var(--surface2);color:var(--ink3);font-size:11px;font-weight:600;padding:6px;text-align:center;border-bottom:1px solid var(--border);}
+  table.symtable td{padding:4px;border-bottom:1px solid var(--border);text-align:center;}
+  table.symtable input{width:100%;padding:5px 6px;border:1px solid var(--border);border-radius:5px;font-size:12px;text-align:center;}
+  table.symtable input.code{font-weight:700;width:54px;}
+  .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+  .grid-wrap{overflow:auto;border:1px solid var(--border);border-radius:8px;max-height:70vh;}
+  table.gridtable{border-collapse:collapse;font-size:11.5px;white-space:nowrap;}
+  table.gridtable th,table.gridtable td{border:1px solid var(--border);padding:3px;text-align:center;}
+  table.gridtable thead th{background:var(--surface2);position:sticky;top:0;z-index:3;color:var(--ink2);}
+  .stick{position:sticky;left:0;background:var(--surface);z-index:2;}
+  thead .stick{z-index:4;background:var(--surface2);}
+  .stick.c-role{left:0;width:96px;}
+  .stick.c-work{left:96px;width:70px;}
+  .stick.c-qual{left:166px;width:120px;}
+  .stick.c-name{left:286px;width:100px;}
+  .stick.c-tot{left:386px;width:64px;}
+  .stick.c-del{left:450px;width:34px;}
+  table.gridtable input,table.gridtable select{width:100%;border:none;text-align:center;font-size:11.5px;padding:3px 1px;background:transparent;}
+  table.gridtable select{cursor:pointer;}
+  table.gridtable input:focus,table.gridtable select:focus{outline:1px solid var(--teal);background:#fff;}
+  table.gridtable td.dayhead-sat{background:#e8f1fb;}
+  table.gridtable td.dayhead-sun{background:#fde8ec;}
+  table.gridtable tr.row-summary td{background:var(--teal-xl);font-weight:600;}
+  table.gridtable tr.row-summary input{font-weight:600;}
+  table.gridtable td.flag-bad{background:var(--bad-lt);color:var(--bad);font-weight:700;}
+  .label-cell{text-align:left !important;padding-left:8px !important;font-size:11.5px;color:var(--ink2);font-weight:600;}
+  #validationOutput{display:flex;flex-direction:column;gap:6px;font-size:12.5px;}
+  .vline{padding:7px 10px;border-radius:6px;}
+  .vline.ok{background:var(--ok-lt);color:var(--ok);}
+  .vline.warn{background:var(--warn-lt);color:var(--warn);}
+  .vline.bad{background:var(--bad-lt);color:var(--bad);}
+  .scopeNote{font-size:12px;color:var(--ink3);line-height:1.6;background:var(--surface2);border-radius:8px;padding:10px 12px;}
+  .savedFlag{font-size:11px;color:#cdeee7;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>通所介護 勤務表作成ツール</h1>
+    <div class="sub">従業者の勤務の体制及び勤務形態一覧表（標準様式1）／通所介護専用 ・ ブラウザのみで動作・データは送信されません</div>
+  </div>
+  <div class="topbar-actions">
+    <span class="savedFlag" id="savedFlag"></span>
+    <button class="btn-ghost" onclick="clearAll()">クリア</button>
+    <button class="btn-primary" onclick="exportExcel()">Excel出力（.xlsx）</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="card">
+    <h2><span class="num">1</span>基本情報</h2>
+    <div class="formgrid">
+      <div class="field">
+        <label>令和（年）</label>
+        <input type="number" id="eraYear" min="1" max="40">
+      </div>
+      <div class="field">
+        <label>月</label>
+        <input type="number" id="month" min="1" max="12">
+      </div>
+      <div class="field">
+        <label>事業所名</label>
+        <input type="text" id="officeName" placeholder="○○デイサービス">
+      </div>
+      <div class="field">
+        <label>(1) 期間</label>
+        <select id="periodType"><option value="４週">４週</option><option value="暦月">暦月</option></select>
+      </div>
+      <div class="field">
+        <label>(2) 予定／実績</label>
+        <select id="planActual"><option value="予定">予定</option><option value="実績">実績</option><option value="予定・実績">予定・実績</option></select>
+      </div>
+      <div class="field">
+        <label>(3) 常勤の勤務時間数（週）</label>
+        <input type="number" id="weeklyHours" step="0.5">
+      </div>
+      <div class="field">
+        <label>(3) 常勤の勤務時間数（月）</label>
+        <input type="number" id="monthlyHours" step="0.5">
+      </div>
+      <div class="field">
+        <label>(4) 事業所全体の提供単位数</label>
+        <input type="number" id="totalUnits" min="1">
+      </div>
+      <div class="field">
+        <label>(4) このシートは何単位目</label>
+        <input type="number" id="unitNumber" min="1">
+      </div>
+      <div class="field">
+        <label>(5) サービス提供時間</label>
+        <div class="two">
+          <input type="time" id="serviceStart">
+          <span>～</span>
+          <input type="time" id="serviceEnd">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span>シフト記号表（勤務時間帯）</h2>
+    <div class="toolbar">
+      <button class="btn-sm" onclick="addSymbol()">＋ 記号を追加</button>
+      <span class="hint">サービス提供時間内の勤務時間は基本情報(5)の時間で自動計算されます。分割勤務（1記号を2つの時間帯に分ける書式）は未対応です。</span>
+    </div>
+    <table class="symtable">
+      <thead><tr><th style="width:60px;">記号</th><th>始業</th><th>終業</th><th>休憩</th><th style="width:40px;"></th></tr></thead>
+      <tbody id="symbolBody"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">3</span>職員と勤務シフト（最大13名）</h2>
+    <div class="toolbar">
+      <button class="btn-sm" onclick="addStaff()" id="addStaffBtn">＋ 職員を追加</button>
+      <span class="hint">各セルは記号表で定義した記号から選択します。(16)利用者数・(17)サービス提供時間（平均提供時間）も同じ表で入力してください。</span>
+    </div>
+    <div class="grid-wrap"><table class="gridtable" id="gridTable"></table></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">4</span>確認・自動チェック</h2>
+    <div id="validationOutput"></div>
+  </div>
+
+  <div class="card">
+    <div class="scopeNote">
+      ・本ツールはお手元の「標準様式1（通所介護・1枚版）」のExcelファイルに、入力内容のみを書き込んで出力します。計算式・書式は元ファイルのものがそのまま使われます（出力後にExcelで開くと自動的に再計算されます）。<br>
+      ・対応範囲：13名までの職員、1ヶ月単位の表（複数月タブ・記載例シートは対象外）、分割勤務（1日に2つの時間帯がある記号）は未対応です。必要な場合は出力後にExcel上で手動調整してください。
+    </div>
+  </div>
+
+</main>
+
+<script>
+const STORAGE_KEY = 'kinmuhyo_tsushokaigo_v1';
+const TEMPLATE_URL = 'assets/templates/tsushokaigo_kinmu_keitai_ichiranhyo.xlsx';
+const MAIN_SHEET = '通所介護（1枚版）';
+const SYM_SHEET = 'シフト記号表（勤務時間帯）';
+const MAX_STAFF = 13;
+const MAX_SYMBOLS = 20;
+
+const ROLE_OPTIONS = ['管理者','生活相談員','看護職員','介護職員','機能訓練指導員','事務員','送迎員','介護助手',
+  'SS管理者','SS職員','他事業所へ応援','他事業所からの応援','入社','退社','傷病休業','産前産後休業','育児休業'];
+const WORKTYPE_OPTIONS = [['A','常勤・専従'],['B','常勤・兼務'],['C','非常勤・専従'],['D','非常勤・兼務']];
+const QUALIFICATIONS_BY_ROLE = {
+  '生活相談員': ['社会福祉士','社会福祉主事任用資格','精神保健福祉士'],
+  '看護職員': ['看護師','准看護師'],
+  '介護職員': ['介護福祉士','看護師','准看護師','訪問介護員養成研修二級課程修了者','認知症介護基礎研修修了者','認知症介護実践者研修修了者','あん摩・指圧・マッサージ師'],
+  '機能訓練指導員': ['理学療法士','作業療法士','言語聴覚士','看護師','准看護師','柔道整復師','あん摩マッサージ指圧師','はり師','きゅう師']
+};
+
+const DEFAULT_SYMBOLS = [
+  {code:'A', start:'08:30', end:'17:30', brk:'01:00'},
+  {code:'B', start:'08:00', end:'17:30', brk:'02:00'},
+  {code:'Ｃ', start:'09:00', end:'12:00', brk:'00:00'},
+  {code:'有', start:'00:00', end:'00:00', brk:'00:00'},
+  {code:'休', start:'00:00', end:'00:00', brk:'00:00'},
+  {code:'D', start:'09:00', end:'13:00', brk:'00:00'},
+  {code:'E', start:'08:30', end:'16:30', brk:'01:00'},
+  {code:'F', start:'08:30', end:'11:30', brk:'00:00'},
+  {code:'G', start:'13:30', end:'17:30', brk:'00:00'},
+  {code:'H', start:'08:30', end:'14:30', brk:'01:00'},
+  {code:'I', start:'11:30', end:'17:30', brk:'01:00'},
+  {code:'K', start:'09:15', end:'16:30', brk:'01:00'}
+];
+
+function defaultState(){
+  const now = new Date();
+  return {
+    eraYear: now.getFullYear() - 2018,
+    month: now.getMonth() + 1,
+    officeName: '',
+    periodType: '４週',
+    planActual: '予定',
+    weeklyHours: 40,
+    monthlyHours: 160,
+    totalUnits: 1,
+    unitNumber: 1,
+    serviceStart: '09:00',
+    serviceEnd: '16:00',
+    symbols: DEFAULT_SYMBOLS.map(s=>({...s})),
+    staff: [{role:'管理者', workType:'A', qualification:'', name:'', concurrent:'', shifts:{}}],
+    users: {},
+    serviceHours: {},
+    role5: ''
+  };
+}
+
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    const base = defaultState();
+    return Object.assign(base, parsed);
+  }catch(e){ return defaultState(); }
+}
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const f = document.getElementById('savedFlag');
+  f.textContent = '保存済み ' + new Date().toLocaleTimeString('ja-JP');
+}
+
+function clearAll(){
+  if(!confirm('入力内容をすべて消去します。よろしいですか？')) return;
+  state = defaultState();
+  saveState();
+  renderAll();
+}
+
+// ---------- helpers ----------
+function colLetter(n){
+  let s='';
+  while(n>0){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); }
+  return s;
+}
+function dayCol(d){ return colLetter(18+d); }
+function staffRowNum(i){ return 22 + i*3; }
+function daysInMonth(eraYear, month){
+  const d = new Date(2018+Number(eraYear), Number(month), 0);
+  return d.getDate();
+}
+function weekdayJP(eraYear, month, day){
+  const d = new Date(2018+Number(eraYear), Number(month)-1, day);
+  return ['日','月','火','水','木','金','土'][d.getDay()];
+}
+function isSat(eraYear,month,day){ return new Date(2018+Number(eraYear),Number(month)-1,day).getDay()===6; }
+function isSun(eraYear,month,day){ return new Date(2018+Number(eraYear),Number(month)-1,day).getDay()===0; }
+function timeToHours(hhmm){
+  if(!hhmm) return 0;
+  const parts = hhmm.split(':');
+  return Number(parts[0]||0) + Number(parts[1]||0)/60;
+}
+function timeToFrac(hhmm){ return timeToHours(hhmm)/24; }
+
+function computeSymbolHours(code){
+  const sym = state.symbols.find(s=>s.code===code);
+  if(!sym) return {work:0, within:0};
+  const start = timeToHours(sym.start), end = timeToHours(sym.end), brk = timeToHours(sym.brk||'00:00');
+  const work = Math.max(0, (end-start) - brk);
+  const ss = timeToHours(state.serviceStart), se = timeToHours(state.serviceEnd);
+  const within = Math.max(0, Math.min(end,se) - Math.max(start,ss));
+  return {work, within};
+}
+
+// ---------- rendering ----------
+function renderAll(){
+  document.getElementById('eraYear').value = state.eraYear;
+  document.getElementById('month').value = state.month;
+  document.getElementById('officeName').value = state.officeName;
+  document.getElementById('periodType').value = state.periodType;
+  document.getElementById('planActual').value = state.planActual;
+  document.getElementById('weeklyHours').value = state.weeklyHours;
+  document.getElementById('monthlyHours').value = state.monthlyHours;
+  document.getElementById('totalUnits').value = state.totalUnits;
+  document.getElementById('unitNumber').value = state.unitNumber;
+  document.getElementById('serviceStart').value = state.serviceStart;
+  document.getElementById('serviceEnd').value = state.serviceEnd;
+  renderSymbols();
+  renderGrid();
+  renderValidation();
+}
+
+function bindBasicInfo(){
+  const ids = ['eraYear','month','officeName','periodType','planActual','weeklyHours','monthlyHours','totalUnits','unitNumber','serviceStart','serviceEnd'];
+  ids.forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>{
+      const el = document.getElementById(id);
+      let v = el.value;
+      if(['eraYear','month','weeklyHours','monthlyHours','totalUnits','unitNumber'].includes(id)) v = v===''?'':Number(v);
+      state[id] = v;
+      saveState();
+      if(id==='eraYear' || id==='month' || id==='periodType') renderGrid();
+      else if(id==='serviceStart' || id==='serviceEnd') { renderGrid(); }
+      renderValidation();
+    });
+  });
+}
+
+function renderSymbols(){
+  const body = document.getElementById('symbolBody');
+  body.innerHTML = state.symbols.map((s,i)=>`
+    <tr>
+      <td><input class="code" data-i="${i}" data-f="code" value="${escAttr(s.code)}" maxlength="3"></td>
+      <td><input type="time" data-i="${i}" data-f="start" value="${escAttr(s.start)}"></td>
+      <td><input type="time" data-i="${i}" data-f="end" value="${escAttr(s.end)}"></td>
+      <td><input type="time" data-i="${i}" data-f="brk" value="${escAttr(s.brk)}"></td>
+      <td><button class="btn-del" onclick="removeSymbol(${i})">×</button></td>
+    </tr>
+  `).join('');
+  body.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      const i = Number(inp.dataset.i), f = inp.dataset.f;
+      state.symbols[i][f] = inp.value;
+      saveState();
+      renderGrid();
+      renderValidation();
+    });
+  });
+}
+function addSymbol(){
+  if(state.symbols.length>=MAX_SYMBOLS){ alert('記号は最大'+MAX_SYMBOLS+'個までです。'); return; }
+  state.symbols.push({code:'', start:'09:00', end:'17:00', brk:'01:00'});
+  saveState(); renderSymbols(); renderGrid();
+}
+function removeSymbol(i){
+  state.symbols.splice(i,1);
+  saveState(); renderSymbols(); renderGrid();
+}
+
+function escAttr(s){ return String(s==null?'':s).replace(/"/g,'&quot;'); }
+function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function qualOptionsFor(role){
+  return QUALIFICATIONS_BY_ROLE[role] || [];
+}
+
+function renderGrid(){
+  const nDays = daysInMonth(state.eraYear, state.month);
+  const days = Array.from({length:nDays}, (_,k)=>k+1);
+
+  let thead = '<thead><tr>'
+    + '<th class="stick c-role">職種</th>'
+    + '<th class="stick c-work">勤務形態</th>'
+    + '<th class="stick c-qual">資格</th>'
+    + '<th class="stick c-name">氏名</th>'
+    + '<th class="stick c-tot">月合計(h)</th>'
+    + '<th class="stick c-del"></th>'
+    + days.map(d=>`<th class="${isSat(state.eraYear,state.month,d)?'dayhead-sat':isSun(state.eraYear,state.month,d)?'dayhead-sun':''}">${d}<br>${weekdayJP(state.eraYear,state.month,d)}</th>`).join('')
+    + '</tr></thead>';
+
+  const symbolOptions = '<option value=""></option>' + state.symbols.map(s=>`<option value="${escAttr(s.code)}">${escHtml(s.code)}</option>`).join('');
+
+  let staffRows = state.staff.map((st,i)=>{
+    let total = 0;
+    const isFourWeek = state.periodType === '４週';
+    const sumDays = isFourWeek ? Math.min(28, nDays) : nDays;
+    for(let d=1; d<=sumDays; d++){
+      const code = st.shifts[d];
+      if(code) total += computeSymbolHours(code).work;
+    }
+    const qOpts = qualOptionsFor(st.role);
+    const qualField = qOpts.length
+      ? `<select data-staff="${i}" data-f="qualification">
+           <option value=""></option>
+           ${qOpts.map(q=>`<option value="${escAttr(q)}" ${st.qualification===q?'selected':''}>${escHtml(q)}</option>`).join('')}
+           <option value="${escAttr(st.qualification)}" ${!qOpts.includes(st.qualification)&&st.qualification?'selected':''} hidden>${escHtml(st.qualification)}</option>
+         </select>`
+      : `<input type="text" data-staff="${i}" data-f="qualification" value="${escAttr(st.qualification)}" placeholder="ー">`;
+
+    const dayCells = days.map(d=>{
+      const v = st.shifts[d] || '';
+      return `<td><select data-staff="${i}" data-day="${d}">${'<option value=""></option>' + state.symbols.map(s=>`<option value="${escAttr(s.code)}" ${s.code===v?'selected':''}>${escHtml(s.code)}</option>`).join('')}</select></td>`;
+    }).join('');
+
+    return `<tr>
+      <td class="stick c-role">
+        <select data-staff="${i}" data-f="role">
+          ${ROLE_OPTIONS.map(r=>`<option value="${escAttr(r)}" ${st.role===r?'selected':''}>${escHtml(r)}</option>`).join('')}
+        </select>
+      </td>
+      <td class="stick c-work">
+        <select data-staff="${i}" data-f="workType">
+          ${WORKTYPE_OPTIONS.map(([code,label])=>`<option value="${code}" ${st.workType===code?'selected':''}>${code}：${label}</option>`).join('')}
+        </select>
+      </td>
+      <td class="stick c-qual">${qualField}</td>
+      <td class="stick c-name"><input type="text" data-staff="${i}" data-f="name" value="${escAttr(st.name)}" placeholder="氏名"></td>
+      <td class="stick c-tot">${total.toFixed(1)}</td>
+      <td class="stick c-del"><button class="btn-del" onclick="removeStaff(${i})">×</button></td>
+      ${dayCells}
+    </tr>`;
+  }).join('');
+
+  const userRow = `<tr class="row-summary">
+    <td class="label-cell" colspan="6">(16) 利用者数</td>
+    ${days.map(d=>`<td><input type="number" min="0" step="1" data-users="${d}" value="${state.users[d]!=null?state.users[d]:''}"></td>`).join('')}
+  </tr>`;
+  const hoursRow = `<tr class="row-summary">
+    <td class="label-cell" colspan="6">(17) サービス提供時間（平均提供時間）</td>
+    ${days.map(d=>`<td><input type="number" min="0" step="0.1" data-hours="${d}" value="${state.serviceHours[d]!=null?state.serviceHours[d]:''}"></td>`).join('')}
+  </tr>`;
+  const requiredRow = `<tr class="row-summary">
+    <td class="label-cell" colspan="6">(18) 確保すべき介護職員の勤務時間数（自動計算）</td>
+    ${days.map(d=>{
+      const u = Number(state.users[d]); const h = Number(state.serviceHours[d]);
+      let req = '';
+      if(state.serviceHours[d]!=null && state.serviceHours[d]!=='' && !isNaN(h)){
+        req = (u>15) ? ((u-15)/5+1)*h : h;
+      }
+      return `<td>${req===''?'':req.toFixed(2)}</td>`;
+    }).join('')}
+  </tr>`;
+  const careActualRow = `<tr class="row-summary">
+    <td class="label-cell" colspan="6">介護職員 提供時間内勤務（実績合計／確認用）</td>
+    ${days.map(d=>{
+      let sum = 0;
+      state.staff.forEach(st=>{
+        if(st.role==='介護職員'){
+          const code = st.shifts[d];
+          if(code) sum += computeSymbolHours(code).within;
+        }
+      });
+      const u = Number(state.users[d]); const h = Number(state.serviceHours[d]);
+      let req = null;
+      if(state.serviceHours[d]!=null && state.serviceHours[d]!=='' && !isNaN(h)) req = (u>15)?((u-15)/5+1)*h:h;
+      const bad = req!=null && sum < req - 0.001;
+      return `<td class="${bad?'flag-bad':''}">${sum>0?sum.toFixed(2):''}</td>`;
+    }).join('')}
+  </tr>`;
+
+  const table = document.getElementById('gridTable');
+  table.innerHTML = thead + '<tbody>' + staffRows + userRow + hoursRow + requiredRow + careActualRow + '</tbody>';
+
+  // bind events (delegation)
+  table.querySelectorAll('[data-staff]').forEach(el=>{
+    el.addEventListener('change', onStaffFieldChange);
+    if(el.tagName==='INPUT') el.addEventListener('input', onStaffFieldChange);
+  });
+  table.querySelectorAll('[data-users]').forEach(el=>{
+    el.addEventListener('input', ()=>{
+      const d = Number(el.dataset.users);
+      state.users[d] = el.value===''? null : Number(el.value);
+      saveState(); renderValidation();
+      refreshSummaryRowsOnly();
+    });
+  });
+  table.querySelectorAll('[data-hours]').forEach(el=>{
+    el.addEventListener('input', ()=>{
+      const d = Number(el.dataset.hours);
+      state.serviceHours[d] = el.value===''? null : Number(el.value);
+      saveState(); renderValidation();
+      refreshSummaryRowsOnly();
+    });
+  });
+
+  document.getElementById('addStaffBtn').disabled = state.staff.length >= MAX_STAFF;
+}
+
+function refreshSummaryRowsOnly(){
+  // cheap re-render of just the dependent rows to avoid losing focus elsewhere
+  renderGrid();
+}
+
+function onStaffFieldChange(e){
+  const el = e.target;
+  const i = Number(el.dataset.staff);
+  if(el.dataset.day){
+    const d = Number(el.dataset.day);
+    state.staff[i].shifts[d] = el.value || undefined;
+    if(!el.value) delete state.staff[i].shifts[d];
+  } else if(el.dataset.f){
+    state.staff[i][el.dataset.f] = el.value;
+    if(el.dataset.f === 'role'){
+      saveState();
+      renderGrid();
+      renderValidation();
+      return;
+    }
+  }
+  saveState();
+  renderValidation();
+}
+
+function addStaff(){
+  if(state.staff.length >= MAX_STAFF){ alert('職員は最大'+MAX_STAFF+'名までです（様式の行数の上限）。'); return; }
+  state.staff.push({role:'介護職員', workType:'A', qualification:'', name:'', concurrent:'', shifts:{}});
+  saveState(); renderGrid(); renderValidation();
+}
+function removeStaff(i){
+  state.staff.splice(i,1);
+  saveState(); renderGrid(); renderValidation();
+}
+
+function renderValidation(){
+  const out = document.getElementById('validationOutput');
+  const lines = [];
+  const nDays = daysInMonth(state.eraYear, state.month);
+  const isFourWeek = state.periodType === '４週';
+  const sumDays = isFourWeek ? Math.min(28,nDays) : nDays;
+
+  if(!state.officeName) lines.push({type:'warn', text:'事業所名が未入力です。'});
+  if(state.staff.length===0) lines.push({type:'warn', text:'職員が1名も登録されていません。'});
+  state.staff.forEach((st,i)=>{
+    if(!st.name) lines.push({type:'warn', text:`${i+1}行目：氏名が未入力です。`});
+    let total = 0;
+    for(let d=1; d<=sumDays; d++){
+      const code = st.shifts[d];
+      if(code) total += computeSymbolHours(code).work;
+    }
+    const cap = isFourWeek ? Number(state.monthlyHours) : Number(state.monthlyHours);
+    if(cap && total > cap){
+      lines.push({type:'bad', text:`${st.name||(i+1)+'行目'}：合計勤務時間（${total.toFixed(1)}h）が常勤の上限（${cap}h/月）を超えています。`});
+    }
+  });
+  for(let d=1; d<=nDays; d++){
+    const u = state.users[d], h = state.serviceHours[d];
+    if((u!=null && u!=='') !== (h!=null && h!=='')){
+      lines.push({type:'warn', text:`${d}日：利用者数とサービス提供時間の片方しか入力されていません。`});
+    }
+  }
+  if(lines.length===0) lines.push({type:'ok', text:'入力内容に明らかな問題は見つかりませんでした。'});
+
+  out.innerHTML = lines.map(l=>`<div class="vline ${l.type}">${escHtml(l.text)}</div>`).join('');
+}
+
+// ---------- Excel export ----------
+// SheetJSのread/write往復はこのテンプレートを大幅に肥大化させる（4.4MB→数十MB）ため使用しない。
+// 代わりにJSZipでzipを読み込み、対象セルのXML文字列だけを正規表現で直接書き換える
+// （スタイル・結合範囲・数式・他シートは一切手を加えずバイト単位で保持される）。
+function escXml(s){
+  return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+function escRe(s){
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function findCellMatch(xml, addr){
+  const re = new RegExp('<c r="' + addr + '"([^>]*?)(/>|>[\\s\\S]*?</c>)');
+  const m = re.exec(xml);
+  if(!m) throw new Error('テンプレートに想定セルが見つかりません: ' + addr);
+  return m;
+}
+function cellStyleAttr(attrsPart){
+  const m = attrsPart.match(/\ss="(\d+)"/);
+  return m ? ' s="' + m[1] + '"' : '';
+}
+function xmlSetNumber(xml, addr, num){
+  const m = findCellMatch(xml, addr);
+  const repl = `<c r="${addr}"${cellStyleAttr(m[1])}><v>${num}</v></c>`;
+  return xml.slice(0, m.index) + repl + xml.slice(m.index + m[0].length);
+}
+function xmlSetString(xml, addr, str){
+  const m = findCellMatch(xml, addr);
+  const repl = `<c r="${addr}"${cellStyleAttr(m[1])} t="inlineStr"><is><t xml:space="preserve">${escXml(str)}</t></is></c>`;
+  return xml.slice(0, m.index) + repl + xml.slice(m.index + m[0].length);
+}
+function xmlClearCell(xml, addr){
+  const m = findCellMatch(xml, addr);
+  const repl = `<c r="${addr}"${cellStyleAttr(m[1])}/>`;
+  return xml.slice(0, m.index) + repl + xml.slice(m.index + m[0].length);
+}
+function xmlSetTime(xml, addr, hhmm){
+  return xmlSetNumber(xml, addr, timeToFrac(hhmm));
+}
+
+async function exportExcel(){
+  if(!state.officeName){
+    if(!confirm('事業所名が未入力です。このまま出力しますか？')) return;
+  }
+  let buf;
+  try{
+    const res = await fetch(TEMPLATE_URL);
+    if(!res.ok) throw new Error('template fetch failed: ' + res.status);
+    buf = await res.arrayBuffer();
+  }catch(e){
+    alert('テンプレートファイルの読み込みに失敗しました。\n' + e.message);
+    return;
+  }
+
+  const zip = await JSZip.loadAsync(buf);
+
+  const wbPath = 'xl/workbook.xml';
+  const relsPath = 'xl/_rels/workbook.xml.rels';
+  let wbXml = await zip.file(wbPath).async('string');
+  const relsXml = await zip.file(relsPath).async('string');
+
+  function sheetPathFor(sheetName){
+    const m = wbXml.match(new RegExp('<sheet name="' + escRe(sheetName) + '"[^>]*r:id="(rId\\d+)"'));
+    if(!m) return null;
+    const relMatch = relsXml.match(new RegExp('Id="' + m[1] + '"[^>]*Target="([^"]+)"'));
+    return relMatch ? 'xl/' + relMatch[1] : null;
+  }
+
+  const mainPath = sheetPathFor(MAIN_SHEET);
+  const symPath = sheetPathFor(SYM_SHEET);
+  if(!mainPath || !symPath || !zip.file(mainPath) || !zip.file(symPath)){
+    alert('テンプレートのシート構成が想定と異なります。');
+    return;
+  }
+
+  let mainXml = await zip.file(mainPath).async('string');
+  let symXml = await zip.file(symPath).async('string');
+
+  try{
+    // 基本情報
+    mainXml = xmlSetNumber(mainXml, 'Z2', Number(state.eraYear));
+    mainXml = xmlSetNumber(mainXml, 'AG2', Number(state.month));
+    mainXml = xmlSetString(mainXml, 'AP2', state.officeName);
+    mainXml = xmlSetString(mainXml, 'BB3', state.periodType);
+    mainXml = xmlSetString(mainXml, 'BB4', state.planActual);
+    mainXml = xmlSetNumber(mainXml, 'AX6', Number(state.weeklyHours));
+    mainXml = xmlSetNumber(mainXml, 'BB6', Number(state.monthlyHours));
+    mainXml = xmlSetNumber(mainXml, 'BB10', Number(state.totalUnits));
+    mainXml = xmlSetNumber(mainXml, 'BB12', Number(state.unitNumber));
+    mainXml = xmlSetTime(mainXml, 'AU14', state.serviceStart);
+    mainXml = xmlSetTime(mainXml, 'AY14', state.serviceEnd);
+
+    // シフト記号表：既定の記載例を一旦クリアしてから書き込み
+    for(let r=6; r<=45; r++){
+      ['C','E','G','I','M','O'].forEach(col=>{ symXml = xmlClearCell(symXml, col+r); });
+    }
+    state.symbols.forEach((sym,idx)=>{
+      if(!sym.code) return;
+      const r = 6+idx;
+      symXml = xmlSetString(symXml, 'C'+r, sym.code);
+      symXml = xmlSetTime(symXml, 'E'+r, sym.start);
+      symXml = xmlSetTime(symXml, 'G'+r, sym.end);
+      symXml = xmlSetTime(symXml, 'I'+r, sym.brk || '00:00');
+      symXml = xmlSetTime(symXml, 'M'+r, state.serviceStart);
+      symXml = xmlSetTime(symXml, 'O'+r, state.serviceEnd);
+    });
+
+    // 職員・シフト
+    const nDays = daysInMonth(state.eraYear, state.month);
+    state.staff.forEach((st,i)=>{
+      const r = staffRowNum(i);
+      mainXml = xmlSetString(mainXml, 'C'+r, st.role || '');
+      mainXml = xmlSetString(mainXml, 'G'+r, st.workType || '');
+      mainXml = xmlSetString(mainXml, 'H'+r, st.qualification || 'ー');
+      mainXml = xmlSetString(mainXml, 'L'+r, st.name || '');
+      if(st.concurrent) mainXml = xmlSetString(mainXml, 'BB'+r, st.concurrent);
+      for(let d=1; d<=nDays; d++){
+        const code = st.shifts[d];
+        if(code) mainXml = xmlSetString(mainXml, dayCol(d)+r, code);
+      }
+    });
+    if(state.role5) mainXml = xmlSetString(mainXml, 'L71', state.role5);
+
+    for(let d=1; d<=nDays; d++){
+      const col = dayCol(d);
+      if(state.users[d] != null && state.users[d] !== '') mainXml = xmlSetNumber(mainXml, col+'64', Number(state.users[d]));
+      if(state.serviceHours[d] != null && state.serviceHours[d] !== '') mainXml = xmlSetNumber(mainXml, col+'65', Number(state.serviceHours[d]));
+    }
+  }catch(e){
+    alert('Excel出力中にエラーが発生しました。\n' + e.message);
+    return;
+  }
+
+  // 対象シートの非表示を解除し、開いたときにこのシートが表に出るようにする
+  const sheetsBlockMatch = wbXml.match(/<sheets>([\s\S]*?)<\/sheets>/);
+  const sheetEntries = sheetsBlockMatch ? (sheetsBlockMatch[1].match(/<sheet [^>]*\/>/g) || []) : [];
+  const newActiveIdx = sheetEntries.findIndex(e => e.includes('name="' + MAIN_SHEET + '"'));
+  const oldActiveTabMatch = wbXml.match(/activeTab="(\d+)"/);
+  const oldActiveIdx = oldActiveTabMatch ? Number(oldActiveTabMatch[1]) : 0;
+
+  wbXml = wbXml.replace(
+    new RegExp('(<sheet name="' + escRe(MAIN_SHEET) + '"[^>]*?)\\s+state="hidden"'),
+    '$1'
+  );
+  if(newActiveIdx >= 0){
+    wbXml = wbXml.replace(/activeTab="\d+"/, 'activeTab="' + newActiveIdx + '"');
+  }
+  // 開いた時に必ず再計算させる
+  wbXml = wbXml.replace(/<calcPr([^>]*)\/>/, (m, attrs) => {
+    return /fullCalcOnLoad/.test(attrs) ? m : '<calcPr' + attrs + ' fullCalcOnLoad="1"/>';
+  });
+
+  // 「選択中タブ」の見た目を、現在アクティブなシートからこのシートへ移す
+  if(oldActiveIdx !== newActiveIdx && sheetEntries[oldActiveIdx]){
+    const oldNameMatch = sheetEntries[oldActiveIdx].match(/name="([^"]*)"/);
+    const oldPath = oldNameMatch ? sheetPathFor(oldNameMatch[1]) : null;
+    if(oldPath && oldPath !== mainPath && zip.file(oldPath)){
+      let oldXml = await zip.file(oldPath).async('string');
+      oldXml = oldXml.replace(/\s+tabSelected="1"/, '');
+      zip.file(oldPath, oldXml);
+    }
+  }
+  if(!/tabSelected="1"/.test(mainXml)){
+    mainXml = mainXml.replace(/<sheetView /, '<sheetView tabSelected="1" ');
+  }
+  mainXml = mainXml.replace(/topLeftCell="[^"]*"/, 'topLeftCell="A1"');
+
+  zip.file(wbPath, wbXml);
+  zip.file(mainPath, mainXml);
+  zip.file(symPath, symXml);
+
+  const blob = await zip.generateAsync({type:'blob', compression:'DEFLATE', compressionOptions:{level:6}});
+  const fname = `勤務形態一覧表_${state.officeName||'通所介護'}_R${state.eraYear}-${String(state.month).padStart(2,'0')}.xlsx`;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+bindBasicInfo();
+renderAll();
+</script>
+</body>
+</html>
