@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音声文字起こしツール｜mp3・音声URLをテキストに</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7f7;
+    --card: #ffffff;
+    --ink: #1c2624;
+    --ink-mid: #435350;
+    --muted: #7c8b88;
+    --muted-light: #aab6b3;
+    --accent: #2f7a72;
+    --accent-light: #4fa89c;
+    --accent-deep: #1f5850;
+    --border: rgba(47,122,114,0.18);
+    --shadow: 0 2px 24px rgba(28,38,36,0.08);
+    --danger: #b8503f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.8;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 0 0 60px; }
+
+  header {
+    background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+    padding: 30px 20px 26px;
+    text-align: center;
+  }
+  header .eyebrow {
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+  header p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 8px;
+  }
+
+  .section { display: none; padding: 24px 18px; }
+  .section.active { display: block; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 18px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+  }
+  .notice {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+  .notice strong { color: var(--accent-deep); font-weight: 500; }
+  .notice ul { margin: 8px 0 0 18px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .file-drop {
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 26px 16px;
+    text-align: center;
+    cursor: pointer;
+    background: #fafcfc;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .file-drop:hover { border-color: var(--accent-light); background: #f2f8f7; }
+  .file-drop .icon { font-size: 28px; margin-bottom: 8px; }
+  .file-drop .main { font-size: 13.5px; color: var(--ink-mid); }
+  .file-drop .sub { font-size: 11.5px; color: var(--muted-light); margin-top: 4px; }
+  .file-drop input[type=file] { display: none; }
+  .file-name {
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--accent-deep);
+    background: #eef6f5;
+    border-radius: 8px;
+    padding: 8px 12px;
+    word-break: break-all;
+    display: none;
+  }
+
+  input[type=url] {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--ink);
+    background: #fafcfc;
+    outline: none;
+  }
+  input[type=url]:focus { border-color: var(--accent-light); background: #fff; }
+
+  .field-row { margin-top: 16px; }
+  .field-label {
+    font-size: 11.5px;
+    color: var(--accent-deep);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--ink);
+    background: #fafcfc;
+    outline: none;
+  }
+  .field-hint { font-size: 11px; color: var(--muted-light); margin-top: 5px; }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    margin-top: 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .start-btn:hover { background: var(--accent-deep); }
+  .start-btn:active { transform: scale(0.99); }
+  .start-btn:disabled { background: var(--muted-light); cursor: not-allowed; }
+
+  /* ── PROCESSING ── */
+  .proc-card { text-align: center; padding: 36px 20px; }
+  .spinner {
+    width: 44px; height: 44px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .proc-status { font-size: 13.5px; color: var(--ink-mid); margin-bottom: 6px; }
+  .proc-sub { font-size: 11.5px; color: var(--muted-light); }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    margin: 16px 0 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* ── RESULT ── */
+  .result-label {
+    font-size: 11.5px;
+    color: var(--accent-deep);
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+  }
+  textarea.result-text {
+    width: 100%;
+    min-height: 220px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 13.5px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--ink);
+    background: #fafcfc;
+    resize: vertical;
+    outline: none;
+    line-height: 1.9;
+  }
+  .result-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .action-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--accent-deep);
+    transition: all 0.15s;
+  }
+  .action-btn:hover { background: #eef6f5; }
+  .action-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .action-btn.primary:hover { background: var(--accent-deep); }
+
+  .retry-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--muted-light);
+    cursor: pointer;
+  }
+
+  .error-box {
+    background: #fbeeec;
+    border: 1px solid rgba(184,80,63,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 12.5px;
+    color: var(--danger);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: var(--muted-light);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">survival_mom_tools</div>
+  <h1>音声文字起こしツール</h1>
+  <p>mp3ファイル・音声URLをその場でテキスト化</p>
+</header>
+
+<div class="wrap">
+
+  <!-- ── INPUT ── -->
+  <div id="sec-input" class="section active">
+    <div class="card">
+      <div class="notice">
+        <strong>すべてこのブラウザの中だけで処理します。</strong>音声やテキストが外部サーバーに送信されることはなく、費用も一切かかりません。
+        <ul>
+          <li>初回は音声認識モデル（数十〜百数十MB）のダウンロードが必要です。2回目以降は端末に保存され高速に動きます</li>
+          <li>URLの音声はサイト側がクロスオリジン許可（CORS）していないと取得できません。失敗する場合はファイルを保存してアップロードしてください</li>
+          <li>音声が長いほど処理に時間がかかります。数分の音声は目安として数十秒〜数分程度です</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <button class="tab-btn active" id="tabBtnFile" onclick="switchTab('file')">ファイルから</button>
+        <button class="tab-btn" id="tabBtnUrl" onclick="switchTab('url')">URLから</button>
+      </div>
+
+      <div class="tab-panel active" id="tabFile">
+        <label class="file-drop" id="fileDrop">
+          <div class="icon">🎙️</div>
+          <div class="main">タップして音声ファイルを選択</div>
+          <div class="sub">mp3 / wav / m4a など</div>
+          <input type="file" id="fileInput" accept="audio/*" onchange="onFileSelected(event)">
+        </label>
+        <div class="file-name" id="fileNameBox"></div>
+      </div>
+
+      <div class="tab-panel" id="tabUrl">
+        <input type="url" id="urlInput" placeholder="https://example.com/audio.mp3">
+        <div class="field-hint">直接再生・ダウンロードできる音声ファイルのURLを入力してください</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">言語</div>
+        <select id="languageSelect">
+          <option value="">自動検出</option>
+          <option value="japanese" selected>日本語</option>
+          <option value="english">英語</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">認識モデル</div>
+        <select id="modelSelect">
+          <option value="onnx-community/whisper-tiny">軽量（速いが精度は控えめ）</option>
+          <option value="onnx-community/whisper-base" selected>標準（バランス型・おすすめ）</option>
+          <option value="onnx-community/whisper-small">高精度（時間がかかります）</option>
+        </select>
+        <div class="field-hint">モデルを切り替えると、初回のみ再ダウンロードが発生します</div>
+      </div>
+
+      <button class="start-btn" id="startBtn" onclick="startTranscription()">文字起こしを開始</button>
+    </div>
+  </div>
+
+  <!-- ── PROCESSING ── -->
+  <div id="sec-processing" class="section">
+    <div class="card proc-card">
+      <div class="spinner"></div>
+      <div class="proc-status" id="procStatus">準備しています…</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="proc-sub" id="procSub"></div>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="sec-result" class="section">
+    <div class="card" id="errorCard" style="display:none">
+      <div class="error-box" id="errorBox"></div>
+    </div>
+    <div class="card" id="resultCard" style="display:none">
+      <div class="result-label">
+        <span>文字起こし結果</span>
+        <span id="charCount"></span>
+      </div>
+      <textarea class="result-text" id="resultText" readonly></textarea>
+      <div class="result-actions">
+        <button class="action-btn" onclick="copyResult()">コピー</button>
+        <button class="action-btn primary" onclick="downloadResult()">テキストを保存</button>
+      </div>
+    </div>
+    <span class="retry-link" onclick="resetAll()">もう一度やってみる</span>
+  </div>
+
+</div>
+
+<footer>survival_mom_tools ｜ 音声文字起こしツール</footer>
+
+<script type="module">
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/dist/transformers.min.js';
+
+env.allowLocalModels = false;
+
+let inputMethod = 'file';
+let selectedFile = null;
+let transcriberCache = {};
+let modelLoadProgress = {};
+
+window.switchTab = function(tab) {
+  inputMethod = tab;
+  document.getElementById('tabBtnFile').classList.toggle('active', tab === 'file');
+  document.getElementById('tabBtnUrl').classList.toggle('active', tab === 'url');
+  document.getElementById('tabFile').classList.toggle('active', tab === 'file');
+  document.getElementById('tabUrl').classList.toggle('active', tab === 'url');
+};
+
+window.onFileSelected = function(event) {
+  const file = event.target.files[0];
+  selectedFile = file || null;
+  const box = document.getElementById('fileNameBox');
+  if (selectedFile) {
+    const sizeMb = (selectedFile.size / (1024 * 1024)).toFixed(1);
+    box.textContent = `${selectedFile.name}（${sizeMb}MB）`;
+    box.style.display = 'block';
+  } else {
+    box.style.display = 'none';
+  }
+};
+
+function switchSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`sec-${name}`).classList.add('active');
+}
+
+function setProcStatus(text, sub) {
+  document.getElementById('procStatus').textContent = text;
+  document.getElementById('procSub').textContent = sub || '';
+}
+
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = `${Math.max(0, Math.min(100, pct))}%`;
+}
+
+async function decodeToFloat32(arrayBuffer) {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) throw new Error('UNSUPPORTED_BROWSER');
+  const ctx = new AudioCtx();
+  let decoded;
+  try {
+    decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
+  } finally {
+    ctx.close();
+  }
+  const targetRate = 16000;
+  const offline = new OfflineAudioContext(1, Math.ceil(decoded.duration * targetRate), targetRate);
+  const source = offline.createBufferSource();
+  source.buffer = decoded;
+  source.connect(offline.destination);
+  source.start(0);
+  const rendered = await offline.startRendering();
+  return rendered.getChannelData(0);
+}
+
+async function getArrayBuffer() {
+  if (inputMethod === 'file') {
+    if (!selectedFile) throw new Error('NO_FILE');
+    return await selectedFile.arrayBuffer();
+  }
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) throw new Error('NO_URL');
+  let res;
+  try {
+    res = await fetch(url);
+  } catch (e) {
+    throw new Error('FETCH_FAILED');
+  }
+  if (!res.ok) throw new Error('FETCH_FAILED');
+  return await res.arrayBuffer();
+}
+
+function progressCallback(data) {
+  if (data.status !== 'progress' && data.status !== 'done') return;
+  const key = data.file || data.name || 'model';
+  if (data.status === 'done') {
+    modelLoadProgress[key] = { loaded: 1, total: 1 };
+  } else {
+    modelLoadProgress[key] = { loaded: data.loaded || 0, total: data.total || 1 };
+  }
+  let loadedSum = 0, totalSum = 0;
+  for (const k in modelLoadProgress) {
+    loadedSum += modelLoadProgress[k].loaded;
+    totalSum += modelLoadProgress[k].total;
+  }
+  const pct = totalSum > 0 ? (loadedSum / totalSum) * 100 : 0;
+  setProgress(pct);
+  setProcStatus('音声認識モデルを準備中…', `ダウンロード ${pct.toFixed(0)}%（初回のみ・端末に保存されます）`);
+}
+
+async function getTranscriber(modelId) {
+  if (transcriberCache[modelId]) return transcriberCache[modelId];
+  modelLoadProgress = {};
+  setProcStatus('音声認識モデルを準備中…', 'ダウンロード 0%（初回のみ・端末に保存されます）');
+  const transcriber = await pipeline('automatic-speech-recognition', modelId, {
+    dtype: 'q8',
+    progress_callback: progressCallback,
+  });
+  transcriberCache[modelId] = transcriber;
+  return transcriber;
+}
+
+let elapsedTimer = null;
+function startElapsedTimer() {
+  const startedAt = Date.now();
+  elapsedTimer = setInterval(() => {
+    const sec = Math.floor((Date.now() - startedAt) / 1000);
+    const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+    const ss = String(sec % 60).padStart(2, '0');
+    document.getElementById('procSub').textContent = `経過時間 ${mm}:${ss}`;
+  }, 1000);
+}
+function stopElapsedTimer() {
+  if (elapsedTimer) clearInterval(elapsedTimer);
+  elapsedTimer = null;
+}
+
+window.startTranscription = async function() {
+  if (inputMethod === 'file' && !selectedFile) {
+    alert('音声ファイルを選択してください');
+    return;
+  }
+  if (inputMethod === 'url' && !document.getElementById('urlInput').value.trim()) {
+    alert('音声のURLを入力してください');
+    return;
+  }
+
+  document.getElementById('startBtn').disabled = true;
+  setProgress(0);
+  setProcStatus('音声を読み込んでいます…', '');
+  switchSection('processing');
+
+  try {
+    const arrayBuffer = await getArrayBuffer();
+    setProcStatus('音声を変換しています…', '');
+    const audioData = await decodeToFloat32(arrayBuffer);
+
+    const modelId = document.getElementById('modelSelect').value;
+    const transcriber = await getTranscriber(modelId);
+
+    setProgress(100);
+    setProcStatus('文字起こし中…', '音声の長さによって数十秒〜数分かかります');
+    startElapsedTimer();
+
+    const language = document.getElementById('languageSelect').value || null;
+    const output = await transcriber(audioData, {
+      language: language,
+      task: 'transcribe',
+      chunk_length_s: 30,
+      stride_length_s: 5,
+    });
+
+    stopElapsedTimer();
+    showResult((output.text || '').trim());
+  } catch (err) {
+    stopElapsedTimer();
+    showError(err);
+  } finally {
+    document.getElementById('startBtn').disabled = false;
+  }
+};
+
+function showResult(text) {
+  document.getElementById('errorCard').style.display = 'none';
+  document.getElementById('resultCard').style.display = 'block';
+  const box = document.getElementById('resultText');
+  box.value = text || '（文字は検出されませんでした）';
+  document.getElementById('charCount').textContent = `${text.length}文字`;
+  switchSection('result');
+}
+
+function showError(err) {
+  const messages = {
+    NO_FILE: 'ファイルが選択されていません。',
+    NO_URL: 'URLが入力されていません。',
+    FETCH_FAILED: 'URLから音声を取得できませんでした。サイト側がクロスオリジン許可（CORS）をしていない可能性があります。ファイルを保存してから「ファイルから」タブでアップロードしてください。',
+    UNSUPPORTED_BROWSER: 'このブラウザは音声処理に対応していません。最新のChrome / Safari / Edgeなどでお試しください。',
+  };
+  const key = err && err.message;
+  const text = messages[key] || `文字起こし中にエラーが発生しました。音声の形式やファイルサイズを確認して、もう一度お試しください。${key ? `（${key}）` : ''}`;
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('errorCard').style.display = 'block';
+  document.getElementById('errorBox').textContent = text;
+  switchSection('result');
+}
+
+window.copyResult = async function() {
+  const text = document.getElementById('resultText').value;
+  try {
+    await navigator.clipboard.writeText(text);
+    alert('コピーしました');
+  } catch (e) {
+    alert('コピーに失敗しました。テキストを選択して手動でコピーしてください。');
+  }
+};
+
+window.downloadResult = function() {
+  const text = document.getElementById('resultText').value;
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'transcript.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+window.resetAll = function() {
+  selectedFile = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileNameBox').style.display = 'none';
+  document.getElementById('urlInput').value = '';
+  document.getElementById('resultText').value = '';
+  switchSection('input');
+};
+</script>
+</body>
+</html>
