@@ -276,6 +276,53 @@
       .card-body, .card-header { padding: 16px; }
     }
 
+    /* ══════ 文章整形パネル（記録タブ内） ══════ */
+    .polish-box {
+      margin-top: 18px; padding: 16px; background: var(--amber-xl); border: 1.5px solid var(--amber-lt);
+      border-radius: var(--r-lg); display: none;
+    }
+    .polish-box.show { display: block; }
+    .polish-label { font-size: 12px; font-weight: 700; color: var(--amber); margin-bottom: 10px; }
+    .polish-text {
+      font-size: 14px; line-height: 1.85; color: var(--ink); white-space: pre-wrap; word-break: break-word;
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-md);
+      padding: 12px 14px; margin: 10px 0;
+    }
+    .ng-warning {
+      background: var(--clay-lt); border: 1.5px solid var(--clay); border-radius: var(--r-md);
+      padding: 10px 14px; margin-bottom: 10px; font-size: 12px; line-height: 1.7;
+    }
+    .ng-warning-title { font-weight: 700; color: var(--clay); margin-bottom: 4px; }
+    .ng-example { color: var(--ink3); font-size: 11px; margin-top: 4px; }
+
+    /* ══════ 文章整形タブ ══════ */
+    .mode-switcher { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .mode-btn {
+      flex: 1; min-width: 120px; padding: 10px 12px; border: 1.5px solid var(--border);
+      border-radius: var(--r-md); font-family: inherit; font-size: 13px; font-weight: 500;
+      color: var(--ink2); background: var(--surface); cursor: pointer; transition: all 0.15s; text-align: center;
+    }
+    .mode-btn:hover { border-color: var(--moss); color: var(--moss); }
+    .mode-btn.active { background: var(--moss); border-color: var(--moss); color: #fff; font-weight: 700; }
+    .mode-panel { display: none; }
+    .mode-panel.active { display: block; }
+
+    .output-box {
+      background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--r-md);
+      padding: 14px; font-size: 14px; line-height: 1.9; color: var(--ink);
+      white-space: pre-wrap; word-break: break-word; min-height: 80px; margin-top: 10px;
+    }
+    .copy-btn {
+      display: inline-block; margin-top: 10px; padding: 8px 20px;
+      background: var(--moss-lt); border: 1.5px solid var(--moss3); border-radius: var(--r-md);
+      color: var(--moss); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { background: var(--moss); color: #fff; }
+    .result-row { display: none; }
+    .result-row.show { display: block; }
+    .incident-hint { font-size: 11px; color: var(--ink3); margin-top: 4px; line-height: 1.6; }
+
     /* ══════ 印刷タブ ══════ */
     .print-field-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 14px; }
     .print-field { flex: 1; min-width: 160px; }
@@ -354,6 +401,7 @@
   <button class="tab-btn active" onclick="switchTab('write', event)">✏️ 記録する</button>
   <button class="tab-btn" onclick="switchTab('list', event)">📋 一覧 <span class="tab-count" id="list-count-badge">0</span></button>
   <button class="tab-btn" onclick="switchTab('handover', event)">📤 申し送り <span class="tab-count" id="handover-count-badge">0</span></button>
+  <button class="tab-btn" onclick="switchTab('polish', event)">✨ 文章整形</button>
   <button class="tab-btn" onclick="switchTab('print', event)">🖨 印刷</button>
 </nav>
 
@@ -386,7 +434,18 @@
         </div>
 
         <div class="btn-row">
+          <button class="btn btn-secondary" onclick="runPolish()">✨ 整形する</button>
           <button class="btn btn-secondary" onclick="runClassify()">🔎 分類する</button>
+        </div>
+
+        <div class="polish-box" id="polish-box">
+          <div class="polish-label">✨ 整形結果（下書きです。確認・修正のうえご使用ください）</div>
+          <div id="polish-ng-warnings"></div>
+          <div class="polish-text" id="polish-result-text"></div>
+          <div class="btn-row" style="margin-top:10px;">
+            <button class="btn btn-secondary" onclick="usePolishedText()">↑ この内容を記録欄に反映する</button>
+            <button class="copy-btn" onclick="copyText('polish-result-text')" style="flex:none;margin-top:0;">📋 コピー</button>
+          </div>
         </div>
 
         <div class="classify-box" id="classify-box">
@@ -444,6 +503,107 @@
       </div>
     </div>
   </div><!-- /tab-handover -->
+
+  <!-- ══════ 文章整形 ══════ -->
+  <div class="tab-page" id="tab-polish">
+
+    <div class="mode-switcher">
+      <button class="mode-btn active" onclick="switchMode('formal', this)">📝 記録整形</button>
+      <button class="mode-btn" onclick="switchMode('family', this)">💌 家族向け報告</button>
+      <button class="mode-btn" onclick="switchMode('incident', this)">🚨 ヒヤリハット・事故報告</button>
+    </div>
+
+    <!-- 記録整形 -->
+    <div class="mode-panel active" id="mode-formal">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">介護記録の整形</div>
+          <div class="card-sub">短いメモや話し言葉を、介護記録らしい丁寧な文章に整えます。「徘徊」「拒否」などNG表現が含まれていれば、修正例とともに警告を表示します。</div>
+        </div>
+        <div class="card-body">
+          <div class="f-row">
+            <div class="f-label">整形したい内容（下書きやメモをそのままでOK）</div>
+            <textarea id="formal-input" rows="5" placeholder="例：昼食 半分食べた 途中で眠そう 声かけで再開"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="doFormalPolish()">✨ 整形する</button>
+          </div>
+          <div id="formal-ng-warnings" style="margin-top:14px;"></div>
+          <div class="result-row" id="formal-result-row">
+            <div class="f-label" style="margin-top:10px;">整形後の文章</div>
+            <div class="output-box" id="formal-output"></div>
+            <button class="copy-btn" onclick="copyText('formal-output')">📋 コピーする</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 家族向け報告 -->
+    <div class="mode-panel" id="mode-family">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">家族向け報告文</div>
+          <div class="card-sub">記録や下書きメモを、ご家族が安心して読める温かな文章に変換します。事実はそのままに、不安を与えない表現に整えます。</div>
+        </div>
+        <div class="card-body">
+          <div class="f-row">
+            <div class="f-label">報告したい内容（記録のコピーでもメモでもOK）</div>
+            <textarea id="family-input" rows="5" placeholder="例：食事半分 眠気あり おやつは完食 穏やかだった"></textarea>
+          </div>
+          <div class="f-row">
+            <div class="f-label">利用者名（任意）</div>
+            <input type="text" id="family-target" list="target-name-list" placeholder="例：山田 太郎様">
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="doFamilyReport()">💌 家族向けに変換する</button>
+          </div>
+          <div class="result-row" id="family-result-row">
+            <div class="f-label" style="margin-top:14px;">家族向け報告文</div>
+            <div class="output-box" id="family-output"></div>
+            <button class="copy-btn" onclick="copyText('family-output')">📋 コピーする</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ヒヤリハット・事故報告 -->
+    <div class="mode-panel" id="mode-incident">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">ヒヤリハット・事故報告書</div>
+          <div class="card-sub">状況を入力するだけで、報告書として整った文章にまとめます。誰かを責めるためではなく、「何が起きたか・どう対応したか・どう防ぐか」を正確に残すための書類です。</div>
+        </div>
+        <div class="card-body">
+          <div class="f-row">
+            <label class="f-label">何が起きたか（状況）</label>
+            <textarea id="inc-situation" rows="3" placeholder="例：トイレへ向かおうとして立ち上がった際、ふらつきがあった"></textarea>
+            <div class="incident-hint">いつ・どこで・どんな状況だったかを、そのまま書いてください</div>
+          </div>
+          <div class="f-row">
+            <label class="f-label">どのように対応したか</label>
+            <textarea id="inc-response" rows="3" placeholder="例：すぐに支えた。看護師に報告し、バイタルを測定した。"></textarea>
+          </div>
+          <div class="f-row">
+            <label class="f-label">けが・体調変化はあったか</label>
+            <input type="text" id="inc-injury" placeholder="例：外傷なし、痛みの訴えなし　／　左膝に擦り傷あり">
+          </div>
+          <div class="f-row">
+            <label class="f-label">再発防止策（わかる範囲で）</label>
+            <textarea id="inc-prevention" rows="3" placeholder="例：立ち上がり時の声かけと見守りを強化する"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="doIncidentReport()">📄 報告書に整形する</button>
+          </div>
+          <div class="result-row" id="incident-result-row">
+            <div class="f-label" style="margin-top:14px;">整形された報告書</div>
+            <div class="output-box" id="incident-output"></div>
+            <button class="copy-btn" onclick="copyText('incident-output')">📋 コピーする</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-polish -->
 
   <!-- ══════ 印刷 ══════ -->
   <div class="tab-page" id="tab-print">
@@ -999,6 +1159,226 @@ function printByTarget() {
     records
   );
   window.print();
+}
+
+/* ══════════════════════════════════════
+   AI 文章整形エンジン（ルールベース・オフライン・無料）
+══════════════════════════════════════ */
+const FORMAL_MAP = [
+  // 食事
+  ['半分食べた','半量ほど召し上がられた'],['半量食べた','半量ほど召し上がられた'],
+  ['全部食べた','全量召し上がられた'],['完食した','全量召し上がられた'],['完食','全量摂取'],
+  ['食べなかった','摂取が見られなかった'],['食べられなかった','摂取が難しい状況であった'],
+  ['残した','一部お残しになられた'],['食べ残した','一部お残しになられた'],
+  ['むせた','むせ込みが見られた'],['むせ込んだ','むせ込みが見られた'],['むせ込みあり','むせ込みが見られた'],
+  ['水分を飲んだ','水分を摂取された'],['お茶を飲んだ','お茶を摂取された'],
+  ['薬を飲んだ','内服された'],['薬を飲まなかった','内服が困難な状況であった'],
+  // 状態
+  ['眠そう','眠気が見られた'],['眠そうだった','眠気が見られた'],
+  ['眠っていた','うとうとされていた'],['眠り込んでいた','深い眠りの状態が見られた'],
+  ['痛そう','痛みを感じているご様子であった'],
+  ['痛みを訴えた','痛みの訴えが見られた'],['痛いと言った','痛みの訴えが見られた'],['痛みなし','痛みの訴えは見られなかった'],
+  ['不安そう','不安なご様子が見られた'],['不安だった','不安なご様子が見られた'],
+  ['笑顔だった','笑顔が見られた'],['笑っていた','笑顔が見られた'],
+  ['嬉しそう','嬉しそうなご様子が見られた'],['穏やかだった','穏やかなご様子であった'],
+  ['元気だった','活気のある様子が見られた'],
+  // 声かけ・対応
+  ['声かけで','声かけにより'],['声かけしたら','職員が声をかけると'],
+  ['声をかけたら','職員が声をかけると'],['声かけをしたら','職員が声をかけると'],
+  ['声かけしたところ','職員が声をかけたところ'],
+  ['再開した','再開された'],['続けた','続けられた'],['続けることができた','続けられた'],
+  // 移動・動作・ケア
+  ['立ち上がった','立ち上がられた'],['立ち上がろうとした','立ち上がろうとされた'],
+  ['歩いた','歩行された'],['歩こうとした','歩行しようとされた'],['歩けた','歩行できた'],
+  ['座った','着座された'],['横になった','臥床された'],
+  ['トイレに行った','トイレへ向かわれた'],['トイレへ行った','トイレへ向かわれた'],
+  ['トイレに座った','便座へ着座された'],
+  ['入浴した','入浴された'],['入浴できた','入浴を行われた'],
+  ['着替えた','更衣された'],['更衣した','更衣された'],
+  ['洗面した','洗面を行われた'],['口腔ケアした','口腔ケアを行った'],
+  ['体位変換した','体位変換を行った'],
+  ['移乗した','移乗された'],['移乗できた','移乗された'],
+  // 転倒・ヒヤリ
+  ['転倒した','転倒された'],['転倒しそうになった','ふらつきが見られた'],
+  ['転びそうになった','ふらつきが見られた'],['ふらついた','ふらつきが見られた'],
+  ['つまずいた','足元のふらつきが見られた'],
+  ['支えた','職員が支えた'],['抱えた','職員が支えた'],
+  ['転倒しなかった','転倒には至らなかった'],['転倒せずに済んだ','転倒には至らなかった'],
+  ['けがはない','外傷・痛みの訴えは見られなかった'],['けがなし','外傷・痛みの訴えは見られなかった'],
+  ['怪我なし','外傷・痛みの訴えは見られなかった'],
+  ['外傷なし','外傷は見られなかった'],['外傷はない','外傷は見られなかった'],['外傷はなかった','外傷は見られなかった'],
+  // 連絡・引継ぎ
+  ['看護師に報告した','看護師へ報告した'],['看護師に連絡した','看護師へ連絡した'],
+  ['医師に報告した','医師へ報告した'],['家族に報告した','ご家族へ報告した'],
+  ['様子を見ることにした','経過観察とした'],['様子を見る','経過観察とする'],
+  ['様子見','経過観察'],['経過観察する','経過観察とした'],
+  ['次の勤務に伝える','次勤務者へ申し送りを行う'],['引継ぎする','申し送りを行う'],
+  ['処置した','処置を行った'],['手当てした','処置を行った'],
+  ['観察を続ける','継続して経過観察とした'],['継続観察','継続して経過観察とした'],
+];
+
+const NG_WORDS = [
+  { ng:'徘徊',
+    hint:'具体的な行動で描写しましょう（どこを・どのように移動されていたか）',
+    example:'例：居室を出られ、廊下を歩かれていた。職員が声をかけると立ち止まられ、穏やかな表情で返答された。' },
+  { ng:'拒否',
+    hint:'本人の意思として描写しましょう（何とおっしゃったか・どうされたか）',
+    example:'例：入浴の声かけに対し「今日は入りたくない」と話され、居室で過ごされた。' },
+  { ng:'不穏',
+    hint:'状態を具体的に描写しましょう（そわそわ・廊下を行き来・声が大きいなど）',
+    example:'例：廊下を何度も行き来され、落ち着かないご様子が見られた。声かけにより居室へ戻られた。' },
+  { ng:'暴言',
+    hint:'客観的な事実として描写しましょう（感情的に言葉を発せられた等）',
+    example:'例：ケア中に感情的に言葉を発せられる場面があった。職員が傾聴し、しばらくして落ち着かれた。' },
+  { ng:'暴力',
+    hint:'具体的な動作で描写しましょう（腕を振られた・体を動かされた等）',
+    example:'例：ケア中に腕を振られた。痛みの訴えがあったため、対応を一時中断した。' },
+  { ng:'落ち着きがない',
+    hint:'具体的な状態を描写しましょう（廊下を行き来・そわそわされていた等）',
+    example:'例：日中、廊下を何度も行き来される様子が見られた。声かけにより居室へ戻られた。' },
+  { ng:'問題行動',
+    hint:'具体的に何が起きたかを客観的に記述してください',
+    example:'例：（具体的な行動内容をそのまま記述してください）' },
+  { ng:'わがまま',
+    hint:'ご本人の意思・思いとして描写しましょう',
+    example:'例：ご自身の意思を強くお持ちの様子で、「〜したい」と話された。' },
+  { ng:'寝たきり',
+    hint:'状況を客観的に描写しましょう',
+    example:'例：日中もベッドで過ごされており、体位変換・清拭を行った。' },
+];
+
+// 短い場面ラベル（次の文に「は」で接続する）
+const SCENE_LABELS = ['昼食','夕食','朝食','食事','入浴','排泄','トイレ','歩行','レク','体操','口腔','整容','更衣','移乗','臥床','離床','就寝','起床','バイタル'];
+
+function polishText(rawText) {
+  let text = rawText.replace(/　/g, ' ').trim();
+
+  // 長い順に置換（部分マッチを避ける）
+  const sorted = [...FORMAL_MAP].sort((a, b) => b[0].length - a[0].length);
+  for (const [inf, frm] of sorted) text = text.split(inf).join(frm);
+
+  // スペース・改行で区切られた節を。で繋ぐ
+  const segs = text
+    .split(/([。！？\n]|\s+)/)
+    .map(s => s.trim())
+    .filter(s => s && !/^[。！？\s]+$/.test(s));
+
+  if (segs.length === 0) return text;
+
+  let result = segs.map(seg => /[。！？]$/.test(seg) ? seg : seg + '。').join('');
+
+  // 短い場面ラベルを次の文に接続（例：「昼食。半量…」→「昼食は半量…」）
+  result = result.replace(new RegExp('(' + SCENE_LABELS.join('|') + ')。([^。]+。)'), (_, label, rest) => label + 'は' + rest);
+
+  return result;
+}
+
+function detectNgWords(text) {
+  return NG_WORDS.filter(e => text.includes(e.ng));
+}
+
+function renderNgWarnings(ngList, containerId) {
+  const el = document.getElementById(containerId);
+  if (ngList.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = ngList.map(e => `
+    <div class="ng-warning">
+      <div class="ng-warning-title">⚠️「${e.ng}」は記録には使いにくい表現です</div>
+      ${e.hint}
+      <div class="ng-example">${e.example}</div>
+    </div>`).join('');
+}
+
+function runPolish() {
+  const body = document.getElementById('rec-body').value.trim();
+  if (!body) { showToast('内容を入力してください'); return; }
+  const polished = polishText(body);
+  const ngs = detectNgWords(body);
+  renderNgWarnings(ngs, 'polish-ng-warnings');
+  document.getElementById('polish-result-text').textContent = polished;
+  document.getElementById('polish-box').classList.add('show');
+}
+
+function usePolishedText() {
+  const polished = document.getElementById('polish-result-text').textContent;
+  document.getElementById('rec-body').value = polished;
+  document.getElementById('polish-box').classList.remove('show');
+  showToast('✓ 記録欄に反映しました');
+}
+
+function toFamilyReport(rawText, targetName) {
+  const polished = polishText(rawText);
+  const today = new Date();
+  const dateStr = `${today.getMonth()+1}月${today.getDate()}日`;
+  const nameStr = targetName ? `${targetName}の` : '';
+  return `${dateStr}の${nameStr}ご様子についてお知らせいたします。\n\n${polished}\n\nスタッフ一同、引き続き丁寧に見守ってまいります。何かご不明な点やご心配なことがございましたら、いつでもお声がけください。`;
+}
+
+function buildIncidentReport(situation, response, injury, prevention) {
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
+  const lines = [`【発生日】${dateStr}`];
+  if (situation) {
+    const s = polishText(situation);
+    lines.push(`【状況】\n${s}`);
+  }
+  if (response) {
+    const r = polishText(response);
+    lines.push(`【対応】\n${r}`);
+  }
+  if (injury) {
+    lines.push(`【受傷・体調変化】\n${injury}`);
+  }
+  if (prevention) {
+    lines.push(`【再発防止策】\n${prevention}`);
+  }
+  return lines.join('\n\n');
+}
+
+/* ─ 文章整形タブ UI ─ */
+function switchMode(mode, btn) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+  btn.classList.add('active');
+}
+
+function doFormalPolish() {
+  const input = document.getElementById('formal-input').value.trim();
+  if (!input) { showToast('内容を入力してください'); return; }
+  const polished = polishText(input);
+  const ngs = detectNgWords(input);
+  renderNgWarnings(ngs, 'formal-ng-warnings');
+  document.getElementById('formal-output').textContent = polished;
+  document.getElementById('formal-result-row').classList.add('show');
+}
+
+function doFamilyReport() {
+  const input = document.getElementById('family-input').value.trim();
+  if (!input) { showToast('内容を入力してください'); return; }
+  const target = document.getElementById('family-target').value.trim();
+  document.getElementById('family-output').textContent = toFamilyReport(input, target);
+  document.getElementById('family-result-row').classList.add('show');
+}
+
+function doIncidentReport() {
+  const sit = document.getElementById('inc-situation').value.trim();
+  const res = document.getElementById('inc-response').value.trim();
+  const inj = document.getElementById('inc-injury').value.trim();
+  const pre = document.getElementById('inc-prevention').value.trim();
+  if (!sit) { showToast('「何が起きたか」を入力してください'); return; }
+  document.getElementById('incident-output').textContent = buildIncidentReport(sit, res, inj, pre);
+  document.getElementById('incident-result-row').classList.add('show');
+}
+
+function copyText(elId) {
+  const text = document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('📋 コピーしました')).catch(() => {
+    // フォールバック
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('📋 コピーしました');
+  });
 }
 
 /* ══════════════════════════════════════
