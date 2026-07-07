@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>リーダー育成実践ワークシート — CARE DESIGN LAB</title>
 <style>
 :root {
@@ -60,7 +65,9 @@ input,textarea{font-family:inherit}
 .tab-nav{
   background:var(--bg-sub);border-bottom:1px solid var(--border);
   display:flex;overflow-x:auto;padding:0 1.5rem;
+  scrollbar-width:none;
 }
+.tab-nav::-webkit-scrollbar{display:none}
 .tab-btn{
   background:none;border:none;padding:.75rem 1.25rem;
   font-size:.82rem;font-weight:600;color:var(--text-3);
@@ -86,6 +93,7 @@ input,textarea{font-family:inherit}
 .activity-input{background:transparent;border:none;outline:none;color:var(--text);font-size:.88rem;border-bottom:1px solid transparent;padding:.15rem .2rem;width:100%;transition:border-color .15s}
 .activity-input:focus{border-bottom-color:var(--accent)}
 .activity-input::placeholder{color:var(--text-3)}
+.seg-wrap{display:contents}
 .seg-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);padding:.25rem .55rem;font-size:.75rem;font-weight:600;color:var(--text-3);transition:all .15s;white-space:nowrap}
 .seg-btn.sel-kanri{background:var(--accent-3);border-color:var(--accent-3);color:#fff}
 .seg-btn.sel-mgmt{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -121,7 +129,7 @@ input,textarea{font-family:inherit}
 .example-tag{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;display:block;margin-bottom:.2rem}
 
 .week-block{margin-bottom:1.5rem}
-.week-head{display:flex;align-items:baseline;gap:.75rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.week-head{display:flex;align-items:baseline;gap:.75rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .week-num{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--accent)}
 .week-theme{font-size:.9rem;font-weight:700;color:var(--text)}
 .week-sub{font-size:.78rem;color:var(--text-2)}
@@ -147,7 +155,21 @@ input,textarea{font-family:inherit}
 .btn-primary:hover{opacity:.85}
 .btn-ghost{background:none;border:1px solid var(--border-strong);color:var(--text-2);padding:.55rem 1.25rem;border-radius:var(--radius);font-size:.82rem;font-weight:600;transition:border-color .15s,color .15s}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+@media(max-width:480px){
+  .app-logo{display:none}
+  .panel{padding:1.25rem 1rem}
+  .ws-title{font-size:1.1rem}
+  .activity-row{grid-template-columns:1fr 28px;grid-template-rows:auto auto;gap:.35rem}
+  .activity-input{grid-column:1;grid-row:1}
+  .del-btn{grid-column:2;grid-row:1;justify-self:end}
+  .seg-wrap{grid-column:1/3;grid-row:2;display:flex;gap:.4rem}
+  .seg-btn{flex:1;text-align:center}
+  .tab-btn{padding:.75rem .9rem;font-size:.78rem}
+}
 </style>
+</head>
+<body>
 
 <header class="app-header">
   <div class="app-logo">CARE DESIGN LAB</div>
@@ -157,7 +179,7 @@ input,textarea{font-family:inherit}
 
 <nav class="tab-nav" role="tablist">
   <button class="tab-btn active" role="tab" aria-selected="true"  data-panel="ws1">① 自己診断</button>
-  <button class="tab-btn"        role="tab" aria-selected="false" data-panel="ws2">② 判断基準テンプレート</button>
+  <button class="tab-btn"        role="tab" aria-selected="false" data-panel="ws2">② 判断基準</button>
   <button class="tab-btn"        role="tab" aria-selected="false" data-panel="ws3">③ 30日ロードマップ</button>
 </nav>
 
@@ -304,8 +326,10 @@ function renderActivityList() {
     row.className = 'activity-row';
     row.innerHTML = `
       <input class="activity-input" type="text" placeholder="例）ヒヤリハット対応、シフト調整、新人へのOJT…" value="${escHtml(a.text)}" data-idx="${i}">
-      <button class="seg-btn${a.type==='kanri'?' sel-kanri':''}" data-idx="${i}" data-type="kanri">管理</button>
-      <button class="seg-btn${a.type==='mgmt'?' sel-mgmt':''}" data-idx="${i}" data-type="mgmt">マネジメント</button>
+      <div class="seg-wrap">
+        <button class="seg-btn${a.type==='kanri'?' sel-kanri':''}" data-idx="${i}" data-type="kanri">管理</button>
+        <button class="seg-btn${a.type==='mgmt'?' sel-mgmt':''}" data-idx="${i}" data-type="mgmt">マネジメント</button>
+      </div>
       <button class="del-btn" data-idx="${i}" aria-label="削除">×</button>
     `;
     list.appendChild(row);
@@ -470,3 +494,5 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
+</body>
+</html>
