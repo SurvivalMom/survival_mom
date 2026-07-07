@@ -1,0 +1,472 @@
+<title>リーダー育成実践ワークシート — CARE DESIGN LAB</title>
+<style>
+:root {
+  --bg:#F5F6F4;--bg-sub:#ECEDEB;--surface:#FFFFFF;--border:#D4D7D3;
+  --border-strong:#B0B5AE;--text:#1A1E1C;--text-2:#566059;--text-3:#8A938D;
+  --accent:#2E7A6C;--accent-2:#C47B28;--accent-3:#D94F3A;--accent-bg:#EAF4F2;
+  --tab-active-bg:#FFFFFF;--shadow:0 1px 4px rgba(0,0,0,.08);--radius:3px;
+  --font:"Hiragino Kaku Gothic ProN","Yu Gothic Medium","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+  --mono:"SF Mono","Menlo","Consolas","Liberation Mono",monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#181C1A;--bg-sub:#1E2320;--surface:#242926;--border:#323834;
+    --border-strong:#4A524C;--text:#E8EBE8;--text-2:#9BA89F;--text-3:#6A7870;
+    --accent:#3D9E8E;--accent-2:#D9922E;--accent-3:#E06655;--accent-bg:#1A2D2A;
+    --tab-active-bg:#242926;--shadow:0 1px 4px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F5F6F4;--bg-sub:#ECEDEB;--surface:#FFFFFF;--border:#D4D7D3;
+  --border-strong:#B0B5AE;--text:#1A1E1C;--text-2:#566059;--text-3:#8A938D;
+  --accent:#2E7A6C;--accent-2:#C47B28;--accent-3:#D94F3A;--accent-bg:#EAF4F2;
+  --tab-active-bg:#FFFFFF;--shadow:0 1px 4px rgba(0,0,0,.08);
+}
+:root[data-theme="dark"]{
+  --bg:#181C1A;--bg-sub:#1E2320;--surface:#242926;--border:#323834;
+  --border-strong:#4A524C;--text:#E8EBE8;--text-2:#9BA89F;--text-3:#6A7870;
+  --accent:#3D9E8E;--accent-2:#D9922E;--accent-3:#E06655;--accent-bg:#1A2D2A;
+  --tab-active-bg:#242926;--shadow:0 1px 4px rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font);line-height:1.7;min-height:100vh;
+}
+button{cursor:pointer;font-family:inherit}
+input,textarea{font-family:inherit}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.app-header{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 1.5rem;display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100;box-shadow:var(--shadow);
+}
+.app-logo{
+  font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text-3);font-weight:600;padding:1rem 0;
+  border-right:1px solid var(--border);padding-right:1rem;white-space:nowrap;
+}
+.app-title{font-size:.85rem;color:var(--text-2);font-weight:500}
+.theme-toggle{
+  margin-left:auto;background:none;border:1px solid var(--border);
+  color:var(--text-2);border-radius:var(--radius);
+  padding:.3rem .55rem;font-size:.75rem;transition:border-color .15s;
+}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.tab-nav{
+  background:var(--bg-sub);border-bottom:1px solid var(--border);
+  display:flex;overflow-x:auto;padding:0 1.5rem;
+}
+.tab-btn{
+  background:none;border:none;padding:.75rem 1.25rem;
+  font-size:.82rem;font-weight:600;color:var(--text-3);
+  border-bottom:2px solid transparent;white-space:nowrap;
+  transition:color .15s,border-color .15s;
+}
+.tab-btn:hover{color:var(--text-2)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--tab-active-bg)}
+.tab-btn:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+.panel{display:none;padding:2rem 1.5rem;max-width:860px;margin:0 auto}
+.panel.active{display:block}
+
+.ws-header{margin-bottom:2rem}
+.ws-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.35rem}
+.ws-title{font-size:1.35rem;font-weight:700;line-height:1.3;border-left:3px solid var(--accent);padding-left:.85rem}
+.ws-desc{color:var(--text-2);font-size:.88rem;margin-top:.6rem;padding-left:1.1rem}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem}
+
+.activity-row{display:grid;grid-template-columns:1fr auto auto 28px;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.activity-row:last-child{border-bottom:none}
+.activity-input{background:transparent;border:none;outline:none;color:var(--text);font-size:.88rem;border-bottom:1px solid transparent;padding:.15rem .2rem;width:100%;transition:border-color .15s}
+.activity-input:focus{border-bottom-color:var(--accent)}
+.activity-input::placeholder{color:var(--text-3)}
+.seg-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);padding:.25rem .55rem;font-size:.75rem;font-weight:600;color:var(--text-3);transition:all .15s;white-space:nowrap}
+.seg-btn.sel-kanri{background:var(--accent-3);border-color:var(--accent-3);color:#fff}
+.seg-btn.sel-mgmt{background:var(--accent);border-color:var(--accent);color:#fff}
+.del-btn{background:none;border:none;color:var(--text-3);font-size:1rem;padding:.1rem .3rem;border-radius:var(--radius);transition:color .15s}
+.del-btn:hover{color:var(--accent-3)}
+
+.add-row-btn{background:none;border:1px dashed var(--border-strong);color:var(--text-2);font-size:.82rem;padding:.5rem 1rem;border-radius:var(--radius);width:100%;margin-top:.75rem;transition:border-color .15s,color .15s}
+.add-row-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.chart-wrap{display:flex;align-items:center;gap:2rem;flex-wrap:wrap;margin-top:1rem}
+#donutCanvas{flex-shrink:0}
+.chart-legend{flex:1;min-width:160px}
+.legend-item{display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.legend-label{font-size:.82rem;color:var(--text-2)}
+.legend-pct{font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.legend-pct.kanri{color:var(--accent-3)}
+.legend-pct.mgmt{color:var(--accent)}
+.diagnosis-box{margin-top:1.25rem;padding:1rem 1.25rem;border-left:3px solid var(--accent-2);background:var(--accent-bg);border-radius:0 var(--radius) var(--radius) 0;font-size:.85rem;color:var(--text-2);line-height:1.6}
+.diagnosis-box strong{color:var(--text);font-weight:700}
+
+.criteria-table{width:100%;border-collapse:collapse;margin-top:.5rem}
+.criteria-table th{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--text-3);padding:.6rem .75rem;border-bottom:2px solid var(--border-strong);text-align:left;background:var(--bg-sub)}
+.criteria-table td{padding:.4rem .5rem;border-bottom:1px solid var(--border);vertical-align:top}
+.criteria-table tr:last-child td{border-bottom:none}
+.criteria-table tr:hover td{background:var(--bg-sub)}
+.ct-input{background:transparent;border:none;outline:none;color:var(--text);font-size:.85rem;width:100%;resize:vertical;min-height:2.4rem;padding:.2rem;line-height:1.55;border-bottom:1px solid transparent;transition:border-color .15s}
+.ct-input:focus{border-bottom-color:var(--accent)}
+.ct-input::placeholder{color:var(--text-3)}
+.ct-del{background:none;border:none;color:var(--text-3);font-size:.85rem;padding:.3rem .4rem;border-radius:var(--radius);cursor:pointer;transition:color .15s}
+.ct-del:hover{color:var(--accent-3)}
+.example-row td{background:var(--accent-bg)!important}
+.example-tag{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;display:block;margin-bottom:.2rem}
+
+.week-block{margin-bottom:1.5rem}
+.week-head{display:flex;align-items:baseline;gap:.75rem;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.week-num{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.week-theme{font-size:.9rem;font-weight:700;color:var(--text)}
+.week-sub{font-size:.78rem;color:var(--text-2)}
+.day-row{display:grid;grid-template-columns:28px 68px 1fr;align-items:center;gap:.6rem;padding:.4rem 0;border-bottom:1px solid var(--border)}
+.day-row:last-child{border-bottom:none}
+.day-check{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.day-num{font-size:.75rem;color:var(--text-3);font-variant-numeric:tabular-nums;font-family:var(--mono)}
+.day-note{background:transparent;border:none;outline:none;color:var(--text);font-size:.82rem;border-bottom:1px solid transparent;padding:.15rem .2rem;width:100%;transition:border-color .15s}
+.day-note:focus{border-bottom-color:var(--accent)}
+.day-note::placeholder{color:var(--text-3)}
+.day-row.done .day-num,.day-row.done .day-note{color:var(--text-3);text-decoration:line-through;text-decoration-color:var(--text-3)}
+
+.progress-wrap{margin-bottom:1.5rem;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.progress-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.6rem}
+.progress-label{font-size:.78rem;color:var(--text-2);font-weight:600}
+.progress-pct{font-size:1.2rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.progress-track{background:var(--bg-sub);border-radius:99px;height:6px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .35s ease}
+.day-count{font-size:.75rem;color:var(--text-3);margin-top:.4rem}
+
+.action-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:.55rem 1.25rem;border-radius:var(--radius);font-size:.82rem;font-weight:700;transition:opacity .15s}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{background:none;border:1px solid var(--border-strong);color:var(--text-2);padding:.55rem 1.25rem;border-radius:var(--radius);font-size:.82rem;font-weight:600;transition:border-color .15s,color .15s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+
+<header class="app-header">
+  <div class="app-logo">CARE DESIGN LAB</div>
+  <div class="app-title">リーダー育成実践ワークシート</div>
+  <button class="theme-toggle" id="themeBtn" aria-label="テーマ切替">☾</button>
+</header>
+
+<nav class="tab-nav" role="tablist">
+  <button class="tab-btn active" role="tab" aria-selected="true"  data-panel="ws1">① 自己診断</button>
+  <button class="tab-btn"        role="tab" aria-selected="false" data-panel="ws2">② 判断基準テンプレート</button>
+  <button class="tab-btn"        role="tab" aria-selected="false" data-panel="ws3">③ 30日ロードマップ</button>
+</nav>
+
+<section class="panel active" id="ws1" role="tabpanel">
+  <div class="ws-header">
+    <div class="ws-label">Worksheet 01</div>
+    <h2 class="ws-title">管理 vs マネジメント 自己診断シート</h2>
+    <p class="ws-desc">今日やったことを書き出し、「管理（見張る仕事）」か「マネジメント（設計する仕事）」かに分類する。<br>割合を可視化することで、自分の時間の使い方の実態が見える。</p>
+  </div>
+  <div class="card">
+    <div id="activityList"></div>
+    <button class="add-row-btn" id="addActivityBtn">＋ 行動を追加する</button>
+  </div>
+  <div class="card">
+    <div style="font-size:.8rem;font-weight:700;color:var(--text-2);margin-bottom:.75rem;letter-spacing:.06em">TODAY'S BREAKDOWN</div>
+    <div class="chart-wrap">
+      <canvas id="donutCanvas" width="140" height="140" aria-label="時間配分ドーナツチャート"></canvas>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--accent-3)"></div>
+          <div>
+            <div class="legend-label">管理（交通整理）</div>
+            <div class="legend-pct kanri" id="kanriPct">—</div>
+          </div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--accent)"></div>
+          <div>
+            <div class="legend-label">マネジメント（道路設計）</div>
+            <div class="legend-pct mgmt" id="mgmtPct">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="diagnosis-box" id="diagnosisBox">行動を分類すると、ここに診断コメントが表示されます。</div>
+  </div>
+  <div class="action-row">
+    <button class="btn-ghost" onclick="clearWs1()">リセット</button>
+    <button class="btn-primary" onclick="window.print()">印刷 / PDF保存</button>
+  </div>
+</section>
+
+<section class="panel" id="ws2" role="tabpanel">
+  <div class="ws-header">
+    <div class="ws-label">Worksheet 02</div>
+    <h2 class="ws-title">判断基準の言語化テンプレート</h2>
+    <p class="ws-desc">「こういうときはこうする」を書き出す。状況・判断・根拠の3列で言語化することで、<br>自分の頭の中にある基準を現場に渡せる形にする。</p>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="criteria-table">
+        <thead>
+          <tr>
+            <th style="width:32%">状況<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.65rem">こういうとき</span></th>
+            <th style="width:32%">判断<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.65rem">こうする</span></th>
+            <th style="width:32%">根拠<br><span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.65rem">なぜなら</span></th>
+            <th style="width:4%"></th>
+          </tr>
+        </thead>
+        <tbody id="criteriaBody">
+          <tr class="example-row">
+            <td><span class="example-tag">記入例</span><textarea class="ct-input" rows="2">夜勤帯にADL対応が重なったとき</textarea></td>
+            <td><textarea class="ct-input" rows="2">まず医療的ケアを優先し、移乗は15分後に組み直す</textarea></td>
+            <td><textarea class="ct-input" rows="2">利用者の安全リスクが高い順に対応するため</textarea></td>
+            <td><button class="ct-del" onclick="delCriteria(this)" aria-label="行を削除">✕</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <button class="add-row-btn" id="addCriteriaBtn">＋ 判断基準を追加する</button>
+  <div class="card" style="margin-top:1.25rem;border-left:3px solid var(--accent-2)">
+    <div style="font-size:.75rem;font-weight:700;color:var(--accent-2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem">HINT</div>
+    <p style="font-size:.83rem;color:var(--text-2);line-height:1.7">
+      最初は「渡せる判断」だけでいい。完璧に書こうとしなくていい。<br>
+      書いたものを現場に渡し、「この場合は？」という反応が来たら書き足す。<br>
+      それが言語化の正しい順番だ。
+    </p>
+  </div>
+  <div class="action-row">
+    <button class="btn-ghost" onclick="clearWs2()">リセット</button>
+    <button class="btn-primary" onclick="window.print()">印刷 / PDF保存</button>
+  </div>
+</section>
+
+<section class="panel" id="ws3" role="tabpanel">
+  <div class="ws-header">
+    <div class="ws-label">Worksheet 03</div>
+    <h2 class="ws-title">30日ロードマップ進捗シート</h2>
+    <p class="ws-desc">毎日1行書き込むだけでいい実践記録。チェックを入れ、気づきを1行メモする。<br>完璧な記録より、続けることの方が大事だ。</p>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <div class="progress-label">OVERALL PROGRESS</div>
+      <div class="progress-pct" id="progressPct">0%</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="day-count" id="dayCount">0 / 30日 完了</div>
+  </div>
+  <div id="roadmapBlocks"></div>
+  <div class="action-row">
+    <button class="btn-ghost" onclick="clearWs3()">リセット</button>
+    <button class="btn-primary" onclick="window.print()">印刷 / PDF保存</button>
+  </div>
+</section>
+
+<script>
+const themeBtn = document.getElementById('themeBtn');
+let currentTheme = localStorage.getItem('ws-theme') || 'auto';
+function applyTheme(t) {
+  if (t === 'auto') { document.documentElement.removeAttribute('data-theme'); themeBtn.textContent = '☾'; }
+  else if (t === 'dark') { document.documentElement.setAttribute('data-theme','dark'); themeBtn.textContent = '☀'; }
+  else { document.documentElement.setAttribute('data-theme','light'); themeBtn.textContent = '☾'; }
+  localStorage.setItem('ws-theme', t);
+}
+applyTheme(currentTheme);
+themeBtn.addEventListener('click', () => {
+  const cycle = {auto:'dark',dark:'light',light:'auto'};
+  currentTheme = cycle[currentTheme];
+  applyTheme(currentTheme); drawDonut();
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+    document.getElementById(btn.dataset.panel).classList.add('active');
+  });
+});
+
+let activities = JSON.parse(localStorage.getItem('ws1-activities') || '[]');
+if (!activities.length) activities = [{text:'',type:null},{text:'',type:null},{text:'',type:null}];
+
+function saveWs1() { localStorage.setItem('ws1-activities', JSON.stringify(activities)); }
+
+function renderActivityList() {
+  const list = document.getElementById('activityList');
+  list.innerHTML = '';
+  activities.forEach((a, i) => {
+    const row = document.createElement('div');
+    row.className = 'activity-row';
+    row.innerHTML = `
+      <input class="activity-input" type="text" placeholder="例）ヒヤリハット対応、シフト調整、新人へのOJT…" value="${escHtml(a.text)}" data-idx="${i}">
+      <button class="seg-btn${a.type==='kanri'?' sel-kanri':''}" data-idx="${i}" data-type="kanri">管理</button>
+      <button class="seg-btn${a.type==='mgmt'?' sel-mgmt':''}" data-idx="${i}" data-type="mgmt">マネジメント</button>
+      <button class="del-btn" data-idx="${i}" aria-label="削除">×</button>
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('.activity-input').forEach(inp => {
+    inp.addEventListener('input', e => { activities[+e.target.dataset.idx].text = e.target.value; saveWs1(); drawDonut(); });
+  });
+  list.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = +btn.dataset.idx, type = btn.dataset.type;
+      activities[idx].type = activities[idx].type === type ? null : type;
+      saveWs1(); renderActivityList(); drawDonut();
+    });
+  });
+  list.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', () => { activities.splice(+btn.dataset.idx, 1); saveWs1(); renderActivityList(); drawDonut(); });
+  });
+}
+
+document.getElementById('addActivityBtn').addEventListener('click', () => {
+  activities.push({text:'',type:null}); saveWs1(); renderActivityList(); drawDonut();
+});
+
+function clearWs1() {
+  activities = [{text:'',type:null},{text:'',type:null},{text:'',type:null}];
+  saveWs1(); renderActivityList(); drawDonut();
+}
+
+function getCSSVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+function drawDonut() {
+  const kanriCount = activities.filter(a => a.type === 'kanri').length;
+  const mgmtCount  = activities.filter(a => a.type === 'mgmt').length;
+  const total = kanriCount + mgmtCount;
+  const canvas = document.getElementById('donutCanvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const size = 140;
+  canvas.width = size * dpr; canvas.height = size * dpr;
+  canvas.style.width = size + 'px'; canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+  const cx = size/2, cy = size/2, r = 52, inner = 34;
+  ctx.clearRect(0, 0, size, size);
+  if (total === 0) {
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2); ctx.arc(cx,cy,inner,0,Math.PI*2,true);
+    ctx.fillStyle = getCSSVar('--bg-sub'); ctx.fill();
+    ctx.fillStyle = getCSSVar('--text-3');
+    ctx.font = '600 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('分類してください', cx, cy);
+    document.getElementById('kanriPct').textContent = '—';
+    document.getElementById('mgmtPct').textContent  = '—';
+    document.getElementById('diagnosisBox').innerHTML = '行動を分類すると、ここに診断コメントが表示されます。';
+    return;
+  }
+  const kanriAngle = (kanriCount/total)*Math.PI*2;
+  const mgmtAngle  = (mgmtCount/total)*Math.PI*2;
+  const start = -Math.PI/2, gap = 0.04;
+  function arc(s, e, color) {
+    if (e-s < 0.001) return;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(s+gap/2)*inner, cy+Math.sin(s+gap/2)*inner);
+    ctx.arc(cx,cy,r,s+gap/2,e-gap/2);
+    ctx.arc(cx,cy,inner,e-gap/2,s+gap/2,true);
+    ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+  }
+  arc(start, start+kanriAngle, getCSSVar('--accent-3'));
+  arc(start+kanriAngle, start+kanriAngle+mgmtAngle, getCSSVar('--accent'));
+  const kp = Math.round(kanriCount/total*100), mp = Math.round(mgmtCount/total*100);
+  document.getElementById('kanriPct').textContent = kanriCount + ' 件（' + kp + '%）';
+  document.getElementById('mgmtPct').textContent  = mgmtCount  + ' 件（' + mp + '%）';
+  let msg = '';
+  if (kp >= 80)      msg = '<strong>ほとんどの時間が「管理（交通整理）」に使われています。</strong><br>今日の現場は回ったかもしれない。でも、明日の設計は誰がやっていますか？<br>まず1つだけ「判断基準の言語化」をやってみてください。';
+  else if (kp >= 50) msg = '<strong>管理がまだ多数を占めています。</strong><br>マネジメントの種は蒔かれています。その比率を少しずつ変えることが今の課題です。<br>ワークシート②で、言語化できる判断基準を1つ探してみてください。';
+  else if (mp >= 70) msg = '<strong>マネジメント設計に時間を使えています。</strong><br>この状態が継続できれば、3ヶ月後の現場は変わります。<br>ワークシート③でロードマップの進捗を確認してください。';
+  else               msg = '<strong>管理とマネジメントのバランスが取れてきています。</strong><br>この分類を毎日続けることで、時間の使い方の変化が見えてきます。';
+  document.getElementById('diagnosisBox').innerHTML = msg;
+}
+
+renderActivityList(); drawDonut();
+
+document.getElementById('addCriteriaBtn').addEventListener('click', addCriteria);
+function addCriteria() {
+  const tbody = document.getElementById('criteriaBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><textarea class="ct-input" rows="2" placeholder="こういうとき…"></textarea></td>
+    <td><textarea class="ct-input" rows="2" placeholder="こうする…"></textarea></td>
+    <td><textarea class="ct-input" rows="2" placeholder="なぜなら…"></textarea></td>
+    <td><button class="ct-del" onclick="delCriteria(this)" aria-label="行を削除">✕</button></td>
+  `;
+  tbody.appendChild(tr); tr.querySelector('textarea').focus();
+}
+function delCriteria(btn) {
+  if (document.getElementById('criteriaBody').rows.length > 1) btn.closest('tr').remove();
+}
+function clearWs2() { document.getElementById('criteriaBody').innerHTML = ''; addCriteria(); }
+
+const weeks = [
+  {week:1,theme:'棚卸し',sub:'自分がしている「判断」を全部書き出す',days:[1,2,3,4,5,6,7]},
+  {week:2,theme:'言語化',sub:'「こういうときはこうする」を60点で書く',days:[8,9,10,11,12,13,14]},
+  {week:3,theme:'実装',sub:'書いたものを現場に渡す（完璧でなくていい）',days:[15,16,17,18,19,20,21]},
+  {week:4,theme:'修正',sub:'使われた基準を磨き、問いのレベルを意識する',days:[22,23,24,25,26,27,28,29,30]},
+];
+let ws3data = JSON.parse(localStorage.getItem('ws3-data') || '{}');
+function saveWs3() { localStorage.setItem('ws3-data', JSON.stringify(ws3data)); }
+
+function renderRoadmap() {
+  const container = document.getElementById('roadmapBlocks');
+  container.innerHTML = '';
+  weeks.forEach(w => {
+    const block = document.createElement('div');
+    block.className = 'card week-block';
+    block.innerHTML = `
+      <div class="week-head">
+        <span class="week-num">WEEK ${w.week}</span>
+        <span class="week-theme">${w.theme}</span>
+        <span class="week-sub">— ${w.sub}</span>
+      </div>
+      ${w.days.map(d => `
+        <div class="day-row${ws3data[d]&&ws3data[d].done?' done':''}" id="row-${d}">
+          <input type="checkbox" class="day-check" id="chk-${d}" data-day="${d}"
+            ${ws3data[d]&&ws3data[d].done?'checked':''} aria-label="${d}日目">
+          <label class="day-num" for="chk-${d}">Day ${String(d).padStart(2,'0')}</label>
+          <input type="text" class="day-note" data-day="${d}"
+            placeholder="今日の気づきを1行で…"
+            value="${escHtml(ws3data[d]&&ws3data[d].note||'')}">
+        </div>
+      `).join('')}
+    `;
+    container.appendChild(block);
+  });
+  container.querySelectorAll('.day-check').forEach(chk => {
+    chk.addEventListener('change', e => {
+      const d = +e.target.dataset.day;
+      if (!ws3data[d]) ws3data[d] = {};
+      ws3data[d].done = e.target.checked;
+      document.getElementById('row-'+d).classList.toggle('done', e.target.checked);
+      saveWs3(); updateProgress();
+    });
+  });
+  container.querySelectorAll('.day-note').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const d = +e.target.dataset.day;
+      if (!ws3data[d]) ws3data[d] = {};
+      ws3data[d].note = e.target.value; saveWs3();
+    });
+  });
+  updateProgress();
+}
+function updateProgress() {
+  const done = Object.values(ws3data).filter(v=>v.done).length;
+  const pct = Math.round(done/30*100);
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('dayCount').textContent = done + ' / 30日 完了';
+}
+function clearWs3() { ws3data = {}; saveWs3(); renderRoadmap(); }
+renderRoadmap();
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
