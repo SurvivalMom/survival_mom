@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>再起動シート — CARE DESIGN LAB</title>
+<style>
+:root{
+  --bg:#F5F6F4;--bg-sub:#ECEDEB;--surface:#FFFFFF;--border:#D4D7D3;
+  --border-strong:#B0B5AE;--text:#1A1E1C;--text-2:#566059;--text-3:#8A938D;
+  --accent:#2E7A6C;--accent-2:#C47B28;--accent-3:#D94F3A;--accent-bg:#EAF4F2;
+  --shadow:0 1px 4px rgba(0,0,0,.08);--radius:3px;
+  --font:"Hiragino Kaku Gothic ProN","Yu Gothic Medium","Yu Gothic","Noto Sans JP","Meiryo",sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#181C1A;--bg-sub:#1E2320;--surface:#242926;--border:#323834;
+    --border-strong:#4A524C;--text:#E8EBE8;--text-2:#9BA89F;--text-3:#6A7870;
+    --accent:#3D9E8E;--accent-2:#D9922E;--accent-3:#E06655;--accent-bg:#1A2D2A;
+    --shadow:0 1px 4px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F5F6F4;--bg-sub:#ECEDEB;--surface:#FFFFFF;--border:#D4D7D3;
+  --border-strong:#B0B5AE;--text:#1A1E1C;--text-2:#566059;--text-3:#8A938D;
+  --accent:#2E7A6C;--accent-2:#C47B28;--accent-3:#D94F3A;--accent-bg:#EAF4F2;
+  --shadow:0 1px 4px rgba(0,0,0,.08);
+}
+:root[data-theme="dark"]{
+  --bg:#181C1A;--bg-sub:#1E2320;--surface:#242926;--border:#323834;
+  --border-strong:#4A524C;--text:#E8EBE8;--text-2:#9BA89F;--text-3:#6A7870;
+  --accent:#3D9E8E;--accent-2:#D9922E;--accent-3:#E06655;--accent-bg:#1A2D2A;
+  --shadow:0 1px 4px rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+input,textarea{font-family:inherit}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.app-header{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 1.5rem;display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100;box-shadow:var(--shadow);
+}
+.app-logo{
+  font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text-3);font-weight:600;padding:1rem 0;
+  border-right:1px solid var(--border);padding-right:1rem;white-space:nowrap;
+}
+.app-title{font-size:.85rem;color:var(--text-2);font-weight:500}
+.theme-toggle{
+  margin-left:auto;background:none;border:1px solid var(--border);
+  color:var(--text-2);border-radius:var(--radius);
+  padding:.3rem .55rem;font-size:.75rem;transition:border-color .15s;
+}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+.main{max-width:720px;margin:0 auto;padding:2rem 1.5rem}
+
+.page-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.35rem}
+.page-title{font-size:1.4rem;font-weight:700;line-height:1.35;border-left:3px solid var(--accent);padding-left:.85rem;margin-bottom:.5rem}
+.page-desc{color:var(--text-2);font-size:.88rem;padding-left:1.1rem;margin-bottom:2rem;line-height:1.7}
+
+.section{margin-bottom:2rem}
+.section-head{
+  display:flex;align-items:center;gap:.75rem;
+  margin-bottom:1rem;padding-bottom:.6rem;border-bottom:2px solid var(--border);
+}
+.section-num{
+  width:28px;height:28px;border-radius:50%;background:var(--accent);
+  color:#fff;font-size:.78rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.section-title{font-size:.95rem;font-weight:700;color:var(--text)}
+.section-hint{font-size:.8rem;color:var(--text-3);margin-top:.15rem}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
+
+.field-label{font-size:.72rem;letter-spacing:.1em;font-weight:700;color:var(--text-3);text-transform:uppercase;margin-bottom:.4rem}
+.field-input{
+  width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);
+  outline:none;color:var(--text);font-size:.9rem;padding:.3rem .2rem;
+  transition:border-color .15s;line-height:1.6;
+}
+.field-input:focus{border-bottom-color:var(--accent)}
+.field-input::placeholder{color:var(--text-3)}
+textarea.field-input{resize:vertical;min-height:3.5rem}
+
+.three-col{display:grid;grid-template-columns:1fr;gap:.85rem}
+@media(min-width:560px){.three-col{grid-template-columns:1fr 1fr 1fr}}
+
+.step-row{display:grid;grid-template-columns:20px 1fr;gap:.6rem;align-items:start;margin-bottom:.6rem}
+.step-row:last-child{margin-bottom:0}
+.step-num{font-size:.75rem;font-weight:700;color:var(--accent);padding-top:.35rem}
+
+.hint-box{
+  background:var(--accent-bg);border-left:3px solid var(--accent-2);
+  border-radius:0 var(--radius) var(--radius) 0;
+  padding:.85rem 1rem;font-size:.82rem;color:var(--text-2);line-height:1.7;
+  margin-bottom:1rem;
+}
+.hint-box strong{color:var(--text)}
+
+.level-grid{display:grid;gap:.75rem}
+.level-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1rem 1.1rem;
+}
+.level-tag{
+  font-size:.65rem;letter-spacing:.14em;font-weight:700;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.4rem;
+}
+.level-q{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:.5rem}
+.level-desc{font-size:.78rem;color:var(--text-2);margin-bottom:.6rem}
+
+.result-box{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.25rem;margin-top:1.5rem;border-top:3px solid var(--accent);
+}
+.result-label{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:.75rem}
+
+.action-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:.6rem 1.4rem;border-radius:var(--radius);font-size:.85rem;font-weight:700;transition:opacity .15s}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{background:none;border:1px solid var(--border-strong);color:var(--text-2);padding:.6rem 1.4rem;border-radius:var(--radius);font-size:.85rem;font-weight:600;transition:border-color .15s,color .15s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+.copy-btn{
+  background:none;border:1px solid var(--border);color:var(--text-3);
+  font-size:.75rem;padding:.3rem .65rem;border-radius:var(--radius);
+  transition:all .15s;margin-top:.75rem;
+}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.copy-btn.copied{border-color:var(--accent);color:var(--accent)}
+
+.complete-banner{
+  display:none;background:var(--accent-bg);border:1px solid var(--accent);
+  border-radius:var(--radius);padding:1rem 1.25rem;margin-top:1.5rem;
+  font-size:.88rem;color:var(--accent);font-weight:700;text-align:center;
+}
+.complete-banner.show{display:block}
+
+@media(max-width:480px){
+  .main{padding:1.25rem 1rem}
+  .page-title{font-size:1.15rem}
+  .app-logo{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-logo">CARE DESIGN LAB</div>
+  <div class="app-title">リーダー再起動シート</div>
+  <button class="theme-toggle" id="themeBtn" aria-label="テーマ切替">☾</button>
+</header>
+
+<main class="main">
+  <div class="page-label">Reboot Worksheet</div>
+  <h1 class="page-title">「向いてない」と思ったリーダーへ。<br>3つのことを、今週だけやってみてほしい。</h1>
+  <p class="page-desc">向いていないんじゃない。設計を知らなかっただけだ。<br>このシートを埋めるだけで、今週の現場が少し変わる。</p>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">判断メモを1枚書く</div>
+        <div class="section-hint">頭の中の判断を、3行で紙に書き出す</div>
+      </div>
+    </div>
+
+    <div class="hint-box">
+      部下が「どうすればいいですか？」と聞いてくる。それはあなたの頭の中にしか判断基準がないから。<br>
+      今日起きた判断を1つ選んで、この3行で書いてみてほしい。<strong>完璧じゃなくていい。60点でいい。</strong>
+    </div>
+
+    <div class="card">
+      <div style="margin-bottom:1rem">
+        <div class="field-label">状況 — こういうとき</div>
+        <textarea class="field-input" id="s1-situation" placeholder="例）夜勤帯にADL対応が重なったとき" rows="2"></textarea>
+      </div>
+      <div style="margin-bottom:1rem">
+        <div class="field-label">判断 — こうする</div>
+        <textarea class="field-input" id="s1-action" placeholder="例）まず医療的ケアを優先し、移乗は15分後に組み直す" rows="2"></textarea>
+      </div>
+      <div>
+        <div class="field-label">根拠 — なぜなら</div>
+        <textarea class="field-input" id="s1-reason" placeholder="例）安全リスクが高い順に対応するため" rows="2"></textarea>
+      </div>
+      <button class="copy-btn" id="copyMemo">このメモをコピーする</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-num">2</div>
+      <div>
+        <div class="section-title">渡せる仕事を1つ選ぶ</div>
+        <div class="section-hint">「自分でやった方が早い」をやめる最初の一歩</div>
+      </div>
+    </div>
+
+    <div class="hint-box">
+      「やっておいて」では動けない。<strong>手順があれば任せられる。</strong><br>
+      今週自分がやる仕事の中から1つだけ選んで、渡す手順を書いてみる。
+    </div>
+
+    <div class="card">
+      <div style="margin-bottom:1rem">
+        <div class="field-label">渡す仕事</div>
+        <input class="field-input" type="text" id="s2-task" placeholder="例）申し送りの記録まとめ">
+      </div>
+      <div style="margin-bottom:1rem">
+        <div class="field-label">渡す相手</div>
+        <input class="field-input" type="text" id="s2-person" placeholder="例）田中さん（入職6ヶ月）">
+      </div>
+      <div>
+        <div class="field-label">渡すときに伝える手順</div>
+        <div class="step-row">
+          <div class="step-num">①</div>
+          <input class="field-input" type="text" id="s2-step1" placeholder="まず…">
+        </div>
+        <div class="step-row">
+          <div class="step-num">②</div>
+          <input class="field-input" type="text" id="s2-step2" placeholder="次に…">
+        </div>
+        <div class="step-row">
+          <div class="step-num">③</div>
+          <input class="field-input" type="text" id="s2-step3" placeholder="最後に…">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-num">3</div>
+      <div>
+        <div class="section-title">今週1回、「問い」を使う</div>
+        <div class="section-hint">答えを教えるのをやめると、部下が動き始める</div>
+      </div>
+    </div>
+
+    <div class="hint-box">
+      答えを教えると、部下は次も聞きに来る。<strong>問いを投げると、部下は自分で考え始める。</strong><br>
+      まずレベル1から。1回使えれば十分だ。
+    </div>
+
+    <div class="level-grid">
+      <div class="level-card">
+        <div class="level-tag">Level 1 — 確認の問い</div>
+        <div class="level-q">「今、何が一番優先だと思う？」</div>
+        <div class="level-desc">部下に状況を整理させる。まずここから始める。</div>
+        <div class="field-label">使う場面を書いておく</div>
+        <input class="field-input" type="text" id="s3-lv1" placeholder="例）ケア中に優先順位を迷っているとき">
+      </div>
+      <div class="level-card">
+        <div class="level-tag">Level 2 — 判断の問い</div>
+        <div class="level-q">「AとBで迷ったら、どちらを選ぶ？理由は？」</div>
+        <div class="level-desc">部下に判断基準を持たせる。慣れてきたら使う。</div>
+        <div class="field-label">使う場面を書いておく</div>
+        <input class="field-input" type="text" id="s3-lv2" placeholder="例）処置の優先順位で迷っているとき">
+      </div>
+      <div class="level-card">
+        <div class="level-tag">Level 3 — 設計の問い</div>
+        <div class="level-q">「同じことが起きないようにするには、何を変えればいい？」</div>
+        <div class="level-desc">部下に仕組みを考えさせる。3ヶ月後の目標。</div>
+        <div class="field-label">使う場面を書いておく</div>
+        <input class="field-input" type="text" id="s3-lv3" placeholder="例）同じミスが繰り返されているとき">
+      </div>
+    </div>
+  </div>
+
+  <!-- 今週のまとめ -->
+  <div class="result-box" id="resultBox">
+    <div class="result-label">今週やること — まとめ</div>
+    <div id="resultContent" style="font-size:.88rem;color:var(--text-2);line-height:2">
+      上の3つを埋めると、ここに今週のアクションがまとまります。
+    </div>
+    <button class="copy-btn" id="copyResult">まとめをコピーする</button>
+  </div>
+
+  <div class="complete-banner" id="completeBanner">
+    ✓ シート完成。今週の現場に持っていってください。
+  </div>
+
+  <div class="action-row">
+    <button class="btn-ghost" id="resetBtn">リセット</button>
+    <button class="btn-primary" onclick="window.print()">印刷 / PDF保存</button>
+  </div>
+
+  <p style="font-size:.72rem;color:var(--text-3);margin-top:2rem;text-align:center;letter-spacing:.06em">
+    CARE DESIGN LAB / survival_log_biz
+  </p>
+</main>
+
+<script>
+const themeBtn = document.getElementById('themeBtn');
+let currentTheme = localStorage.getItem('reboot-theme') || 'auto';
+function applyTheme(t){
+  if(t==='auto'){document.documentElement.removeAttribute('data-theme');themeBtn.textContent='☾';}
+  else if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');themeBtn.textContent='☀';}
+  else{document.documentElement.setAttribute('data-theme','light');themeBtn.textContent='☾';}
+  localStorage.setItem('reboot-theme',t);
+}
+applyTheme(currentTheme);
+themeBtn.addEventListener('click',()=>{
+  const cycle={auto:'dark',dark:'light',light:'auto'};
+  currentTheme=cycle[currentTheme];applyTheme(currentTheme);
+});
+
+const KEYS=['s1-situation','s1-action','s1-reason','s2-task','s2-person',
+            's2-step1','s2-step2','s2-step3','s3-lv1','s3-lv2','s3-lv3'];
+
+function save(){
+  const data={};
+  KEYS.forEach(k=>{const el=document.getElementById(k);if(el)data[k]=el.value;});
+  localStorage.setItem('reboot-data',JSON.stringify(data));
+  updateResult();
+}
+
+function load(){
+  const raw=localStorage.getItem('reboot-data');
+  if(!raw)return;
+  const data=JSON.parse(raw);
+  KEYS.forEach(k=>{const el=document.getElementById(k);if(el&&data[k])el.value=data[k];});
+  updateResult();
+}
+
+function updateResult(){
+  const g=id=>document.getElementById(id)?.value?.trim()||'';
+  const sit=g('s1-situation'),act=g('s1-action'),rsn=g('s1-reason');
+  const task=g('s2-task'),person=g('s2-person');
+  const st1=g('s2-step1'),st2=g('s2-step2'),st3=g('s2-step3');
+  const lv1=g('s3-lv1');
+
+  const filled=[sit,act,rsn,task,person,st1,lv1].filter(v=>v).length;
+  const total=7;
+
+  let html='';
+  if(sit||act||rsn){
+    html+=`<div style="margin-bottom:1rem"><strong style="color:var(--accent)">① 判断メモ</strong><br>`;
+    if(sit)html+=`状況：${esc(sit)}<br>`;
+    if(act)html+=`判断：${esc(act)}<br>`;
+    if(rsn)html+=`根拠：${esc(rsn)}`;
+    html+=`</div>`;
+  }
+  if(task||person||st1){
+    html+=`<div style="margin-bottom:1rem"><strong style="color:var(--accent)">② 渡す仕事</strong><br>`;
+    if(task)html+=`仕事：${esc(task)}<br>`;
+    if(person)html+=`相手：${esc(person)}<br>`;
+    if(st1)html+=`手順①：${esc(st1)}<br>`;
+    if(st2)html+=`手順②：${esc(st2)}<br>`;
+    if(st3)html+=`手順③：${esc(st3)}`;
+    html+=`</div>`;
+  }
+  if(lv1){
+    html+=`<div><strong style="color:var(--accent)">③ 問いを使う場面</strong><br>`;
+    html+=`Lv1：${esc(lv1)}`;
+    const lv2=g('s3-lv2'),lv3=g('s3-lv3');
+    if(lv2)html+=`<br>Lv2：${esc(lv2)}`;
+    if(lv3)html+=`<br>Lv3：${esc(lv3)}`;
+    html+=`</div>`;
+  }
+
+  document.getElementById('resultContent').innerHTML=html||'上の3つを埋めると、ここに今週のアクションがまとまります。';
+  document.getElementById('completeBanner').classList.toggle('show', filled>=total);
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function copyText(text,btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='コピーしました ✓';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=btn.dataset.label;btn.classList.remove('copied');},2000);
+  });
+}
+
+document.getElementById('copyMemo').dataset.label='このメモをコピーする';
+document.getElementById('copyMemo').addEventListener('click',function(){
+  const sit=document.getElementById('s1-situation').value.trim();
+  const act=document.getElementById('s1-action').value.trim();
+  const rsn=document.getElementById('s1-reason').value.trim();
+  const text=`【判断メモ】\n状況：${sit}\n判断：${act}\n根拠：${rsn}`;
+  copyText(text,this);
+});
+
+document.getElementById('copyResult').dataset.label='まとめをコピーする';
+document.getElementById('copyResult').addEventListener('click',function(){
+  const g=id=>document.getElementById(id)?.value?.trim()||'';
+  let text='【今週やること】\n\n';
+  text+=`① 判断メモ\n状況：${g('s1-situation')}\n判断：${g('s1-action')}\n根拠：${g('s1-reason')}\n\n`;
+  text+=`② 渡す仕事\n仕事：${g('s2-task')}\n相手：${g('s2-person')}\n手順①：${g('s2-step1')}\n手順②：${g('s2-step2')}\n手順③：${g('s2-step3')}\n\n`;
+  text+=`③ 問いを使う場面\nLv1：${g('s3-lv1')}\nLv2：${g('s3-lv2')}\nLv3：${g('s3-lv3')}`;
+  copyText(text,this);
+});
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(!confirm('入力内容をリセットしますか？'))return;
+  KEYS.forEach(k=>{const el=document.getElementById(k);if(el)el.value='';});
+  localStorage.removeItem('reboot-data');
+  updateResult();
+});
+
+KEYS.forEach(k=>{
+  const el=document.getElementById(k);
+  if(el)el.addEventListener('input',save);
+});
+
+load();
+</script>
+</body>
+</html>
