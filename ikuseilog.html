@@ -312,6 +312,14 @@
             <input class="f-input" id="newMemberQ3" placeholder="例：1日1回、自分から利用者に世間話を振れるようになる">
           </div>
         </div>
+        <div class="goal-q">
+          <div class="goal-q-num">Q4</div>
+          <div style="flex:1">
+            <label class="f-label">どこまでの判断を任せるか？（裁量の境界線）</label>
+            <input class="f-input" id="newMemberQ4" placeholder="例：利用者への対応方法は本人判断OK。家族対応は必ず事前に相談">
+            <div style="font-size:0.7rem;color:var(--ink3);margin-top:4px;">「ここまでは君の判断」「ここからは私が責任を持つ」を最初に決めておく</div>
+          </div>
+        </div>
         <div style="display:flex; gap:10px; margin-top:8px;">
           <button class="btn btn-primary" onclick="createMember()">育成をスタートする</button>
           <button class="btn btn-outline" onclick="closeNewMemberForm()">キャンセル</button>
@@ -371,11 +379,18 @@
         </div>
         <div class="field">
           <label class="f-label">⭐ 褒めポイント（次回必ず伝える）</label>
-          <input class="f-input" id="weekPraise" placeholder="例：はじめて自分から声をかけられていた">
+          <div style="font-size:0.7rem;color:var(--ink3);margin-bottom:6px;">「安易な褒め」は茶番になる。<strong>具体的な行動＋その成果</strong>で書く。感動したなら「ありがとう」で十分。</div>
+          <input class="f-input" id="weekPraise" placeholder="例：〇〇さんが自分から声をかけたことで、利用者が笑顔になっていた">
         </div>
         <div class="field">
           <label class="f-label">次週までの「1つだけ」のチャレンジ</label>
+          <div style="font-size:0.7rem;color:var(--ink3);margin-bottom:6px;">本人が自分で決めたか？ <input type="checkbox" id="selfDecidedCheck" style="margin-left:4px;vertical-align:middle;"> <label for="selfDecidedCheck" style="font-size:0.7rem;color:var(--ink3);">本人が決めた（押しつけていない）</label></div>
           <input class="f-input" id="weekNextAction" placeholder="例：来週は2回、自分から話しかけてみる">
+        </div>
+        <div class="field">
+          <label class="f-label">フィードバックメモ</label>
+          <div style="font-size:0.7rem;color:var(--ink3);margin-bottom:6px;">⚠️ 書く前に確認：<strong>これは成果に直結しているか？</strong> 上司の感想・好み・なんとなくのダメ出しは書かない。</div>
+          <textarea class="f-textarea" id="weekFeedback" placeholder="例：申し送りの声が小さくて後ろまで届いていなかった → 次回は一歩前に出て話す"></textarea>
         </div>
         <button class="btn btn-primary" onclick="saveWeekRecord()">この週の記録を保存する</button>
       </div>
@@ -567,7 +582,7 @@ function showView(name) {
 function openNewMemberForm() { document.getElementById('newMemberCard').style.display = 'block'; }
 function closeNewMemberForm() {
   document.getElementById('newMemberCard').style.display = 'none';
-  ['newMemberName','newMemberRole','newMemberQ1','newMemberQ2','newMemberQ3'].forEach(id => document.getElementById(id).value = '');
+  ['newMemberName','newMemberRole','newMemberQ1','newMemberQ2','newMemberQ3','newMemberQ4'].forEach(id => document.getElementById(id).value = '');
 }
 
 function createMember() {
@@ -580,6 +595,7 @@ function createMember() {
     q1: document.getElementById('newMemberQ1').value.trim(),
     q2: document.getElementById('newMemberQ2').value.trim(),
     q3: document.getElementById('newMemberQ3').value.trim(),
+    q4: document.getElementById('newMemberQ4').value.trim(),
     startDate: new Date().toISOString().slice(0,10),
     records: []
   };
@@ -641,7 +657,8 @@ function renderDetail() {
   document.getElementById('detailGoal').innerHTML = `
     <strong>Q1．詰まっている場面：</strong>${escapeHtml(m.q1 || '—')}<br>
     <strong>Q2．止まっているステップ：</strong>${escapeHtml(m.q2 || '—')}<br>
-    <strong>Q3．4週間後のゴール：</strong>${escapeHtml(m.q3 || '—')}`;
+    <strong>Q3．4週間後のゴール：</strong>${escapeHtml(m.q3 || '—')}<br>
+    <strong>Q4．裁量の境界線：</strong>${escapeHtml(m.q4 || '—')}`;
 
   // Week tabs
   const tabs = document.getElementById('weekTabs');
@@ -677,6 +694,8 @@ function loadWeekForm(m) {
   document.getElementById('weekReflection').value = rec ? rec.reflection : '';
   document.getElementById('weekPraise').value = rec ? rec.praise : '';
   document.getElementById('weekNextAction').value = rec ? rec.nextAction : '';
+  document.getElementById('weekFeedback').value = rec ? (rec.feedback || '') : '';
+  document.getElementById('selfDecidedCheck').checked = rec ? !!rec.selfDecided : false;
   renderAiHint(currentStatus);
 }
 
@@ -689,24 +708,28 @@ function selectStatus(btn) {
 
 const HINTS = {
   '大きく成長': [
-    'できたことを具体的に言葉で伝える（「丁寧だったね」より「さっきの声かけ、自然だったね」）',
-    '次のレベルの「もう1段」を一緒に決める。難易度を急に上げすぎない',
-    '本人に「なぜできたと思う？」と聞き、再現できる形に言語化させる'
+    '具体的な行動＋成果で褒める（「自然だったね」より「さっきの声かけで利用者が笑顔になっていたね」）。感動したなら「ありがとう」で十分',
+    '本人に「なぜできたと思う？」と聞き、再現できる形に言語化させる。成長を属人化しない',
+    '次のレベルを急に上げすぎない。「もう1段だけ」を一緒に設定し、裁量の境界線も同時に確認する',
+    '小さな成功体験をルーティン化できないか考える。人の記憶・やり方が毎回ブレるのは仕組みがない証拠'
   ],
   '順調': [
     '今のペースを維持できているか確認し、無理に負荷を上げない',
-    '小さな変化でも見つけたら、その場で一言フィードバックする',
-    '次週のチャレンジは「今までの延長」で1つだけ設定する'
+    '小さな変化でも見つけたら、その場で具体的に一言フィードバックする（成果に関係ない感想は言わない）',
+    '次週のチャレンジは「今までの延長」で1つだけ。本人が自分で決めたか確認する',
+    '心理的安全性を保つ：「この人には話せる」と感じさせる関係の質が、次の成長の土台になる'
   ],
   'つまずき': [
     '責めずに「何が難しかったか」を一緒に分解する（Q1〜Q3に戻る）',
-    'できなかったことより、試したこと自体を認める',
-    '次週のチャレンジを今より小さく・具体的に再設定する'
+    'できなかったことより、試したこと自体を認める。安易な褒めは不要、事実を受け止めるだけでいい',
+    '次週のチャレンジを今より小さく・具体的に再設定する。「前進の実感」がゼロになると人は止まる',
+    'つまずきの原因を探る前に、環境を見直す。仕組みが整っていれば人のせいにならない'
   ],
   '様子見': [
-    'まずは「最近どう？」と軽く聞くことから始める',
+    'まずは「最近どう？」と軽く聞くことから始める。問いで人を導く。答えを押しつけない',
     '評価ではなく観察期間と捉え、次週は記録だけでもよいと伝える',
-    '本人が話しやすいタイミング（業務後など）を探る'
+    '本人が話しやすいタイミング（業務後・休憩など）を探る。関係の階層（心理的安全性）が先、成長は後',
+    '存在を認める言葉をかける。スキルより前に「あなたがいてよかった」という実感が人を動かす'
   ]
 };
 
@@ -727,7 +750,9 @@ function saveWeekRecord() {
     topic: document.getElementById('weekTopic').value.trim(),
     reflection: document.getElementById('weekReflection').value.trim(),
     praise: document.getElementById('weekPraise').value.trim(),
-    nextAction: document.getElementById('weekNextAction').value.trim()
+    nextAction: document.getElementById('weekNextAction').value.trim(),
+    feedback: document.getElementById('weekFeedback').value.trim(),
+    selfDecided: document.getElementById('selfDecidedCheck').checked
   };
   const idx = m.records.findIndex(r => r.week === currentWeek);
   if (idx >= 0) m.records[idx] = data; else m.records.push(data);
@@ -763,7 +788,8 @@ function renderTimelineList(m) {
       ${r.topic ? `<div class="timeline-text-label">取り組み</div><div class="timeline-text">${escapeHtml(r.topic)}</div>` : ''}
       ${r.reflection ? `<div class="timeline-text-label">気づき</div><div class="timeline-text">${escapeHtml(r.reflection)}</div>` : ''}
       ${r.praise ? `<div class="timeline-text-label">⭐ 褒めポイント</div><div class="timeline-text">${escapeHtml(r.praise)}</div>` : ''}
-      ${r.nextAction ? `<div class="timeline-text-label">次のチャレンジ</div><div class="timeline-text">${escapeHtml(r.nextAction)}</div>` : ''}
+      ${r.nextAction ? `<div class="timeline-text-label">次のチャレンジ${r.selfDecided?' ✅ 本人が決定':''}</div><div class="timeline-text">${escapeHtml(r.nextAction)}</div>` : ''}
+      ${r.feedback ? `<div class="timeline-text-label">フィードバック</div><div class="timeline-text">${escapeHtml(r.feedback)}</div>` : ''}
     </div>`).join('');
 }
 
@@ -794,11 +820,11 @@ function renderSummary() {
 
 function downloadCSV() {
   if (!members.length) { toast('まだ記録がありません'); return; }
-  let rows = [['メンバー名','役割','開始日','週','日付','様子','取り組み','気づき','褒めポイント','次のチャレンジ']];
+  let rows = [['メンバー名','役割','開始日','週','日付','様子','取り組み','気づき','褒めポイント','次のチャレンジ','本人が決定','FBメモ']];
   members.forEach(m => {
-    if (!m.records.length) { rows.push([m.name, m.role, m.startDate, '', '', '', '', '', '', '']); return; }
+    if (!m.records.length) { rows.push([m.name, m.role, m.startDate, '', '', '', '', '', '', '', '', '']); return; }
     [...m.records].sort((a,b)=>a.week-b.week).forEach(r => {
-      rows.push([m.name, m.role, m.startDate, r.week, r.date, r.status, r.topic, r.reflection, r.praise, r.nextAction]);
+      rows.push([m.name, m.role, m.startDate, r.week, r.date, r.status, r.topic, r.reflection, r.praise, r.nextAction, r.selfDecided?'○':'', r.feedback||'']);
     });
   });
   const csv = rows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
