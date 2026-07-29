@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>夏休みサバイバル時間割ワークシート</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fff9f3;
+    --sand: #e8ddd0;
+    --clay: #c9a882;
+    --terra: #a07050;
+    --forest: #5a7a5e;
+    --ink: #2d2520;
+    --ink-light: #5a4e46;
+    --accent: #d4876a;
+    --accent-soft: #f0e0d6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .wrapper { max-width: 460px; margin: 0 auto; }
+
+  .header {
+    text-align: center;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--sand);
+    margin-bottom: 24px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--clay);
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .header h1 span {
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink-light);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .header-note {
+    font-size: 11px;
+    color: var(--ink-light);
+    line-height: 1.8;
+    margin-top: 14px;
+    padding: 0 6px;
+  }
+
+  .section {
+    background: var(--warm-white);
+    border: 1px solid var(--sand);
+    border-radius: 16px;
+    padding: 18px 18px;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+
+  .row:last-child { margin-bottom: 0; }
+
+  .row input[type="text"],
+  .row input[type="time"],
+  .row input[type="number"] {
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .row input:focus { border-bottom-color: var(--clay); }
+  .row input::placeholder { color: var(--sand); font-size: 11px; }
+
+  .row select {
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    padding: 4px 2px;
+  }
+
+  .name-input { width: 90px; }
+  .time-input { width: 100px; }
+  .num-input { width: 56px; text-align: right; }
+  .place-input { flex: 1; min-width: 100px; }
+  .choice-input { flex: 1; min-width: 80px; }
+
+  .num-label { font-size: 12px; color: var(--clay); flex-shrink: 0; }
+
+  .hint {
+    font-size: 10px;
+    color: var(--clay);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    border-left: 2px solid var(--sand);
+    padding-left: 10px;
+    margin-top: 10px;
+  }
+
+  .script-box {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.8;
+    margin-bottom: 10px;
+    min-height: 20px;
+  }
+
+  .copy-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--terra);
+    border: 1px solid var(--clay);
+    border-radius: 10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .copy-btn:active { background: var(--accent-soft); }
+
+  /* 1週間プラン */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .week-cell {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 8px 3px;
+    text-align: center;
+  }
+
+  .week-cell.weekend { background: var(--accent-soft); }
+
+  .week-youbi {
+    font-size: 10px;
+    color: var(--clay);
+    margin-bottom: 4px;
+  }
+
+  .week-time {
+    font-size: 11px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .week-lunch {
+    margin-top: 4px;
+    font-size: 9px;
+    color: var(--forest);
+  }
+
+  /* 今日の振り返り */
+  .today-date {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-bottom: 12px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--sand);
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .check-row:last-of-type { border-bottom: none; }
+
+  .check-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--terra);
+    margin-top: 1px;
+  }
+
+  .streak-box {
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  .streak-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--terra);
+  }
+
+  .streak-label {
+    font-size: 10px;
+    color: var(--ink-light);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .btn-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .primary-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .primary-btn:active { background: var(--terra); }
+
+  .secondary-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .secondary-btn:active { background: var(--sand); }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--forest);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--clay);
+    letter-spacing: 0.1em;
+    margin-top: 32px;
+    opacity: 0.6;
+  }
+
+  /* 画像カード用モーダル */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45,37,32,0.7);
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.show { display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; }
+  .modal-inner {
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .modal-title {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  #card {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 16px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .card-date { font-size: 11px; color: var(--clay); margin-bottom: 14px; }
+  .card-item {
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 0;
+    line-height: 1.6;
+  }
+  .card-msg {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--sand);
+    font-size: 12px;
+    color: var(--ink-light);
+    line-height: 1.8;
+  }
+  .card-footer {
+    text-align: right;
+    font-size: 9px;
+    color: var(--clay);
+    margin-top: 14px;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+  .close-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-sub">survival_mom</div>
+    <h1>夏休みサバイバル時間割
+      <span>書き込み式ワークシート</span>
+    </h1>
+    <div class="header-note">
+      予定通り進めるための表ではありません。「今日はどこを守れたか」を確認するための表です。守れた項目が一つでもあれば、その日は十分です。
+    </div>
+  </div>
+
+  <!-- 基本情報 -->
+  <div class="section">
+    <div class="section-title">基本情報</div>
+    <div class="row">
+      <span>姉の名前</span>
+      <input type="text" class="name-input" id="sisterName" placeholder="例）ゆい">
+      <span>／ 弟の名前</span>
+      <input type="text" class="name-input" id="brotherName" placeholder="例）そう">
+    </div>
+  </div>
+
+  <!-- ①起きなくていい時間 -->
+  <div class="section">
+    <div class="section-title">① 起きなくていい時間</div>
+    <div class="row">
+      <span id="labelSister1">お姉ちゃん</span>
+      <span>が起きなくていい時間 →</span>
+      <input type="time" class="time-input" id="wakeLimit" value="10:00">
+      <span>まで</span>
+    </div>
+  </div>
+
+  <!-- ②「暇」に渡す選択肢 -->
+  <div class="section">
+    <div class="section-title">② 「暇」に渡す選択肢</div>
+    <div class="row"><span id="labelBrother1">弟</span><span>の「暇」に渡す選択肢</span></div>
+    <div class="row">①<input type="text" class="choice-input" id="choice1" placeholder="例）ブロック"></div>
+    <div class="row">②<input type="text" class="choice-input" id="choice2" placeholder="例）お絵かき"></div>
+    <div class="row">③<input type="text" class="choice-input" id="choice3" placeholder="例）YouTube 30分"></div>
+  </div>
+
+  <!-- ③母の避難時間 -->
+  <div class="section">
+    <div class="section-title">③ 母の避難時間</div>
+    <div class="row">
+      <input type="time" class="time-input" id="escapeStart" value="07:00">
+      <span>〜</span>
+      <input type="number" class="num-input" id="escapeMinutes" value="15" min="5" max="60">
+      <span class="num-label">分間</span>
+    </div>
+    <div class="row">
+      <span>場所</span>
+      <input type="text" class="place-input" id="escapePlace" placeholder="例）キッチンで一人コーヒー">
+    </div>
+  </div>
+
+  <!-- ④デイサービスに聞く一言 -->
+  <div class="section">
+    <div class="section-title">④ デイサービスに聞く一言</div>
+    <div class="script-box" id="dayServiceScript"></div>
+    <button class="copy-btn" onclick="copyScript()">この文をコピーする</button>
+  </div>
+
+  <!-- ⑤昼食組み立てるだけデー -->
+  <div class="section">
+    <div class="section-title">⑤ 昼食「組み立てるだけ」デー（週2日）</div>
+    <div class="row">
+      <select id="lunchDay1">
+        <option value="0">日曜日</option><option value="1" selected>月曜日</option>
+        <option value="2">火曜日</option><option value="3">水曜日</option>
+        <option value="4">木曜日</option><option value="5">金曜日</option>
+        <option value="6">土曜日</option>
+      </select>
+      <span>と</span>
+      <select id="lunchDay2">
+        <option value="0">日曜日</option><option value="1">月曜日</option>
+        <option value="2">火曜日</option><option value="3">水曜日</option>
+        <option value="4" selected>木曜日</option><option value="5">金曜日</option>
+        <option value="6">土曜日</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 1週間プラン -->
+  <div class="section">
+    <div class="section-title">1週間プラン（自動反映）</div>
+    <div class="week-grid" id="weekGrid"></div>
+    <div class="hint">土日は「母の避難時間」を朝ではなく昼に移動します。使える人がいる日は、その時間を先取りしてください。</div>
+  </div>
+
+  <!-- 今日の振り返り -->
+  <div class="section">
+    <div class="section-title">今日の振り返り</div>
+    <div class="today-date" id="todayDate"></div>
+
+    <label class="check-row"><input type="checkbox" id="check1"><span>①起きなくていい時間を守れた</span></label>
+    <label class="check-row"><input type="checkbox" id="check2"><span>②「暇」に選択肢を渡せた</span></label>
+    <label class="check-row"><input type="checkbox" id="check3"><span>③母の避難時間を確保できた</span></label>
+    <label class="check-row"><input type="checkbox" id="check4"><span>④デイサービスに連絡できた</span></label>
+    <label class="check-row"><input type="checkbox" id="check5"><span>⑤昼食「組み立てるだけ」にできた</span></label>
+
+    <div class="streak-box">
+      <div class="streak-num" id="streakCount">0</div>
+      <div class="streak-label">これまでに何か1つでも守れた日</div>
+    </div>
+  </div>
+
+  <div class="btn-area">
+    <button class="primary-btn" onclick="saveToday()">今日の記録を保存する</button>
+    <button class="secondary-btn" onclick="showCard()">📸　今日のカードを画像で保存</button>
+    <button class="secondary-btn" onclick="clearAll()">全部クリア</button>
+  </div>
+
+  <div class="footer">survival_mom</div>
+</div>
+
+<!-- 画像カード用モーダル -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-title">PREVIEW</div>
+    <div id="card">
+      <div class="card-title">今日、守れたこと</div>
+      <div class="card-date" id="cDate"></div>
+      <div id="cItems"></div>
+      <div class="card-msg">守れた項目が一つでもあれば、その日は十分です。足りないのは根性じゃなく、仕組みだけ。</div>
+      <div class="card-footer">survival_mom</div>
+    </div>
+    <button class="primary-btn" style="margin-bottom:10px;" onclick="downloadImage()">⬇️　画像を保存する</button>
+    <button class="close-btn" onclick="closeModal()">とじる</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">保存しました ✓</div>
+
+<script>
+const STORE_KEY = 'natsuyasumiWorksheet_v1';
+const DAILY_KEY = 'natsuyasumiDaily_v1';
+
+const fieldIds = [
+  'sisterName','brotherName','wakeLimit','choice1','choice2','choice3',
+  'escapeStart','escapeMinutes','escapePlace','lunchDay1','lunchDay2'
+];
+
+function v(id) { return document.getElementById(id)?.value ?? ''; }
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function saveSettings() {
+  const data = {};
+  fieldIds.forEach(id => data[id] = v(id));
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+  renderDependents();
+}
+
+function loadSettings() {
+  const raw = localStorage.getItem(STORE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined && data[id] !== '') el.value = data[id];
+    });
+  } catch (e) {}
+}
+
+function renderDependents() {
+  const sister = v('sisterName') || 'お姉ちゃん';
+  const brother = v('brotherName') || '弟';
+  document.getElementById('labelSister1').textContent = sister;
+  document.getElementById('labelBrother1').textContent = brother;
+
+  // デイサービス台詞
+  const childForCall = sister || 'こども';
+  document.getElementById('dayServiceScript').textContent =
+    `「${childForCall}ですが、キャンセル枠か、午後だけの短時間枠は出ていますか」`;
+
+  renderWeekGrid();
+}
+
+function renderWeekGrid() {
+  const youbiList = ['日','月','火','水','木','金','土'];
+  const escapeStart = v('escapeStart') || '07:00';
+  const escapeMinutes = v('escapeMinutes') || '15';
+  const lunchDay1 = v('lunchDay1');
+  const lunchDay2 = v('lunchDay2');
+
+  // 平日の避難時間をそのまま使い、休日は昼(12:00スタート)に移動
+  const [h, m] = escapeStart.split(':').map(Number);
+
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const isWeekend = (i === 0 || i === 6);
+    const cell = document.createElement('div');
+    cell.className = 'week-cell' + (isWeekend ? ' weekend' : '');
+
+    const timeLabel = isWeekend
+      ? `12:00〜${escapeMinutes}分`
+      : `${escapeStart}〜${escapeMinutes}分`;
+
+    const lunchMark = (String(i) === lunchDay1 || String(i) === lunchDay2)
+      ? '<div class="week-lunch">昼食かんたん</div>' : '';
+
+    cell.innerHTML = `
+      <div class="week-youbi">${youbiList[i]}</div>
+      <div class="week-time">${timeLabel}</div>
+      ${lunchMark}
+    `;
+    grid.appendChild(cell);
+  }
+}
+
+function copyScript() {
+  const text = document.getElementById('dayServiceScript').textContent;
+  navigator.clipboard?.writeText(text).then(() => showToast('コピーしました ✓'));
+}
+
+// 今日の振り返り
+const checkIds = ['check1','check2','check3','check4','check5'];
+
+function loadToday() {
+  document.getElementById('todayDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' });
+
+  const raw = localStorage.getItem(DAILY_KEY);
+  const daily = raw ? JSON.parse(raw) : {};
+  const today = daily[todayKey()] || {};
+  checkIds.forEach(id => {
+    document.getElementById(id).checked = !!today[id];
+  });
+  renderStreak(daily);
+}
+
+function saveToday() {
+  const raw = localStorage.getItem(DAILY_KEY);
+  const daily = raw ? JSON.parse(raw) : {};
+  const entry = {};
+  checkIds.forEach(id => entry[id] = document.getElementById(id).checked);
+  daily[todayKey()] = entry;
+  localStorage.setItem(DAILY_KEY, JSON.stringify(daily));
+  renderStreak(daily);
+  showToast('今日の記録を保存しました ✓');
+}
+
+function renderStreak(daily) {
+  const count = Object.values(daily).filter(day =>
+    Object.values(day).some(v => v === true)
+  ).length;
+  document.getElementById('streakCount').textContent = count;
+}
+
+function showCard() {
+  const sister = v('sisterName') || 'お姉ちゃん';
+  const brother = v('brotherName') || '弟';
+  const labels = [
+    `①${sister}が起きなくていい時間を守れた`,
+    `②${brother}の「暇」に選択肢を渡せた`,
+    '③母の避難時間を確保できた',
+    '④デイサービスに連絡できた',
+    '⑤昼食「組み立てるだけ」にできた'
+  ];
+  document.getElementById('cDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' });
+
+  const itemsEl = document.getElementById('cItems');
+  itemsEl.innerHTML = '';
+  checkIds.forEach((id, i) => {
+    const checked = document.getElementById(id).checked;
+    const div = document.createElement('div');
+    div.className = 'card-item';
+    div.textContent = (checked ? '✓ ' : '・') + labels[i];
+    itemsEl.appendChild(div);
+  });
+
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function downloadImage() {
+  const card = document.getElementById('card');
+  html2canvas(card, { scale: 2, backgroundColor: '#fff9f3', useCORS: true, logging: false })
+    .then(canvas => {
+      const link = document.createElement('a');
+      link.download = '今日守れたこと.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('保存しました ✓');
+    });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function clearAll() {
+  if (!confirm('入力内容と記録をすべてクリアしますか？')) return;
+  localStorage.removeItem(STORE_KEY);
+  localStorage.removeItem(DAILY_KEY);
+  location.reload();
+}
+
+// 入力変更を自動保存
+fieldIds.forEach(id => {
+  document.getElementById(id)?.addEventListener('input', saveSettings);
+  document.getElementById(id)?.addEventListener('change', saveSettings);
+});
+checkIds.forEach(id => {
+  document.getElementById(id)?.addEventListener('change', saveToday);
+});
+
+loadSettings();
+renderDependents();
+loadToday();
+</script>
+</body>
+</html>
