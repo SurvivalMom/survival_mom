@@ -424,18 +424,19 @@
   <div class="section">
     <div class="section-title">基本情報</div>
     <div class="row">
-      <span>上の子の名前</span>
-      <input type="text" class="name-input" id="olderName" placeholder="例）ゆい">
-      <span>／ 下の子の名前</span>
-      <input type="text" class="name-input" id="youngerName" placeholder="例）そう">
+      <span>特性のあるお子さんの名前</span>
+      <input type="text" class="name-input" id="targetName" placeholder="例）ゆい">
+      <span>／ きょうだい児のお子さんの名前</span>
+      <input type="text" class="name-input" id="siblingName" placeholder="例）そう">
     </div>
+    <div class="hint">上の子・下の子は問いません。学校や朝がしんどい方を「特性のあるお子さん」、待たされる側を「きょうだい児」として入力してください。</div>
   </div>
 
   <!-- ①起きなくていい時間 -->
   <div class="section">
     <div class="section-title">① 起きなくていい時間</div>
     <div class="row">
-      <span id="labelOlder1">上の子</span>
+      <span id="labelTarget1">特性のあるお子さん</span>
       <span>が起きなくていい時間 →</span>
       <input type="time" class="time-input" id="wakeLimit" value="10:00">
       <span>まで</span>
@@ -445,7 +446,7 @@
   <!-- ②「暇」に渡す選択肢 -->
   <div class="section">
     <div class="section-title">② 「暇」に渡す選択肢</div>
-    <div class="row"><span id="labelYounger1">下の子</span><span>の「暇」に渡す選択肢</span></div>
+    <div class="row"><span id="labelSibling1">きょうだい児のお子さん</span><span>の「暇」に渡す選択肢</span></div>
     <div class="row">①<input type="text" class="choice-input" id="choice1" placeholder="例）ブロック"></div>
     <div class="row">②<input type="text" class="choice-input" id="choice2" placeholder="例）お絵かき"></div>
     <div class="row">③<input type="text" class="choice-input" id="choice3" placeholder="例）YouTube 30分"></div>
@@ -545,11 +546,11 @@
 <div class="toast" id="toast">保存しました ✓</div>
 
 <script>
-const STORE_KEY = 'natsuyasumiWorksheet_v2';
+const STORE_KEY = 'natsuyasumiWorksheet_v3';
 const DAILY_KEY = 'natsuyasumiDaily_v1';
 
 const fieldIds = [
-  'olderName','youngerName','wakeLimit','choice1','choice2','choice3',
+  'targetName','siblingName','wakeLimit','choice1','choice2','choice3',
   'escapeStart','escapeMinutes','escapePlace','lunchDay1','lunchDay2'
 ];
 
@@ -579,13 +580,13 @@ function loadSettings() {
 }
 
 function renderDependents() {
-  const older = v('olderName') || '上の子';
-  const younger = v('youngerName') || '下の子';
-  document.getElementById('labelOlder1').textContent = older;
-  document.getElementById('labelYounger1').textContent = younger;
+  const target = v('targetName') || '特性のあるお子さん';
+  const sibling = v('siblingName') || 'きょうだい児のお子さん';
+  document.getElementById('labelTarget1').textContent = target;
+  document.getElementById('labelSibling1').textContent = sibling;
 
   // デイサービス台詞
-  const childForCall = older || 'こども';
+  const childForCall = target || 'こども';
   document.getElementById('dayServiceScript').textContent =
     `「${childForCall}ですが、キャンセル枠か、午後だけの短時間枠は出ていますか」`;
 
@@ -668,11 +669,11 @@ function renderStreak(daily) {
 }
 
 function showCard() {
-  const older = v('olderName') || '上の子';
-  const younger = v('youngerName') || '下の子';
+  const target = v('targetName') || '特性のあるお子さん';
+  const sibling = v('siblingName') || 'きょうだい児のお子さん';
   const labels = [
-    `①${older}が起きなくていい時間を守れた`,
-    `②${younger}の「暇」に選択肢を渡せた`,
+    `①${target}が起きなくていい時間を守れた`,
+    `②${sibling}の「暇」に選択肢を渡せた`,
     '③母の避難時間を確保できた',
     '④デイサービスに連絡できた',
     '⑤昼食「組み立てるだけ」にできた'
