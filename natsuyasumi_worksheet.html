@@ -592,15 +592,18 @@ function renderDependents() {
   renderWeekGrid();
 }
 
+function clampMinutes(raw) {
+  const n = parseInt(raw, 10);
+  if (isNaN(n)) return 15;
+  return Math.min(60, Math.max(1, n));
+}
+
 function renderWeekGrid() {
   const youbiList = ['日','月','火','水','木','金','土'];
   const escapeStart = v('escapeStart') || '07:00';
-  const escapeMinutes = v('escapeMinutes') || '15';
+  const escapeMinutes = clampMinutes(v('escapeMinutes'));
   const lunchDay1 = v('lunchDay1');
   const lunchDay2 = v('lunchDay2');
-
-  // 平日の避難時間をそのまま使い、休日は昼(12:00スタート)に移動
-  const [h, m] = escapeStart.split(':').map(Number);
 
   const grid = document.getElementById('weekGrid');
   grid.innerHTML = '';
@@ -724,6 +727,12 @@ function clearAll() {
 fieldIds.forEach(id => {
   document.getElementById(id)?.addEventListener('input', saveSettings);
   document.getElementById(id)?.addEventListener('change', saveSettings);
+});
+
+// 分数の異常値（負数・0・空欄）を確定時に補正する
+document.getElementById('escapeMinutes')?.addEventListener('change', function () {
+  this.value = clampMinutes(this.value);
+  saveSettings();
 });
 checkIds.forEach(id => {
   document.getElementById(id)?.addEventListener('change', saveToday);
