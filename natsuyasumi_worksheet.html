@@ -424,10 +424,10 @@
   <div class="section">
     <div class="section-title">基本情報</div>
     <div class="row">
-      <span>姉の名前</span>
-      <input type="text" class="name-input" id="sisterName" placeholder="例）ゆい">
-      <span>／ 弟の名前</span>
-      <input type="text" class="name-input" id="brotherName" placeholder="例）そう">
+      <span>上の子の名前</span>
+      <input type="text" class="name-input" id="olderName" placeholder="例）ゆい">
+      <span>／ 下の子の名前</span>
+      <input type="text" class="name-input" id="youngerName" placeholder="例）そう">
     </div>
   </div>
 
@@ -435,7 +435,7 @@
   <div class="section">
     <div class="section-title">① 起きなくていい時間</div>
     <div class="row">
-      <span id="labelSister1">お姉ちゃん</span>
+      <span id="labelOlder1">上の子</span>
       <span>が起きなくていい時間 →</span>
       <input type="time" class="time-input" id="wakeLimit" value="10:00">
       <span>まで</span>
@@ -445,7 +445,7 @@
   <!-- ②「暇」に渡す選択肢 -->
   <div class="section">
     <div class="section-title">② 「暇」に渡す選択肢</div>
-    <div class="row"><span id="labelBrother1">弟</span><span>の「暇」に渡す選択肢</span></div>
+    <div class="row"><span id="labelYounger1">下の子</span><span>の「暇」に渡す選択肢</span></div>
     <div class="row">①<input type="text" class="choice-input" id="choice1" placeholder="例）ブロック"></div>
     <div class="row">②<input type="text" class="choice-input" id="choice2" placeholder="例）お絵かき"></div>
     <div class="row">③<input type="text" class="choice-input" id="choice3" placeholder="例）YouTube 30分"></div>
@@ -545,11 +545,11 @@
 <div class="toast" id="toast">保存しました ✓</div>
 
 <script>
-const STORE_KEY = 'natsuyasumiWorksheet_v1';
+const STORE_KEY = 'natsuyasumiWorksheet_v2';
 const DAILY_KEY = 'natsuyasumiDaily_v1';
 
 const fieldIds = [
-  'sisterName','brotherName','wakeLimit','choice1','choice2','choice3',
+  'olderName','youngerName','wakeLimit','choice1','choice2','choice3',
   'escapeStart','escapeMinutes','escapePlace','lunchDay1','lunchDay2'
 ];
 
@@ -579,13 +579,13 @@ function loadSettings() {
 }
 
 function renderDependents() {
-  const sister = v('sisterName') || 'お姉ちゃん';
-  const brother = v('brotherName') || '弟';
-  document.getElementById('labelSister1').textContent = sister;
-  document.getElementById('labelBrother1').textContent = brother;
+  const older = v('olderName') || '上の子';
+  const younger = v('youngerName') || '下の子';
+  document.getElementById('labelOlder1').textContent = older;
+  document.getElementById('labelYounger1').textContent = younger;
 
   // デイサービス台詞
-  const childForCall = sister || 'こども';
+  const childForCall = older || 'こども';
   document.getElementById('dayServiceScript').textContent =
     `「${childForCall}ですが、キャンセル枠か、午後だけの短時間枠は出ていますか」`;
 
@@ -668,11 +668,11 @@ function renderStreak(daily) {
 }
 
 function showCard() {
-  const sister = v('sisterName') || 'お姉ちゃん';
-  const brother = v('brotherName') || '弟';
+  const older = v('olderName') || '上の子';
+  const younger = v('youngerName') || '下の子';
   const labels = [
-    `①${sister}が起きなくていい時間を守れた`,
-    `②${brother}の「暇」に選択肢を渡せた`,
+    `①${older}が起きなくていい時間を守れた`,
+    `②${younger}の「暇」に選択肢を渡せた`,
     '③母の避難時間を確保できた',
     '④デイサービスに連絡できた',
     '⑤昼食「組み立てるだけ」にできた'
