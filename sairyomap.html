@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>裁量マップ | 誰に・何を・どこまで任せるかを可視化する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f3f0; --surface: #ffffff; --surface2: #faf9f7;
+    --forest: #2d4a3e; --forest2: #3d6452; --forest3: #4e8068; --forest-lt: #d4e8df; --forest-xl: #eef6f2;
+    --amber: #c8922a; --amber2: #e8b050; --amber-lt: #fdf3e0;
+    --coral: #c85a4a; --coral-lt: #fde8e5;
+    --slate: #6b7a8d; --slate-lt: #edf1f5;
+    --ink: #1c2420; --ink2: #3a4840; --ink3: #6a7870; --ink4: #a0aca8;
+    --border: rgba(28,36,32,0.10); --border2: rgba(28,36,32,0.06);
+    --shadow-sm: 0 1px 3px rgba(28,36,32,0.07);
+    --shadow: 0 4px 20px rgba(28,36,32,0.09), 0 1px 4px rgba(28,36,32,0.05);
+    --shadow-lg: 0 12px 48px rgba(28,36,32,0.12), 0 4px 14px rgba(28,36,32,0.06);
+    --r-xl: 20px; --r-lg: 14px; --r-md: 9px; --r-sm: 5px;
+  }
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.75; min-height: 100vh; }
+
+  /* ── ヘッダー ── */
+  .app-header {
+    background: var(--forest);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .app-logo { color: #fff; font-family: 'Noto Serif JP', serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.03em; }
+  .app-logo span { color: var(--amber2); }
+  .header-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    padding: 7px 14px; border-radius: var(--r-sm); font-size: 0.78rem; font-weight: 600;
+    border: none; cursor: pointer; transition: all .18s;
+  }
+  .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff; }
+  .btn-outline:hover { background: rgba(255,255,255,0.1); }
+  .btn-amber { background: var(--amber); color: #fff; }
+  .btn-amber:hover { background: var(--amber2); }
+
+  /* ── メインレイアウト ── */
+  .app-body { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* ── スタッフ管理 ── */
+  .section-title {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink3); margin-bottom: 14px;
+  }
+  .staff-bar {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 28px;
+  }
+  .staff-chip {
+    padding: 8px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; border: 2px solid transparent; transition: all .18s;
+    background: var(--surface); color: var(--ink2);
+    box-shadow: var(--shadow-sm);
+  }
+  .staff-chip:hover { border-color: var(--forest3); }
+  .staff-chip.active { background: var(--forest); color: #fff; border-color: var(--forest); }
+  .btn-add-staff {
+    padding: 8px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 600;
+    border: 2px dashed var(--border); background: transparent; color: var(--ink3);
+    cursor: pointer; transition: all .18s;
+  }
+  .btn-add-staff:hover { border-color: var(--forest3); color: var(--forest); }
+
+  /* ── 業務カード ── */
+  .task-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;
+    margin-bottom: 24px;
+  }
+  .task-card {
+    background: var(--surface); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm); border: 1px solid var(--border2);
+    overflow: hidden; transition: box-shadow .18s;
+  }
+  .task-card:hover { box-shadow: var(--shadow); }
+  .task-card-header {
+    padding: 14px 16px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .task-cat {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--ink4); margin-bottom: 2px;
+  }
+  .task-name { font-size: 0.92rem; font-weight: 700; color: var(--ink); }
+  .btn-task-del {
+    background: none; border: none; cursor: pointer; color: var(--ink4);
+    font-size: 1rem; padding: 2px 4px; line-height: 1;
+  }
+  .btn-task-del:hover { color: var(--coral); }
+
+  /* ── 裁量ボタン ── */
+  .discretion-row {
+    display: flex; border-top: 1px solid var(--border2);
+  }
+  .disc-btn {
+    flex: 1; padding: 10px 4px; font-size: 0.72rem; font-weight: 700;
+    border: none; background: transparent; cursor: pointer; transition: all .18s;
+    color: var(--ink3); text-align: center; line-height: 1.3;
+    border-right: 1px solid var(--border2);
+  }
+  .disc-btn:last-child { border-right: none; }
+  .disc-btn:hover { background: var(--surface2); }
+  .disc-btn.selected-ok { background: var(--forest-xl); color: var(--forest); }
+  .disc-btn.selected-watch { background: var(--amber-lt); color: var(--amber); }
+  .disc-btn.selected-no { background: var(--coral-lt); color: var(--coral); }
+  .disc-label { font-size: 0.65rem; margin-top: 2px; }
+
+  /* ── 境界線メモ ── */
+  .boundary-memo {
+    padding: 8px 12px; border-top: 1px solid var(--border2);
+    display: none;
+  }
+  .boundary-memo.visible { display: block; }
+  .boundary-memo input {
+    width: 100%; border: none; background: var(--surface2);
+    border-radius: var(--r-sm); padding: 6px 10px; font-size: 0.78rem;
+    color: var(--ink); font-family: inherit; outline: none;
+  }
+  .boundary-memo input::placeholder { color: var(--ink4); }
+  .boundary-memo input:focus { background: var(--forest-xl); }
+
+  /* ── 業務追加 ── */
+  .add-task-form {
+    background: var(--surface); border-radius: var(--r-lg);
+    border: 2px dashed var(--border); padding: 18px;
+    display: none;
+  }
+  .add-task-form.open { display: block; }
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .f-input {
+    flex: 1; min-width: 140px; border: 1.5px solid var(--border);
+    border-radius: var(--r-sm); padding: 9px 12px; font-size: 0.85rem;
+    font-family: inherit; color: var(--ink); background: var(--bg); outline: none;
+  }
+  .f-input:focus { border-color: var(--forest3); background: #fff; }
+  .f-select {
+    flex: 1; min-width: 140px; border: 1.5px solid var(--border);
+    border-radius: var(--r-sm); padding: 9px 12px; font-size: 0.85rem;
+    font-family: inherit; color: var(--ink); background: var(--bg); outline: none; cursor: pointer;
+  }
+  .f-select:focus { border-color: var(--forest3); }
+  .btn-primary {
+    background: var(--forest); color: #fff; border: none; border-radius: var(--r-sm);
+    padding: 9px 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all .18s;
+  }
+  .btn-primary:hover { background: var(--forest2); }
+  .btn-ghost {
+    background: none; border: 1.5px solid var(--border); border-radius: var(--r-sm);
+    padding: 9px 16px; font-size: 0.85rem; color: var(--ink3); cursor: pointer;
+  }
+
+  /* ── サマリーパネル ── */
+  .summary-panel {
+    background: var(--forest); color: #fff; border-radius: var(--r-xl);
+    padding: 24px 28px; margin-bottom: 24px;
+    display: flex; gap: 32px; flex-wrap: wrap; align-items: center;
+  }
+  .summary-item { text-align: center; }
+  .summary-num { font-size: 2rem; font-weight: 700; line-height: 1; }
+  .summary-num.ok { color: var(--amber2); }
+  .summary-num.watch { color: #ffd580; }
+  .summary-num.no { color: #ff9e9e; }
+  .summary-label { font-size: 0.7rem; color: rgba(255,255,255,0.55); margin-top: 4px; }
+  .summary-msg { flex: 1; min-width: 200px; font-size: 0.85rem; color: rgba(255,255,255,0.75); line-height: 1.8; }
+
+  /* ── マップビュー（一覧） ── */
+  .map-view { display: none; }
+  .map-view.open { display: block; }
+  .map-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .map-table th {
+    background: var(--forest); color: #fff; padding: 10px 14px;
+    text-align: left; font-weight: 600; font-size: 0.75rem;
+  }
+  .map-table th:first-child { border-radius: var(--r-sm) 0 0 0; }
+  .map-table th:last-child { border-radius: 0 var(--r-sm) 0 0; }
+  .map-table td { padding: 10px 14px; border-bottom: 1px solid var(--border2); }
+  .map-table tr:last-child td { border-bottom: none; }
+  .map-table tr:nth-child(even) td { background: var(--surface2); }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 100px;
+    font-size: 0.7rem; font-weight: 700;
+  }
+  .badge-ok { background: var(--forest-lt); color: var(--forest); }
+  .badge-watch { background: var(--amber-lt); color: var(--amber); }
+  .badge-no { background: var(--coral-lt); color: var(--coral); }
+  .badge-none { background: var(--slate-lt); color: var(--slate); }
+
+  /* ── タブ ── */
+  .view-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+  .view-tab {
+    padding: 8px 18px; border-radius: var(--r-sm); font-size: 0.8rem; font-weight: 600;
+    border: none; cursor: pointer; background: var(--surface); color: var(--ink3);
+    box-shadow: var(--shadow-sm);
+  }
+  .view-tab.active { background: var(--forest); color: #fff; }
+
+  /* ── 空状態 ── */
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--ink3);
+  }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.88rem; line-height: 1.9; }
+
+  /* ── 印刷 ── */
+  @media print {
+    .app-header, .header-actions, .staff-bar, .add-task-form,
+    .btn-add-staff, .btn-task-del, .discretion-row, .view-tabs,
+    .summary-panel { display: none !important; }
+    .map-view { display: block !important; }
+    body { background: #fff; }
+  }
+
+  @media (max-width: 600px) {
+    .task-grid { grid-template-columns: 1fr; }
+    .summary-panel { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<header class="app-header">
+  <div class="app-logo">裁量<span>マップ</span></div>
+  <div class="header-actions">
+    <button class="btn-sm btn-outline" onclick="showMapView()">一覧表示</button>
+    <button class="btn-sm btn-outline" onclick="window.print()">印刷</button>
+    <button class="btn-sm btn-amber" onclick="saveData()">保存</button>
+  </div>
+</header>
+
+<main class="app-body">
+
+  <!-- スタッフ選択 -->
+  <div class="section-title">スタッフを選ぶ</div>
+  <div class="staff-bar" id="staffBar">
+    <button class="btn-add-staff" onclick="openAddStaff()">＋ スタッフを追加</button>
+  </div>
+
+  <!-- スタッフ追加フォーム -->
+  <div class="add-task-form" id="addStaffForm" style="margin-bottom:24px;">
+    <div class="form-row">
+      <input class="f-input" id="newStaffName" placeholder="スタッフ名（例：田中さん）" maxlength="20">
+      <button class="btn-primary" onclick="addStaff()">追加</button>
+      <button class="btn-ghost" onclick="closeAddStaff()">キャンセル</button>
+    </div>
+  </div>
+
+  <!-- サマリー -->
+  <div class="summary-panel" id="summaryPanel" style="display:none;">
+    <div class="summary-item">
+      <div class="summary-num ok" id="sumOk">0</div>
+      <div class="summary-label">任せている</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-num watch" id="sumWatch">0</div>
+      <div class="summary-label">様子見</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-num no" id="sumNo">0</div>
+      <div class="summary-label">まだ早い</div>
+    </div>
+    <div class="summary-msg" id="summaryMsg"></div>
+  </div>
+
+  <!-- タブ -->
+  <div class="view-tabs" id="viewTabs" style="display:none;">
+    <button class="view-tab active" onclick="switchTab('cards')">業務カード</button>
+    <button class="view-tab" onclick="switchTab('map')">マップ一覧</button>
+  </div>
+
+  <!-- 業務カードビュー -->
+  <div id="cardsView">
+    <div class="section-title" id="taskSectionTitle" style="display:none;">業務ごとの裁量設定</div>
+    <div class="task-grid" id="taskGrid"></div>
+    <button class="btn-add-staff" id="btnAddTask" onclick="openAddTask()" style="display:none;">＋ 業務を追加</button>
+    <div class="add-task-form" id="addTaskForm" style="margin-top:12px;">
+      <div class="form-row">
+        <input class="f-input" id="newTaskName" placeholder="業務名（例：入浴介助リード）" maxlength="30">
+        <select class="f-select" id="newTaskCat">
+          <option value="直接介護">直接介護</option>
+          <option value="記録・情報">記録・情報</option>
+          <option value="コミュニケーション">コミュニケーション</option>
+          <option value="マネジメント">マネジメント</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <button class="btn-primary" onclick="addTask()">追加</button>
+        <button class="btn-ghost" onclick="closeAddTask()">キャンセル</button>
+      </div>
+    </div>
+
+    <!-- 空状態 -->
+    <div class="empty-state" id="emptyState">
+      <div class="icon">🗂️</div>
+      <p>上のスタッフチップを選んで<br>業務ごとの裁量を設定してください。<br><br>まずスタッフを追加しましょう。</p>
+    </div>
+  </div>
+
+  <!-- マップ一覧ビュー -->
+  <div class="map-view" id="mapView">
+    <div id="mapTableWrap"></div>
+  </div>
+
+</main>
+
+<script>
+// ── データ構造 ──
+// state.staff: [{id, name}]
+// state.tasks: [{id, name, cat}]
+// state.map: { staffId: { taskId: { level: 'ok'|'watch'|'no'|null, memo: '' } } }
+
+const STORAGE_KEY = 'sairyomap_v1';
+
+let state = {
+  staff: [],
+  tasks: [
+    {id:'t1', name:'入浴介助リード', cat:'直接介護'},
+    {id:'t2', name:'食事介助', cat:'直接介護'},
+    {id:'t3', name:'申し送り（発信）', cat:'記録・情報'},
+    {id:'t4', name:'介護記録の記入', cat:'記録・情報'},
+    {id:'t5', name:'利用者への声かけ対応', cat:'コミュニケーション'},
+    {id:'t6', name:'家族への連絡・報告', cat:'コミュニケーション'},
+    {id:'t7', name:'新人への口頭指示', cat:'マネジメント'},
+    {id:'t8', name:'ヒヤリハット後の判断', cat:'マネジメント'},
+  ],
+  map: {}
+};
+let currentStaffId = null;
+
+// ── 初期化 ──
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) { try { state = JSON.parse(saved); } catch(e) {} }
+  renderStaffBar();
+  if (state.staff.length > 0) {
+    selectStaff(state.staff[0].id);
+  }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const btn = document.querySelector('.btn-amber');
+  btn.textContent = '保存済み ✓';
+  setTimeout(() => { btn.textContent = '保存'; }, 1500);
+}
+
+// ── スタッフ ──
+function renderStaffBar() {
+  const bar = document.getElementById('staffBar');
+  bar.innerHTML = '';
+  state.staff.forEach(s => {
+    const chip = document.createElement('button');
+    chip.className = 'staff-chip' + (s.id === currentStaffId ? ' active' : '');
+    chip.textContent = s.name;
+    chip.onclick = () => selectStaff(s.id);
+    chip.oncontextmenu = (e) => { e.preventDefault(); removeStaff(s.id); };
+    bar.appendChild(chip);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn-add-staff';
+  addBtn.textContent = '＋ スタッフを追加';
+  addBtn.onclick = openAddStaff;
+  bar.appendChild(addBtn);
+}
+
+function selectStaff(id) {
+  currentStaffId = id;
+  if (!state.map[id]) state.map[id] = {};
+  renderStaffBar();
+  renderTaskGrid();
+  renderSummary();
+  document.getElementById('viewTabs').style.display = 'flex';
+  document.getElementById('taskSectionTitle').style.display = 'block';
+  document.getElementById('btnAddTask').style.display = 'inline-block';
+  document.getElementById('emptyState').style.display = 'none';
+  switchTab('cards');
+}
+
+function removeStaff(id) {
+  if (!confirm('このスタッフを削除しますか？')) return;
+  state.staff = state.staff.filter(s => s.id !== id);
+  delete state.map[id];
+  if (currentStaffId === id) {
+    currentStaffId = state.staff.length > 0 ? state.staff[0].id : null;
+  }
+  renderStaffBar();
+  if (currentStaffId) selectStaff(currentStaffId);
+  else resetView();
+  saveData();
+}
+
+function resetView() {
+  document.getElementById('viewTabs').style.display = 'none';
+  document.getElementById('taskSectionTitle').style.display = 'none';
+  document.getElementById('btnAddTask').style.display = 'none';
+  document.getElementById('summaryPanel').style.display = 'none';
+  document.getElementById('taskGrid').innerHTML = '';
+  document.getElementById('emptyState').style.display = 'block';
+}
+
+function openAddStaff() { document.getElementById('addStaffForm').classList.add('open'); document.getElementById('newStaffName').focus(); }
+function closeAddStaff() { document.getElementById('addStaffForm').classList.remove('open'); document.getElementById('newStaffName').value = ''; }
+function addStaff() {
+  const name = document.getElementById('newStaffName').value.trim();
+  if (!name) return;
+  const id = 's' + Date.now();
+  state.staff.push({id, name});
+  state.map[id] = {};
+  closeAddStaff();
+  renderStaffBar();
+  selectStaff(id);
+  saveData();
+}
+
+// ── 業務 ──
+function renderTaskGrid() {
+  const grid = document.getElementById('taskGrid');
+  grid.innerHTML = '';
+  if (!currentStaffId) return;
+  state.tasks.forEach(t => {
+    const entry = state.map[currentStaffId][t.id] || {level: null, memo: ''};
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.innerHTML = `
+      <div class="task-card-header">
+        <div>
+          <div class="task-cat">${t.cat}</div>
+          <div class="task-name">${t.name}</div>
+        </div>
+        <button class="btn-task-del" onclick="removeTask('${t.id}')" title="削除">×</button>
+      </div>
+      <div class="discretion-row">
+        <button class="disc-btn ${entry.level==='ok'?'selected-ok':''}" onclick="setLevel('${t.id}','ok',this)">
+          ✅<div class="disc-label">任せている</div>
+        </button>
+        <button class="disc-btn ${entry.level==='watch'?'selected-watch':''}" onclick="setLevel('${t.id}','watch',this)">
+          👀<div class="disc-label">様子見</div>
+        </button>
+        <button class="disc-btn ${entry.level==='no'?'selected-no':''}" onclick="setLevel('${t.id}','no',this)">
+          🔴<div class="disc-label">まだ早い</div>
+        </button>
+      </div>
+      <div class="boundary-memo ${entry.memo||entry.level?'visible':''}">
+        <input type="text" value="${entry.memo||''}" placeholder="境界線メモ（例：声かけはOK・判断は要相談）"
+          onchange="setMemo('${t.id}', this.value)" oninput="setMemo('${t.id}', this.value)">
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function setLevel(taskId, level, btn) {
+  if (!currentStaffId) return;
+  if (!state.map[currentStaffId][taskId]) state.map[currentStaffId][taskId] = {level: null, memo: ''};
+  const entry = state.map[currentStaffId][taskId];
+  entry.level = entry.level === level ? null : level;
+  renderTaskGrid();
+  renderSummary();
+  saveData();
+}
+
+function setMemo(taskId, val) {
+  if (!currentStaffId) return;
+  if (!state.map[currentStaffId][taskId]) state.map[currentStaffId][taskId] = {level: null, memo: ''};
+  state.map[currentStaffId][taskId].memo = val;
+  saveData();
+}
+
+function removeTask(id) {
+  if (!confirm('この業務項目を削除しますか？')) return;
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  Object.keys(state.map).forEach(sid => { delete state.map[sid][id]; });
+  renderTaskGrid();
+  renderSummary();
+  saveData();
+}
+
+function openAddTask() { document.getElementById('addTaskForm').classList.add('open'); document.getElementById('newTaskName').focus(); }
+function closeAddTask() { document.getElementById('addTaskForm').classList.remove('open'); document.getElementById('newTaskName').value = ''; }
+function addTask() {
+  const name = document.getElementById('newTaskName').value.trim();
+  const cat = document.getElementById('newTaskCat').value;
+  if (!name) return;
+  const id = 't' + Date.now();
+  state.tasks.push({id, name, cat});
+  closeAddTask();
+  renderTaskGrid();
+  saveData();
+}
+
+// ── サマリー ──
+function renderSummary() {
+  if (!currentStaffId) return;
+  const panel = document.getElementById('summaryPanel');
+  panel.style.display = 'flex';
+  const map = state.map[currentStaffId] || {};
+  let ok = 0, watch = 0, no = 0, unset = 0;
+  state.tasks.forEach(t => {
+    const l = (map[t.id] || {}).level;
+    if (l === 'ok') ok++;
+    else if (l === 'watch') watch++;
+    else if (l === 'no') no++;
+    else unset++;
+  });
+  document.getElementById('sumOk').textContent = ok;
+  document.getElementById('sumWatch').textContent = watch;
+  document.getElementById('sumNo').textContent = no;
+  const staff = state.staff.find(s => s.id === currentStaffId);
+  const name = staff ? staff.name : 'このスタッフ';
+  let msg = '';
+  if (ok + watch + no === 0) {
+    msg = `${name}の裁量をまだ設定していません。`;
+  } else if (no > ok + watch) {
+    msg = `${name}には「まだ早い」業務が多い状態です。次の一歩を1つ決めてください。`;
+  } else if (ok > 0 && no === 0) {
+    msg = `${name}への委譲が進んでいます。さらに一歩ずらせる業務はありますか？`;
+  } else {
+    msg = `${name}に${ok}つの業務を委譲中。様子見${watch}つを次のステップへ。`;
+  }
+  document.getElementById('summaryMsg').textContent = msg;
+}
+
+// ── マップ一覧ビュー ──
+function renderMapTable() {
+  const wrap = document.getElementById('mapTableWrap');
+  if (state.staff.length === 0 || state.tasks.length === 0) {
+    wrap.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>スタッフと業務を追加すると<br>一覧表が表示されます。</p></div>';
+    return;
+  }
+  const levelBadge = (l) => {
+    if (l === 'ok') return '<span class="badge badge-ok">任せている</span>';
+    if (l === 'watch') return '<span class="badge badge-watch">様子見</span>';
+    if (l === 'no') return '<span class="badge badge-no">まだ早い</span>';
+    return '<span class="badge badge-none">未設定</span>';
+  };
+  let html = `<table class="map-table">
+    <thead><tr>
+      <th>業務</th>
+      <th>カテゴリ</th>
+      ${state.staff.map(s => `<th>${s.name}</th>`).join('')}
+    </tr></thead>
+    <tbody>`;
+  state.tasks.forEach(t => {
+    html += `<tr>
+      <td><strong>${t.name}</strong></td>
+      <td style="color:var(--ink3);font-size:0.75rem;">${t.cat}</td>
+      ${state.staff.map(s => {
+        const entry = (state.map[s.id] || {})[t.id] || {};
+        return `<td>${levelBadge(entry.level)}${entry.memo ? `<div style="font-size:0.7rem;color:var(--ink3);margin-top:3px;">${entry.memo}</div>` : ''}</td>`;
+      }).join('')}
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function showMapView() { switchTab('map'); }
+
+// ── タブ切替 ──
+function switchTab(tab) {
+  document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
+  if (tab === 'cards') {
+    document.getElementById('cardsView').style.display = 'block';
+    document.getElementById('mapView').classList.remove('open');
+    document.querySelectorAll('.view-tab')[0].classList.add('active');
+  } else {
+    document.getElementById('cardsView').style.display = 'none';
+    document.getElementById('mapView').classList.add('open');
+    document.querySelectorAll('.view-tab')[1].classList.add('active');
+    renderMapTable();
+  }
+}
+
+// Enterキー対応
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('addStaffForm').classList.contains('open')) addStaff();
+    if (document.getElementById('addTaskForm').classList.contains('open')) addTask();
+  }
+});
+
+init();
+</script>
+</body>
+</html>
