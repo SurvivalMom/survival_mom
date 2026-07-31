@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>裁量マップ | 誰に・何を・どこまで任せているかを可視化する、現場リーダーのための無料ツール</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest:   #0f1f17;
+      --forest2:  #16291f;
+      --forest3:  #20392b;
+      --green:    #2d8a5e;
+      --green2:   #3fb37a;
+      --gold:     #c8922a;
+      --gold2:    #e8b050;
+      --coral:    #c0392b;
+      --coral2:   #e74c3c;
+      --white:    #ffffff;
+      --off:      #f5f3ef;
+      --ink:      #1c1c1c;
+      --ink2:     #4a4a4a;
+      --ink3:     #7a7a7a;
+      --border:   rgba(255,255,255,0.1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: var(--forest); color: var(--white); line-height: 1.7; }
+
+    /* ══ HERO ══ */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #0a1610 0%, #0f1f17 40%, #142c20 100%);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; position: relative; overflow: hidden; padding: 80px 24px;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,146,42,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(45,138,94,0.10) 0%, transparent 60%);
+    }
+    .hero-inner { position: relative; max-width: 860px; }
+    .hero-sub { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.3em; color: var(--gold2); text-transform: uppercase; margin-bottom: 28px; display: block; }
+    .hero h1 { font-family: 'Noto Serif JP', serif; font-size: clamp(1.9rem, 5vw, 3.2rem); font-weight: 700; line-height: 1.45; margin-bottom: 28px; letter-spacing: -0.01em; }
+    .hero h1 em { font-style: normal; color: var(--gold2); }
+    .hero-desc { font-size: 1rem; color: rgba(255,255,255,0.65); max-width: 580px; margin: 0 auto 40px; line-height: 1.9; }
+    .hero-badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+    .hero-badge { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 100px; padding: 7px 16px; font-size: 0.74rem; color: rgba(255,255,255,0.75); }
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--gold), #d9a23f);
+      color: #1c1006; font-size: 1rem; font-weight: 700; padding: 20px 52px;
+      border-radius: 100px; text-decoration: none; letter-spacing: 0.05em;
+      box-shadow: 0 8px 32px rgba(200,146,42,0.4); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(200,146,42,0.55); }
+    .btn-cta-note {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--white); color: var(--ink);
+      font-size: 1rem; font-weight: 700; padding: 20px 52px;
+      border-radius: 100px; text-decoration: none; letter-spacing: 0.05em;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-cta-note:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0,0,0,0.3); }
+    .hero-note { font-size: 0.78rem; color: rgba(255,255,255,0.35); margin-top: 16px; }
+
+    /* ══ SECTION BASE ══ */
+    .section-dark { background: var(--forest2); padding: 100px 24px; }
+    .section-dark .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-light { background: var(--off); color: var(--ink); padding: 100px 24px; }
+    .section-light .section-inner { max-width: 1000px; margin: 0 auto; }
+
+    /* ══ TYPOGRAPHY ══ */
+    .label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold2); margin-bottom: 16px; display: block; }
+    .label-dark { color: var(--gold); }
+    h2 { font-family: 'Noto Serif JP', serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.45; margin-bottom: 20px; }
+    h2 em { font-style: normal; color: var(--gold2); }
+    h2.dark { color: var(--ink); }
+    h2.dark em { color: var(--gold); }
+    .lead { font-size: 1.02rem; line-height: 1.9; color: rgba(255,255,255,0.68); max-width: 680px; }
+
+    /* ══ VOICE ══ */
+    .voice-box {
+      background: rgba(200,146,42,0.08); border-left: 3px solid var(--gold2);
+      border-radius: 0 10px 10px 0; padding: 20px 24px; margin: 32px 0;
+      font-size: 0.95rem; color: rgba(255,255,255,0.8); line-height: 1.85; font-style: italic;
+    }
+    .voice-box cite { display: block; font-style: normal; font-size: 0.72rem; color: var(--gold2); margin-top: 10px; letter-spacing: 0.1em; }
+
+    /* ══ PROBLEM ══ */
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 48px; }
+    @media (max-width: 640px) { .problem-grid { grid-template-columns: 1fr; } }
+    .problem-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 30px 26px; }
+    .problem-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; color: rgba(255,255,255,0.9); }
+    .problem-card p { font-size: 0.86rem; color: rgba(255,255,255,0.52); line-height: 1.8; }
+
+    /* ══ HOW IT WORKS ══ */
+    .flow-steps { display: flex; flex-direction: column; gap: 0; margin-top: 60px; }
+    .flow-step { display: flex; gap: 24px; align-items: flex-start; padding: 32px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .flow-step:last-child { border-bottom: none; }
+    .flow-num { flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #1c1006; font-size: 1.1rem; }
+    .flow-label { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--gold2); text-transform: uppercase; margin-bottom: 8px; }
+    .flow-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .flow-desc { color: rgba(255,255,255,0.62); font-size: 0.9rem; line-height: 1.9; }
+
+    /* ══ FEATURES ══ */
+    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 56px; }
+    @media (max-width: 700px) { .features-grid { grid-template-columns: 1fr; } }
+    .feature-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 30px 26px; transition: transform 0.2s, border-color 0.2s; }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(200,146,42,0.4); }
+    .feature-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
+    .feature-card h3 { font-size: 0.98rem; font-weight: 700; margin-bottom: 10px; color: white; }
+    .feature-card p { font-size: 0.84rem; color: rgba(255,255,255,0.54); line-height: 1.8; }
+
+    /* ══ GAP TABLE ══ */
+    .gap-grid { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0; margin-top: 48px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); }
+    @media (max-width: 640px) { .gap-grid { grid-template-columns: 1fr; } .gap-col.center { display: none; } }
+    .gap-col { padding: 32px 28px; }
+    .gap-col.left { background: #edecea; color: var(--ink); }
+    .gap-col.center { background: #d9d6d2; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+    .gap-col.right { background: var(--green); color: white; }
+    .gap-col h3 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 20px; opacity: 0.6; }
+    .gap-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: 0.87rem; line-height: 1.6; }
+    .gap-item .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-top: 7px; flex-shrink: 0; opacity: 0.5; }
+
+    /* ══ FAQ ══ */
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 24px 0; }
+    .faq-q { font-size: 0.95rem; font-weight: 700; color: white; margin-bottom: 10px; display: flex; gap: 10px; }
+    .faq-q span { color: var(--gold2); flex-shrink: 0; }
+    .faq-a { font-size: 0.84rem; color: rgba(255,255,255,0.58); line-height: 1.8; padding-left: 22px; }
+
+    /* ══ CTA ══ */
+    .cta-section { background: linear-gradient(160deg, #0a1610 0%, #142c20 50%, #1c1006 100%); padding: 120px 24px; text-align: center; }
+    .cta-inner { max-width: 720px; margin: 0 auto; }
+    .cta-section h2 { font-family: 'Noto Serif JP', serif; font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.45; margin-bottom: 24px; }
+    .cta-section p { font-size: 1rem; color: rgba(255,255,255,0.6); line-height: 1.9; margin-bottom: 40px; }
+    .cta-btn-group { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .cta-divider { font-size: 0.75rem; color: rgba(255,255,255,0.3); letter-spacing: 0.15em; }
+
+    /* ══ FADE IN ══ */
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner fade-in">
+    <span class="hero-sub">介護・医療・福祉の現場リーダーのための無料ツール</span>
+    <h1>「誰に何を任せているか」<br>あなたは今、<em>言葉にできますか？</em></h1>
+    <p class="hero-desc">
+      頭の中では「あの人には任せられる」「この業務はまだ早い」とわかっている。<br>
+      でも書き出したことは、一度もない。<br>
+      裁量マップは、その「見えない地図」を可視化する。
+    </p>
+    <div class="hero-badges">
+      <span class="hero-badge">🗂️ スタッフ×業務で設定</span>
+      <span class="hero-badge">👀 様子見／まだ早い／任せている</span>
+      <span class="hero-badge">📋 一覧表で全体を把握</span>
+      <span class="hero-badge">🖨️ 印刷・面談資料に使える</span>
+    </div>
+    <a href="https://survivalmom.github.io/survival_mom/sairyomap.html" class="btn-cta">
+      裁量マップを無料で使う
+    </a>
+    <p class="hero-note">登録不要・ブラウザだけで動作</p>
+  </div>
+</section>
+
+<!-- ══ VOICE ══ -->
+<section style="background:#0c1a12; padding:72px 24px;">
+  <div style="max-width:800px; margin:0 auto;">
+    <div class="voice-box fade-in">
+      「新人に任せようとしたとき、何を任せていいか整理できていなかった。頭の中にあるのに、言葉にしたことが一度もなかった。」
+      <cite>— 介護老人保健施設・主任</cite>
+    </div>
+    <div class="voice-box fade-in" style="margin-top:0; animation-delay:.1s">
+      「パートさんが夏休みに入って現場が詰まったとき、誰に何を頼めるかが全員分わかっていなかった。だから結局自分が入るしかなかった。」
+      <cite>— 訪問介護事業所・サービス提供責任者</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROBLEM ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label">Problem</span>
+      <h2>「任せたいけど怖い」の正体は、<br><em>可視化されていないことだ。</em></h2>
+      <p class="lead">頭の中にある「この人にはここまで」という感覚。それが言語化されていないから、毎回判断に迷い、毎回自分が動くことになる。</p>
+    </div>
+    <div class="problem-grid fade-in">
+      <div class="problem-card">
+        <h3>誰に何を任せているか、書き出したことがない</h3>
+        <p>「だいたいわかっている」で動いている。でも夏休みや急な欠勤のとき、その「だいたい」が崩れる。</p>
+      </div>
+      <div class="problem-card">
+        <h3>業務ごとに「任せていい範囲」が違うのに、整理できていない</h3>
+        <p>入浴介助はAさんに任せられる。でも家族への電話はまだ早い。この粒度で整理されたことが、一度もない。</p>
+      </div>
+      <div class="problem-card">
+        <h3>「任せる」と言ったのに、フォローが場当たりになる</h3>
+        <p>境界線を決めていないから、どこまで見守ってどこから介入するか、毎回その場で判断することになる。</p>
+      </div>
+      <div class="problem-card">
+        <h3>評価のとき、根拠が「感覚」しかない</h3>
+        <p>「頑張っていた」「成長した気がする」。でも何を任せて、どこまでできるようになったか、記録がない。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section style="background:#0a1310; padding:100px 24px;">
+  <div style="max-width:860px; margin:0 auto;">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label">How It Works</span>
+      <h2>3ステップで、<br>「見えない地図」を<em>可視化する</em>。</h2>
+    </div>
+    <div class="flow-steps fade-in">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div>
+          <div class="flow-label">スタッフを追加する</div>
+          <div class="flow-title">チームの名前を入力するだけ</div>
+          <div class="flow-desc">田中さん、鈴木さん…名前を追加するだけで準備完了。登録不要、ブラウザ上で動作する。</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div>
+          <div class="flow-label">業務ごとに裁量を設定する</div>
+          <div class="flow-title">「任せている／様子見／まだ早い」を選ぶ</div>
+          <div class="flow-desc">入浴介助、申し送り、家族対応、記録業務…8つの介護現場プリセット業務が最初から入っている。追加・削除も自由。境界線メモ欄に「声かけはOK・判断は相談」と書き込める。</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div>
+          <div class="flow-label">マップ一覧で全体を把握する</div>
+          <div class="flow-title">スタッフ×業務の全体表が一枚で見える</div>
+          <div class="flow-desc">誰が何をどこまでできるかが一覧になる。印刷して面談資料にも使える。「次の一歩」が自然に見えてくる。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in" style="text-align:center;">
+      <span class="label">Features</span>
+      <h2>裁量マップが持つ、<br><em>4つ</em>の機能</h2>
+    </div>
+    <div class="features-grid fade-in">
+      <div class="feature-card">
+        <span class="feature-icon">🗂️</span>
+        <h3>スタッフ×業務マトリクス設定</h3>
+        <p>スタッフを追加してチップで切り替え、業務ごとに3段階の裁量を設定。頭の中にある「地図」を一枚の表に変える。</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">✏️</span>
+        <h3>境界線メモ欄</h3>
+        <p>「声かけはOK・判断は相談」「記録は書ける・ダブルチェックは必要」など、業務ごとの境界線を言葉で記録できる。曖昧な「なんとなく」を言語化する。</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <h3>サマリーと次の一歩</h3>
+        <p>スタッフごとに「任せている・様子見・まだ早い」の数が一目でわかる。「次にずらせる業務はどれか」が自然に見えてくる。</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🖨️</span>
+        <h3>一覧表示・印刷対応</h3>
+        <p>マップ一覧ビューでチーム全体の裁量状況を一枚に。印刷ボタンで面談・シフト会議の資料として活用できる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BEFORE / AFTER ══ -->
+<section class="section-light">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label label-dark">Before / After</span>
+      <h2 class="dark">「頭の中」と、<br><em>「言語化された地図」</em>の差。</h2>
+    </div>
+    <div class="gap-grid fade-in">
+      <div class="gap-col left">
+        <h3>裁量マップなし</h3>
+        <div class="gap-item"><span class="dot"></span>「だいたいわかっている」で動いている</div>
+        <div class="gap-item"><span class="dot"></span>人が減ったとき、誰に何を頼めるか咄嗟に出てこない</div>
+        <div class="gap-item"><span class="dot"></span>任せる境界線が曖昧で、本人が「どこまでやっていいか」わからない</div>
+        <div class="gap-item"><span class="dot"></span>評価のとき「感覚」しか言葉にならない</div>
+        <div class="gap-item"><span class="dot"></span>結局自分が動くことになり、育成が止まる</div>
+      </div>
+      <div class="gap-col center">→</div>
+      <div class="gap-col right">
+        <h3>裁量マップあり</h3>
+        <div class="gap-item"><span class="dot"></span>誰に何を任せているかが一枚の表で見える</div>
+        <div class="gap-item"><span class="dot"></span>人手不足の朝、誰に何をお願いするかが即決できる</div>
+        <div class="gap-item"><span class="dot"></span>「ここまではあなたの判断」を言葉で渡せる</div>
+        <div class="gap-item"><span class="dot"></span>「入浴介助のリードを任せるようになった」と根拠で話せる</div>
+        <div class="gap-item"><span class="dot"></span>次の一歩が見えて、育成が動き続ける</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="label">FAQ</span>
+      <h2>よくある質問</h2>
+    </div>
+    <div class="fade-in" style="margin-top:48px;">
+      <div class="faq-item">
+        <div class="faq-q"><span>Q</span>登録やインストールは必要ですか？</div>
+        <div class="faq-a">不要です。ブラウザで開くだけで使えます。スマホでも動作します。データはブラウザに保存されるため、外部サーバーには送信されません。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Q</span>介護以外の職種でも使えますか？</div>
+        <div class="faq-a">使えます。プリセットは介護現場に合わせていますが、業務は自由に追加・削除できます。医療・福祉・保育・飲食・小売など、チームで動く現場であればどこでも使えます。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Q</span>裁量マップで可視化したあと、どうすればいいですか？</div>
+        <div class="faq-a">「様子見」の業務を一つ選んで、今週一度だけ任せてみてください。うまくいったら来週「任せている」に変える。その繰り返しが育成です。記録しながら境界線をずらし続ける方法は、note記事で詳しく書いています。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Q</span>データはどこに保存されますか？</div>
+        <div class="faq-a">ブラウザのlocalStorageに保存されます。同じブラウザを使えば次回も続きから使えます。ブラウザのキャッシュを削除するとデータも消えます。重要な記録は印刷して保管することをお勧めします。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="cta-inner fade-in">
+    <h2>まず、<em style="color:var(--gold2)">書き出す</em>ことから始める。</h2>
+    <p>
+      裁量マップは無料で使えます。<br>
+      今すぐ開いて、一人分だけ設定してみてください。<br>
+      「次の一歩」が、見えてきます。
+    </p>
+    <div class="cta-btn-group">
+      <a href="https://survivalmom.github.io/survival_mom/sairyomap.html" class="btn-cta">
+        裁量マップを無料で使う
+      </a>
+      <div class="cta-divider">── または ──</div>
+      <a href="#" class="btn-cta-note">
+        境界線をずらし続ける方法をnoteで読む
+      </a>
+      <p style="font-size:0.75rem; color:rgba(255,255,255,0.3); margin-top:8px;">※noteリンクは記事公開後に更新されます</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
