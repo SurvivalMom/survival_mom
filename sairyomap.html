@@ -54,10 +54,11 @@
     display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 28px;
   }
   .staff-chip {
-    padding: 8px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 600;
+    padding: 10px 18px; border-radius: 100px; font-size: 0.82rem; font-weight: 600;
     cursor: pointer; border: 2px solid transparent; transition: all .18s;
     background: var(--surface); color: var(--ink2);
     box-shadow: var(--shadow-sm);
+    -webkit-touch-callout: none; user-select: none;
   }
   .staff-chip:hover { border-color: var(--forest3); }
   .staff-chip.active { background: var(--forest); color: #fff; border-color: var(--forest); }
@@ -299,7 +300,7 @@
     <!-- 空状態 -->
     <div class="empty-state" id="emptyState">
       <div class="icon">🗂️</div>
-      <p>上のスタッフチップを選んで<br>業務ごとの裁量を設定してください。<br><br>まずスタッフを追加しましょう。</p>
+      <p>まずスタッフを追加してください。<br>チップをタップして選ぶと<br>業務ごとの裁量を設定できます。<br><br><small style="color:var(--ink4);">スタッフの削除：長押し（スマホ）/ 右クリック（PC）</small></p>
     </div>
   </div>
 
@@ -361,6 +362,13 @@ function renderStaffBar() {
     chip.textContent = s.name;
     chip.onclick = () => selectStaff(s.id);
     chip.oncontextmenu = (e) => { e.preventDefault(); removeStaff(s.id); };
+    // 長押し削除（スマホ対応）
+    let pressTimer = null;
+    chip.addEventListener('touchstart', () => {
+      pressTimer = setTimeout(() => { removeStaff(s.id); }, 700);
+    }, {passive: true});
+    chip.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+    chip.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
     bar.appendChild(chip);
   });
   const addBtn = document.createElement('button');
