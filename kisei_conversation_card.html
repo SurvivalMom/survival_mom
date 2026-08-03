@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帰省サバイバル会話カード</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fff9f3;
+    --sand: #e8ddd0;
+    --clay: #c9a882;
+    --terra: #a07050;
+    --forest: #5a7a5e;
+    --ink: #2d2520;
+    --ink-light: #5a4e46;
+    --accent: #d4876a;
+    --accent-soft: #f0e0d6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .wrapper { max-width: 460px; margin: 0 auto; }
+
+  .header {
+    text-align: center;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--sand);
+    margin-bottom: 24px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--clay);
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .header h1 span {
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink-light);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .header-note {
+    font-size: 11px;
+    color: var(--ink-light);
+    line-height: 1.8;
+    margin-top: 14px;
+    padding: 0 6px;
+  }
+
+  .section {
+    background: var(--warm-white);
+    border: 1px solid var(--sand);
+    border-radius: 16px;
+    padding: 18px 18px;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+
+  .row:last-child { margin-bottom: 0; }
+
+  .row input[type="text"] {
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .row input:focus { border-bottom-color: var(--clay); }
+  .row input::placeholder { color: var(--sand); font-size: 11px; }
+
+  .name-input { width: 100px; }
+
+  .hint {
+    font-size: 10px;
+    color: var(--clay);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    border-left: 2px solid var(--sand);
+    padding-left: 10px;
+    margin-top: 10px;
+  }
+
+  /* 会話カード */
+  .card-item {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--sand);
+  }
+  .card-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+  .card-question {
+    font-size: 12px;
+    color: var(--clay);
+    margin-bottom: 6px;
+  }
+
+  .card-answer-box {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+
+  .card-note {
+    font-size: 11px;
+    color: var(--ink-light);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .copy-btn {
+    width: 100%;
+    padding: 9px;
+    background: transparent;
+    color: var(--terra);
+    border: 1px solid var(--clay);
+    border-radius: 10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .copy-btn:active { background: var(--accent-soft); }
+
+  /* 判断基準表 */
+  .criteria-row {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--sand);
+  }
+  .criteria-row:last-child { border-bottom: none; }
+  .criteria-q {
+    font-size: 12px;
+    color: var(--clay);
+    margin-bottom: 4px;
+  }
+  .criteria-a {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* 今日の振り返り */
+  .today-date {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-bottom: 12px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--sand);
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .check-row:last-of-type { border-bottom: none; }
+
+  .check-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--terra);
+    margin-top: 1px;
+  }
+
+  .streak-box {
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  .streak-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--terra);
+  }
+
+  .streak-label {
+    font-size: 10px;
+    color: var(--ink-light);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .btn-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .primary-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .primary-btn:active { background: var(--terra); }
+
+  .secondary-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .secondary-btn:active { background: var(--sand); }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--forest);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--clay);
+    letter-spacing: 0.1em;
+    margin-top: 32px;
+    opacity: 0.6;
+  }
+
+  /* 画像カード用モーダル */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45,37,32,0.7);
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.show { display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; }
+  .modal-inner {
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .modal-title {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  #card {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 16px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .card-date { font-size: 11px; color: var(--clay); margin-bottom: 14px; }
+  .card-line {
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 0;
+    line-height: 1.6;
+  }
+  .card-msg {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--sand);
+    font-size: 12px;
+    color: var(--ink-light);
+    line-height: 1.8;
+  }
+  .card-footer {
+    text-align: right;
+    font-size: 9px;
+    color: var(--clay);
+    margin-top: 14px;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+  .close-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-sub">survival_mom</div>
+    <h1>帰省サバイバル会話カード
+      <span>親戚の一言に、その場で困らないために</span>
+    </h1>
+    <div class="header-note">
+      演技をするための台本ではありません。その場で言葉に詰まって、あとで自己嫌悪になる時間を減らすためのカードです。
+    </div>
+  </div>
+
+  <!-- 基本情報 -->
+  <div class="section">
+    <div class="section-title">基本情報</div>
+    <div class="row">
+      <span>特性のあるお子さんの名前</span>
+      <input type="text" class="name-input" id="targetName" placeholder="例）ゆい">
+    </div>
+    <div class="row">
+      <span>きょうだいのお子さんの名前</span>
+      <input type="text" class="name-input" id="siblingName" placeholder="例）そう">
+    </div>
+    <div class="hint">上の子・下の子は問いません。どちらの名前をどちらに入れても使えます。</div>
+  </div>
+
+  <!-- 会話カード -->
+  <div class="section">
+    <div class="section-title">① 会話カード</div>
+
+    <div class="card-item">
+      <div class="card-question">「学校はどう?」と聞かれたら</div>
+      <div class="card-answer-box" id="answer1">「今、合っているペースを探しているところです」</div>
+      <button class="copy-btn" onclick="copyAnswer('answer1')">この返しをコピーする</button>
+    </div>
+
+    <div class="card-item">
+      <div class="card-question">「甘やかしてるんじゃない?」と言われたら</div>
+      <div class="card-answer-box" id="answer2">「病院と相談しながらやっているので大丈夫です」</div>
+      <div class="card-note">反論せず、事実だけを置いて話題を戻す。</div>
+      <button class="copy-btn" onclick="copyAnswer('answer2')">この返しをコピーする</button>
+    </div>
+
+    <div class="card-item">
+      <div class="card-question">「大丈夫そうね」と言われたら</div>
+      <div class="card-answer-box" id="answer3">「今日は調子がいいみたいです」</div>
+      <div class="card-note">"いつも"ではなく"今日"であることをさりげなく添える。</div>
+      <button class="copy-btn" onclick="copyAnswer('answer3')">この返しをコピーする</button>
+    </div>
+
+    <div class="card-item">
+      <div class="card-question">きょうだいが褒められすぎたら</div>
+      <div class="card-answer-box" id="answer4"></div>
+      <div class="card-note">我慢に気づいていることを、本人にも聞こえる声で伝える。</div>
+      <button class="copy-btn" onclick="copyAnswer('answer4')">この返しをコピーする</button>
+    </div>
+  </div>
+
+  <!-- 判断基準表 -->
+  <div class="section">
+    <div class="section-title">② 話す/話さないの判断基準</div>
+
+    <div class="criteria-row">
+      <div class="criteria-q">相手が今後も頻繁に会う人か</div>
+      <div class="criteria-a">会う頻度が高いなら、最低限の事実だけ先に伝えておくと後が楽</div>
+    </div>
+    <div class="criteria-row">
+      <div class="criteria-q">相手が具体的なアドバイスを求めてくるタイプか</div>
+      <div class="criteria-a">アドバイス目的なら、詳細を話すほど長引くので事実の共有だけに留める</div>
+    </div>
+    <div class="criteria-row">
+      <div class="criteria-q">自分が今、話せる体力があるか</div>
+      <div class="criteria-a">体力がない日は「また今度ゆっくり話すね」で切り上げてよい</div>
+    </div>
+  </div>
+
+  <!-- 今日の振り返り -->
+  <div class="section">
+    <div class="section-title">今回の帰省での振り返り</div>
+    <div class="today-date" id="todayDate"></div>
+
+    <label class="check-row"><input type="checkbox" id="check1"><span>①「学校はどう?」に用意した返しを使えた</span></label>
+    <label class="check-row"><input type="checkbox" id="check2"><span>②「甘やかしてるんじゃない?」に用意した返しを使えた</span></label>
+    <label class="check-row"><input type="checkbox" id="check3"><span>③「大丈夫そうね」に用意した返しを使えた</span></label>
+    <label class="check-row"><input type="checkbox" id="check4"><span>④きょうだいへのフォローの一言を言えた</span></label>
+
+    <div class="streak-box">
+      <div class="streak-num" id="streakCount">0</div>
+      <div class="streak-label">これまでに何か1つでも使えた帰省の回数</div>
+    </div>
+  </div>
+
+  <div class="btn-area">
+    <button class="primary-btn" onclick="saveToday()">今回の記録を保存する</button>
+    <button class="secondary-btn" onclick="showCard()">📸　今回のカードを画像で保存</button>
+    <button class="secondary-btn" onclick="clearAll()">全部クリア</button>
+  </div>
+
+  <div class="footer">survival_mom</div>
+</div>
+
+<!-- 画像カード用モーダル -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-title">PREVIEW</div>
+    <div id="card">
+      <div class="card-title">今回、使えたこと</div>
+      <div class="card-date" id="cDate"></div>
+      <div id="cItems"></div>
+      <div class="card-msg">使えた項目が一つでもあれば、それで十分です。演技をしなくていい帰省を、少しずつ増やしていく。</div>
+      <div class="card-footer">survival_mom</div>
+    </div>
+    <button class="primary-btn" style="margin-bottom:10px;" onclick="downloadImage()">⬇️　画像を保存する</button>
+    <button class="close-btn" onclick="closeModal()">とじる</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">保存しました ✓</div>
+
+<script>
+const STORE_KEY = 'kiseiCardWorksheet_v1';
+const DAILY_KEY = 'kiseiCardDaily_v1';
+
+const fieldIds = ['targetName', 'siblingName'];
+
+function v(id) { return document.getElementById(id)?.value ?? ''; }
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function saveSettings() {
+  const data = {};
+  fieldIds.forEach(id => data[id] = v(id));
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+  renderDependents();
+}
+
+function loadSettings() {
+  const raw = localStorage.getItem(STORE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined && data[id] !== '') el.value = data[id];
+    });
+  } catch (e) {}
+}
+
+function renderDependents() {
+  const sibling = v('siblingName') || 'きょうだいのお子さん';
+
+  document.getElementById('answer4').textContent =
+    `「${sibling}も、今日は頑張ってくれました」`;
+}
+
+function copyAnswer(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard?.writeText(text).then(() => showToast('コピーしました ✓'));
+}
+
+// 今回の振り返り
+const checkIds = ['check1', 'check2', 'check3', 'check4'];
+
+function loadToday() {
+  document.getElementById('todayDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+
+  const raw = localStorage.getItem(DAILY_KEY);
+  const daily = raw ? JSON.parse(raw) : {};
+  const today = daily[todayKey()] || {};
+  checkIds.forEach(id => {
+    document.getElementById(id).checked = !!today[id];
+  });
+  renderStreak(daily);
+}
+
+function saveToday() {
+  const raw = localStorage.getItem(DAILY_KEY);
+  const daily = raw ? JSON.parse(raw) : {};
+  const entry = {};
+  checkIds.forEach(id => entry[id] = document.getElementById(id).checked);
+  daily[todayKey()] = entry;
+  localStorage.setItem(DAILY_KEY, JSON.stringify(daily));
+  renderStreak(daily);
+  showToast('今回の記録を保存しました ✓');
+}
+
+function renderStreak(daily) {
+  const count = Object.values(daily).filter(day =>
+    Object.values(day).some(v => v === true)
+  ).length;
+  document.getElementById('streakCount').textContent = count;
+}
+
+function showCard() {
+  const labels = [
+    '①「学校はどう?」に用意した返しを使えた',
+    '②「甘やかしてるんじゃない?」に用意した返しを使えた',
+    '③「大丈夫そうね」に用意した返しを使えた',
+    '④きょうだいへのフォローの一言を言えた'
+  ];
+  document.getElementById('cDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+
+  const itemsEl = document.getElementById('cItems');
+  itemsEl.innerHTML = '';
+  checkIds.forEach((id, i) => {
+    const checked = document.getElementById(id).checked;
+    const div = document.createElement('div');
+    div.className = 'card-line';
+    div.textContent = (checked ? '✓ ' : '・') + labels[i];
+    itemsEl.appendChild(div);
+  });
+
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function downloadImage() {
+  const card = document.getElementById('card');
+  html2canvas(card, { scale: 2, backgroundColor: '#fff9f3', useCORS: true, logging: false })
+    .then(canvas => {
+      const link = document.createElement('a');
+      link.download = '帰省で使えたこと.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('保存しました ✓');
+    });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function clearAll() {
+  if (!confirm('入力内容と記録をすべてクリアしますか？')) return;
+  localStorage.removeItem(STORE_KEY);
+  localStorage.removeItem(DAILY_KEY);
+  location.reload();
+}
+
+fieldIds.forEach(id => {
+  document.getElementById(id)?.addEventListener('input', saveSettings);
+  document.getElementById(id)?.addEventListener('change', saveSettings);
+});
+checkIds.forEach(id => {
+  document.getElementById(id)?.addEventListener('change', saveToday);
+});
+
+loadSettings();
+renderDependents();
+loadToday();
+</script>
+</body>
+</html>
