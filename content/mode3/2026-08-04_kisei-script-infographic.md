@@ -22,7 +22,7 @@ Title in Japanese bold gothic font, size 36px:
 [LIST SECTION - directly below title, same left margin]
 Japanese regular gothic font, size 32px, line height 1.8:
 ①学校の話を聞かれたら、どこまで話すか
-②弟に「今日はこう答えてね」と耳打ちする内容
+②きょうだいの子に「今日はこう答えてね」と耳打ちする内容
 ③従兄弟の話題になったときの切り上げ方
 ④「甘やかしてる」と言われたときの返し方
 ⑤「大丈夫そうね」と言われたときの受け方
