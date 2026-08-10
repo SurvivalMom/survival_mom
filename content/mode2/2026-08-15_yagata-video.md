@@ -66,4 +66,4 @@ Romaji: "Seikatsu rizumu tatenaoshi nanokakan puran" to "note honpen kiji" wo, p
 
 ピン留めコメント：夜型の子の部屋の前で、動けなくなったこと、ありますか？
 
-ハッシュタグ：#起立性調節障害 #夏休み明け生活リズム #発達障害グレーゾーン #母親の本音 #survival_mom
+ハッシュタグ：#起立性調節障害 #発達障害グレーゾーン #夏休み明け #不登校 #小学生ママ
