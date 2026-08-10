@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生活リズム立て直し7日間プラン</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fff9f3;
+    --sand: #e8ddd0;
+    --clay: #c9a882;
+    --terra: #a07050;
+    --forest: #5a7a5e;
+    --ink: #2d2520;
+    --ink-light: #5a4e46;
+    --accent: #d4876a;
+    --accent-soft: #f0e0d6;
+    --warn: #b8603f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .wrapper { max-width: 460px; margin: 0 auto; }
+
+  .header {
+    text-align: center;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--sand);
+    margin-bottom: 24px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--clay);
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .header h1 span {
+    display: block;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--ink-light);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .header-note {
+    font-size: 11px;
+    color: var(--ink-light);
+    line-height: 1.8;
+    margin-top: 14px;
+    padding: 0 6px;
+  }
+
+  .section {
+    background: var(--warm-white);
+    border: 1px solid var(--sand);
+    border-radius: 16px;
+    padding: 18px 18px;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+
+  .row:last-child { margin-bottom: 0; }
+
+  .row input[type="text"],
+  .row input[type="time"],
+  .row input[type="date"] {
+    border: none;
+    border-bottom: 1px solid var(--sand);
+    background: transparent;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .row input:focus { border-bottom-color: var(--clay); }
+  .row input::placeholder { color: var(--sand); font-size: 11px; }
+
+  .time-input { width: 110px; }
+  .date-input { width: 140px; }
+
+  .hint {
+    font-size: 10px;
+    color: var(--clay);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    border-left: 2px solid var(--sand);
+    padding-left: 10px;
+    margin-top: 10px;
+  }
+
+  .card-item {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--sand);
+  }
+  .card-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+  .card-question {
+    font-size: 12px;
+    color: var(--clay);
+    margin-bottom: 6px;
+  }
+
+  .card-answer-box {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+
+  .card-note {
+    font-size: 11px;
+    color: var(--ink-light);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .copy-btn {
+    width: 100%;
+    padding: 9px;
+    background: transparent;
+    color: var(--terra);
+    border: 1px solid var(--clay);
+    border-radius: 10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .copy-btn:active { background: var(--accent-soft); }
+
+  .plan-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--sand);
+    font-size: 13px;
+  }
+  .plan-row:last-child { border-bottom: none; }
+  .plan-day { color: var(--clay); }
+  .plan-time {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .plan-empty {
+    font-size: 12px;
+    color: var(--ink-light);
+    line-height: 1.7;
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .criteria-row {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--sand);
+  }
+  .criteria-row:last-child { border-bottom: none; }
+  .criteria-q {
+    font-size: 12px;
+    color: var(--clay);
+    margin-bottom: 4px;
+  }
+  .criteria-a {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .today-date {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-bottom: 12px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--sand);
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .check-row:last-of-type { border-bottom: none; }
+
+  .check-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--terra);
+    margin-top: 1px;
+  }
+
+  .streak-box {
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  .streak-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--terra);
+  }
+
+  .streak-label {
+    font-size: 10px;
+    color: var(--ink-light);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .od-result {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.8;
+    display: none;
+  }
+  .od-result.show { display: block; }
+  .od-result.low { background: var(--cream); color: var(--ink-light); }
+  .od-result.high { background: var(--accent-soft); color: var(--warn); }
+
+  .btn-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .primary-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .primary-btn:active { background: var(--terra); }
+
+  .secondary-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 12px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .secondary-btn:active { background: var(--sand); }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--forest);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--clay);
+    letter-spacing: 0.1em;
+    margin-top: 32px;
+    opacity: 0.6;
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45,37,32,0.7);
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.show { display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; }
+  .modal-inner {
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .modal-title {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--clay);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  #card {
+    background: var(--warm-white);
+    border: 1.5px solid var(--sand);
+    border-radius: 16px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .card-date { font-size: 11px; color: var(--clay); margin-bottom: 14px; }
+  .card-line {
+    font-size: 13px;
+    color: var(--ink);
+    padding: 4px 0;
+    line-height: 1.6;
+    display: flex;
+    justify-content: space-between;
+  }
+  .card-msg {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--sand);
+    font-size: 12px;
+    color: var(--ink-light);
+    line-height: 1.8;
+  }
+  .card-footer {
+    text-align: right;
+    font-size: 9px;
+    color: var(--clay);
+    margin-top: 14px;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+  .close-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--ink-light);
+    border: 1px solid var(--sand);
+    border-radius: 10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="header-sub">survival_mom</div>
+    <h1>生活リズム立て直し7日間プラン
+      <span>9月の始業式の朝を、怒鳴らずに迎えるために</span>
+    </h1>
+    <div class="header-note">
+      一気に戻そうとしなくていいプランです。今日より少し早く起きられたら、その日は成功。
+      それだけを積み重ねるためのシートです。
+    </div>
+  </div>
+
+  <!-- 基本情報 -->
+  <div class="section">
+    <div class="section-title">基本情報</div>
+    <div class="row">
+      <span>今の起床時間</span>
+      <input type="time" class="time-input" id="currentWake">
+    </div>
+    <div class="row">
+      <span>始業式までに戻したい起床時間</span>
+      <input type="time" class="time-input" id="targetWake">
+    </div>
+    <div class="row">
+      <span>始業式の日</span>
+      <input type="date" class="date-input" id="startDate">
+    </div>
+    <div class="hint">1日15〜30分ずつ、7日間で少しずつ早める前提で計算します。差が大きいときは無理に7日で揃えず、続きは翌週に持ち越して大丈夫です。</div>
+    <button class="copy-btn" style="margin-top:12px;" onclick="calcPlan()">プランを計算する</button>
+  </div>
+
+  <!-- 7日間プラン -->
+  <div class="section">
+    <div class="section-title">① 7日間の起床時間プラン</div>
+    <div id="planList">
+      <div class="plan-empty">起床時間を入力して「プランを計算する」を押すと、ここに7日分の目安が出ます。</div>
+    </div>
+  </div>
+
+  <!-- 声かけ集 -->
+  <div class="section">
+    <div class="section-title">② 言っていいこと・言わなくていいこと</div>
+
+    <div class="card-item">
+      <div class="card-question">起こすとき</div>
+      <div class="card-answer-box" id="answer1">「今日は何時に起きられそう?」</div>
+      <div class="card-note">「いい加減にしなさい」の代わりに、基準を約束にしておく。</div>
+      <button class="copy-btn" onclick="copyAnswer('answer1')">この声かけをコピーする</button>
+    </div>
+
+    <div class="card-item">
+      <div class="card-question">起きられない朝</div>
+      <div class="card-answer-box" id="answer2">「起きられない体の理由があるかもしれないね」</div>
+      <div class="card-note">怠けを疑う前に、体の状態を疑ってあげる。</div>
+      <button class="copy-btn" onclick="copyAnswer('answer2')">この声かけをコピーする</button>
+    </div>
+
+    <div class="card-item">
+      <div class="card-question">プラン通りにいかなかった夜</div>
+      <div class="card-answer-box" id="answer3">「また明日」</div>
+      <div class="card-note">その日のうちに自分（親）を責めない。翌日また割り直せばいい。</div>
+      <button class="copy-btn" onclick="copyAnswer('answer3')">この声かけをコピーする</button>
+    </div>
+  </div>
+
+  <!-- ODセルフチェック -->
+  <div class="section">
+    <div class="section-title">③ 起立性調節障害(OD)セルフチェック</div>
+    <div class="hint" style="margin-top:0; margin-bottom:12px;">3つ以上当てはまる場合は、「怠け」ではなく体の状態として、小児科などへの相談を検討する目安です。</div>
+
+    <label class="check-row"><input type="checkbox" class="odCheck"><span>朝はつらそうなのに、夜になると元気になる</span></label>
+    <label class="check-row"><input type="checkbox" class="odCheck"><span>立ち上がったときにめまいや立ちくらみがある</span></label>
+    <label class="check-row"><input type="checkbox" class="odCheck"><span>午前中に強い倦怠感があり、午後は軽くなる</span></label>
+    <label class="check-row"><input type="checkbox" class="odCheck"><span>朝の腹痛や頭痛を訴える</span></label>
+    <label class="check-row"><input type="checkbox" class="odCheck"><span>顔色が悪く、疲れやすい</span></label>
+
+    <div class="od-result" id="odResult"></div>
+  </div>
+
+  <!-- 今日の記録 -->
+  <div class="section">
+    <div class="section-title">今日の記録</div>
+    <div class="today-date" id="todayDate"></div>
+
+    <label class="check-row"><input type="checkbox" id="check1"><span>①昨日より早く起きられた</span></label>
+    <label class="check-row"><input type="checkbox" id="check2"><span>②朝、光を浴びさせられた</span></label>
+    <label class="check-row"><input type="checkbox" id="check3"><span>③怒鳴らずに声をかけられた</span></label>
+
+    <div class="streak-box">
+      <div class="streak-num" id="streakCount">0</div>
+      <div class="streak-label">何か1つでもできた日の合計</div>
+    </div>
+  </div>
+
+  <div class="btn-area">
+    <button class="primary-btn" onclick="saveToday()">今日の記録を保存する</button>
+    <button class="secondary-btn" onclick="showCard()">📸　今日のカードを画像で保存</button>
+    <button class="secondary-btn" onclick="clearAll()">全部クリア</button>
+  </div>
+
+  <div class="footer">survival_mom</div>
+</div>
+
+<!-- 画像カード用モーダル -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-title">PREVIEW</div>
+    <div id="card">
+      <div class="card-title">今日、できたこと</div>
+      <div class="card-date" id="cDate"></div>
+      <div id="cItems"></div>
+      <div class="card-msg">できた項目が一つでもあれば、それで十分です。昨日より少し早く起きられた日を、少しずつ増やしていく。</div>
+      <div class="card-footer">survival_mom</div>
+    </div>
+    <button class="primary-btn" style="margin-bottom:10px;" onclick="downloadImage()">⬇️　画像を保存する</button>
+    <button class="close-btn" onclick="closeModal()">とじる</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">保存しました ✓</div>
+
+<script>
+const STORE_KEY = 'seikatsuRhythmPlan_v1';
+const DAILY_KEY = 'seikatsuRhythmDaily_v1';
+
+const fieldIds = ['currentWake', 'targetWake', 'startDate'];
+
+function v(id) { return document.getElementById(id)?.value ?? ''; }
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function saveSettings() {
+  const data = {};
+  fieldIds.forEach(id => data[id] = v(id));
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+}
+
+function loadSettings() {
+  const raw = localStorage.getItem(STORE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data[id] !== undefined && data[id] !== '') el.value = data[id];
+    });
+  } catch (e) {}
+}
+
+function toMinutes(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function toHHMM(mins) {
+  mins = ((mins % 1440) + 1440) % 1440;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+function calcPlan() {
+  const cur = v('currentWake');
+  const tgt = v('targetWake');
+  const listEl = document.getElementById('planList');
+
+  if (!cur || !tgt) {
+    listEl.innerHTML = '<div class="plan-empty">今の起床時間と、目標の起床時間の両方を入力してください。</div>';
+    return;
+  }
+
+  let curMin = toMinutes(cur);
+  const tgtMin = toMinutes(tgt);
+  let diff = curMin - tgtMin;
+  if (diff < 0) diff += 1440;
+
+  if (diff === 0) {
+    listEl.innerHTML = '<div class="plan-empty">すでに目標の起床時間に近いようです。無理に早めなくて大丈夫です。</div>';
+    saveSettings();
+    return;
+  }
+
+  let step = Math.ceil(diff / 7);
+  step = Math.min(Math.max(step, 15), 30);
+
+  let html = '';
+  let wake = curMin;
+  for (let i = 1; i <= 7; i++) {
+    wake = wake - step;
+    if ((curMin - wake) >= diff) wake = tgtMin;
+    html += `<div class="plan-row"><span class="plan-day">Day ${i}</span><span class="plan-time">${toHHMM(wake)}</span></div>`;
+    if (wake === tgtMin) break;
+  }
+  listEl.innerHTML = html;
+  saveSettings();
+}
+
+function copyAnswer(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard?.writeText(text).then(() => showToast('コピーしました ✓'));
+}
+
+// ODセルフチェック
+document.querySelectorAll('.odCheck').forEach(el => {
+  el.addEventListener('change', () => {
+    const count = document.querySelectorAll('.odCheck:checked').length;
+    const result = document.getElementById('odResult');
+    if (count === 0) {
+      result.classList.remove('show');
+      return;
+    }
+    result.classList.add('show');
+    if (count >= 3) {
+      result.className = 'od-result show high';
+      result.textContent = `${count}個当てはまりました。「怠け」と決めつけず、小児科などへの相談を検討する目安です。`;
+    } else {
+      result.className = 'od-result show low';
+      result.textContent = `${count}個当てはまりました。引き続き様子を見つつ、増えるようなら相談先を探しておくと安心です。`;
+    }
+  });
+});
+
+// 今日の記録
+const checkIds = ['check1', 'check2', 'check3'];
+
+function loadToday() {
+  document.getElementById('todayDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+
+  const raw = localStorage.getItem(DAILY_KEY);
+  const daily = raw ? JSON.parse(raw) : {};
+  const today = daily[todayKey()] || {};
+  checkIds.forEach(id => {
+    document.getElementById(id).checked = !!today[id];
+  });
+  renderStreak(daily);
+}
+
+function saveToday() {
+  const raw = localStorage.getItem(DAILY_KEY);
+  const daily = raw ? JSON.parse(raw) : {};
+  const entry = {};
+  checkIds.forEach(id => entry[id] = document.getElementById(id).checked);
+  daily[todayKey()] = entry;
+  localStorage.setItem(DAILY_KEY, JSON.stringify(daily));
+  renderStreak(daily);
+  showToast('今日の記録を保存しました ✓');
+}
+
+function renderStreak(daily) {
+  const count = Object.values(daily).filter(day =>
+    Object.values(day).some(v => v === true)
+  ).length;
+  document.getElementById('streakCount').textContent = count;
+}
+
+function showCard() {
+  const labels = [
+    '①昨日より早く起きられた',
+    '②朝、光を浴びさせられた',
+    '③怒鳴らずに声をかけられた'
+  ];
+  document.getElementById('cDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+
+  const itemsEl = document.getElementById('cItems');
+  itemsEl.innerHTML = '';
+  checkIds.forEach((id, i) => {
+    const checked = document.getElementById(id).checked;
+    const div = document.createElement('div');
+    div.className = 'card-line';
+    div.textContent = (checked ? '✓ ' : '・') + labels[i];
+    itemsEl.appendChild(div);
+  });
+
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function downloadImage() {
+  const card = document.getElementById('card');
+  html2canvas(card, { scale: 2, backgroundColor: '#fff9f3', useCORS: true, logging: false })
+    .then(canvas => {
+      const link = document.createElement('a');
+      link.download = '生活リズム記録.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('保存しました ✓');
+    });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function clearAll() {
+  if (!confirm('入力内容と記録をすべてクリアしますか？')) return;
+  localStorage.removeItem(STORE_KEY);
+  localStorage.removeItem(DAILY_KEY);
+  location.reload();
+}
+
+fieldIds.forEach(id => {
+  document.getElementById(id)?.addEventListener('input', saveSettings);
+  document.getElementById(id)?.addEventListener('change', saveSettings);
+});
+
+loadSettings();
+loadToday();
+if (v('currentWake') && v('targetWake')) calcPlan();
+</script>
+</body>
+</html>
