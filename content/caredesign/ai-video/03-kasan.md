@@ -22,50 +22,29 @@
 
 ## シーン構成
 
-**Scene 1**
-経営者（独り言）：「同じ基本報酬のはずなのに、なぜあそこは余裕があるんだろう。」
-```
-Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions.
-The owner (dark business suit), looking at documents, mutters to himself:
-"同じ基本報酬のはずなのに、なぜあそこは余裕があるんだろう。"
-```
+S1：経営者（独り言）：「同じ基本報酬のはずなのに、なぜあそこは余裕があるんだろう。」
+S2：管理者：「加算の取り方次第で、収益が最大1.5倍変わるそうです。」
+S3：経営者：「まず、うちがどの加算を取れているか、一度確認しよう。」
+S4：経営者（独白）：「この戦略は、自分にしかできない仕事だ。」
+S5（無音・締め）：管理者、ノートPCを閉じる。経営者、静かに頷く。
 
-**Scene 2**
-管理者：「加算の取り方次第で、収益が最大1.5倍変わるそうです。」
 ```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-The manager (teal scrubs) brings in a folder and says: "加算の取り方次第で、
-収益が最大1.5倍変わるそうです。"
-```
-
-**Scene 3**
-経営者：「まず、うちがどの加算を取れているか、一度確認しよう。」
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-The owner (dark business suit) says: "まず、うちがどの加算を取れているか、
-一度確認しよう。" The manager (teal scrubs) nods and opens a laptop.
-```
-
-**Scene 4**
-経営者（独白）：「この戦略は、自分にしかできない仕事だ。」
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-The owner (dark business suit), alone at his desk, says quietly to himself:
-"この戦略は、自分にしかできない仕事だ。"
-```
-
-**Scene 5（無音・締め・テロップは後入れ）**
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no dialogue, no captions.
-The manager (teal scrubs) closes the laptop after finishing the check. The
-owner (dark business suit) nods with quiet satisfaction. Calm resolved
-mood. Leave the upper third of the frame clean and uncluttered for text to
-be added later.
+S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+only, no music, no captions. The owner (dark business suit), looking at
+documents, mutters to himself: "同じ基本報酬のはずなのに、なぜあそこは
+余裕があるんだろう。"
+S2: Same setting. The manager (teal scrubs) brings in a folder and says:
+"加算の取り方次第で、収益が最大1.5倍変わるそうです。"
+S3: Same setting. The owner (dark business suit) says: "まず、うちがどの
+加算を取れているか、一度確認しよう。" The manager (teal scrubs) nods and
+opens a laptop.
+S4: Same setting. The owner (dark business suit), alone at his desk, says
+quietly to himself: "この戦略は、自分にしかできない仕事だ。"
+S5: Same setting, natural ambient sound only, no music, no dialogue, no
+captions. The manager (teal scrubs) closes the laptop after finishing the
+check. The owner (dark business suit) nods with quiet satisfaction. Calm
+resolved mood. Leave the upper third of the frame clean for text to be
+added later.
 ```
 
 ## 公開前の映り込み確認項目
