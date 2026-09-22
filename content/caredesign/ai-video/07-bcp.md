@@ -23,26 +23,41 @@ BCP（事業継続計画）は策定して終わりではありません。
 
 ## シーン構成
 
-S1：経営者：「このBCP、最後に開いたのいつだったかな…」管理者、思い出せない表情。
-S2：管理者：「策定しただけで、終わっていましたね。」
-S3：経営者：「訓練とか研修も、ちゃんとやらないといけないらしい。」
-S4：管理者：「訓練していないと、いざという時に動けないですもんね。」経営者うなずく。
-S5（無音・締め）：バインダーを机に開いて置く。
-
+**Scene 1**
+経営者：「このBCP、最後に開いたのいつだったかな…」管理者、思い出せない表情。
 ```
-S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+Vertical 9:16 cinematic, realistic office interior, natural ambient sound
 only, no music, no captions. Owner (dark business suit) pulls a thick
 dusty binder off a shelf, in Japanese (romanized for correct
 pronunciation): "Kono bii-shii-pii, saigo ni hiraita no itsu datta
 kana..." Manager (teal scrubs) looks like she can't quite remember.
-S2: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+```
+
+**Scene 2**
+管理者：「策定しただけで、終わっていましたね。」
+```
+Same setting. Manager (teal scrubs) says, in Japanese (romanized):
 "Sakutei shita dake de, owatte imashita ne."
-S3: Same setting. Owner (dark business suit) says, in Japanese
+```
+
+**Scene 3**
+経営者：「訓練とか研修も、ちゃんとやらないといけないらしい。」
+```
+Same setting. Owner (dark business suit) says, in Japanese
 (romanized): "Kunren toka kenshuu mo, chanto yaranai to ikenai rashii."
-S4: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+```
+
+**Scene 4**
+管理者：「訓練していないと、いざという時に動けないですもんね。」経営者うなずく。
+```
+Same setting. Manager (teal scrubs) says, in Japanese (romanized):
 "Kunren shite inai to, iza to iu toki ni ugokenai desu mon ne." Owner
 nods.
-S5: Same setting, natural ambient sound only, no music, no dialogue, no
+```
+
+**Scene 5（無音・締め・テロップは後入れ）**
+```
+Same setting, natural ambient sound only, no music, no dialogue, no
 captions. Owner opens the binder flat on the desk. Leave the upper third
 of the frame clean for text to be added later.
 ```

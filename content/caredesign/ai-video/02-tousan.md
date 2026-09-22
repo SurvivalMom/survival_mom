@@ -23,30 +23,45 @@
 
 ## シーン構成
 
-S1：管理者：「近くの法人さん、閉められたみたいです…」経営者：「うちは、大丈夫だよ。」
-S2：経営者：「2025年、介護事業者の倒産は過去最多の176件だったらしい。」
-S3：管理者：「数字になる前に、何か変化ってあるんでしょうか。」経営者：「きっと、その前に小さな異変があるはずだ。」
-S4：経営者（独白）：「倒産の多くも、職員が辞めることから、静かに始まっているのかもしれない。」
-S5（無音・締め）：経営者、窓の方を見る。
-
+**Scene 1**
+管理者：「近くの法人さん、閉められたみたいです…」経営者：「うちは、大丈夫だよ。」
 ```
-S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+Vertical 9:16 cinematic, realistic office interior, natural ambient sound
 only, no music, no captions. The manager (teal scrubs) says hesitantly, in
 Japanese (romanized for correct pronunciation): "Chikaku no houjin-san,
 shimerareta mitai desu..." The owner (dark business suit) replies, trying
 to sound confident but slightly uneasy, in Japanese (romanized): "Uchi wa,
 daijoubu da yo."
-S2: Same setting. The owner (dark business suit), reading a report, says
+```
+
+**Scene 2**
+経営者：「2025年、介護事業者の倒産は過去最多の176件だったらしい。」
+```
+Same setting. The owner (dark business suit), reading a report, says
 quietly, in Japanese (romanized): "Ni-sen-nijuugo-nen, kaigo jigyousha no
 tousan wa kako saita no hyaku-nanajuuroku-ken datta rashii."
-S3: Same setting. The manager (teal scrubs) asks, in Japanese (romanized):
+```
+
+**Scene 3**
+管理者：「数字になる前に、何か変化ってあるんでしょうか。」経営者：「きっと、その前に小さな異変があるはずだ。」
+```
+Same setting. The manager (teal scrubs) asks, in Japanese (romanized):
 "Suuji ni naru mae ni, nanika henka tte arun deshou ka." The owner (dark
 business suit) replies, in Japanese (romanized): "Kitto, sono mae ni
 chiisana ihen ga aru hazu da."
-S4: Same setting. The owner (dark business suit), looking down, says to
+```
+
+**Scene 4**
+経営者（独白）：「倒産の多くも、職員が辞めることから、静かに始まっているのかもしれない。」
+```
+Same setting. The owner (dark business suit), looking down, says to
 himself, in Japanese (romanized): "Tousan no ooku mo, shokuin ga yameru
 koto kara, shizuka ni hajimatte iru no kamoshirenai."
-S5: Same setting, natural ambient sound only, no music, no dialogue, no
+```
+
+**Scene 5（無音・締め・テロップは後入れ）**
+```
+Same setting, natural ambient sound only, no music, no dialogue, no
 captions. The owner (dark business suit) closes the report and looks
 toward the window with quiet resolve. Still, contemplative mood. Leave the
 upper third of the frame clean for text to be added later.

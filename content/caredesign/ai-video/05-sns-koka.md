@@ -23,27 +23,42 @@ SNSを頑張っているのに効果が見えない——「更新頻度が足�
 
 ## シーン構成
 
-S1：経営者（ため息）：「SNS、頑張ってるのに効果が見えないな…」管理者：「更新頻度が足りないんでしょうか。」
-S2：経営者：「TikTokも始めた方がいいのか、正直わからない。」
-S3：管理者：「SNSは『即採用』じゃなくて『出会いのきっかけ』、って聞いたことあります。」
-S4：経営者（ゆっくりうなずく）：「数字じゃなく、信頼を積み上げる場、か。」
-S5（無音・締め）：スマホを静かに置き、ノートを開く。
-
+**Scene 1**
+経営者（ため息）：「SNS、頑張ってるのに効果が見えないな…」管理者：「更新頻度が足りないんでしょうか。」
 ```
-S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+Vertical 9:16 cinematic, realistic office interior, natural ambient sound
 only, no music, no captions. Owner (dark business suit) scrolls a phone
 with a sigh, in Japanese (romanized for correct pronunciation): "Esu-enu-
 esu, ganbatteru noni kouka ga mienai na..." Manager (teal scrubs) replies,
 in Japanese (romanized): "Koushin hindo ga tarinain deshou ka."
-S2: Same setting. Owner (dark business suit) says, in Japanese
+```
+
+**Scene 2**
+経営者：「TikTokも始めた方がいいのか、正直わからない。」
+```
+Same setting. Owner (dark business suit) says, in Japanese
 (romanized): "Tikkutokku mo hajimeta hou ga ii no ka, shoujiki
 wakaranai."
-S3: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+```
+
+**Scene 3**
+管理者：「SNSは『即採用』じゃなくて『出会いのきっかけ』、って聞いたことあります。」
+```
+Same setting. Manager (teal scrubs) says, in Japanese (romanized):
 "Esu-enu-esu wa sokusaiyou janakute deai no kikkake, tte kiita koto
 arimasu."
-S4: Same setting. Owner (dark business suit) nods slowly, in Japanese
+```
+
+**Scene 4**
+経営者（ゆっくりうなずく）：「数字じゃなく、信頼を積み上げる場、か。」
+```
+Same setting. Owner (dark business suit) nods slowly, in Japanese
 (romanized): "Suuji janaku, shinrai wo tsumiageru ba, ka."
-S5: Same setting, natural ambient sound only, no music, no dialogue, no
+```
+
+**Scene 5（無音・締め・テロップは後入れ）**
+```
+Same setting, natural ambient sound only, no music, no dialogue, no
 captions. Owner sets the phone face down and opens a notebook instead.
 Leave the upper third of the frame clean for text to be added later.
 ```

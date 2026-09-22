@@ -23,28 +23,43 @@
 
 ## シーン構成
 
-S1：経営者：「外国人材の受け入れ、何から始めればいいんだろう。」
-S2：管理者：「2026年には、介護職員が27万人ほど不足するそうです。」
-S3：経営者：「住居と、日本語のサポートと…キャリアパスも用意しないと。」管理者：「その3つが定着の鍵になるみたいですね。」
-S4：経営者（独白）：「受け入れる前の準備が、その後を左右する。」
-S5（無音・締め）：2人、資料を静かに閉じる。
-
+**Scene 1**
+経営者：「外国人材の受け入れ、何から始めればいいんだろう。」
 ```
-S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+Vertical 9:16 cinematic, realistic office interior, natural ambient sound
 only, no music, no captions. Owner (dark business suit) looks at a
 brochure and says, in Japanese (romanized for correct pronunciation):
 "Gaikoku jinzai no ukeire, nani kara hajimereba iin darou." Manager (teal
 scrubs) leans in, equally puzzled.
-S2: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+```
+
+**Scene 2**
+管理者：「2026年には、介護職員が27万人ほど不足するそうです。」
+```
+Same setting. Manager (teal scrubs) says, in Japanese (romanized):
 "Ni-sen-nijuuroku-nen ni wa, kaigo shokuin ga nijuu-nana-man-nin hodo
 fusoku suru sou desu." Owner (dark business suit) nods seriously.
-S3: Same setting. Owner (dark business suit) says, in Japanese
+```
+
+**Scene 3**
+経営者：「住居と、日本語のサポートと…キャリアパスも用意しないと。」管理者：「その3つが定着の鍵になるみたいですね。」
+```
+Same setting. Owner (dark business suit) says, in Japanese
 (romanized): "Juukyo to, nihongo no sapooto to... kyaria pasu mo youi
 shinai to." Manager (teal scrubs) replies, in Japanese (romanized):
 "Sono mittsu ga teichaku no kagi ni naru mitai desu ne."
-S4: Same setting. Owner (dark business suit), alone, says quietly, in
+```
+
+**Scene 4**
+経営者（独白）：「受け入れる前の準備が、その後を左右する。」
+```
+Same setting. Owner (dark business suit), alone, says quietly, in
 Japanese (romanized): "Ukeireru mae no junbi ga, sono ato wo sayuu suru."
-S5: Same setting, natural ambient sound only, no music, no dialogue, no
+```
+
+**Scene 5（無音・締め・テロップは後入れ）**
+```
+Same setting, natural ambient sound only, no music, no dialogue, no
 captions. Both close the brochure calmly. Leave the upper third of the
 frame clean for text to be added later.
 ```
