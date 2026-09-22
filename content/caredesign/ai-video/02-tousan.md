@@ -31,18 +31,21 @@ S5（無音・締め）：経営者、窓の方を見る。
 
 ```
 S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. The manager (teal scrubs) says hesitantly:
-"近くの法人さん、閉められたみたいです…" The owner (dark business suit)
-replies, trying to sound confident but slightly uneasy: "うちは、大丈夫
-だよ。"
+only, no music, no captions. The manager (teal scrubs) says hesitantly, in
+Japanese (romanized for correct pronunciation): "Chikaku no houjin-san,
+shimerareta mitai desu..." The owner (dark business suit) replies, trying
+to sound confident but slightly uneasy, in Japanese (romanized): "Uchi wa,
+daijoubu da yo."
 S2: Same setting. The owner (dark business suit), reading a report, says
-quietly: "2025年、介護事業者の倒産は過去最多の176件だったらしい。"
-S3: Same setting. The manager (teal scrubs) asks: "数字になる前に、何か
-変化ってあるんでしょうか。" The owner (dark business suit) replies:
-"きっと、その前に小さな異変があるはずだ。"
+quietly, in Japanese (romanized): "Ni-sen-nijuugo-nen, kaigo jigyousha no
+tousan wa kako saita no hyaku-nanajuuroku-ken datta rashii."
+S3: Same setting. The manager (teal scrubs) asks, in Japanese (romanized):
+"Suuji ni naru mae ni, nanika henka tte arun deshou ka." The owner (dark
+business suit) replies, in Japanese (romanized): "Kitto, sono mae ni
+chiisana ihen ga aru hazu da."
 S4: Same setting. The owner (dark business suit), looking down, says to
-himself: "倒産の多くも、職員が辞めることから、静かに始まっているのかも
-しれない。"
+himself, in Japanese (romanized): "Tousan no ooku mo, shokuin ga yameru
+koto kara, shizuka ni hajimatte iru no kamoshirenai."
 S5: Same setting, natural ambient sound only, no music, no dialogue, no
 captions. The owner (dark business suit) closes the report and looks
 toward the window with quiet resolve. Still, contemplative mood. Leave the

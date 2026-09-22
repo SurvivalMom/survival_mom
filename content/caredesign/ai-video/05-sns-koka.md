@@ -23,49 +23,29 @@ SNSを頑張っているのに効果が見えない——「更新頻度が足�
 
 ## シーン構成
 
-**Scene 1**
-経営者（ため息）：「SNS、頑張ってるのに効果が見えないな…」管理者：「更新頻度が足りないんでしょうか。」
-```
-Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions.
-Owner (dark business suit) scrolls a phone with a sigh: "SNS、頑張ってる
-のに効果が見えないな…" Manager (teal scrubs) replies: "更新頻度が足りない
-んでしょうか。"
-```
+S1：経営者（ため息）：「SNS、頑張ってるのに効果が見えないな…」管理者：「更新頻度が足りないんでしょうか。」
+S2：経営者：「TikTokも始めた方がいいのか、正直わからない。」
+S3：管理者：「SNSは『即採用』じゃなくて『出会いのきっかけ』、って聞いたことあります。」
+S4：経営者（ゆっくりうなずく）：「数字じゃなく、信頼を積み上げる場、か。」
+S5（無音・締め）：スマホを静かに置き、ノートを開く。
 
-**Scene 2**
-経営者：「TikTokも始めた方がいいのか、正直わからない。」
 ```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Owner (dark business suit) says: "TikTokも始めた方がいいのか、正直
-わからない。"
-```
-
-**Scene 3**
-管理者：「SNSは『即採用』じゃなくて『出会いのきっかけ』、って聞いたことあります。」
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Manager (teal scrubs) says: "SNSは『即採用』じゃなくて『出会いのきっかけ』、
-って聞いたことあります。"
-```
-
-**Scene 4**
-経営者（ゆっくりうなずく）：「数字じゃなく、信頼を積み上げる場、か。」
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Owner (dark business suit) nods slowly: "数字じゃなく、信頼を積み上げる
-場、か。"
-```
-
-**Scene 5（無音・締め・テロップは後入れ）**
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no dialogue, no captions.
-Owner sets the phone face down and opens a notebook instead. Leave the
-upper third of the frame clean and uncluttered for text to be added later.
+S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+only, no music, no captions. Owner (dark business suit) scrolls a phone
+with a sigh, in Japanese (romanized for correct pronunciation): "Esu-enu-
+esu, ganbatteru noni kouka ga mienai na..." Manager (teal scrubs) replies,
+in Japanese (romanized): "Koushin hindo ga tarinain deshou ka."
+S2: Same setting. Owner (dark business suit) says, in Japanese
+(romanized): "Tikkutokku mo hajimeta hou ga ii no ka, shoujiki
+wakaranai."
+S3: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+"Esu-enu-esu wa sokusaiyou janakute deai no kikkake, tte kiita koto
+arimasu."
+S4: Same setting. Owner (dark business suit) nods slowly, in Japanese
+(romanized): "Suuji janaku, shinrai wo tsumiageru ba, ka."
+S5: Same setting, natural ambient sound only, no music, no dialogue, no
+captions. Owner sets the phone face down and opens a notebook instead.
+Leave the upper third of the frame clean for text to be added later.
 ```
 
 ## 公開前の映り込み確認項目

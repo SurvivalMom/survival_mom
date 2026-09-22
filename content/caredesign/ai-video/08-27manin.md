@@ -23,49 +23,31 @@
 
 ## シーン構成
 
-**Scene 1**
-経営者（ため息）：「求人出しても出しても、応募が来ないな…」
-```
-Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions.
-Owner (dark business suit) looks at an empty applicant list on a screen
-with a sigh: "求人出しても出しても、応募が来ないな…"
-```
+S1：経営者（ため息）：「求人出しても出しても、応募が来ないな…」
+S2：管理者：「2026年には、介護職員が27万人ほど足りなくなるそうです。」
+S3：経営者：「だったら、新しく採るより、今いる職員が辞めない方を考えた方がいいのかもな。」
+S4：管理者：「辞めさせない経営が、採用戦略そのものになる、ってことですね。」経営者うなずく。
+S5（無音・締め）：経営者、座っている職員の方を静かに見る。
 
-**Scene 2**
-管理者：「2026年には、介護職員が27万人ほど足りなくなるそうです。」
 ```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Manager (teal scrubs) says: "2026年には、介護職員が27万人ほど足りなく
-なるそうです。"
-```
-
-**Scene 3**
-経営者：「だったら、新しく採るより、今いる職員が辞めない方を考えた方がいいのかもな。」
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Owner (dark business suit) says: "だったら、新しく採るより、今いる職員が
-辞めない方を考えた方がいいのかもな。"
-```
-
-**Scene 4**
-管理者：「辞めさせない経営が、採用戦略そのものになる、ってことですね。」経営者うなずく。
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Manager (teal scrubs) says: "辞めさせない経営が、採用戦略そのものになる、
-ってことですね。" Owner nods.
-```
-
-**Scene 5（無音・締め・テロップは後入れ）**
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no dialogue, no captions.
-Owner quietly looks toward a seated staff member in the background. Leave
-the upper third of the frame clean and uncluttered for text to be added
-later.
+S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+only, no music, no captions. Owner (dark business suit) looks at an empty
+applicant list on a screen with a sigh, in Japanese (romanized for
+correct pronunciation): "Kyuujin dashitemo dashitemo, oubo ga konai
+na..."
+S2: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+"Ni-sen-nijuuroku-nen ni wa, kaigo shokuin ga nijuu-nana-man-nin hodo
+tarinaku naru sou desu."
+S3: Same setting. Owner (dark business suit) says, in Japanese
+(romanized): "Dattara, atarashiku toru yori, ima iru shokuin ga yamenai
+hou wo kangaeta hou ga ii no kamo na."
+S4: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+"Yamesasenai keiei ga, saiyou senryaku sono mono ni naru, tte koto desu
+ne." Owner nods.
+S5: Same setting, natural ambient sound only, no music, no dialogue, no
+captions. Owner quietly looks toward a seated staff member in the
+background. Leave the upper third of the frame clean for text to be
+added later.
 ```
 
 ## 公開前の映り込み確認項目

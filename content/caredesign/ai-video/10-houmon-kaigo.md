@@ -23,48 +23,30 @@
 
 ## シーン構成
 
-**Scene 1**
-経営者（困惑）：「たった一人辞めただけなのに、こんなに響くとは…」
-```
-Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions.
-Owner (dark business suit) holds a resignation letter, looking troubled:
-"たった一人辞めただけなのに、こんなに響くとは…"
-```
+S1：経営者（困惑）：「たった一人辞めただけなのに、こんなに響くとは…」
+S2：管理者：「2025年、訪問介護の倒産は91件で過去最多だったそうです。」
+S3：経営者：「規模が小さいほど、一人の離職の影響が大きいんだな。」
+S4：管理者：「生き残りは規模じゃなくて、辞めない仕組み、ってことですね。」経営者うなずく。
+S5（無音・締め）：退職届を静かに机に置く。
 
-**Scene 2**
-管理者：「2025年、訪問介護の倒産は91件で過去最多だったそうです。」
 ```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Manager (teal scrubs) says: "2025年、訪問介護の倒産は91件で過去最多
-だったそうです。"
-```
-
-**Scene 3**
-経営者：「規模が小さいほど、一人の離職の影響が大きいんだな。」
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Owner (dark business suit) says: "規模が小さいほど、一人の離職の影響が
-大きいんだな。"
-```
-
-**Scene 4**
-管理者：「生き残りは規模じゃなくて、辞めない仕組み、ってことですね。」経営者うなずく。
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Manager (teal scrubs) says: "生き残りは規模じゃなくて、辞めない仕組み、
-ってことですね。" Owner nods.
-```
-
-**Scene 5（無音・締め・テロップは後入れ）**
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no dialogue, no captions.
-Owner sets the resignation letter down quietly on the desk. Leave the
-upper third of the frame clean and uncluttered for text to be added later.
+S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+only, no music, no captions. Owner (dark business suit) holds a
+resignation letter, looking troubled, in Japanese (romanized for correct
+pronunciation): "Tatta hitori yameta dake nanoni, konna ni hibiku to
+wa..."
+S2: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+"Ni-sen-nijuugo-nen, houmon kaigo no tousan wa kyuujuu-ikken de kako
+saita datta sou desu."
+S3: Same setting. Owner (dark business suit) says, in Japanese
+(romanized): "Kibo ga chiisai hodo, hitori no rishoku no eikyou ga
+ookiin da na."
+S4: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+"Ikinokori wa kibo janakute, yamenai shikumi, tte koto desu ne." Owner
+nods.
+S5: Same setting, natural ambient sound only, no music, no dialogue, no
+captions. Owner sets the resignation letter down quietly on the desk.
+Leave the upper third of the frame clean for text to be added later.
 ```
 
 ## 公開前の映り込み確認項目

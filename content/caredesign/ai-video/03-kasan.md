@@ -32,15 +32,18 @@ S5（無音・締め）：管理者、ノートPCを閉じる。経営者、静�
 ```
 S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
 only, no music, no captions. The owner (dark business suit), looking at
-documents, mutters to himself: "同じ基本報酬のはずなのに、なぜあそこは
-余裕があるんだろう。"
-S2: Same setting. The manager (teal scrubs) brings in a folder and says:
-"加算の取り方次第で、収益が最大1.5倍変わるそうです。"
-S3: Same setting. The owner (dark business suit) says: "まず、うちがどの
-加算を取れているか、一度確認しよう。" The manager (teal scrubs) nods and
-opens a laptop.
+documents, mutters to himself, in Japanese (romanized for correct
+pronunciation): "Onaji kihon houshuu no hazu nanoni, naze asoko wa yoyuu
+ga arun darou."
+S2: Same setting. The manager (teal scrubs) brings in a folder and says,
+in Japanese (romanized): "Kasan no torikata shidai de, shuueki ga saidai
+itten-go-bai kawaru sou desu."
+S3: Same setting. The owner (dark business suit) says, in Japanese
+(romanized): "Mazu, uchi ga dono kasan wo torete iru ka, ichido kakunin
+shiyou." The manager (teal scrubs) nods and opens a laptop.
 S4: Same setting. The owner (dark business suit), alone at his desk, says
-quietly to himself: "この戦略は、自分にしかできない仕事だ。"
+quietly to himself, in Japanese (romanized): "Kono senryaku wa, jibun ni
+shika dekinai shigoto da."
 S5: Same setting, natural ambient sound only, no music, no dialogue, no
 captions. The manager (teal scrubs) closes the laptop after finishing the
 check. The owner (dark business suit) nods with quiet satisfaction. Calm

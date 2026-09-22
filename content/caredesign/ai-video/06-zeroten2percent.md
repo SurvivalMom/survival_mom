@@ -23,48 +23,29 @@ SNS経由の入職は、実は全体のわずか0.2%。
 
 ## シーン構成
 
-**Scene 1**
-経営者：「SNS経由の入職、実は全体の0.2%しかないらしい。」管理者、驚いた表情。
-```
-Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions.
-Owner (dark business suit) reads recruitment data: "SNS経由の入職、実は
-全体の0.2%しかないらしい。" Manager (teal scrubs) looks surprised.
-```
+S1：経営者：「SNS経由の入職、実は全体の0.2%しかないらしい。」管理者、驚いた表情。
+S2：管理者：「『見た』と『応募する』の間には、大きな距離があるんですね。」
+S3：経営者：「フォロワー数より、コメント欄の信頼感の方が効いてるらしい。」
+S4：管理者：「SNSは最終手段じゃなくて、最初の接点、ってことですね。」経営者うなずく。
+S5（無音・締め）：2人、画面を見ながら静かに頷き合う。
 
-**Scene 2**
-管理者：「『見た』と『応募する』の間には、大きな距離があるんですね。」
 ```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Manager (teal scrubs) says: "『見た』と『応募する』の間には、大きな距離が
-あるんですね。"
-```
-
-**Scene 3**
-経営者：「フォロワー数より、コメント欄の信頼感の方が効いてるらしい。」
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Owner (dark business suit) says: "フォロワー数より、コメント欄の信頼感の
-方が効いてるらしい。"
-```
-
-**Scene 4**
-管理者：「SNSは最終手段じゃなくて、最初の接点、ってことですね。」経営者うなずく。
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no captions.
-Manager (teal scrubs) says: "SNSは最終手段じゃなくて、最初の接点、って
-ことですね。" Owner nods.
-```
-
-**Scene 5（無音・締め・テロップは後入れ）**
-```
-Vertical 9:16 cinematic, same office, natural ambient sound only, no music,
-no dialogue, no captions.
-Both nod quietly while looking at the screen. Leave the upper third of the
-frame clean and uncluttered for text to be added later.
+S1: Vertical 9:16 cinematic, realistic office interior, natural ambient sound
+only, no music, no captions. Owner (dark business suit) reads recruitment
+data, in Japanese (romanized for correct pronunciation): "Esu-enu-esu
+keiyu no nyuushoku, jitsu wa zentai no reiten-ni-paasento shika nai
+rashii." Manager (teal scrubs) looks surprised.
+S2: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+"Mita to oubo suru no aida ni wa, ookina kyori ga arun desu ne."
+S3: Same setting. Owner (dark business suit) says, in Japanese
+(romanized): "Forowaa-suu yori, komento-ran no shinrai-kan no hou ga
+kiiteru rashii."
+S4: Same setting. Manager (teal scrubs) says, in Japanese (romanized):
+"Esu-enu-esu wa saishuu shudan janakute, saisho no setten, tte koto desu
+ne." Owner nods.
+S5: Same setting, natural ambient sound only, no music, no dialogue, no
+captions. Both nod quietly while looking at the screen. Leave the upper
+third of the frame clean for text to be added later.
 ```
 
 ## 公開前の映り込み確認項目
