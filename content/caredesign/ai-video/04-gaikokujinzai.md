@@ -4,7 +4,8 @@
 - 形式：セリフ型（ドラマ仕立て）。プレイブックD-4-1準拠
 - 登場人物：経営者（dark business suit）／管理者（teal scrubs）
 - テロップ・BGMなし（テロップは後編集で追加）
-- 主CTA：保存
+- 主CTA：保存（Scene5に絵文字リアクションの問いかけを補助的に追加。主CTAは保存のまま）
+- 編集ペース：カット間を詰めて1.2〜1.3倍速相当のテンポにする（ジャンプカット推奨。初速の離脱対策）
 
 ## タイトル
 受け入れる前に、これだけは
@@ -24,6 +25,7 @@
 ## シーン構成
 
 **Scene 1**
+（後編集で冒頭1〜3秒に「【介護経営者へ】受け入れる前に、これだけは」の太字テロップを追加）
 経営者：「外国人材の受け入れ、何から始めればいいんだろう。」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
@@ -41,13 +43,14 @@ Same setting. Manager (teal scrubs) says, in Japanese (romanized):
 fusoku suru sou desu." Owner (dark business suit) nods seriously.
 ```
 
-**Scene 3**
-経営者：「住居と、日本語のサポートと…キャリアパスも用意しないと。」管理者：「その3つが定着の鍵になるみたいですね。」
+**Scene 3（具体策・テンポよく3点提示）**
+管理者、指を折りながらテンポよく：「①住居サポートの窓口を用意する、②日本語学習の時間を業務内に確保する、③昇進・キャリアパスを最初に明示する。」
 ```
-Same setting. Owner (dark business suit) says, in Japanese
-(romanized): "Juukyo to, nihongo no sapooto to... kyaria pasu mo youi
-shinai to." Manager (teal scrubs) replies, in Japanese (romanized):
-"Sono mittsu ga teichaku no kagi ni naru mitai desu ne."
+Same setting. Manager (teal scrubs) counts on her fingers in quick
+succession (jump-cut pacing between each point), in Japanese (romanized):
+"Ichi, juukyo sapooto no madoguchi wo youi suru. Ni, nihongo gakushuu no
+jikan wo gyoumu-nai ni kakuho suru. San, shoushin, kyaria pasu wo saisho
+ni meiji suru." Owner (dark business suit) nods, writing each point down.
 ```
 
 **Scene 4**
@@ -58,6 +61,7 @@ Japanese (romanized): "Ukeireru mae no junbi ga, sono ato wo sayuu suru."
 ```
 
 **Scene 5（無音・締め・テロップは後入れ）**
+（後編集で「受け入れ準備、できてるのは👍　これからは🙅」の軽い問いかけテロップを追加。保存の依頼は継続して表示）
 ```
 Same setting, natural ambient sound only, no music, no dialogue, no
 captions. Both close the brochure calmly. Leave the upper third of the
@@ -69,3 +73,4 @@ frame clean for text to be added later.
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
 - [ ] 衣装が経営者=スーツ、管理者/職員=スクラブで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
+- [ ] Scene1冒頭のフックテロップ／Scene5の絵文字リアクション問いかけが後編集で正しく追加されているか

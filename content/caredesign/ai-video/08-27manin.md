@@ -4,7 +4,8 @@
 - 形式：セリフ型（ドラマ仕立て）。プレイブックD-4-1準拠
 - 登場人物：経営者（dark business suit）／管理者（teal scrubs）
 - テロップ・BGMなし（テロップは後編集で追加）
-- 主CTA：保存
+- 主CTA：保存（Scene5に絵文字リアクションの問いかけを補助的に追加。主CTAは保存のまま）
+- 編集ペース：カット間を詰めて1.2〜1.3倍速相当のテンポにする（ジャンプカット推奨。初速の離脱対策）
 
 ## タイトル
 27万人、足りません
@@ -24,6 +25,7 @@
 ## シーン構成
 
 **Scene 1**
+（後編集で冒頭1〜3秒に「【介護経営者へ】27万人、足りません」の太字テロップを追加）
 経営者（ため息）：「求人出しても出しても、応募が来ないな…」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
@@ -41,23 +43,28 @@ Same setting. Manager (teal scrubs) says, in Japanese (romanized):
 tarinaku naru sou desu."
 ```
 
-**Scene 3**
-経営者：「だったら、新しく採るより、今いる職員が辞めない方を考えた方がいいのかもな。」
+**Scene 3（具体策・テンポよく3点提示）**
+管理者、指を折りながらテンポよく：「①退職の予兆を早期に把握する、②面談の頻度を増やす、③未経験者の育成ルートを整備する。」
 ```
-Same setting. Owner (dark business suit) says, in Japanese
-(romanized): "Dattara, atarashiku toru yori, ima iru shokuin ga yamenai
-hou wo kangaeta hou ga ii no kamo na."
+Same setting. Manager (teal scrubs) counts on her fingers in quick
+succession (jump-cut pacing between each point), in Japanese (romanized):
+"Ichi, taishoku no yochou wo souki ni haaku suru. Ni, mendan no hindo wo
+fuyasu. San, mikeiken-sha no ikusei ruuto wo seibi suru." Owner (dark
+business suit) nods, writing each point down.
 ```
 
 **Scene 4**
-管理者：「辞めさせない経営が、採用戦略そのものになる、ってことですね。」経営者うなずく。
+経営者：「だったら、新しく採るより、今いる職員が辞めない方を考えた方がいいのかもな。」管理者：「辞めさせない経営が、採用戦略そのものになる、ってことですね。」
 ```
-Same setting. Manager (teal scrubs) says, in Japanese (romanized):
-"Yamesasenai keiei ga, saiyou senryaku sono mono ni naru, tte koto desu
-ne." Owner nods.
+Same setting. Owner (dark business suit) says, in Japanese
+(romanized): "Dattara, atarashiku toru yori, ima iru shokuin ga yamenai
+hou wo kangaeta hou ga ii no kamo na." Manager (teal scrubs) replies, in
+Japanese (romanized): "Yamesasenai keiei ga, saiyou senryaku sono mono
+ni naru, tte koto desu ne." Owner nods.
 ```
 
 **Scene 5（無音・締め・テロップは後入れ）**
+（後編集で「定着施策、意識してるのは👍　採用中心なら🙅」の軽い問いかけテロップを追加。保存の依頼は継続して表示）
 ```
 Same setting, natural ambient sound only, no music, no dialogue, no
 captions. Owner quietly looks toward a seated staff member in the
@@ -70,3 +77,4 @@ added later.
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
 - [ ] 衣装が経営者=スーツ、管理者/職員=スクラブで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
+- [ ] Scene1冒頭のフックテロップ／Scene5の絵文字リアクション問いかけが後編集で正しく追加されているか

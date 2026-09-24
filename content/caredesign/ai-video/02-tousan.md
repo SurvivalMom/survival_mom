@@ -4,7 +4,8 @@
 - 形式：セリフ型（ドラマ仕立て）。プレイブックD-4-1準拠
 - 登場人物：経営者（dark business suit）／管理者（teal scrubs）
 - テロップ・BGMなし（テロップは後編集で追加）
-- 主CTA：保存
+- 主CTA：保存（Scene5に絵文字リアクションの問いかけを補助的に追加。主CTAは保存のまま）
+- 編集ペース：カット間を詰めて1.2〜1.3倍速相当のテンポにする（ジャンプカット推奨。初速の離脱対策）
 
 ## タイトル
 倒産176件、対岸の火事じゃない
@@ -24,6 +25,7 @@
 ## シーン構成
 
 **Scene 1**
+（後編集で冒頭1〜3秒に「【介護経営者へ】倒産176件、対岸の火事じゃない」の太字テロップを追加）
 管理者：「近くの法人さん、閉められたみたいです…」経営者：「うちは、大丈夫だよ。」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
@@ -42,13 +44,14 @@ quietly, in Japanese (romanized): "Ni-sen-nijuugo-nen, kaigo jigyousha no
 tousan wa kako saita no hyaku-nanajuuroku-ken datta rashii."
 ```
 
-**Scene 3**
-管理者：「数字になる前に、何か変化ってあるんでしょうか。」経営者：「きっと、その前に小さな異変があるはずだ。」
+**Scene 3（具体策・テンポよく3点提示）**
+経営者、指を折りながらテンポよく：「①有給消化率の変化を見る、②残業時間の急増をチェックする、③退職相談を一人の窓口に集約する。」
 ```
-Same setting. The manager (teal scrubs) asks, in Japanese (romanized):
-"Suuji ni naru mae ni, nanika henka tte arun deshou ka." The owner (dark
-business suit) replies, in Japanese (romanized): "Kitto, sono mae ni
-chiisana ihen ga aru hazu da."
+Same setting. Owner (dark business suit) counts on his fingers in quick
+succession (jump-cut pacing between each point), in Japanese (romanized):
+"Ichi, yuukyuu shouka-ritsu no henka wo miru. Ni, zangyou jikan no
+kyuuzou wo chekku suru. San, taishoku soudan wo hitori no madoguchi ni
+shuuyaku suru." Manager (teal scrubs) nods, writing each point down.
 ```
 
 **Scene 4**
@@ -60,6 +63,7 @@ koto kara, shizuka ni hajimatte iru no kamoshirenai."
 ```
 
 **Scene 5（無音・締め・テロップは後入れ）**
+（後編集で「予兆、意識してるのは👍　してないのは🙅」の軽い問いかけテロップを追加。保存の依頼は継続して表示）
 ```
 Same setting, natural ambient sound only, no music, no dialogue, no
 captions. The owner (dark business suit) closes the report and looks
@@ -72,3 +76,4 @@ upper third of the frame clean for text to be added later.
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
 - [ ] 衣装が経営者=スーツ、管理者/職員=スクラブで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
+- [ ] Scene1冒頭のフックテロップ／Scene5の絵文字リアクション問いかけが後編集で正しく追加されているか

@@ -4,7 +4,10 @@
 - 形式：セリフ型（ドラマ仕立て）。プレイブックD-4-1準拠
 - 登場人物：経営者（dark business suit）／管理者（teal scrubs）
 - テロップ・BGMなし（テロップは後編集で追加）
-- 主CTA：保存
+- 主CTA：保存（Scene5に絵文字リアクションの問いかけを補助的に追加。主CTAは保存のまま）
+- 編集ペース：カット間を詰めて1.2〜1.3倍速相当のテンポにする（ジャンプカット推奨。初速の離脱対策）
+- 改訂メモ：初回公開時のインサイト（40再生・非フォロワーリーチ0%・保存0）を踏まえ、
+  ①冒頭フックの明確化 ②テンポ短縮 ③具体策の追加 ④低摩擦CTAの補助追加、の4点を反映
 
 ## タイトル
 0.2%の壁
@@ -12,7 +15,7 @@
 ## キャプション
 SNS経由の入職は、実は全体のわずか0.2%。
 でもそれは、SNSが無駄という意味ではありません。
-「最初の接点」としての役割を、保存して見返してください。
+「最初の接点」としての役割と、明日からできる3つの工夫を、保存して見返してください。
 
 ## ハッシュタグ
 #介護経営 #介護採用 #SNS採用 #経営者 #人材定着
@@ -24,6 +27,7 @@ SNS経由の入職は、実は全体のわずか0.2%。
 ## シーン構成
 
 **Scene 1**
+（後編集で冒頭1〜3秒に「【介護経営者へ】SNS経由の入職、実は0.2%」の太字テロップを追加）
 経営者：「SNS経由の入職、実は全体の0.2%しかないらしい。」管理者、驚いた表情。
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
@@ -40,12 +44,14 @@ Same setting. Manager (teal scrubs) says, in Japanese (romanized):
 "Mita to oubo suru no aida ni wa, ookina kyori ga arun desu ne."
 ```
 
-**Scene 3**
-経営者：「フォロワー数より、コメント欄の信頼感の方が効いてるらしい。」
+**Scene 3（具体策・テンポよく3点提示）**
+経営者、指を折りながらテンポよく：「①職員の声を投稿に混ぜる、②コメントに丁寧に返信する、③プロフィールに低いハードルの応募導線を書く。」
 ```
-Same setting. Owner (dark business suit) says, in Japanese
-(romanized): "Forowaa-suu yori, komento-ran no shinrai-kan no hou ga
-kiiteru rashii."
+Same setting. Owner (dark business suit) counts on his fingers in quick
+succession (jump-cut pacing between each point), in Japanese (romanized):
+"Ichi, shokuin no koe wo toukou ni mazeru. Ni, komento ni teinei ni
+henshin suru. San, purofiiru ni teihaadoru no oubo doousen wo kaku."
+Manager (teal scrubs) nods, taking notes.
 ```
 
 **Scene 4**
@@ -57,6 +63,7 @@ ne." Owner nods.
 ```
 
 **Scene 5（無音・締め・テロップは後入れ）**
+（後編集で「SNS採用、やってる人は👍　やってない人は🙅」の軽い問いかけテロップを追加。保存の依頼は継続して表示）
 ```
 Same setting, natural ambient sound only, no music, no dialogue, no
 captions. Both nod quietly while looking at the screen. Leave the upper
@@ -68,3 +75,4 @@ third of the frame clean for text to be added later.
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
 - [ ] 衣装が経営者=スーツ、管理者/職員=スクラブで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
+- [ ] Scene1冒頭のフックテロップ／Scene5の絵文字リアクション問いかけが後編集で正しく追加されているか
