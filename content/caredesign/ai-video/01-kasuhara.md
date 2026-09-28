@@ -27,16 +27,18 @@
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】カスハラ、もう他人事じゃない」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】カスハラ、もう他人事じゃない」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者、管理者に：「また利用者様のご家族からお電話が…対応が難しくなってきました。」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no background music, no on-screen text/captions. A care facility
-manager in teal scrubs enters the office looking troubled and says, in
-Japanese (romanized for correct pronunciation): "Mata riyousha-sama no
-gokazoku kara odenwa ga... Taiou ga muzukashiku natte kimashita." The
-owner, wearing a dark business suit, looks up from his desk with a tired
-expression, phone still faintly buzzing nearby.
+only, no background music, no on-screen text/captions. Opens already in
+motion, no static establishing pause. A care facility manager in teal
+scrubs bursts into the office already mid-stride, visibly troubled, and
+says, in Japanese (romanized for correct pronunciation): "Mata
+riyousha-sama no gokazoku kara odenwa ga... Taiou ga muzukashiku natte
+kimashita." The owner, wearing a dark business suit, snaps his head up
+from his desk, alert, phone still faintly buzzing nearby.
 ```
 
 **Scene 2**

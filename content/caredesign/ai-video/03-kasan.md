@@ -25,14 +25,16 @@
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】その加算、取れてますか」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】その加算、取れてますか」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者（独り言）：「同じ基本報酬のはずなのに、なぜあそこは余裕があるんだろう。」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. The owner (dark business suit), looking at
-documents, mutters to himself, in Japanese (romanized for correct
-pronunciation): "Onaji kihon houshuu no hazu nanoni, naze asoko wa yoyuu
-ga arun darou."
+only, no music, no captions. Opens already in motion, no static
+establishing pause. The owner (dark business suit) slaps a stack of
+documents down on the desk in frustration, looking at them, and mutters
+to himself, in Japanese (romanized for correct pronunciation): "Onaji
+kihon houshuu no hazu nanoni, naze asoko wa yoyuu ga arun darou."
 ```
 
 **Scene 2**

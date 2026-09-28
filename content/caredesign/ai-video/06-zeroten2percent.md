@@ -27,14 +27,17 @@ SNS経由の入職は、実は全体のわずか0.2%。
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】SNS経由の入職、実は0.2%」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】SNS経由の入職、実は0.2%」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者：「SNS経由の入職、実は全体の0.2%しかないらしい。」管理者、驚いた表情。
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. Owner (dark business suit) reads recruitment
-data, in Japanese (romanized for correct pronunciation): "Esu-enu-esu
-keiyu no nyuushoku, jitsu wa zentai no reiten-ni-paasento shika nai
-rashii." Manager (teal scrubs) looks surprised.
+only, no music, no captions. Opens already in motion, no static
+establishing pause. Owner (dark business suit) sets down a tablet
+abruptly and turns to face the manager, reading recruitment data with
+visible surprise, in Japanese (romanized for correct pronunciation):
+"Esu-enu-esu keiyu no nyuushoku, jitsu wa zentai no reiten-ni-paasento
+shika nai rashii." Manager (teal scrubs) looks surprised.
 ```
 
 **Scene 2**

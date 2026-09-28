@@ -25,14 +25,16 @@
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】27万人、足りません」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】27万人、足りません」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者（ため息）：「求人出しても出しても、応募が来ないな…」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. Owner (dark business suit) looks at an empty
-applicant list on a screen with a sigh, in Japanese (romanized for
-correct pronunciation): "Kyuujin dashitemo dashitemo, oubo ga konai
-na..."
+only, no music, no captions. Opens already in motion, no static
+establishing pause. Owner (dark business suit) scrolls rapidly through an
+empty applicant list on a screen, then closes the laptop lid with a sharp
+motion, sighing, in Japanese (romanized for correct pronunciation):
+"Kyuujin dashitemo dashitemo, oubo ga konai na..."
 ```
 
 **Scene 2**

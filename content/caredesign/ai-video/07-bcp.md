@@ -25,14 +25,19 @@ BCP（事業継続計画）は策定して終わりではありません。
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】そのBCP、動きますか」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】そのBCP、動きますか」の
+太字テロップを全文表示。フェードイン・文字送りは使わない。
+改訂メモ：公開実績でスキップ率72.5%・開始1〜2秒で視聴維持率50%割れが確認されたため、
+テロップの表示タイミングと冒頭カットの動きをD-4-2に沿って強化）
 経営者：「このBCP、最後に開いたのいつだったかな…」管理者、思い出せない表情。
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. Owner (dark business suit) pulls a thick
-dusty binder off a shelf, in Japanese (romanized for correct
-pronunciation): "Kono bii-shii-pii, saigo ni hiraita no itsu datta
-kana..." Manager (teal scrubs) looks like she can't quite remember.
+only, no music, no captions. Opens already in motion, no static
+establishing pause. Owner (dark business suit) yanks a thick dusty binder
+off the shelf abruptly and blows the dust off it in one quick motion,
+close on his surprised/frustrated expression, in Japanese (romanized for
+correct pronunciation): "Kono bii-shii-pii, saigo ni hiraita no itsu
+datta kana..." Manager (teal scrubs) looks like she can't quite remember.
 ```
 
 **Scene 2**

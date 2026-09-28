@@ -25,14 +25,17 @@
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】倒産176件、対岸の火事じゃない」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】倒産176件、対岸の火事じゃない」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 管理者：「近くの法人さん、閉められたみたいです…」経営者：「うちは、大丈夫だよ。」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. The manager (teal scrubs) says hesitantly, in
-Japanese (romanized for correct pronunciation): "Chikaku no houjin-san,
-shimerareta mitai desu..." The owner (dark business suit) replies, trying
-to sound confident but slightly uneasy, in Japanese (romanized): "Uchi wa,
+only, no music, no captions. Opens already in motion, no static
+establishing pause. The manager (teal scrubs) hurries in, phone still in
+hand, and says hesitantly, in Japanese (romanized for correct
+pronunciation): "Chikaku no houjin-san, shimerareta mitai desu..." The
+owner (dark business suit) looks up sharply, replying, trying to sound
+confident but slightly uneasy, in Japanese (romanized): "Uchi wa,
 daijoubu da yo."
 ```
 

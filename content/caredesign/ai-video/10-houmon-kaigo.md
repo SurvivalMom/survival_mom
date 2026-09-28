@@ -25,14 +25,16 @@
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】小さいほど、揺れる」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】小さいほど、揺れる」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者（困惑）：「たった一人辞めただけなのに、こんなに響くとは…」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. Owner (dark business suit) holds a
-resignation letter, looking troubled, in Japanese (romanized for correct
-pronunciation): "Tatta hitori yameta dake nanoni, konna ni hibiku to
-wa..."
+only, no music, no captions. Opens already in motion, no static
+establishing pause. Owner (dark business suit) grips a resignation letter
+tightly, hand trembling slightly, close on his troubled expression, in
+Japanese (romanized for correct pronunciation): "Tatta hitori yameta dake
+nanoni, konna ni hibiku to wa..."
 ```
 
 **Scene 2**

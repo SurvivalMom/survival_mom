@@ -25,14 +25,17 @@
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】受け入れる前に、これだけは」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】受け入れる前に、これだけは」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者：「外国人材の受け入れ、何から始めればいいんだろう。」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. Owner (dark business suit) looks at a
-brochure and says, in Japanese (romanized for correct pronunciation):
-"Gaikoku jinzai no ukeire, nani kara hajimereba iin darou." Manager (teal
-scrubs) leans in, equally puzzled.
+only, no music, no captions. Opens already in motion, no static
+establishing pause. Owner (dark business suit) flips through a brochure
+quickly, then sets it down with a frustrated exhale, and says, in Japanese
+(romanized for correct pronunciation): "Gaikoku jinzai no ukeire, nani
+kara hajimereba iin darou." Manager (teal scrubs) leans in, equally
+puzzled.
 ```
 
 **Scene 2**

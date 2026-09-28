@@ -25,13 +25,16 @@
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】見えないところで語られてる」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】見えないところで語られてる」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者（心配そうに）：「職員の本音って、俺、ちゃんと知ってるのかな…」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. Owner (dark business suit) looks at a phone
-screen with concern, in Japanese (romanized for correct pronunciation):
-"Shokuin no honne tte, ore, chanto shitteru no kana..."
+only, no music, no captions. Opens already in motion, no static
+establishing pause. Owner (dark business suit) stops abruptly mid-stride,
+staring at a phone screen with sudden concern, in Japanese (romanized for
+correct pronunciation): "Shokuin no honne tte, ore, chanto shitteru no
+kana..."
 ```
 
 **Scene 2**

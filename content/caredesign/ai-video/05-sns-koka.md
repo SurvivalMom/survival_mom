@@ -25,14 +25,17 @@ SNSを頑張っているのに効果が見えない——「更新頻度が足�
 ## シーン構成
 
 **Scene 1**
-（後編集で冒頭1〜3秒に「【介護経営者へ】その焦り、あるあるです」の太字テロップを追加）
+（後編集で0.0秒（1フレーム目）から「【介護経営者へ】その焦り、あるあるです」の
+太字テロップを全文表示。フェードイン・文字送りは使わない）
 経営者（ため息）：「SNS、頑張ってるのに効果が見えないな…」管理者：「更新頻度が足りないんでしょうか。」
 ```
 Vertical 9:16 cinematic, realistic office interior, natural ambient sound
-only, no music, no captions. Owner (dark business suit) scrolls a phone
-with a sigh, in Japanese (romanized for correct pronunciation): "Esu-enu-
-esu, ganbatteru noni kouka ga mienai na..." Manager (teal scrubs) replies,
-in Japanese (romanized): "Koushin hindo ga tarinain deshou ka."
+only, no music, no captions. Opens already in motion, no static
+establishing pause. Owner (dark business suit) sets a phone down on the
+desk with a sharp tap of frustration, in Japanese (romanized for correct
+pronunciation): "Esu-enu-esu, ganbatteru noni kouka ga mienai na..."
+Manager (teal scrubs) replies, in Japanese (romanized): "Koushin hindo ga
+tarinain deshou ka."
 ```
 
 **Scene 2**
