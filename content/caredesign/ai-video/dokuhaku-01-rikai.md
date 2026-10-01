@@ -12,8 +12,8 @@
 「なんでわからないんだ」と思った瞬間
 
 ## キャプション
-「指示しても動かない」「叱っても響かない」——それ、理解が足りないだけかもしれません。
-保存して、伝え方を見直すきっかけにしてください。
+「指示しても動かない」「叱っても響かない」——理解しようとしていなかったのは、
+自分の方だったかもしれません。保存して、伝え方を見直すきっかけにしてください。
 
 ## ハッシュタグ
 #介護経営 #人材育成 #介護管理職 #部下育成 #介護現場
@@ -47,16 +47,16 @@ captions. Manager continues muttering, in Japanese (romanized):
 ```
 
 **Scene 3（気づき・締め）**
-管理者：「足りないのは、管理じゃなくて、理解なのかもしれない。」
+管理者：「理解しようとしていなかったのは、自分の方だったのかもしれない。」
 ```
 Same setting. Manager looks up slowly from the binder, quiet realization
-on her face, says softly, in Japanese (romanized): "Tarinai no wa,
-kanri ja nakute, rikai nano kamo shirenai." Natural ambient sound only,
-no music, no captions. Leave the upper third of the frame clean for
-text to be added later.
+on her face, says softly, in Japanese (romanized): "Rikai shiyou to
+shiteinakatta no wa, jibun no hou datta no kamo shirenai." Natural
+ambient sound only, no music, no captions. Leave the upper third of the
+frame clean for text to be added later.
 ```
 （後編集で結びのテロップと「保存して、伝え方を見直すきっかけにしてください」の
-主CTAを追加）
+主CTAを追加。参考元の長い引用文は追加しない。テロップは本編のセリフ＋CTAのみに絞る）
 
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・管理者に見えないか
