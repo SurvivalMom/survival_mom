@@ -4,7 +4,7 @@
 - 形式：独白×証拠クローズアップ型。プレイブックD-4-3準拠
 - 登場人物：管理者1名のみ（teal scrubs）。対話なし
 - テロップ・BGMなし（テロップは後編集で追加）
-- 尺目安：10〜15秒
+- 尺目安：10〜15秒（確定版は約23秒。Scene3が2段の言い直し構成のため。採用確定）
 - 主CTA：保存
 - 参考元：TikTok「『管理』の正体とは？」（@kakyoj）を介護現場向けに翻案
 
@@ -46,17 +46,21 @@ captions. Manager continues muttering, in Japanese (romanized):
 "Shiji shitemo ugokanai. Shikattemo hibikanai."
 ```
 
-**Scene 3（気づき・締め）**
-管理者：「理解しようとしていなかったのは、自分の方だったのかもしれない。」
+**Scene 3（気づき・締め・2段の言い直し構成で確定）**
+管理者：「足りないのは、管理じゃなくて…理解しようとしていなかったのは、自分の方だったのかもしれない。」
 ```
-Same setting. Manager looks up slowly from the binder, quiet realization
-on her face, says softly, in Japanese (romanized): "Rikai shiyou to
-shiteinakatta no wa, jibun no hou datta no kamo shirenai." Natural
-ambient sound only, no music, no captions. Leave the upper third of the
-frame clean for text to be added later.
+Same setting. Manager looks up slowly from the binder, pauses mid-thought
+with a quiet, searching expression, then arrives at a quieter
+realization, says softly, in Japanese (romanized): "Tarinai no wa,
+kanri ja nakute... rikai shiyou to shiteinakatta no wa, jibun no hou
+datta no kamo shirenai." Natural ambient sound only, no music, no
+captions. Leave the upper third of the frame clean for text to be added
+later.
 ```
 （後編集で結びのテロップと「保存して、伝え方を見直すきっかけにしてください」の
-主CTAを追加。参考元の長い引用文は追加しない。テロップは本編のセリフ＋CTAのみに絞る）
+主CTAを追加。参考元の長い引用文は追加しない。テロップは本編のセリフ＋CTAのみに絞る。
+確定版：言いよどみ「足りないのは管理じゃなくて…」から言い直し「理解しようとしていなかったのは
+自分の方だったのかもしれない」への2段構成を採用）
 
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・管理者に見えないか
