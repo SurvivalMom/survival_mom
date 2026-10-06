@@ -1,16 +1,18 @@
-# AI動画（独白×証拠クローズアップ型）：自分が一番うまい、を何年続けているか
+# AI動画（解説×語りかけ型）：自分が一番うまい、を何年続けていますか
 
 ## メタ情報
-- 形式：独白×証拠クローズアップ型。プレイブックD-4-3準拠
-- 登場人物：管理者1名のみ（teal scrubs）。対話なし
+- 形式：解説×語りかけ型。プレイブックD-4-4準拠
+- 登場人物：管理者1名のみ（teal scrubs）。カメラ目線で視聴者に語りかける。対話なし
 - テロップ・BGMなし（テロップは後編集で追加）
-- 尺目安：10〜15秒
+- 尺目安：15〜20秒
 - 主CTA：保存
 - 参考元：YouTube「【令和版マネジメント】管理職の5大落とし穴」
   （ベビーシッター型の見分け方）を介護現場向けに翻案
+- 改訂メモ：「見分け方」という診断コンテンツのため、独白×証拠クローズアップ型
+  （D-4-3）から解説×語りかけ型（D-4-4）に変更
 
 ## タイトル
-自分が一番うまい、を何年続けているか
+自分が一番うまい、を何年続けていますか
 
 ## キャプション
 管理職になって何年経っても、自分が一番うまいままなら。
@@ -25,37 +27,41 @@
 
 ## シーン構成
 
-**Scene 1（独白開始・違和感）**
-（後編集で0.0秒（1フレーム目）から「【介護管理者へ】自分が一番うまい、を何年続けているか」の
-太字テロップを全文表示。フェードイン・文字送りは使わない）
-管理者（独り言）：「あれ、この一覧表…」
+**Scene 1（問題提起・フック）**
+（後編集で0.0秒（1フレーム目）から「【介護管理者へ】自分が一番うまい、を何年続けて
+いますか」の太字テロップを全文表示。フェードイン・文字送りは使わない）
+管理者（視聴者へ）：「管理職になって何年経っても、現場で一番うまいのは自分のまま
+ですか。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
-already in motion. Manager (teal scrubs) picks up a staff skills
-matrix sheet, muttering to herself, in Japanese (romanized for correct
-pronunciation): "Are, kono ichiran-hyou..."
+already in motion. Manager (teal scrubs) looks directly into the
+camera, speaking calmly and clearly to the viewer, in Japanese
+(romanized for correct pronunciation): "Kanrishoku ni natte nan-nen
+tattemo, genba de ichiban umai no wa jibun no mama desu ka."
 ```
 
-**Scene 2（具体物クローズアップ）**
-管理者：「何年経っても、一番上は自分のままだ。」
+**Scene 2（構造の説明）**
+管理者（視聴者へ）：「これは、管理職が陥りやすい落とし穴のひとつです。自分が一番
+できてしまうと、無意識のうちに人に教える機会を手放してしまいます。」
 ```
-Close-up on the skills matrix, her own name at the top row with the
-highest scores across every year's column, the row meant for a
-successor left blank. Manager's finger traces along her own row.
-Natural ambient sound only, no music, no captions. Manager continues
-muttering, in Japanese (romanized): "Nannen tattemo, ichiban ue wa
-jibun no mama da."
+Same setting, same framing. Manager continues speaking directly to
+camera, calm and clear, in Japanese (romanized): "Kore wa, kanrishoku
+ga ochiiriyasui otoshiana no hitotsu desu. Jibun ga ichiban dekite
+shimau to, muishiki no uchi ni hito ni oshieru kikai wo tebanashite
+shimaimasu." Natural ambient sound only, no music, no captions.
 ```
 
-**Scene 3（気づき・締め）**
-管理者：「教えてこなかったのは、自分だったのかもしれない。」
+**Scene 3（締め・問いかけ）**
+管理者（視聴者へ）：「教えてこなかったのは、自分だったのかもしれません。保存して、
+育成の仕方を見直すきっかけにしてください。」
 ```
-Same setting. Manager sets the sheet down slowly, quiet realization on
-her face, says softly, in Japanese (romanized): "Oshiete konakatta no
-wa, jibun datta no kamo shirenai." Natural ambient sound only, no
-music, no captions. Leave the upper third of the frame clean for text
-to be added later.
+Same setting. Manager pauses briefly, then delivers the closing line
+directly to camera, calm and quiet, in Japanese (romanized): "Oshiete
+konakatta no wa, jibun datta no kamo shiremasen. Hozon shite, ikusei
+no shikata wo minaosu kikkake ni shite kudasai." Natural ambient sound
+only, no music, no captions. Leave the upper third of the frame clean
+for text to be added later.
 ```
 （後編集で結びのテロップと「保存して、育成の仕方を見直すきっかけにしてください」の
 主CTAを追加）
