@@ -5,9 +5,8 @@
 - 登場人物：管理者1名のみ（teal scrubs）。カメラ目線で視聴者に語りかける。対話なし
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：15〜20秒
-- 主CTA：フォロー（v2.2改訂：2026年10月。フォロワー100名未満の信頼構築モードのため、
-  3章・D-6の既定に従いフォローへ変更。テーマ内の「フォローの仕方」という表現と
-  Instagramの「フォロー」が重複しないよう、本文表現は「確認の仕方」に調整）
+- 主CTA：保存（v2.3改訂：2026年10月。D-6-1「保存優先・フォロー補助パターン」に
+  従い、動画内は保存に統一。キャプションのみフォローへ軽く言及）
 - 参考元：YouTube「【令和版マネジメント】管理職の5大落とし穴」（放置マンタイプ）を
   介護現場向けに翻案
 - 改訂メモ：タイプ分類・診断コンテンツのため、独白×証拠クローズアップ型（D-4-3）から
@@ -18,7 +17,8 @@
 
 ## キャプション
 「あとよろしく」で終わらせていないか。任せることと、任せきりは違うかもしれません。
-フォローして、任せた後の確認の仕方を見直すヒントを見逃さないでください。
+保存して、フォローの仕方を見直してください。
+（フォローしておくと、次回の投稿も見逃しません）
 
 ## ハッシュタグ
 #介護経営 #介護管理職 #人材育成 #マネジメント #組織づくり
@@ -55,18 +55,17 @@ only, no music, no captions.
 ```
 
 **Scene 3（締め・問いかけ）**
-管理者（視聴者へ）：「任せることと、任せきりは違うのかもしれません。フォローして、任せた後の
-確認の仕方を見直すヒントを見逃さないでください。」
+管理者（視聴者へ）：「任せることと、任せきりは違うのかもしれません。保存して、フォローの
+仕方を見直してください。」
 ```
 Same setting. Manager pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized): "Makaseru
-koto to, makasekiri wa chigau no kamo shiremasen. Foroo shite,
-makaseta ato no kakunin no shikata wo minaosu hinto wo minogasanaide
-kudasai." Natural ambient sound only, no music, no captions. Leave the
-upper third of the frame clean for text to be added later.
+koto to, makasekiri wa chigau no kamo shiremasen. Hozon shite, foroo
+no shikata wo minaoshite kudasai." Natural ambient sound only, no
+music, no captions. Leave the upper third of the frame clean for text
+to be added later.
 ```
-（後編集で結びのテロップと「フォローして、任せた後の確認の仕方を見直すヒントを
-見逃さないでください」の主CTAを追加）
+（後編集で結びのテロップと「保存して、フォローの仕方を見直してください」の主CTAを追加）
 
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・管理者に見えないか

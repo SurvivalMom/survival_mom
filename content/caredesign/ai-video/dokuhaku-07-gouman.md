@@ -5,8 +5,8 @@
 - 登場人物：管理者1名のみ（teal scrubs）。カメラ目線で視聴者に語りかける。対話なし
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：15〜20秒
-- 主CTA：フォロー（v2.2改訂：2026年10月。フォロワー100名未満の信頼構築モードのため、
-  3章・D-6の既定に従いフォローへ変更）
+- 主CTA：保存（v2.3改訂：2026年10月。D-6-1「保存優先・フォロー補助パターン」に
+  従い、動画内は保存に統一。キャプションのみフォローへ軽く言及）
 - 参考元：TikTok「誰にでもある3つの欠点」（傲慢）を介護現場向けに翻案
 - 改訂メモ：「3つの欠点」という分類提示テーマのため、独白×証拠クローズアップ型
   （D-4-3）から解説×語りかけ型（D-4-4）に変更
@@ -16,7 +16,8 @@
 
 ## キャプション
 人には誰にでも共通する欠点があります。そのひとつが傲慢。
-フォローして、自分の評価の仕方を振り返るヒントを見逃さないでください。
+保存して、自分の評価の仕方を振り返ってみてください。
+（フォローしておくと、次回の投稿も見逃しません）
 
 ## ハッシュタグ
 #介護経営 #介護管理職 #自己成長 #マネジメント #人材育成
@@ -52,19 +53,18 @@ Natural ambient sound only, no music, no captions.
 ```
 
 **Scene 3（締め・問いかけ）**
-管理者（視聴者へ）：「正しさを振りかざす相手から、人は静かに離れていきます。フォローして、
-自分の評価の仕方を振り返るヒントを見逃さないでください。」
+管理者（視聴者へ）：「正しさを振りかざす相手から、人は静かに離れていきます。保存して、
+自分の評価の仕方を振り返ってみてください。」
 ```
 Same setting. Manager pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized):
 "Tadashisa wo furikazasu aite kara, hito wa shizuka ni hanarete
-ikimasu. Foroo shite, jibun no hyouka no shikata wo furikaeru hinto wo
-minogasanaide kudasai." Natural ambient sound only, no music, no
-captions. Leave the upper third of the frame clean for text to be
-added later.
+ikimasu. Hozon shite, jibun no hyouka no shikata wo furikaette mite
+kudasai." Natural ambient sound only, no music, no captions. Leave the
+upper third of the frame clean for text to be added later.
 ```
-（後編集で結びのテロップと「フォローして、自分の評価の仕方を振り返るヒントを
-見逃さないでください」の主CTAを追加）
+（後編集で結びのテロップと「保存して、自分の評価の仕方を振り返ってみてください」の
+主CTAを追加）
 
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・管理者に見えないか

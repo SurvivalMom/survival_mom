@@ -5,8 +5,8 @@
 - 登場人物：管理者1名のみ（teal scrubs）。カメラ目線で視聴者に語りかける。対話なし
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：15〜20秒
-- 主CTA：フォロー（v2.2改訂：2026年10月。フォロワー100名未満の信頼構築モードのため、
-  3章・D-6の既定に従いフォローへ変更）
+- 主CTA：保存（v2.3改訂：2026年10月。D-6-1「保存優先・フォロー補助パターン」に
+  従い、動画内は保存に統一。キャプションのみフォローへ軽く言及）
 - 参考元：YouTube「【令和版マネジメント】管理職の5大落とし穴」（伝言係タイプ）を
   介護現場向けに翻案
 - 改訂メモ：タイプ分類・診断コンテンツのため、独白×証拠クローズアップ型（D-4-3）から
@@ -17,7 +17,8 @@
 
 ## キャプション
 「職員はこう言ってます」とそのまま伝えるだけでは、対立を生むこともあります。
-フォローして、伝え方を見直すヒントを見逃さないでください。
+保存して、伝え方を見直してください。
+（フォローしておくと、次回の投稿も見逃しません）
 
 ## ハッシュタグ
 #介護経営 #介護管理職 #組織づくり #コミュニケーション #マネジメント
@@ -54,18 +55,17 @@ no music, no captions.
 ```
 
 **Scene 3（締め・問いかけ）**
-管理者（視聴者へ）：「大事なのは伝えることではなく、納得に導くこと。フォローして、伝え方を
-見直すヒントを見逃さないでください。」
+管理者（視聴者へ）：「大事なのは伝えることではなく、納得に導くこと。保存して、伝え方を
+見直してください。」
 ```
 Same setting. Manager pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized): "Daiji na
-no wa tsutaeru koto dewa naku, nattoku ni michibiku koto. Foroo shite,
-tsutaekata wo minaosu hinto wo minogasanaide kudasai." Natural ambient
-sound only, no music, no captions. Leave the upper third of the frame
-clean for text to be added later.
+no wa tsutaeru koto dewa naku, nattoku ni michibiku koto. Hozon shite,
+tsutaekata wo minaoshite kudasai." Natural ambient sound only, no
+music, no captions. Leave the upper third of the frame clean for text
+to be added later.
 ```
-（後編集で結びのテロップと「フォローして、伝え方を見直すヒントを見逃さないでください」の
-主CTAを追加）
+（後編集で結びのテロップと「保存して、伝え方を見直してください」の主CTAを追加）
 
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・管理者に見えないか

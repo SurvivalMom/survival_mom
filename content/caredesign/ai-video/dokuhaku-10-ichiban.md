@@ -5,8 +5,8 @@
 - 登場人物：管理者1名のみ（teal scrubs）。カメラ目線で視聴者に語りかける。対話なし
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：15〜20秒
-- 主CTA：フォロー（v2.2改訂：2026年10月。フォロワー100名未満の信頼構築モードのため、
-  3章・D-6の既定に従いフォローへ変更）
+- 主CTA：保存（v2.3改訂：2026年10月。D-6-1「保存優先・フォロー補助パターン」に
+  従い、動画内は保存に統一。キャプションのみフォローへ軽く言及）
 - 参考元：YouTube「【令和版マネジメント】管理職の5大落とし穴」
   （ベビーシッター型の見分け方）を介護現場向けに翻案
 - 改訂メモ：「見分け方」という診断コンテンツのため、独白×証拠クローズアップ型
@@ -17,7 +17,8 @@
 
 ## キャプション
 管理職になって何年経っても、自分が一番うまいままなら。
-フォローして、育成のヒントを見逃さないでください。
+保存して、育成の仕方を見直すきっかけにしてください。
+（フォローしておくと、次回の投稿も見逃しません）
 
 ## ハッシュタグ
 #介護経営 #介護管理職 #人材育成 #組織づくり #マネジメント
@@ -54,17 +55,17 @@ shimaimasu." Natural ambient sound only, no music, no captions.
 ```
 
 **Scene 3（締め・問いかけ）**
-管理者（視聴者へ）：「教えてこなかったのは、自分だったのかもしれません。フォローして、
-育成のヒントを見逃さないでください。」
+管理者（視聴者へ）：「教えてこなかったのは、自分だったのかもしれません。保存して、
+育成の仕方を見直すきっかけにしてください。」
 ```
 Same setting. Manager pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized): "Oshiete
-konakatta no wa, jibun datta no kamo shiremasen. Foroo shite, ikusei
-no hinto wo minogasanaide kudasai." Natural ambient sound only, no
-music, no captions. Leave the upper third of the frame clean for text
-to be added later.
+konakatta no wa, jibun datta no kamo shiremasen. Hozon shite, ikusei
+no shikata wo minaosu kikkake ni shite kudasai." Natural ambient sound
+only, no music, no captions. Leave the upper third of the frame clean
+for text to be added later.
 ```
-（後編集で結びのテロップと「フォローして、育成のヒントを見逃さないでください」の
+（後編集で結びのテロップと「保存して、育成の仕方を見直すきっかけにしてください」の
 主CTAを追加）
 
 ## 公開前の映り込み確認項目
