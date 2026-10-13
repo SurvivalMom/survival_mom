@@ -71,9 +71,12 @@ tayorareru bamen desu."
 途切れさせない事業所』のように。採用、見学、連携先への説明で、同じ言葉を
 使い続けます。」
 ```
-Close-up on a notepad, owner's hand writing a single sentence summary
-on it. Natural ambient sound only, no music, no captions. Owner's
-voice continues, in Japanese (romanized): "Sore wo ichibun ni
+Close-up on a notepad, owner's hand underlining a single handwritten
+line twice with the pen — camera framing stays tight on the hand and
+pen tip so no full text is legible (abstract marks only, avoid
+rendering readable Japanese text). Natural ambient sound only, no
+music, no captions. Owner's voice continues, in Japanese (romanized):
+"Sore wo ichibun ni
 shimasu. Tatoeba 'gohonnin to kazoku eno renraku wo, teinei ni
 togiresasenai jigyousho' no you ni. Saiyou, kengaku, renkeisaki eno
 setsumei de, onaji kotoba wo tsukaitsuzukemasu."

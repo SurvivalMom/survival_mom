@@ -61,9 +61,12 @@ ga muzukashiku narimasu."
 ください。大切なのは、完璧な答えではなく、誰に相談し、何を学び、次にどう
 変えたかです。」
 ```
-Close-up on an interview memo pad, manager's hand writing the question
-down. Natural ambient sound only, no music, no captions. Manager's
-voice continues, in Japanese (romanized): "Mendan dewa, 'soutei-gai no
+Close-up on an interview memo pad, manager's hand jotting a short note
+and drawing a question mark at the end — camera framing stays tight on
+the hand and pen tip so no full text is legible (abstract marks only,
+avoid rendering readable Japanese text). Natural ambient sound only,
+no music, no captions. Manager's voice continues, in Japanese
+(romanized): "Mendan dewa, 'soutei-gai no
 koto ga okita toki, dou taiou shimashita ka' to kiite kudasai. Taisetsu
 na no wa, kanpeki na kotae dewa naku, dare ni soudan shi, nani wo
 manabi, tsugi ni dou kaeta ka desu."
@@ -73,9 +76,11 @@ manabi, tsugi ni dou kaeta ka desu."
 管理者：「見るべきなのは、報告できるか、相談できるか、学び直せるか。この
 三つです。」
 ```
-Close-up on the same memo pad, manager's hand writing three words:
-"houkoku", "soudan", "manabinaoshi". Natural ambient sound only, no
-music, no captions. Manager's voice continues, in Japanese
+Close-up on the same memo pad, manager's hand drawing three short
+bullet points with a small circle around each — abstract marks only,
+camera framing stays tight on the hand and pen tip so no legible words
+are rendered. Natural ambient sound only, no music, no captions.
+Manager's voice continues, in Japanese
 (romanized): "Mirubeki na no wa, houkoku dekiru ka, soudan dekiru ka,
 manabinaoseru ka. Kono mittsu desu."
 ```

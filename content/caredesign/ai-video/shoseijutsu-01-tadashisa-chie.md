@@ -59,9 +59,11 @@ ni narimasu."
 管理者：「ベテランには積み上げた理由があり、新人にはつまずく場面があります。
 まずは『どこが一番やりにくいですか』と聞いてください。」
 ```
-Close-up on a notepad, manager's hand writing the question "Doko ga
-ichiban yarinikui desu ka" on it. Natural ambient sound only, no
-music, no captions. Manager's voice continues, in Japanese
+Close-up on a notepad, manager's hand jotting a short handwritten note
+and underlining it twice with the pen — camera framing stays tight on
+the hand and pen tip so no full text is legible (abstract marks only,
+avoid rendering readable Japanese text). Natural ambient sound only,
+no music, no captions. Manager's voice continues, in Japanese
 (romanized): "Beteran ni wa tsumiagerareta riyuu ga ari, shinjin ni wa
 tsumazuku bamen ga arimasu. Mazu 'doko ga ichiban yarinikui desu ka'
 to kiite kudasai."
@@ -71,9 +73,12 @@ to kiite kudasai."
 管理者：「出てきた声を会議で見える化して、今月変えることを一つだけ決める。
 正しさを証明するより、現場の知恵を味方にする方が改善は進みます。」
 ```
-Close-up on a whiteboard, manager's hand writing a short improvement
-note on it. Natural ambient sound only, no music, no captions.
-Manager's voice continues, in Japanese (romanized): "Dete kita koe wo
+Close-up on a whiteboard, manager's hand drawing a short bulleted
+checklist with checkmarks and a circled number — abstract marks and
+checkmarks only, camera framing stays tight on the hand and marker tip
+so no legible words are rendered. Natural ambient sound only, no
+music, no captions. Manager's voice continues, in Japanese (romanized):
+"Dete kita koe wo
 kaigi de mieruka shite, kongetsu kaeru koto wo hitotsu dake kimeru.
 Tadashisa wo shoumei suru yori, genba no chie wo mikata ni suru hou ga
 kaizen wa susumimasu."

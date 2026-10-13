@@ -72,9 +72,11 @@ kudasai. Genba ni wa, shiryou ni denai riyuu ga arimasu."
 管理者：「そのうえで、一つだけ変える。何を守るか、何を変えるか、いつ
 振り返るか。この3つを職員と共有します。」
 ```
-Close-up on a memo pad, manager's hand writing three words: "mamoru",
-"kaeru", "minaosu". Natural ambient sound only, no music, no
-captions. Manager's voice continues, in Japanese (romanized): "Sono ue
+Close-up on a memo pad, manager's hand drawing three short bullet
+points with a small circle around each — abstract marks only, camera
+framing stays tight on the hand and pen tip so no legible words are
+rendered. Natural ambient sound only, no music, no captions. Manager's
+voice continues, in Japanese (romanized): "Sono ue
 de, hitotsu dake kaeru. Nani wo mamoru ka, nani wo kaeru ka, itsu
 furikaeru ka. Kono mittsu wo shokuin to kyouyuu shimasu."
 ```

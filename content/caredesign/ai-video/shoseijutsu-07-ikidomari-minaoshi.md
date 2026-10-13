@@ -62,9 +62,11 @@ ikimasu."
 基準です。たとえば6週間で問い合わせがどう変わるか。変わらなければ、対象・
 伝え方・手段のどれを変えるかです。」
 ```
-Close-up on a notepad, owner's hand writing three words: "mokuteki",
-"kikan", "minaoshi kijun". Natural ambient sound only, no music, no
-captions. Owner's voice continues, in Japanese (romanized): "Sesaku wo
+Close-up on a notepad, owner's hand drawing three short bullet points
+with a small circle around each — abstract marks only, camera framing
+stays tight on the hand and pen tip so no legible words are rendered.
+Natural ambient sound only, no music, no captions. Owner's voice
+continues, in Japanese (romanized): "Sesaku wo
 hajimeru mae ni, mittsu dake kimemashou. Mokuteki, tamesu kikan,
 minaosu kijun desu. Tatoeba rokushuukan de toiawase ga dou kawaru ka.
 Kawaranakereba, taishou, tsutaekata, shudan no dore wo kaeru ka desu."

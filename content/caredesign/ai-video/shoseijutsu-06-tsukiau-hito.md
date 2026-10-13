@@ -58,9 +58,11 @@ kara desu."
 管理者：「相談先は三種類あると強いです。同じ悩みを持つ他事業所の管理者。
 現場の実情を教えてくれる職員。そして制度や経営を客観的に見られる専門家です。」
 ```
-Close-up on a planner and a list of names being written down, manager's
-hand holding a pen. Natural ambient sound only, no music, no
-captions. Manager's voice continues, in Japanese (romanized):
+Close-up on a planner, manager's hand drawing a short bulleted list
+with three dots down the margin — abstract marks only, camera framing
+stays tight on the hand and pen tip so no legible names or words are
+rendered. Natural ambient sound only, no music, no captions. Manager's
+voice continues, in Japanese (romanized):
 "Soudan-saki wa sanshurui aru to tsuyoi desu. Onaji nayami wo motsu
 ta-jigyousho no kanrisha. Genba no jitsujou wo oshiete kureru shokuin.
 Soshite seido ya keiei wo kyakkanteki ni mirareru senmonka desu."
@@ -70,9 +72,11 @@ Soshite seido ya keiei wo kyakkanteki ni mirareru senmonka desu."
 管理者：「月に一度、30分で構いません。一つの課題を持って、外の人に相談する
 時間を予定に入れましょう。」
 ```
-Close-up on a calendar, manager's hand writing "tsuki 1-kai, 30-pun"
-into a blank slot. Natural ambient sound only, no music, no captions.
-Manager's voice continues, in Japanese (romanized): "Tsuki ni ichido,
+Close-up on a calendar, manager's hand circling one blank date square
+and drawing a small clock icon beside it — abstract mark only, camera
+framing stays tight on the hand and pen tip so no legible text is
+rendered. Natural ambient sound only, no music, no captions. Manager's
+voice continues, in Japanese (romanized): "Tsuki ni ichido,
 sanjuppun de kamaimasen. Hitotsu no kadai wo motte, soto no hito ni
 soudan suru jikan wo yotei ni iremashou."
 ```
