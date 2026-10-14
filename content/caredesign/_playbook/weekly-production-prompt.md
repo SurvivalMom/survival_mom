@@ -498,18 +498,30 @@ v2.2改訂：2026年10月追加。独白型（D-4-3）は「自分の見落と�
 - **キャラクターの同一性**：v2.5改訂：2026年10月。動画生成は呼び出しごとに別人が
   生成されるため、台本の文章指定だけでは同一人物にならない。使用する生成ツールが
   参照画像に対応している場合、最初に基準ポートレートを1枚生成し、以降のアナリスト役
-  全カットでその画像を参照画像として読み込む運用とする。基準ポートレート生成プロンプト
-  （nanobanana等の画像生成ツール用）：
+  全カットでその画像を参照画像として読み込む運用とする。
+- **アナリスト役のキャラクター設定確定**：v2.5改訂：2026年10月。50代半ばの男性、
+  癒し系。カウンセラー・コーチ的な、話を聞く器の大きさを感じさせる佇まい。座った
+  姿勢・開いた手の位置・柔らかい照明の基準ポートレートを採用確定（2026年10月選定）。
+  基準ポートレート生成プロンプト（nanobanana等の画像生成ツール用）：
   ```
-  Professional portrait photo, Japanese woman in her 40s, shoulder-length
-  dark hair neatly tied back, calm and composed expression, light gray
-  blazer over a simple white blouse, no necktie, no name badge, no
-  jewelry, soft neutral office background (softly blurred), natural
-  lighting, photorealistic, vertical 4:5 framing, waist-up shot, facing
-  camera directly, warm but professional demeanor
+  Professional portrait photo of a fictional Japanese man in his
+  mid-50s, created as an original AI character (not based on any real
+  person). Gentle, warm facial expression with soft kind eyes and a
+  calm, reassuring presence — like an experienced counselor or coach
+  who listens deeply and puts people at ease, not a corporate or
+  sales-type demeanor. Slightly graying hair, neatly groomed, a few
+  natural wrinkles conveying warmth and life experience. Seated, relaxed
+  posture with open hand position resting on the knees, a gentle
+  closed-mouth smile reaching the eyes. Light gray blazer over a simple
+  soft-colored shirt, no necktie, no name badge, no jewelry, no visible
+  logos or identifying marks. Soft neutral office background with
+  blurred bookshelf and plants, warm soft natural lighting.
+  Photorealistic, vertical 4:5 framing, waist-up shot, facing camera
+  directly. Generic/composite facial features, not resembling any
+  specific real individual.
   ```
-  参照画像が使えない生成ツールの場合は、台本のプロンプト内の人物描写
-  （年齢・髪型・衣装）を全テーマで一字一句同じ文章に統一し、ブレを最小化する
+  参照画像が使えない生成ツールの場合は、台本のプロンプト内の人物描写（年齢・
+  髪型・衣装・佇まい）を全テーマで一字一句同じ文章に統一し、ブレを最小化する
 - **カメラ目線で視聴者に直接語りかける構成**。独白型の「自分に向けてつぶやく」口調とは
   逆に、「あなたは〜していませんか」「〜だとしたら」のように、二人称で視聴者へ問いかける
   文を積極的に使う。ただし4-3の語り口ルールに従い、「教える」口調ではなく「観察を

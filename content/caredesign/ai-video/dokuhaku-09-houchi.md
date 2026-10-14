@@ -2,7 +2,7 @@
 
 ## メタ情報
 - 形式：解説×語りかけ型。プレイブックD-4-4準拠
-- 登場人物：介護離職予兆アナリスト1名のみ（light gray blazer、ノーネクタイ）。
+- 登場人物：介護離職予兆アナリスト1名のみ（50代半ば男性、癒し系、light gray blazer、ノーネクタイ）。
   カメラ目線で視聴者に語りかける。対話なし（v2.5改訂：2026年10月。D-4-4の既定に
   従い話者を経営者・管理者からアナリスト役に変更）
 - テロップ・BGMなし（テロップは後編集で追加）
@@ -38,8 +38,8 @@
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
-already in motion. Analyst (light gray blazer, no necktie, no name
-badge) looks directly into the camera, speaking calmly and clearly to
+already in motion. Analyst (mid-50s man, gentle demeanor, light gray blazer, no
+necktie, no name badge) looks directly into the camera, speaking calmly and clearly to
 the viewer, in Japanese (romanized for correct pronunciation): "'Ato
 yoroshiku', sore dake de owarasete imasen ka."
 ```
