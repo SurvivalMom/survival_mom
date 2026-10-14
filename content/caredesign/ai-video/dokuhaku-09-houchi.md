@@ -2,7 +2,9 @@
 
 ## メタ情報
 - 形式：解説×語りかけ型。プレイブックD-4-4準拠
-- 登場人物：管理者1名のみ（teal scrubs）。カメラ目線で視聴者に語りかける。対話なし
+- 登場人物：介護離職予兆アナリスト1名のみ（light gray blazer、ノーネクタイ）。
+  カメラ目線で視聴者に語りかける。対話なし（v2.5改訂：2026年10月。D-4-4の既定に
+  従い話者を経営者・管理者からアナリスト役に変更）
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：15〜20秒
 - 主CTA：保存（v2.3改訂：2026年10月。D-6-1「保存優先・フォロー補助パターン」に
@@ -32,33 +34,34 @@
 **Scene 1（問題提起・フック）**
 （後編集で0.0秒（1フレーム目）から「【介護管理者様】『あとよろしく』で、終わらせて
 いませんか」の太字テロップを全文表示。フェードイン・文字送りは使わない）
-管理者（視聴者へ）：「『あとよろしく』、それだけで終わらせていませんか。」
+アナリスト（視聴者へ）：「『あとよろしく』、それだけで終わらせていませんか。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
-already in motion. Manager (teal scrubs) looks directly into the
-camera, speaking calmly and clearly to the viewer, in Japanese
-(romanized for correct pronunciation): "'Ato yoroshiku', sore dake de
-owarasete imasen ka."
+already in motion. Analyst (light gray blazer, no necktie, no name
+badge) looks directly into the camera, speaking calmly and clearly to
+the viewer, in Japanese (romanized for correct pronunciation): "'Ato
+yoroshiku', sore dake de owarasete imasen ka."
 ```
 
 **Scene 2（構造の説明）**
-管理者（視聴者へ）：「管理職が陥りやすいもうひとつの落とし穴が、放置マンタイプです。
-任せた後の進捗確認を怠ると、『大丈夫です』という一言だけが積み重なっていきます。」
+アナリスト（視聴者へ）：「管理職が陥りやすいもうひとつの落とし穴に、放置マンタイプと
+いう傾向があります。任せた後の進捗確認を怠ると、『大丈夫です』という一言だけが
+積み重なっていくようです。」
 ```
-Same setting, same framing. Manager continues speaking directly to
+Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "Kanrishoku ga
-ochiiriyasui mou hitotsu no otoshiana ga, houchi-man taipu desu.
-Makaseta ato no shinchoku kakunin wo okotaru to, 'daijoubu desu' to
-iu hitokoto dake ga tsumikasanatte ikimasu." Natural ambient sound
-only, no music, no captions.
+ochiiriyasui mou hitotsu no otoshiana ni, houchi-man taipu to iu
+keikou ga arimasu. Makaseta ato no shinchoku kakunin wo okotaru to,
+'daijoubu desu' to iu hitokoto dake ga tsumikasanatte iku you desu."
+Natural ambient sound only, no music, no captions.
 ```
 
 **Scene 3（締め・問いかけ）**
-管理者（視聴者へ）：「任せることと、任せきりは違うのかもしれません。保存して、フォローの
+アナリスト（視聴者へ）：「任せることと、任せきりは違うのかもしれません。保存して、フォローの
 仕方を見直してください。」
 ```
-Same setting. Manager pauses briefly, then delivers the closing line
+Same setting. Analyst pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized): "Makaseru
 koto to, makasekiri wa chigau no kamo shiremasen. Hozon shite, foroo
 no shikata wo minaoshite kudasai." Natural ambient sound only, no
@@ -70,6 +73,6 @@ to be added later.
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・管理者に見えないか
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
-- [ ] 衣装が管理者=teal scrubsで統一されているか
+- [ ] 衣装がアナリスト=light gray blazerで統一されているか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] Scene1冒頭のフックテロップが後編集で正しく追加されているか
