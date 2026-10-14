@@ -2,7 +2,9 @@
 
 ## メタ情報
 - 形式：解説型・長尺版。プレイブックD-4-4-1準拠
-- 登場人物：経営者1名のみ（dark business suit）。カメラ目線で視聴者に語りかける。対話なし
+- 登場人物：介護離職予兆アナリスト1名のみ（light gray blazer、ノーネクタイ）。
+  カメラ目線で視聴者に語りかける。対話なし（v2.5改訂：2026年10月。D-4-4の既定に
+  従い話者を経営者・管理者からアナリスト役に変更）
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：35〜45秒（5パート構成）
 - 主CTA：保存（D-6-1「保存優先・フォロー補助パターン」に従い、動画内は保存に統一）
@@ -32,68 +34,68 @@
 勝とうとしていませんか」の太字テロップを全文表示。フェードイン・文字送りは
 使わない。画面上部に小さく「介護事業を、続けられる組織にする管理者の考え方 #3」の
 シリーズテロップを添える）
-経営者（視聴者へ）：「採用も稼働率も、大手と同じやり方で勝とうとしなくて
-大丈夫です。」
+アナリスト（視聴者へ）：「採用も稼働率も、大手と同じやり方で勝とうとしなくて
+大丈夫そうです。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
-already in motion. Owner (dark business suit) looks directly into the
-camera, speaking calmly and clearly to the viewer, in Japanese
-(romanized for correct pronunciation): "Saiyou mo kadouritsu mo,
-ootede to onaji yarikata de katou to shinakute daijoubu desu."
+already in motion. Analyst (light gray blazer, no necktie, no name
+badge) looks directly into the camera, speaking calmly and clearly to
+the viewer, in Japanese (romanized for correct pronunciation): "Saiyou
+mo kadouritsu mo, ootede to onaji yarikata de katou to shinakutemo
+daijoubu sou desu."
 ```
 
 **Scene 2（具体物クローズアップ・声は継続、3〜12秒）**
-経営者：「給与、知名度、広告費。そこだけで比べたら、地域の小さな事業所は
-苦しくなります。」
+アナリスト：「給与、知名度、広告費。そこだけで比べると、地域の小さな事業所は
+苦しくなりがちです。」
 ```
 Close-up on a job-listing website and a local area map spread on the
-desk, owner's hand tracing over them. Natural ambient sound only, no
-music, no captions. Owner's voice continues over the shot, in Japanese
-(romanized): "Kyuuyo, chimeido, koukokuhi. Soko dake de kurabetara,
-chiiki no chiisana jigyousho wa kurushiku narimasu."
+desk, a hand tracing over them. Natural ambient sound only, no music,
+no captions. Analyst's voice continues over the shot, in Japanese
+(romanized): "Kyuuyo, chimeido, koukokuhi. Soko dake de kuraberu to,
+chiiki no chiisana jigyousho wa kurushiku nari gachi desu."
 ```
 
 **Scene 3（具体物クローズアップ・声は継続、12〜25秒）**
-経営者：「代わりに、実際に選ばれた理由を三つ集めてください。家族に喜ばれた
-対応。職員が誇りに思う仕事。連携先から頼られる場面です。」
+アナリスト：「代わりに、実際に選ばれた理由を三つ集めてみてください。家族に
+喜ばれた対応。職員が誇りに思う仕事。連携先から頼られる場面です。」
 ```
-Close-up on a liaison notebook with family-feedback notes, owner's
-hand flipping through pages. Natural ambient sound only, no music, no
-captions. Owner's voice continues, in Japanese (romanized): "Kawari
-ni, jissai ni erabareta riyuu wo mittsu atsumete kudasai. Kazoku ni
-yorokobareta taiou. Shokuin ga hokori ni omou shigoto. Renkeisaki kara
-tayorareru bamen desu."
+Close-up on a liaison notebook with family-feedback notes, a hand
+flipping through pages. Natural ambient sound only, no music, no
+captions. Analyst's voice continues, in Japanese (romanized): "Kawari
+ni, jissai ni erabareta riyuu wo mittsu atsumete mite kudasai. Kazoku
+ni yorokobareta taiou. Shokuin ga hokori ni omou shigoto. Renkeisaki
+kara tayorareru bamen desu."
 ```
 
 **Scene 4（具体物クローズアップ・声は継続、25〜36秒）**
-経営者：「それを一文にします。たとえば『ご本人と家族への連絡を、丁寧に
+アナリスト：「それを一文にします。たとえば『ご本人と家族への連絡を、丁寧に
 途切れさせない事業所』のように。採用、見学、連携先への説明で、同じ言葉を
-使い続けます。」
+使い続けるとよさそうです。」
 ```
-Close-up on a notepad, owner's hand underlining a single handwritten
-line twice with the pen — camera framing stays tight on the hand and
-pen tip so no full text is legible (abstract marks only, avoid
-rendering readable Japanese text). Natural ambient sound only, no
-music, no captions. Owner's voice continues, in Japanese (romanized):
-"Sore wo ichibun ni
-shimasu. Tatoeba 'gohonnin to kazoku eno renraku wo, teinei ni
-togiresasenai jigyousho' no you ni. Saiyou, kengaku, renkeisaki eno
-setsumei de, onaji kotoba wo tsukaitsuzukemasu."
+Close-up on a notepad, a hand underlining a single handwritten line
+twice with the pen — camera framing stays tight on the hand and pen
+tip so no full text is legible (abstract marks only, avoid rendering
+readable Japanese text). Natural ambient sound only, no music, no
+captions. Analyst's voice continues, in Japanese (romanized): "Sore wo
+ichibun ni shimasu. Tatoeba 'gohonnin to kazoku eno renraku wo, teinei
+ni togiresasenai jigyousho' no you ni. Saiyou, kengaku, renkeisaki eno
+setsumei de, onaji kotoba wo tsukaitsuzukeru to yosasou desu."
 ```
 
 **Scene 5（顔出し・締め、36〜43秒）**
-経営者（視聴者へ）：「競合分析の前に、まず『私たちが選ばれる理由』を一文で
-言えるようにしましょう。保存して、『うちの強みは○○』を職員と一緒に埋めて
-みてください。」
+アナリスト（視聴者へ）：「競合分析の前に、まず『私たちが選ばれる理由』を一文で
+言えるようにしておくとよさそうです。保存して、『うちの強みは○○』を職員と
+一緒に埋めてみてください。」
 ```
-Same setting as Scene 1. Owner looks back into the camera, calm and
+Same setting as Scene 1. Analyst looks back into the camera, calm and
 quiet, in Japanese (romanized): "Kyougou bunseki no mae ni, mazu
-'watashitachi ga erabareru riyuu' wo ichibun de ieru you ni
-shimashou. Hozon shite, 'uchi no tsuyomi wa maru maru' wo shokuin to
-issho ni umete mite kudasai." Natural ambient sound only, no music, no
-captions. Leave the upper third of the frame clean for text to be
-added later.
+'watashitachi ga erabareru riyuu' wo ichibun de ieru you ni shite oku
+to yosasou desu. Hozon shite, 'uchi no tsuyomi wa maru maru' wo
+shokuin to issho ni umete mite kudasai." Natural ambient sound only,
+no music, no captions. Leave the upper third of the frame clean for
+text to be added later.
 ```
 （後編集で結びのテロップ「保存して、『うちの強みは○○』を職員と一緒に
 埋めてみてください」の主CTAを追加。シリーズ締めテロップ「現場を守るために、
@@ -102,6 +104,6 @@ added later.
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・経営者に見えないか
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
-- [ ] 衣装が経営者=dark business suitで統一されているか
+- [ ] 衣装がアナリスト=light gray blazerで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] Scene1冒頭のフックテロップが後編集で正しく追加されているか

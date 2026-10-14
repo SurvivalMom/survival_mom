@@ -2,7 +2,9 @@
 
 ## メタ情報
 - 形式：解説型・長尺版。プレイブックD-4-4-1準拠
-- 登場人物：管理者1名のみ（teal scrubs）。カメラ目線で視聴者に語りかける。対話なし
+- 登場人物：介護離職予兆アナリスト1名のみ（light gray blazer、ノーネクタイ）。
+  カメラ目線で視聴者に語りかける。対話なし（v2.5改訂：2026年10月。D-4-4の既定に
+  従い話者を経営者・管理者からアナリスト役に変更）
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：35〜45秒（5パート構成）
 - 主CTA：保存（D-6-1「保存優先・フォロー補助パターン」に従い、動画内は保存に統一）
@@ -32,69 +34,71 @@
 見るべきもの」の太字テロップを全文表示。フェードイン・文字送りは使わない。
 画面上部に小さく「介護事業を、続けられる組織にする管理者の考え方 #5」の
 シリーズテロップを添える）
-管理者（視聴者へ）：「採用面談で見たいのは、資格や肩書きだけではありません。
+アナリスト（視聴者へ）：「採用面談で見たいのは、資格や肩書きだけではありません。
 困った時にどう動く人かです。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
-already in motion. Manager (teal scrubs) looks directly into the
-camera, speaking calmly and clearly to the viewer, in Japanese
-(romanized for correct pronunciation): "Saiyou mendan de mitai no wa,
-shikaku ya katagaki dake dewa arimasen. Komatta toki ni dou ugoku hito
-ka desu."
+already in motion. Analyst (light gray blazer, no necktie, no name
+badge) looks directly into the camera, speaking calmly and clearly to
+the viewer, in Japanese (romanized for correct pronunciation): "Saiyou
+mendan de mitai no wa, shikaku ya katagaki dake dewa arimasen. Komatta
+toki ni dou ugoku hito ka desu."
 ```
 
 **Scene 2（具体物クローズアップ・声は継続、3〜13秒）**
-管理者：「経験年数が長くても、報告が遅い。連携が苦手。フィードバックを
-受け止められない。これではチームで働くのが難しくなります。」
+アナリスト：「経験年数が長くても、報告が遅い。連携が苦手。フィードバックを
+受け止められない。これではチームで働くのが難しくなる傾向があるようです。」
 ```
-Close-up on a resume and work-history sheet on the desk, manager's
-hand turning the pages. Natural ambient sound only, no music, no
-captions. Manager's voice continues over the shot, in Japanese
-(romanized): "Keiken-nensuu ga nagakutemo, houkoku ga osoi. Renkei ga
-nigate. Fiidobakku wo uketomerarenai. Kore dewa chiimu de hataraku no
-ga muzukashiku narimasu."
+Close-up on a resume and work-history sheet on the desk, a hand
+turning the pages. Natural ambient sound only, no music, no captions.
+Analyst's voice continues over the shot, in Japanese (romanized):
+"Keiken-nensuu ga nagakutemo, houkoku ga osoi. Renkei ga nigate.
+Fiidobakku wo uketomerarenai. Kore dewa chiimu de hataraku no ga
+muzukashiku naru keikou ga aru you desu."
 ```
 
 **Scene 3（具体物クローズアップ・声は継続、13〜27秒）**
-管理者：「面談では、『想定外のことが起きた時、どう対応しましたか』と聞いて
-ください。大切なのは、完璧な答えではなく、誰に相談し、何を学び、次にどう
-変えたかです。」
+アナリスト：「面談では、『想定外のことが起きた時、どう対応しましたか』と聞いて
+みてください。大切なのは、完璧な答えではなく、誰に相談し、何を学び、次にどう
+変えたかのようです。」
 ```
-Close-up on an interview memo pad, manager's hand jotting a short note
-and drawing a question mark at the end — camera framing stays tight on
-the hand and pen tip so no full text is legible (abstract marks only,
+Close-up on an interview memo pad, a hand jotting a short note and
+drawing a question mark at the end — camera framing stays tight on the
+hand and pen tip so no full text is legible (abstract marks only,
 avoid rendering readable Japanese text). Natural ambient sound only,
-no music, no captions. Manager's voice continues, in Japanese
+no music, no captions. Analyst's voice continues, in Japanese
 (romanized): "Mendan dewa, 'soutei-gai no
-koto ga okita toki, dou taiou shimashita ka' to kiite kudasai. Taisetsu
-na no wa, kanpeki na kotae dewa naku, dare ni soudan shi, nani wo
-manabi, tsugi ni dou kaeta ka desu."
+koto ga okita toki, dou taiou shimashita ka' to kiite mite kudasai.
+Taisetsu na no wa, kanpeki na kotae dewa naku, dare ni soudan shi,
+nani wo manabi, tsugi ni dou kaeta ka no you desu."
 ```
 
 **Scene 4（具体物クローズアップ・声は継続、27〜37秒）**
-管理者：「見るべきなのは、報告できるか、相談できるか、学び直せるか。この
-三つです。」
+アナリスト：「見るべきなのは、報告できるか、相談できるか、学び直せるか。この
+三つのようです。」
 ```
-Close-up on the same memo pad, manager's hand drawing three short
-bullet points with a small circle around each — abstract marks only,
-camera framing stays tight on the hand and pen tip so no legible words
-are rendered. Natural ambient sound only, no music, no captions.
-Manager's voice continues, in Japanese
+Close-up on the same memo pad, a hand drawing three short bullet
+points with a small circle around each — abstract marks only, camera
+framing stays tight on the hand and pen tip so no legible words are
+rendered. Natural ambient sound only, no music, no captions. Analyst's
+voice continues, in Japanese
 (romanized): "Mirubeki na no wa, houkoku dekiru ka, soudan dekiru ka,
-manabinaoseru ka. Kono mittsu desu."
+manabinaoseru ka. Kono mittsu no you desu."
 ```
 
 **Scene 5（顔出し・締め、37〜43秒）**
-管理者（視聴者へ）：「人をラベルで判断しない。現場で信頼を積み上げられるかを
-見ましょう。保存して、次の面談に『想定外の出来事』の質問を一つ追加してください。」
+アナリスト（視聴者へ）：「人をラベルで判断しない。現場で信頼を積み上げられるかを
+見ていきましょう。保存して、次の面談に『想定外の出来事』の質問を一つ追加して
+ください。」
 ```
-Same setting as Scene 1. Manager looks back into the camera, calm and
+Same setting as Scene 1. Analyst looks back into the camera, calm and
 quiet, in Japanese (romanized): "Hito wo raberu de handan shinai.
-Genba de shinrai wo tsumiagerareru ka wo mimashou. Hozon shite, tsugi
-no mendan ni 'soutei-gai no dekigoto' no shitsumon wo hitotsu tsuika
-shite kudasai." Natural ambient sound only, no music, no captions.
-Leave the upper third of the frame clean for text to be added later.
+Genba de shinrai wo tsumiagerareru ka wo mite ikimashou. Hozon shite,
+tsugi no mendan ni 'soutei-gai no dekigoto' no shitsumon wo hitotsu
+tsuika shite kudasai." Natural ambient sound only, no music, no
+captions. Leave the upper third of the frame clean for text to be
+added later.
 ```
 （後編集で結びのテロップ「保存して、次の面談に『想定外の出来事』の質問を
 一つ追加してください」の主CTAを追加。シリーズ締めテロップ「現場を守るために、
@@ -103,6 +107,6 @@ Leave the upper third of the frame clean for text to be added later.
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・管理者に見えないか
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
-- [ ] 衣装が管理者=teal scrubsで統一されているか
+- [ ] 衣装がアナリスト=light gray blazerで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] Scene1冒頭のフックテロップが後編集で正しく追加されているか

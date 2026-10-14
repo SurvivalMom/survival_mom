@@ -2,7 +2,9 @@
 
 ## メタ情報
 - 形式：解説型・長尺版。プレイブックD-4-4-1準拠
-- 登場人物：経営者1名のみ（dark business suit）。カメラ目線で視聴者に語りかける。対話なし
+- 登場人物：介護離職予兆アナリスト1名のみ（light gray blazer、ノーネクタイ）。
+  カメラ目線で視聴者に語りかける。対話なし（v2.5改訂：2026年10月。D-4-4の既定に
+  従い話者を経営者・管理者からアナリスト役に変更）
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：35〜45秒（5パート構成）
 - 主CTA：保存（D-6-1「保存優先・フォロー補助パターン」に従い、動画内は保存に統一）
@@ -32,62 +34,64 @@
 限らない」の太字テロップを全文表示。フェードイン・文字送りは使わない。画面上部に
 小さく「介護事業を、続けられる組織にする管理者の考え方 #7（最終話）」の
 シリーズテロップを添える）
-経営者（視聴者へ）：「介護事業の経営で怖いのは、失敗することより、効かない
-施策を続けることです。」
+アナリスト（視聴者へ）：「介護事業の経営で怖いのは、失敗することより、効かない
+施策を続けることのようです。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
-already in motion. Owner (dark business suit) looks directly into the
-camera, speaking calmly and clearly to the viewer, in Japanese
-(romanized for correct pronunciation): "Kaigo jigyou no keiei de
-kowai no wa, shippai suru koto yori, kikanai sesaku wo tsuzukeru koto
-desu."
+already in motion. Analyst (light gray blazer, no necktie, no name
+badge) looks directly into the camera, speaking calmly and clearly to
+the viewer, in Japanese (romanized for correct pronunciation): "Kaigo
+jigyou no keiei de kowai no wa, shippai suru koto yori, kikanai sesaku
+wo tsuzukeru koto no you desu."
 ```
 
 **Scene 2（具体物クローズアップ・声は継続、3〜14秒）**
-経営者：「求人広告、見学会、新しい業務ルール。『ここまでやったから、もう
-少し続けよう』と判断を先送りすると、費用だけでなく職員の時間も消えていきます。」
+アナリスト：「求人広告、見学会、新しい業務ルール。『ここまでやったから、もう
+少し続けよう』と判断を先送りすると、費用だけでなく職員の時間も消えていく
+傾向があります。」
 ```
 Close-up on a job-ad printout and a spreadsheet of numbers on the
-desk, owner's hand tracing down a column. Natural ambient sound only,
-no music, no captions. Owner's voice continues over the shot, in
+desk, a hand tracing down a column. Natural ambient sound only, no
+music, no captions. Analyst's voice continues over the shot, in
 Japanese (romanized): "Kyuujin koukoku, kengakukai, atarashii gyoumu
 ruuru. 'Koko made yattakara, mou sukoshi tsuzukeyou' to handan wo
-sakiokuri suru to, hiyou dake de naku shokuin no jikan mo kiete
-ikimasu."
+sakiokuri suru to, hiyou dake de naku shokuin no jikan mo kieteiku
+keikou ga arimasu."
 ```
 
 **Scene 3（具体物クローズアップ・声は継続、14〜27秒）**
-経営者：「施策を始める前に、三つだけ決めましょう。目的、試す期間、見直す
-基準です。たとえば6週間で問い合わせがどう変わるか。変わらなければ、対象・
-伝え方・手段のどれを変えるかです。」
+アナリスト：「施策を始める前に、三つだけ決めておくとよさそうです。目的、試す
+期間、見直す基準です。たとえば6週間で問い合わせがどう変わるか。変わらなければ、
+対象・伝え方・手段のどれを変えるかです。」
 ```
-Close-up on a notepad, owner's hand drawing three short bullet points
-with a small circle around each — abstract marks only, camera framing
-stays tight on the hand and pen tip so no legible words are rendered.
-Natural ambient sound only, no music, no captions. Owner's voice
+Close-up on a notepad, a hand drawing three short bullet points with a
+small circle around each — abstract marks only, camera framing stays
+tight on the hand and pen tip so no legible words are rendered.
+Natural ambient sound only, no music, no captions. Analyst's voice
 continues, in Japanese (romanized): "Sesaku wo
-hajimeru mae ni, mittsu dake kimemashou. Mokuteki, tamesu kikan,
-minaosu kijun desu. Tatoeba rokushuukan de toiawase ga dou kawaru ka.
-Kawaranakereba, taishou, tsutaekata, shudan no dore wo kaeru ka desu."
+hajimeru mae ni, mittsu dake kimete oku to yosasou desu. Mokuteki,
+tamesu kikan, minaosu kijun desu. Tatoeba rokushuukan de toiawase ga
+dou kawaru ka. Kawaranakereba, taishou, tsutaekata, shudan no dore wo
+kaeru ka desu."
 ```
 
 **Scene 4（具体物クローズアップ・声は継続、27〜38秒）**
-経営者：「やめることは失敗ではありません。人も予算も、より可能性のある
+アナリスト：「やめることは失敗ではないようです。人も予算も、より可能性のある
 打ち手に戻すための経営判断です。」
 ```
-Close-up on a diagram with an arrow being redrawn on paper, owner's
-hand holding a pen mid-stroke. Natural ambient sound only, no music,
-no captions. Owner's voice continues, in Japanese (romanized): "Yameru
-koto wa shippai dewa arimasen. Hito mo yosan mo, yori kanousei no aru
-ute ni modosu tame no keiei handan desu."
+Close-up on a diagram with an arrow being redrawn on paper, a hand
+holding a pen mid-stroke. Natural ambient sound only, no music, no
+captions. Analyst's voice continues, in Japanese (romanized): "Yameru
+koto wa shippai dewa nai you desu. Hito mo yosan mo, yori kanousei no
+aru ute ni modosu tame no keiei handan desu."
 ```
 
 **Scene 5（顔出し・締め、38〜44秒）**
-経営者（視聴者へ）：「今、惰性で続けていることはありませんか。保存して、
+アナリスト（視聴者へ）：「今、惰性で続けていることはありませんか。保存して、
 次の施策会議で『目的・期間・見直し基準』を確認してください。」
 ```
-Same setting as Scene 1. Owner looks back into the camera, calm and
+Same setting as Scene 1. Analyst looks back into the camera, calm and
 quiet, in Japanese (romanized): "Ima, dasei de tsuzukete iru koto wa
 arimasen ka. Hozon shite, tsugi no sesaku kaigi de 'mokuteki, kikan,
 minaoshi kijun' wo kakunin shite kudasai." Natural ambient sound only,
@@ -101,6 +105,6 @@ text to be added later.
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・経営者に見えないか
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
-- [ ] 衣装が経営者=dark business suitで統一されているか
+- [ ] 衣装がアナリスト=light gray blazerで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] Scene1冒頭のフックテロップが後編集で正しく追加されているか

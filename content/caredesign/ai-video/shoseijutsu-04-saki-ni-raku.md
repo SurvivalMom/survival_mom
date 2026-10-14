@@ -2,7 +2,9 @@
 
 ## メタ情報
 - 形式：解説型・長尺版。プレイブックD-4-4-1準拠
-- 登場人物：経営者1名のみ（dark business suit）。カメラ目線で視聴者に語りかける。対話なし
+- 登場人物：介護離職予兆アナリスト1名のみ（light gray blazer、ノーネクタイ）。
+  カメラ目線で視聴者に語りかける。対話なし（v2.5改訂：2026年10月。D-4-4の既定に
+  従い話者を経営者・管理者からアナリスト役に変更）
 - テロップ・BGMなし（テロップは後編集で追加）
 - 尺目安：35〜45秒（5パート構成）
 - 主CTA：保存（D-6-1「保存優先・フォロー補助パターン」に従い、動画内は保存に統一）
@@ -32,60 +34,61 @@
 共通点」の太字テロップを全文表示。フェードイン・文字送りは使わない。画面上部に
 小さく「介護事業を、続けられる組織にする管理者の考え方 #4」のシリーズテロップを
 添える）
-経営者（視聴者へ）：「紹介され続ける事業所は、営業がうまいのではありません。
-相手の仕事を楽にしています。」
+アナリスト（視聴者へ）：「紹介され続ける事業所は、営業がうまいわけではない
+ようです。相手の仕事を楽にしています。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
-already in motion. Owner (dark business suit) looks directly into the
-camera, speaking calmly and clearly to the viewer, in Japanese
-(romanized for correct pronunciation): "Shoukai sare tsuzukeru
-jigyousho wa, eigyou ga umai no dewa arimasen. Aite no shigoto wo raku
-ni shiteimasu."
+already in motion. Analyst (light gray blazer, no necktie, no name
+badge) looks directly into the camera, speaking calmly and clearly to
+the viewer, in Japanese (romanized for correct pronunciation):
+"Shoukai sare tsuzukeru jigyousho wa, eigyou ga umai wake dewa nai you
+desu. Aite no shigoto wo raku ni shiteimasu."
 ```
 
 **Scene 2（具体物クローズアップ・声は継続、3〜13秒）**
-経営者：「家族が知りたい時に連絡が来る。連携先が状況を確認しやすい。職員が
-困った時に相談できる。小さな安心の積み重ねです。」
+アナリスト：「家族が知りたい時に連絡が来る。連携先が状況を確認しやすい。職員が
+困った時に相談できる。小さな安心の積み重ねのようです。」
 ```
-Close-up on a phone and a contact log on the desk, owner's hand
-resting near it. Natural ambient sound only, no music, no captions.
-Owner's voice continues over the shot, in Japanese (romanized):
-"Kazoku ga shiritai toki ni renraku ga kuru. Renkeisaki ga joukyou wo
-kakunin shiyasui. Shokuin ga komatta toki ni soudan dekiru. Chiisana
-anshin no tsumikasane desu."
+Close-up on a phone and a contact log on the desk, a hand resting near
+it. Natural ambient sound only, no music, no captions. Analyst's voice
+continues over the shot, in Japanese (romanized): "Kazoku ga shiritai
+toki ni renraku ga kuru. Renkeisaki ga joukyou wo kakunin shiyasui.
+Shokuin ga komatta toki ni soudan dekiru. Chiisana anshin no
+tsumikasane no you desu."
 ```
 
 **Scene 3（具体物クローズアップ・声は継続、13〜26秒）**
-経営者：「『紹介してください』と言う前に、相手がどこで困っているかを聞く。
-そして、こちらが先に渡せる価値を一つ決めます。」
+アナリスト：「『紹介してください』と言う前に、相手がどこで困っているかを聞いて
+みてください。そして、こちらが先に渡せる価値を一つ決めます。」
 ```
-Close-up on a liaison notebook and meeting notes, owner's hand
-flipping through pages. Natural ambient sound only, no music, no
-captions. Owner's voice continues, in Japanese (romanized): "'Shoukai
-shite kudasai' to iu mae ni, aite ga doko de komatte iru ka wo kiku.
-Soshite, kochira ga saki ni wataseru kachi wo hitotsu kimemasu."
+Close-up on a liaison notebook and meeting notes, a hand flipping
+through pages. Natural ambient sound only, no music, no captions.
+Analyst's voice continues, in Japanese (romanized): "'Shoukai shite
+kudasai' to iu mae ni, aite ga doko de komatte iru ka wo kiite mite
+kudasai. Soshite, kochira ga saki ni wataseru kachi wo hitotsu
+kimemasu."
 ```
 
 **Scene 4（顔出し、26〜37秒）**
-経営者（視聴者へ）：「自分たちの利益は、信頼の後に来ます。今週、誰の手間を
-一つ減らせるかをチームで考えてみてください。」
+アナリスト（視聴者へ）：「自分たちの利益は、信頼の後に来るようです。今週、
+誰の手間を一つ減らせるかをチームで考えてみてください。」
 ```
-Same setting as Scene 1. Owner continues speaking directly to camera,
-calm and clear, in Japanese (romanized): "Jibun-tachi no rieki wa,
-shinrai no ato ni kimasu. Konshuu, dare no tema wo hitotsu heraseru ka
-wo chiimu de kangaete mite kudasai." Natural ambient sound only, no
-music, no captions.
+Same setting as Scene 1. Analyst continues speaking directly to
+camera, calm and clear, in Japanese (romanized): "Jibun-tachi no rieki
+wa, shinrai no ato ni kuru you desu. Konshuu, dare no tema wo hitotsu
+heraseru ka wo chiimu de kangaete mite kudasai." Natural ambient sound
+only, no music, no captions.
 ```
 
 **Scene 5（顔出し・締め、37〜42秒）**
-経営者（視聴者へ）：「その一手が、次の相談と紹介につながります。保存して、
+アナリスト（視聴者へ）：「その一手が、次の相談と紹介につながるようです。保存して、
 今週減らす相手の手間を一つ、会議の議題にしてください。」
 ```
-Same setting. Owner pauses briefly, then delivers the closing line
+Same setting. Analyst pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized): "Sono
-itte ga, tsugi no soudan to shoukai ni tsunagarimasu. Hozon shite,
-konshuu herasu aite no tema wo hitotsu, kaigi no gidai ni shite
+itte ga, tsugi no soudan to shoukai ni tsunagaru you desu. Hozon
+shite, konshuu herasu aite no tema wo hitotsu, kaigi no gidai ni shite
 kudasai." Natural ambient sound only, no music, no captions. Leave the
 upper third of the frame clean for text to be added later.
 ```
@@ -96,6 +99,6 @@ upper third of the frame clean for text to be added later.
 ## 公開前の映り込み確認項目
 - [ ] 生成人物が特定の実在職員・経営者に見えないか
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
-- [ ] 衣装が経営者=dark business suitで統一されているか
+- [ ] 衣装がアナリスト=light gray blazerで統一されているか
 - [ ] Scene5に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] Scene1冒頭のフックテロップが後編集で正しく追加されているか
