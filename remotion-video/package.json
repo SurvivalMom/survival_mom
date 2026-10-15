@@ -1,0 +1,22 @@
+{
+  "name": "caredesign-dokuhaku-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion project that renders a 9:16 vertical short video from content/caredesign/ai-video/dokuhaku-09-houchi.md",
+  "scripts": {
+    "start": "remotion studio src/index.ts",
+    "build": "remotion render src/index.ts DokuhakuShort out/dokuhaku-09-houchi.mp4",
+    "still": "remotion still src/index.ts DokuhakuShort out/dokuhaku-09-houchi.png"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.535",
+    "@remotion/cli": "4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "typescript": "5.6.3"
+  }
+}
