@@ -10,9 +10,13 @@ type Props = {
 };
 
 export const Telop: React.FC<Props> = ({segment}) => {
-	const {fps} = useVideoConfig();
+	const {fps, width} = useVideoConfig();
 	// Relative to the enclosing <Sequence>, not the whole timeline.
 	const localFrame = useCurrentFrame();
+	// Font sizes below were authored against a 1080px-wide canvas; scale
+	// them proportionally so the same design reads correctly at other
+	// composition widths (e.g. 720px when overlaying on raw footage).
+	const rem = width / 1080;
 
 	// Fast punch-in pop, matching the quick-cut SNS telop style. No
 	// fade-out — the next Sequence hard-cuts over this one, which reads
@@ -34,8 +38,8 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					transform: `scale(${scale})`,
 					opacity,
 					maxWidth: '88%',
-					padding: '36px 44px',
-					borderRadius: 28,
+					padding: `${36 * rem}px ${44 * rem}px`,
+					borderRadius: 28 * rem,
 					background: '#d92b1f',
 					boxShadow: '0 18px 46px rgba(0,0,0,0.45)',
 				}}
@@ -44,7 +48,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: 72,
+						fontSize: 72 * rem,
 						lineHeight: 1.28,
 						color: '#ffe8a3',
 						textAlign: 'center',
@@ -73,7 +77,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: 86,
+						fontSize: 86 * rem,
 						lineHeight: 1.32,
 						color: '#ffffff',
 						whiteSpace: 'pre-line',
@@ -84,9 +88,9 @@ export const Telop: React.FC<Props> = ({segment}) => {
 				</div>
 				<div
 					style={{
-						marginTop: 28,
-						height: 6,
-						width: 160,
+						marginTop: 28 * rem,
+						height: 6 * rem,
+						width: 160 * rem,
 						marginLeft: 'auto',
 						marginRight: 'auto',
 						borderRadius: 999,
@@ -107,15 +111,15 @@ export const Telop: React.FC<Props> = ({segment}) => {
 				maxWidth: '86%',
 				textAlign: 'center',
 				background: 'rgba(10,10,12,0.72)',
-				borderRadius: 18,
-				padding: '22px 36px',
+				borderRadius: 18 * rem,
+				padding: `${22 * rem}px ${36 * rem}px`,
 			}}
 		>
 			<div
 				style={{
 					fontFamily: FONT_STACK,
 					fontWeight: 800,
-					fontSize: 78,
+					fontSize: 78 * rem,
 					lineHeight: 1.3,
 					color: '#ffffff',
 					whiteSpace: 'pre-line',

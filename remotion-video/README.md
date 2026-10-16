@@ -14,9 +14,16 @@ Remotionプロジェクトです。
   わずかに暖色が滲むグラデーション背景
 - `src/Telop.tsx` — テロップ本体。フック（赤バナー）／通常セリフ（黒半透明
   角丸ボックス）／締めCTA（白文字＋オレンジのアンダーライン）の3種類の見た目
-- `src/Composition.tsx` — 上記を`Sequence`でタイムラインに並べるメイン
-  コンポーネント
-- `src/Root.tsx` / `src/index.ts` — Remotionのコンポジション登録
+- `src/Composition.tsx` — テキストのみモード（`DokuhakuShort`）。上記を
+  `Sequence`でタイムラインに並べるコンポーネント
+- `src/VideoBackground.tsx` — 実写モード用。AI生成済みの人物動画
+  （`public/source-videos/`）を背景として再生する
+- `src/CompositionWithFootage.tsx` — 実写モード（`DokuhakuShortWithFootage`）。
+  実際のAI生成人物動画の上に同じテロップを自動で重ねる。動画の実尺に合わせて
+  テロップの配置時間を比例配分する（`buildScaledTimeline`）。フックは画面上部、
+  それ以外は画面下部に配置し、顔を隠さないようにしている
+- `src/Root.tsx` / `src/index.ts` — Remotionのコンポジション登録（上記2つの
+  モードを両方登録）
 
 ## 使い方
 
@@ -27,10 +34,26 @@ npm install
 # プレビュー（Remotion Studio）
 npm run start
 
-# mp4書き出し
+# mp4書き出し（テキストのみモード）
 npm run build
 # -> out/dokuhaku-09-houchi.mp4 に出力
+
+# mp4書き出し（実写モード：AI生成人物動画にテロップを重ねる）
+npx remotion render src/index.ts DokuhakuShortWithFootage out/dokuhaku-09-houchi-with-footage.mp4
 ```
+
+### 実写モードの素材を差し替える場合
+
+1. AI生成した人物動画（無音でなくてOK。音声はそのまま残ります）を
+   `public/source-videos/`に置く
+2. `src/CompositionWithFootage.tsx`の`SOURCE_VIDEO`と
+   `SOURCE_VIDEO_DURATION_IN_SECONDS`（`ffprobe`等で実尺を確認）を書き換える
+3. `src/Root.tsx`の`DokuhakuShortWithFootage`コンポジションの
+   `width`/`height`も、新しい動画の解像度に合わせる
+
+テロップの配置時間は文字数ベースの比例配分であり、音声の書き起こしと
+フレーム単位で一致させたものではありません。実際の発話タイミングと
+ズレがないか、Remotion Studioで確認・微調整してください。
 
 ## 注意（このサンドボックス環境固有）
 

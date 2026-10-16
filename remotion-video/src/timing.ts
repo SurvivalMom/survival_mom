@@ -33,3 +33,37 @@ export const buildTimeline = (segments: Segment[]): TimedSegment[] => {
 
 export const totalDurationInFrames = (segments: Segment[]): number =>
 	buildTimeline(segments).reduce((sum, s) => sum + s.durationInFrames, 0);
+
+/**
+ * Same relative pacing as buildTimeline (longer lines get proportionally
+ * more time, with per-kind minimum holds respected as weights), but
+ * rescaled so the whole sequence exactly fills a known total duration —
+ * used when overlaying captions on top of real, fixed-length footage
+ * (e.g. an AI-generated talking-head clip) instead of driving the
+ * timeline from text length alone.
+ *
+ * Caveat: this is a proportional estimate, not a forced transcript
+ * alignment — it was not checked against the actual spoken audio frame
+ * by frame. Nudge `from`/`durationInFrames` in Remotion Studio's timeline
+ * if any caption drifts noticeably from what's being said.
+ */
+export const buildScaledTimeline = (
+	segments: Segment[],
+	totalFrames: number,
+): TimedSegment[] => {
+	const raw = segments.map((s) => durationInFrames(s));
+	const rawSum = raw.reduce((a, b) => a + b, 0);
+	const scale = totalFrames / rawSum;
+
+	let cursor = 0;
+	const timed: TimedSegment[] = segments.map((segment, i) => {
+		const isLast = i === segments.length - 1;
+		const duration = isLast
+			? Math.max(1, totalFrames - cursor)
+			: Math.max(1, Math.round(raw[i] * scale));
+		const result: TimedSegment = {...segment, from: cursor, durationInFrames: duration};
+		cursor += duration;
+		return result;
+	});
+	return timed;
+};
