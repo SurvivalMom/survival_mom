@@ -1,7 +1,6 @@
 import React from 'react';
 import {AbsoluteFill, Sequence} from 'remotion';
-import {segments} from './content';
-import {buildScaledTimeline} from './timing';
+import {alignedSegments} from './audioAlignedContent';
 import {VideoBackground} from './VideoBackground';
 import {Telop} from './Telop';
 
@@ -12,41 +11,51 @@ export const SOURCE_VIDEO = 'source-videos/dokuhaku-09-houchi-raw.mp4';
 export const SOURCE_VIDEO_DURATION_IN_SECONDS = 30.016;
 
 /**
- * Same telop treatment as DokuhakuShort (Composition.tsx), but composited
- * over the real AI-generated talking-head clip instead of a text-only
- * gradient background — this is the "automate the 後編集 telop pass"
- * version. Caption timing is proportionally scaled to fill the clip's
- * actual length (see buildScaledTimeline); it is not a frame-accurate
- * transcript alignment, so re-check captions against the audio in
- * Remotion Studio and nudge any that drift before export.
+ * Same telop treatment as DokuhakuShort (Composition.tsx), composited
+ * over the real AI-generated talking-head clip. Caption timing here
+ * comes from audioAlignedContent.ts, which is anchored to pauses
+ * actually measured in the clip's audio (ffmpeg silencedetect) rather
+ * than a flat proportional estimate from text length — see that file's
+ * header comment for method and known limitations (the CTA caption in
+ * particular is not backed by detected speech; see `unsynced`).
+ *
+ * Caption position: centered around the lower-face / chin area rather
+ * than hugging the bottom edge, per request. The hook banner stays at
+ * the top (same place every produced video in this account uses it).
  */
 export const DokuhakuShortWithFootage: React.FC<{fps: number}> = ({fps}) => {
-	const totalFrames = Math.ceil(SOURCE_VIDEO_DURATION_IN_SECONDS * fps);
-	const timeline = buildScaledTimeline(segments, totalFrames);
-
 	return (
 		<AbsoluteFill style={{backgroundColor: '#000'}}>
 			<VideoBackground src={SOURCE_VIDEO} />
-			{timeline.map((segment, i) => (
-				<Sequence
-					key={i}
-					from={segment.from}
-					durationInFrames={segment.durationInFrames}
-					name={segment.text.replace(/\n/g, ' ').slice(0, 24)}
-				>
-					<AbsoluteFill
-						style={{
-							justifyContent: segment.kind === 'hook' ? 'flex-start' : 'flex-end',
-							alignItems: 'center',
-							padding: '0 36px',
-							paddingTop: segment.kind === 'hook' ? 64 : undefined,
-							paddingBottom: segment.kind === 'hook' ? undefined : 120,
-						}}
+			{alignedSegments.map((segment, i) => {
+				const from = Math.round(segment.startSeconds * fps);
+				const durationInFrames = Math.max(
+					1,
+					Math.round((segment.endSeconds - segment.startSeconds) * fps),
+				);
+				return (
+					<Sequence
+						key={i}
+						from={from}
+						durationInFrames={durationInFrames}
+						name={segment.text.replace(/\n/g, ' ').slice(0, 24)}
 					>
-						<Telop segment={segment} />
-					</AbsoluteFill>
-				</Sequence>
-			))}
+						<AbsoluteFill
+							style={{
+								justifyContent: segment.kind === 'hook' ? 'flex-start' : 'center',
+								alignItems: 'center',
+								padding: '0 36px',
+								paddingTop: segment.kind === 'hook' ? 64 : undefined,
+								// Nudge below true vertical center so captions land
+								// around the jaw/chin, not over the eyes/mouth.
+								transform: segment.kind === 'hook' ? undefined : 'translateY(18%)',
+							}}
+						>
+							<Telop segment={segment} />
+						</AbsoluteFill>
+					</Sequence>
+				);
+			})}
 		</AbsoluteFill>
 	);
 };
