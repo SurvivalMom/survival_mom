@@ -4,11 +4,14 @@ import {alignedSegments} from './audioAlignedContent';
 import {VideoBackground} from './VideoBackground';
 import {Telop} from './Telop';
 
-// public/source-videos/dokuhaku-09-houchi-raw.mp4 — AI-generated
-// talking-head footage of the アナリスト character, 720x1280, 24fps,
-// with its own spoken audio track (confirmed via ffprobe: 30.016s).
-export const SOURCE_VIDEO = 'source-videos/dokuhaku-09-houchi-raw.mp4';
-export const SOURCE_VIDEO_DURATION_IN_SECONDS = 30.016;
+// public/source-videos/dokuhaku-09-houchi-cut.mp4 — the raw AI-generated
+// talking-head footage with the dead-air silence between Scene 1 and
+// Scene 2 (originally ~5.4s–9.7s) physically cut out via ffmpeg
+// trim+concat. 720x1280, 24fps, confirmed via ffprobe: 25.732s (down
+// from the original 30.016s). See audioAlignedContent.ts for how the
+// caption timestamps were shifted to match this new timeline.
+export const SOURCE_VIDEO = 'source-videos/dokuhaku-09-houchi-cut.mp4';
+export const SOURCE_VIDEO_DURATION_IN_SECONDS = 25.732;
 
 /**
  * Same telop treatment as DokuhakuShort (Composition.tsx), composited
@@ -19,9 +22,12 @@ export const SOURCE_VIDEO_DURATION_IN_SECONDS = 30.016;
  * header comment for method and known limitations (the CTA caption in
  * particular is not backed by detected speech; see `unsynced`).
  *
- * Caption position: centered around the lower-face / chin area rather
- * than hugging the bottom edge, per request. The hook banner stays at
- * the top (same place every produced video in this account uses it).
+ * Caption position: regular lines are centered around the lower-face /
+ * chin area rather than hugging the bottom edge, per request. The hook
+ * banner and the closing CTA both sit at the top of the frame instead —
+ * the CTA was moved there because it was colliding with the final
+ * spoken line's caption at the chin position; overlapping the face at
+ * the very end of the clip is acceptable per request.
  */
 export const DokuhakuShortWithFootage: React.FC<{fps: number}> = ({fps}) => {
 	return (
@@ -42,13 +48,14 @@ export const DokuhakuShortWithFootage: React.FC<{fps: number}> = ({fps}) => {
 					>
 						<AbsoluteFill
 							style={{
-								justifyContent: segment.kind === 'hook' ? 'flex-start' : 'center',
+								justifyContent: segment.kind === 'line' ? 'center' : 'flex-start',
 								alignItems: 'center',
 								padding: '0 36px',
-								paddingTop: segment.kind === 'hook' ? 64 : undefined,
-								// Nudge below true vertical center so captions land
-								// around the jaw/chin, not over the eyes/mouth.
-								transform: segment.kind === 'hook' ? undefined : 'translateY(18%)',
+								paddingTop: segment.kind === 'line' ? undefined : 64,
+								// Nudge below true vertical center so regular-line
+								// captions land around the jaw/chin, not over the
+								// eyes/mouth. Hook and CTA stay pinned to the top.
+								transform: segment.kind === 'line' ? 'translateY(18%)' : undefined,
 							}}
 						>
 							<Telop segment={segment} />
