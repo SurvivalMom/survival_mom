@@ -50,7 +50,7 @@ export type AlignedSegment = {
 export const alignedSegments: AlignedSegment[] = [
 	// Hook — fixed overlay, not tied to speech; ends right as real speech
 	// begins (1.236s) so it hands off cleanly instead of overlapping.
-	{kind: 'hook', text: '【介護管理者様】\n「あとよろしく」で、\n終わらせていませんか', startSeconds: 0, endSeconds: 1.236},
+	{kind: 'hook', text: '「あとよろしく」で、\n終わらせていませんか', startSeconds: 0, endSeconds: 1.236},
 
 	// Scene 1 — speech windows A, B, C (1.236–5.4s), each held ~1.2s into
 	// its following pause so the caption doesn't vanish before the next

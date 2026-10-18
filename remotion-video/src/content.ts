@@ -16,7 +16,7 @@ export const title = '「あとよろしく」で、終わらせていません�
 
 export const segments: Segment[] = [
 	// Scene 1 — hook, shown in full per D-4-2 (0.0秒で全文表示)
-	{kind: 'hook', text: '【介護管理者様】\n「あとよろしく」で、\n終わらせていませんか'},
+	{kind: 'hook', text: '「あとよろしく」で、\n終わらせていませんか'},
 	{kind: 'line', text: '『あとよろしく』、'},
 	{kind: 'line', text: 'それだけで'},
 	{kind: 'line', text: '終わらせていませんか。'},
