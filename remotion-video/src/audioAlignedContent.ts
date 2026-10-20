@@ -50,7 +50,7 @@ export type AlignedSegment = {
 export const alignedSegments: AlignedSegment[] = [
 	// Hook — fixed overlay, not tied to speech; ends right as real speech
 	// begins (1.236s) so it hands off cleanly instead of overlapping.
-	{kind: 'hook', text: '「あとよろしく」で、\n終わらせていませんか', startSeconds: 0, endSeconds: 1.236},
+	{kind: 'hook', text: '「あとよろしく」\nで、終わらせて\nいませんか', startSeconds: 0, endSeconds: 1.236},
 
 	// Scene 1 — speech windows A, B, C (1.236–5.4s), each held ~1.2s into
 	// its following pause so the caption doesn't vanish before the next
@@ -58,7 +58,7 @@ export const alignedSegments: AlignedSegment[] = [
 	// last line's end is pulled in to exactly that point.
 	{kind: 'line', text: '『あとよろしく』、', startSeconds: 1.236, endSeconds: 2.703},
 	{kind: 'line', text: 'それだけで', startSeconds: 2.703, endSeconds: 3.947},
-	{kind: 'line', text: '終わらせていませんか。', startSeconds: 3.947, endSeconds: 5.4},
+	{kind: 'line', text: '終わらせて\nいませんか。', startSeconds: 3.947, endSeconds: 5.4},
 
 	// (the ~4.9s silence that used to sit here has been cut from the
 	// video itself; everything below is shifted back by 4.3s to match)
@@ -67,7 +67,7 @@ export const alignedSegments: AlignedSegment[] = [
 	// spoken together with no detected pause between them, so those are
 	// merged into one caption instead of splitting mid-window.
 	{kind: 'line', text: '管理職が陥りやすい\nもうひとつの\n落とし穴に、', startSeconds: 5.703, endSeconds: 8.952},
-	{kind: 'line', text: '「放置マンタイプ」という\n傾向があります。', startSeconds: 8.952, endSeconds: 11.16},
+	{kind: 'line', text: '「放置マンタイプ」\nという\n傾向があります。', startSeconds: 8.952, endSeconds: 11.16},
 	{kind: 'line', text: '任せた後の\n進捗確認を\n怠ると、', startSeconds: 11.16, endSeconds: 14.098},
 	{kind: 'line', text: '『大丈夫です』という', startSeconds: 14.098, endSeconds: 16.973},
 	{kind: 'line', text: '一言だけが', startSeconds: 16.973, endSeconds: 18.17},

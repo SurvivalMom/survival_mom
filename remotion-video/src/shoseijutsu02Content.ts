@@ -64,7 +64,7 @@ export const shoseijutsu02Blocks: VideoBlock[] = [
 		trimStartSeconds: 0,
 		durationSeconds: 9.5,
 		segments: [
-			{kind: 'hook', text: '新任管理者が、最初に\nやってはいけないこと', startSeconds: 0, endSeconds: 1.3},
+			{kind: 'hook', text: '新任管理者が、\n最初にやっては\nいけないこと', startSeconds: 0, endSeconds: 1.3},
 			{kind: 'line', text: '最初の一週間で\n避けたいことが\nあります。', startSeconds: 1.3, endSeconds: 5.0},
 			{kind: 'line', text: 'それは\n改革宣言です。', startSeconds: 5.0, endSeconds: 9.5},
 		],
@@ -76,9 +76,19 @@ export const shoseijutsu02Blocks: VideoBlock[] = [
 		trimStartSeconds: 1.09,
 		durationSeconds: 28.69,
 		segments: [
-			{kind: 'line', text: '着任直後に\n『前のやり方は非効率です』と\n変え始めると、', startSeconds: 0, endSeconds: 5.15},
-			{kind: 'line', text: '職員は内容よりも\n『自分たちを否定された』と\n受け取ってしまう\n傾向があるようです。', startSeconds: 5.15, endSeconds: 13.32},
-			{kind: 'line', text: '最初の30日は、\n申し送りで詰まる場所、\n記録に時間がかかる場面、\n誰に相談が集まるかを\n観察してみてください。', startSeconds: 14.07, endSeconds: 24.36},
+			// Scene 2, clause 1 -- 2 short bursts instead of one 4-line block.
+			{kind: 'line', text: '着任直後に\n『前のやり方は', startSeconds: 0, endSeconds: 2.3},
+			{kind: 'line', text: '非効率です』と\n変え始めると、', startSeconds: 2.3, endSeconds: 5.15},
+			// Scene 2, clause 2 -- 3 bursts (was one 4-line block).
+			{kind: 'line', text: '職員は内容よりも', startSeconds: 5.15, endSeconds: 7.0},
+			{kind: 'line', text: '『自分たちを\n否定された』と', startSeconds: 7.0, endSeconds: 9.8},
+			{kind: 'line', text: '受け取ってしまう\n傾向があるようです。', startSeconds: 9.8, endSeconds: 13.32},
+			// Scene 3, clause 1 -- 4 bursts (was one 5-line block).
+			{kind: 'line', text: '最初の30日は、', startSeconds: 14.07, endSeconds: 15.65},
+			{kind: 'line', text: '申し送りで\n詰まる場所、', startSeconds: 15.65, endSeconds: 17.83},
+			{kind: 'line', text: '記録に時間が\nかかる場面、', startSeconds: 17.83, endSeconds: 20.2},
+			{kind: 'line', text: '誰に相談が\n集まるかを\n観察してみて\nください。', startSeconds: 20.2, endSeconds: 24.36},
+			// Scene 3, clause 2 -- short enough to stay as one caption.
 			{kind: 'line', text: '現場には、\n資料に出ない\n理由があるものです。', startSeconds: 24.36, endSeconds: 28.69},
 		],
 	},

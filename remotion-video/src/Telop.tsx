@@ -31,22 +31,17 @@ export const Telop: React.FC<Props> = ({segment}) => {
 	const scale = 0.86 + pop * 0.14;
 	const opacity = Math.min(1, pop * 1.3);
 
-	// Authors hand-place `\n` in segment text to control where each line
-	// breaks. But if a line is too long for the box at the kind's base
-	// font size, the browser re-wraps it anyway -- and CJK text has no
-	// word boundaries, so that re-wrap lands mid-word ("前のや" / "り方は").
-	// Shrink the font just enough that the longest authored line always
-	// fits on one line, so the hand-placed breaks are the only ones that
-	// ever show. 1.35em/char is an empirically-fit width for bold
-	// Hiragino/Gothic full-width glyphs at this weight (wider than the
-	// nominal 1em box), with a small safety margin.
-	const longestLineChars = Math.max(...segment.text.split('\n').map((line) => line.length));
-	const EM_PER_CHAR = 1.35;
-	const fitFontSize = (baseFontSizePx: number, maxWidthFraction: number) => {
-		const availableWidthPx = width * maxWidthFraction;
-		const maxSafeFontSizePx = availableWidthPx / (longestLineChars * EM_PER_CHAR);
-		return Math.min(baseFontSizePx, maxSafeFontSizePx);
-	};
+	// Font size per kind is a FIXED constant -- never adjusted per caption.
+	// A size that changes caption-to-caption reads as more distracting
+	// than an occasional long line, so instead every caption's `\n`
+	// placement (in content.ts / audioAlignedContent.ts / etc.) is
+	// hand-fit to stay within these sizes' safe per-line character budget
+	// at this box's width, calibrated empirically against bold
+	// Hiragino/Gothic full-width glyphs (~1.35em/char, wider than the
+	// nominal 1em box): hook ~9 chars/line, line ~11 chars/line,
+	// cta ~10 chars/line. A caption needing more text than that reads
+	// better split into several shorter sequential captions than packed
+	// into one tall multi-line block -- see content files for examples.
 
 	if (segment.kind === 'hook') {
 		return (
@@ -65,7 +60,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: fitFontSize(72 * rem, 0.88),
+						fontSize: 72 * rem,
 						lineHeight: 1.28,
 						color: '#ffe8a3',
 						textAlign: 'center',
@@ -94,7 +89,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: fitFontSize(86 * rem, 0.85),
+						fontSize: 64 * rem,
 						lineHeight: 1.32,
 						color: '#ffffff',
 						whiteSpace: 'pre-line',
@@ -136,7 +131,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 				style={{
 					fontFamily: FONT_STACK,
 					fontWeight: 800,
-					fontSize: fitFontSize(78 * rem, 0.86),
+					fontSize: 62 * rem,
 					lineHeight: 1.3,
 					color: '#ffffff',
 					whiteSpace: 'pre-line',
