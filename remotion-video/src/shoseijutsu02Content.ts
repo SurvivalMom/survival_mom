@@ -66,7 +66,7 @@ export const shoseijutsu02Blocks: VideoBlock[] = [
 		segments: [
 			{kind: 'hook', text: '新任管理者が、最初に\nやってはいけないこと', startSeconds: 0, endSeconds: 1.3},
 			{kind: 'line', text: '最初の一週間で\n避けたいことが\nあります。', startSeconds: 1.3, endSeconds: 5.0},
-			{kind: 'line', text: 'それは改革宣言です。', startSeconds: 5.0, endSeconds: 9.5},
+			{kind: 'line', text: 'それは\n改革宣言です。', startSeconds: 5.0, endSeconds: 9.5},
 		],
 	},
 	// Scene 2 + 3 -- bulletin board / handover notebook B-roll, voice
@@ -76,10 +76,10 @@ export const shoseijutsu02Blocks: VideoBlock[] = [
 		trimStartSeconds: 1.09,
 		durationSeconds: 28.69,
 		segments: [
-			{kind: 'line', text: '着任直後に『前のやり方は\n非効率です』と変え始めると、', startSeconds: 0, endSeconds: 5.15},
-			{kind: 'line', text: '職員は内容よりも\n『自分たちを否定された』と\n受け取ってしまう傾向があるようです。', startSeconds: 5.15, endSeconds: 13.32},
-			{kind: 'line', text: '最初の30日は、申し送りで詰まる場所、\n記録に時間がかかる場面、\n誰に相談が集まるかを観察してみてください。', startSeconds: 14.07, endSeconds: 24.36},
-			{kind: 'line', text: '現場には、資料に出ない\n理由があるものです。', startSeconds: 24.36, endSeconds: 28.69},
+			{kind: 'line', text: '着任直後に\n『前のやり方は非効率です』と\n変え始めると、', startSeconds: 0, endSeconds: 5.15},
+			{kind: 'line', text: '職員は内容よりも\n『自分たちを否定された』と\n受け取ってしまう\n傾向があるようです。', startSeconds: 5.15, endSeconds: 13.32},
+			{kind: 'line', text: '最初の30日は、\n申し送りで詰まる場所、\n記録に時間がかかる場面、\n誰に相談が集まるかを\n観察してみてください。', startSeconds: 14.07, endSeconds: 24.36},
+			{kind: 'line', text: '現場には、\n資料に出ない\n理由があるものです。', startSeconds: 24.36, endSeconds: 28.69},
 		],
 	},
 	// Scene 4 -- memo pad, hand drawing 3 bullet points.
@@ -89,8 +89,8 @@ export const shoseijutsu02Blocks: VideoBlock[] = [
 		durationSeconds: 9.61,
 		segments: [
 			{kind: 'line', text: 'そのうえで、\n一つだけ変える。', startSeconds: 0, endSeconds: 2.45},
-			{kind: 'line', text: '何を守るか、何を変えるか、\nいつ振り返るか。', startSeconds: 2.45, endSeconds: 6.12},
-			{kind: 'line', text: 'この3つを職員と共有すると\nよさそうです。', startSeconds: 6.12, endSeconds: 9.61},
+			{kind: 'line', text: '何を守るか、\n何を変えるか、\nいつ振り返るか。', startSeconds: 2.45, endSeconds: 6.12},
+			{kind: 'line', text: 'この3つを\n職員と共有すると\nよさそうです。', startSeconds: 6.12, endSeconds: 9.61},
 		],
 	},
 	// Scene 5 -- analyst-speaking.mp4 reused (muted); no spoken audio for
@@ -101,8 +101,8 @@ export const shoseijutsu02Blocks: VideoBlock[] = [
 		durationSeconds: 7.0,
 		muted: true,
 		segments: [
-			{kind: 'line', text: '早く成果を出すより、\n長く協力される管理者の\n方がうまくいくようです。', startSeconds: 0, endSeconds: 3.3, unsynced: true},
-			{kind: 'cta', text: '保存して、着任直後に\n見たかった現場のポイントを、\n次の面談で使ってください。', startSeconds: 3.3, endSeconds: 7.0, unsynced: true},
+			{kind: 'line', text: '早く成果を出すより、\n長く協力される\n管理者の方が\nうまくいくようです。', startSeconds: 0, endSeconds: 3.3, unsynced: true},
+			{kind: 'cta', text: '保存して、\n着任直後に見たかった\n現場のポイントを、\n次の面談で\n使ってください。', startSeconds: 3.3, endSeconds: 7.0, unsynced: true},
 		],
 	},
 ];

@@ -66,16 +66,16 @@ export const alignedSegments: AlignedSegment[] = [
 	// Scene 2 — speech windows D–I. D/E/F each covered two script phrases
 	// spoken together with no detected pause between them, so those are
 	// merged into one caption instead of splitting mid-window.
-	{kind: 'line', text: '管理職が陥りやすい\nもうひとつの落とし穴に、', startSeconds: 5.703, endSeconds: 8.952},
+	{kind: 'line', text: '管理職が陥りやすい\nもうひとつの\n落とし穴に、', startSeconds: 5.703, endSeconds: 8.952},
 	{kind: 'line', text: '「放置マンタイプ」という\n傾向があります。', startSeconds: 8.952, endSeconds: 11.16},
-	{kind: 'line', text: '任せた後の\n進捗確認を怠ると、', startSeconds: 11.16, endSeconds: 14.098},
+	{kind: 'line', text: '任せた後の\n進捗確認を\n怠ると、', startSeconds: 11.16, endSeconds: 14.098},
 	{kind: 'line', text: '『大丈夫です』という', startSeconds: 14.098, endSeconds: 16.973},
 	{kind: 'line', text: '一言だけが', startSeconds: 16.973, endSeconds: 18.17},
-	{kind: 'line', text: '積み重なっていくようです。', startSeconds: 18.17, endSeconds: 21.07},
+	{kind: 'line', text: '積み重なっていく\nようです。', startSeconds: 18.17, endSeconds: 21.07},
 
 	// Scene 3 — speech windows J, K.
 	{kind: 'line', text: '任せることと、', startSeconds: 21.07, endSeconds: 22.193},
-	{kind: 'line', text: '任せきりは、\n違うのかもしれません。', startSeconds: 22.193, endSeconds: 24.663},
+	{kind: 'line', text: '任せきりは、\n違うのかも\nしれません。', startSeconds: 22.193, endSeconds: 24.663},
 
 	// CTA — now positioned at the top of the frame (see
 	// CompositionWithFootage.tsx), so it no longer needs to dodge the

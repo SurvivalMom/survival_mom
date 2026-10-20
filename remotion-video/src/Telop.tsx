@@ -31,6 +31,23 @@ export const Telop: React.FC<Props> = ({segment}) => {
 	const scale = 0.86 + pop * 0.14;
 	const opacity = Math.min(1, pop * 1.3);
 
+	// Authors hand-place `\n` in segment text to control where each line
+	// breaks. But if a line is too long for the box at the kind's base
+	// font size, the browser re-wraps it anyway -- and CJK text has no
+	// word boundaries, so that re-wrap lands mid-word ("前のや" / "り方は").
+	// Shrink the font just enough that the longest authored line always
+	// fits on one line, so the hand-placed breaks are the only ones that
+	// ever show. 1.35em/char is an empirically-fit width for bold
+	// Hiragino/Gothic full-width glyphs at this weight (wider than the
+	// nominal 1em box), with a small safety margin.
+	const longestLineChars = Math.max(...segment.text.split('\n').map((line) => line.length));
+	const EM_PER_CHAR = 1.35;
+	const fitFontSize = (baseFontSizePx: number, maxWidthFraction: number) => {
+		const availableWidthPx = width * maxWidthFraction;
+		const maxSafeFontSizePx = availableWidthPx / (longestLineChars * EM_PER_CHAR);
+		return Math.min(baseFontSizePx, maxSafeFontSizePx);
+	};
+
 	if (segment.kind === 'hook') {
 		return (
 			<div
@@ -48,7 +65,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: 72 * rem,
+						fontSize: fitFontSize(72 * rem, 0.88),
 						lineHeight: 1.28,
 						color: '#ffe8a3',
 						textAlign: 'center',
@@ -77,7 +94,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: 86 * rem,
+						fontSize: fitFontSize(86 * rem, 0.85),
 						lineHeight: 1.32,
 						color: '#ffffff',
 						whiteSpace: 'pre-line',
@@ -119,7 +136,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 				style={{
 					fontFamily: FONT_STACK,
 					fontWeight: 800,
-					fontSize: 78 * rem,
+					fontSize: fitFontSize(78 * rem, 0.86),
 					lineHeight: 1.3,
 					color: '#ffffff',
 					whiteSpace: 'pre-line',
