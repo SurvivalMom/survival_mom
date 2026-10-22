@@ -1,6 +1,6 @@
 import React from 'react';
-import {AbsoluteFill, Sequence} from 'remotion';
-import {dokuhaku10Segments} from './dokuhaku10Content';
+import {AbsoluteFill, Audio, Sequence, staticFile} from 'remotion';
+import {dokuhaku10Segments, SOURCE_VIDEO, HOOK_SFX} from './dokuhaku10Content';
 import {VideoBackground} from './VideoBackground';
 import {Telop} from './Telop';
 
@@ -8,12 +8,14 @@ import {Telop} from './Telop';
  * dokuhaku-10-ichiban (自分が一番うまい、を何年続けていますか). Same
  * treatment as DokuhakuShortWithFootage: real AI-generated talking-head
  * clip, captions anchored to detected speech (see dokuhaku10Content.ts),
- * regular lines at chin level, hook/cta pinned to the top of frame.
+ * regular lines at chin level, hook/cta pinned to the top of frame. A
+ * short synthesized whoosh+pop plays under the hook reveal at frame 0.
  */
 export const Dokuhaku10WithFootage: React.FC<{fps: number}> = ({fps}) => {
 	return (
 		<AbsoluteFill style={{backgroundColor: '#000'}}>
-			<VideoBackground src="source-videos/dokuhaku-10-ichiban-raw.mp4" />
+			<VideoBackground src={SOURCE_VIDEO} />
+			<Audio src={staticFile(HOOK_SFX)} />
 			{dokuhaku10Segments.map((segment, i) => {
 				const from = Math.round(segment.startSeconds * fps);
 				const durationInFrames = Math.max(1, Math.round((segment.endSeconds - segment.startSeconds) * fps));
