@@ -3,9 +3,11 @@ import {Composition} from 'remotion';
 import {DokuhakuShort} from './Composition';
 import {DokuhakuShortWithFootage, SOURCE_VIDEO_DURATION_IN_SECONDS} from './CompositionWithFootage';
 import {Shoseijutsu02WithFootage} from './CompositionShoseijutsu02';
+import {Dokuhaku10WithFootage} from './CompositionDokuhaku10';
 import {segments} from './content';
 import {totalDurationInFrames} from './timing';
 import {shoseijutsu02DurationInFrames} from './shoseijutsu02Content';
+import {SOURCE_VIDEO_DURATION_IN_SECONDS as DOKUHAKU10_DURATION_IN_SECONDS} from './dokuhaku10Content';
 
 const FPS = 30;
 
@@ -39,6 +41,17 @@ export const RemotionRoot: React.FC = () => {
 				id="Shoseijutsu02WithFootage"
 				component={Shoseijutsu02WithFootage}
 				durationInFrames={shoseijutsu02DurationInFrames(FPS)}
+				fps={FPS}
+				width={720}
+				height={1280}
+			/>
+			{/* dokuhaku-10: single continuous AI-generated talking-head clip,
+			    same approach as DokuhakuShortWithFootage (see dokuhaku10Content.ts). */}
+			<Composition
+				id="Dokuhaku10WithFootage"
+				component={Dokuhaku10WithFootage}
+				defaultProps={{fps: FPS}}
+				durationInFrames={Math.ceil(DOKUHAKU10_DURATION_IN_SECONDS * FPS)}
 				fps={FPS}
 				width={720}
 				height={1280}
