@@ -1,4 +1,4 @@
-# AI動画（情景独白型・裏シリーズ）：「特変なし」の続き
+# AI動画（情景独白型・裏シリーズ）：今日も「特変なし」と書いた
 
 ## メタ情報
 - 形式：情景独白型（新裏シリーズ。D-4-3「独白×証拠クローズアップ型」からさらに
@@ -15,7 +15,7 @@
 - 参考元：アカウント既存投稿の続編として独自に構成。外部動画からの翻案ではない
 
 ## タイトル
-「特変なし」の続き
+今日も「特変なし」と書いた
 
 ## キャプション
 あれから3年。
@@ -31,14 +31,14 @@
 ## シーン構成
 
 **Scene 1（0〜4秒）**
-（後編集で0.0秒から「今日もまた、同じ三文字を書いた。」の
+（後編集で0.0秒から「今日も「特変なし」と書いた。」の
 テロップを表示。フェードイン・文字送りは使わない）
 ```
 Vertical 9:16 cinematic, realistic night-shift nursing station interior,
 dim warm desk lamp light, natural ambient sound only (pen on paper,
 distant quiet hum), no music, no on-screen captions. Close-up on a
 handover notebook, many previous dates each ending in the same
-handwritten phrase "特変なし". An anonymous hand writes the same three
+handwritten phrase "特変なし". An anonymous hand writes the same four
 characters again, quickly, almost without looking. No face visible,
 no name badges, no readable patient information.
 ```
