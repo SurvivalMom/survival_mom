@@ -153,6 +153,16 @@ export const Telop: React.FC<Props> = ({segment}) => {
  * the `hook` kind above) rather than a subordinate caption, since during
  * Scene 1 -- where the lower telop is blank -- this is the only text on
  * screen and needs to carry the hook's attention-grabbing job by itself.
+ * Font size (68) is deliberately larger than both lower-telop kinds
+ * (`line` 62, `cta` 64) so the header reads as more prominent than
+ * whatever the lower layer is showing, not less -- per explicit feedback,
+ * this replaced an earlier, smaller size that read as subordinate.
+ * Same fixed-size-plus-manual-line-break convention as the rest of this
+ * file applies here too: left to auto-wrap, this size fits roughly
+ * ~10 chars/line within the box, but letting the browser pick the break
+ * point produces lopsided splits (e.g. a 2-character orphan line) more
+ * often than not, so header text longer than ~10 chars should carry its
+ * own hand-placed `\n` at a natural clause boundary (see ura01Content.ts).
  */
 export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	const {width} = useVideoConfig();
@@ -165,7 +175,7 @@ export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 				textAlign: 'center',
 				background: '#d92b1f',
 				borderRadius: 18 * rem,
-				padding: `${16 * rem}px ${30 * rem}px`,
+				padding: `${18 * rem}px ${32 * rem}px`,
 				boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
 			}}
 		>
@@ -173,8 +183,8 @@ export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 				style={{
 					fontFamily: FONT_STACK,
 					fontWeight: 900,
-					fontSize: 46 * rem,
-					lineHeight: 1.3,
+					fontSize: 68 * rem,
+					lineHeight: 1.28,
 					color: '#ffe8a3',
 					whiteSpace: 'pre-line',
 					textShadow: '0 3px 0 rgba(0,0,0,0.25)',

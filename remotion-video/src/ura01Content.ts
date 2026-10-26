@@ -45,7 +45,10 @@ export const SOURCE_VIDEO_DURATION_IN_SECONDS = 16.5;
 
 // Persistent top-of-frame header, 0.0s through the full clip -- the
 // original hook line from the script, shown once and never re-triggered.
-export const ura01Header = '今日も「特変なし」と書いた。';
+// Manually broken after と (10 chars / 4 chars) -- left to auto-wrap at
+// HeaderTelop's size, the browser split it as 今日も「特変なし」と書い /
+// た。, an unbalanced 2-character orphan on the second line.
+export const ura01Header = '今日も「特変なし」と\n書いた。';
 
 // Lower telop layer. Scene 1 (0-5.5s, the writing beat) is deliberately
 // blank per the script -- the header alone carries that stretch.
