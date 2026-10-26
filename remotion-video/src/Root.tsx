@@ -4,10 +4,12 @@ import {DokuhakuShort} from './Composition';
 import {DokuhakuShortWithFootage, SOURCE_VIDEO_DURATION_IN_SECONDS} from './CompositionWithFootage';
 import {Shoseijutsu02WithFootage} from './CompositionShoseijutsu02';
 import {Dokuhaku10WithFootage} from './CompositionDokuhaku10';
+import {Ura01WithFootage} from './CompositionUra01';
 import {segments} from './content';
 import {totalDurationInFrames} from './timing';
 import {shoseijutsu02DurationInFrames} from './shoseijutsu02Content';
 import {SOURCE_VIDEO_DURATION_IN_SECONDS as DOKUHAKU10_DURATION_IN_SECONDS} from './dokuhaku10Content';
+import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA01_DURATION_IN_SECONDS} from './ura01Content';
 
 const FPS = 30;
 
@@ -52,6 +54,18 @@ export const RemotionRoot: React.FC = () => {
 				component={Dokuhaku10WithFootage}
 				defaultProps={{fps: FPS}}
 				durationInFrames={Math.ceil(DOKUHAKU10_DURATION_IN_SECONDS * FPS)}
+				fps={FPS}
+				width={720}
+				height={1280}
+			/>
+			{/* ura-01: first episode of the "ura" scenic-monologue series --
+			    real hand/notebook footage, two-layer telop (persistent top
+			    header + changing lower telop, see ura01Content.ts). */}
+			<Composition
+				id="Ura01WithFootage"
+				component={Ura01WithFootage}
+				defaultProps={{fps: FPS}}
+				durationInFrames={Math.ceil(URA01_DURATION_IN_SECONDS * FPS)}
 				fps={FPS}
 				width={720}
 				height={1280}

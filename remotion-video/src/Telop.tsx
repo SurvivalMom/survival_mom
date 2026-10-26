@@ -142,3 +142,42 @@ export const Telop: React.FC<Props> = ({segment}) => {
 		</div>
 	);
 };
+
+/**
+ * Persistent small header for the ura series' two-layer telop format: the
+ * original hook line stays pinned to the top of frame for the whole video
+ * (not just the first scene), while the lower Telop changes per scene.
+ * Deliberately NOT built on the pop/spring entrance above -- the brief
+ * says no fade-in, no text-reveal, just present from frame 1 -- and
+ * deliberately smaller/lighter than every other telop kind so it reads as
+ * subordinate to whatever the lower layer is showing.
+ */
+export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
+	const {width} = useVideoConfig();
+	const rem = width / 1080;
+
+	return (
+		<div
+			style={{
+				maxWidth: '90%',
+				textAlign: 'center',
+				background: 'rgba(10,10,12,0.55)',
+				borderRadius: 12 * rem,
+				padding: `${10 * rem}px ${22 * rem}px`,
+			}}
+		>
+			<div
+				style={{
+					fontFamily: FONT_STACK,
+					fontWeight: 700,
+					fontSize: 30 * rem,
+					lineHeight: 1.3,
+					color: 'rgba(255,255,255,0.78)',
+					whiteSpace: 'pre-line',
+				}}
+			>
+				{text}
+			</div>
+		</div>
+	);
+};
