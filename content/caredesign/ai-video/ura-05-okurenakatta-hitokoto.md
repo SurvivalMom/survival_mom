@@ -33,8 +33,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「反論を打っては、消した。」を0.0秒から13秒（動画終了）
+  まで画面上部に小さく固定表示し続ける。フェードイン・文字送りは使わず、
+  他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「反論を打っては、消した。」のテロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic break room interior at night, dim
 lighting. Close-up on a smartphone screen in an anonymous hand, a
@@ -46,7 +52,8 @@ visible.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「正しいことを言われただけなのに、なぜか悔しかった。」）
+（下部テロップ：「正しいことを言われただけなのに、なぜか悔しかった。」上部固定
+ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand stops typing entirely, thumb hovering over the
 screen without pressing anything. Natural ambient sound only, no
@@ -54,9 +61,9 @@ music, no captions. No face visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「怒っていたのは、相手じゃなく、できない自分にだったのかもしれない。」
+（下部テロップ：「怒っていたのは、相手じゃなく、できない自分にだったのかもしれない。」
 続けて主CTA「保存して、今度こそ、送らなかった理由を考えてみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The phone screen dims to black as the hand sets it face
 down on the table. Quiet, unresolved mood. No face visible, no music,
@@ -69,3 +76,5 @@ added later.
 - [ ] 実在施設・名札・ロゴが写り込んでいないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

@@ -34,8 +34,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「あの時の判断、合っていたのか、まだ分からない。」を0.0秒
+  から13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・
+  文字送りは使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「あの時の判断、合っていたのか、まだ分からない。」のテロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 slightly dim evening light. Close-up on a past care record entry, an
@@ -45,7 +51,8 @@ visible, no name badges.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「根拠を聞かれないまま、時間だけが過ぎていく。」）
+（下部テロップ：「根拠を聞かれないまま、時間だけが過ぎていく。」上部固定
+ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand closes the record and sets it aside, lingering
 for a moment, unresolved. Natural ambient sound only, no music, no
@@ -53,9 +60,9 @@ captions. No face visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「今度は、自分から聞いてみようと思う。」
+（下部テロップ：「今度は、自分から聞いてみようと思う。」
 続けて主CTA「保存して、気になっていた判断を、一度誰かに話してみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand picks up a pen and writes a short note to bring
 up later -- a reminder to ask, not a full answer -- the handwriting
@@ -69,3 +76,5 @@ lower third of the frame clean for text to be added later.
 - [ ] 手のみの描写で、顔や個人を特定できる特徴が映っていないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

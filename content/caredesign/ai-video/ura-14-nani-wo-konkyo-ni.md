@@ -35,9 +35,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「『あなたは、何を根拠にそう考えましたか』と聞かれた。」を
+  0.0秒から13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・
+  文字送りは使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「『あなたは、何を根拠にそう考えましたか』と聞かれた。」の
-テロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic care facility office interior, warm
 evening light. Close-up on a care record, an anonymous hand's pen
@@ -47,7 +52,8 @@ visible, no name badges.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「初めて、自分の考えを言葉にできた気がした。」）
+（下部テロップ：「初めて、自分の考えを言葉にできた気がした。」上部固定
+ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand writes steadily now, unhurried, finishing a
 full sentence in its own words rather than a short clipped note.
@@ -56,9 +62,9 @@ legible text beyond an abstract filled line.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「正解じゃなくても、自分の考えで決めていいんだと思えた夜だった。」
+（下部テロップ：「正解じゃなくても、自分の考えで決めていいんだと思えた夜だった。」
 続けて主CTA「保存して、次は誰かに、同じ問いを投げかけてみてください。」を
-小さく添える）
+小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand rests beside the finished entry for a moment
 before closing the notebook gently, calm and settled rather than
@@ -72,3 +78,5 @@ to be added later.
 - [ ] 手のみの描写で、顔や個人を特定できる特徴が映っていないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

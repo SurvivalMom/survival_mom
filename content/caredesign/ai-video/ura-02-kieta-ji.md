@@ -34,8 +34,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「気づけば、ノートの字が全部、先輩のものになっていた。」を
+  0.0秒から13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・
+  文字送りは使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「気づけば、ノートの字が全部、先輩のものになっていた。」のテロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic care facility break room interior,
 soft daylight, natural ambient sound only, no music, no on-screen
@@ -46,7 +52,8 @@ visible, no name badges.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「最後に自分で書いたのは、いつだっただろう。」）
+（下部テロップ：「最後に自分で書いたのは、いつだっただろう。」上部固定ヘッダーは
+そのまま表示継続）
 ```
 Same setting. The hand flips backward through earlier pages, searching,
 slowing down, scanning each one. Natural ambient sound only, no music,
@@ -54,9 +61,9 @@ no captions. No face visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「聞かれる前に答えが来るから、考えなくなったのかもしれない。」
+（下部テロップ：「聞かれる前に答えが来るから、考えなくなったのかもしれない。」
 続けて主CTA「保存して、次に答えを渡される前に、少しだけ自分で考えてみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand holds a pen above a blank line at the end of the
 notebook, pauses, then closes the notebook without writing anything.
@@ -69,3 +76,5 @@ the lower third of the frame clean for text to be added later.
 - [ ] 手のみの描写で、顔や個人を特定できる特徴が映っていないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

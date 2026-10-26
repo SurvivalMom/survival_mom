@@ -35,8 +35,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「分からないことがあると、まず周りを見る癖がある。」を
+  0.0秒から13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・
+  文字送りは使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「分からないことがあると、まず周りを見る癖がある。」のテロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic care facility office interior, soft
 daylight. Close-up on a record-keeping desk, an anonymous hand pausing
@@ -46,7 +52,8 @@ only, no music, no on-screen captions. No face visible, no name badges.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「自分で考えるより先に、正解に似せることを覚えていた。」）
+（下部テロップ：「自分で考えるより先に、正解に似せることを覚えていた。」上部
+固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand copies a phrasing from a reference notebook into
 the current record, mirroring the handwriting style rather than writing
@@ -55,9 +62,9 @@ visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「素直でいることと、自分で決められないことは、同じじゃないのかもしれない。」
+（下部テロップ：「素直でいることと、自分で決められないことは、同じじゃないのかもしれない。」
 続けて主CTA「保存して、次に答えを探す前に、少しだけ自分の考えを声に出してみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand stops copying, pen lifted, pausing over a blank
 line as if about to write something in its own words. Quiet,
@@ -70,3 +77,5 @@ lower third of the frame clean for text to be added later.
 - [ ] 手のみの描写で、顔や個人を特定できる特徴が映っていないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

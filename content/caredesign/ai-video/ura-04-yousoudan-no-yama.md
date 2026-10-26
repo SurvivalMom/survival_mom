@@ -34,8 +34,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「『要相談』の判子だけが、ノートに増えていく。」を0.0秒から
+  13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・文字送りは
+  使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「『要相談』の判子だけが、ノートに増えていく。」のテロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 close-up on a stack of handover documents, page after page stamped
@@ -45,7 +51,8 @@ captions. No face visible, no name badges.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「決めていいとは、誰にも言われていない。」）
+（下部テロップ：「決めていいとは、誰にも言われていない。」上部固定ヘッダーは
+そのまま表示継続）
 ```
 Same setting. The hand stops on one page, hovers a pen above a blank
 decision field, then withdraws without writing. Natural ambient sound
@@ -53,9 +60,9 @@ only, no music, no captions. No face visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「決めても、決めなくても、責められる気がしていた。」
+（下部テロップ：「決めても、決めなくても、責められる気がしていた。」
 続けて主CTA「保存して、自分に渡されている権限を、一度だけ確認してみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand closes the stack of documents and rests on top
 of it for a moment, quiet exhale implied through stillness rather than
@@ -68,3 +75,5 @@ of the frame clean for text to be added later.
 - [ ] 書類の文字が実在の個人情報として読めてしまわないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

@@ -34,9 +34,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「聞きに行ったら、『あなたはどう思う？』と聞き返された。」
+  を0.0秒から13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・
+  文字送りは使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「聞きに行ったら、『あなたはどう思う？』と聞き返された。」の
-テロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic care facility office interior, soft
 daylight. Close-up on a small memo pad, an anonymous hand holding a
@@ -46,7 +51,8 @@ no name badges.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「突き放された気がしたけど、違った。」）
+（下部テロップ：「突き放された気がしたけど、違った。」上部固定ヘッダーは
+そのまま表示継続）
 ```
 Same setting. The hand sets the memo down and picks up a pen, writing
 a tentative answer of its own beneath the question, slowly at first.
@@ -54,9 +60,9 @@ Natural ambient sound only, no music, no captions. No face visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「ちゃんと、見てくれていたんだと思う。」
+（下部テロップ：「ちゃんと、見てくれていたんだと思う。」
 続けて主CTA「保存して、今度は自分から、誰かに同じ聞き方をしてみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. Close-up reveals a small check mark or circle already
 added beside the hand-written answer by someone else's hand, from an
@@ -70,3 +76,5 @@ Leave the lower third of the frame clean for text to be added later.
 - [ ] メモの文字が実在の個人情報として読めてしまわないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

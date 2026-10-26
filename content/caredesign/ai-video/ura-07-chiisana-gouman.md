@@ -33,8 +33,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「今日も、あの利用者さんの遅さに、少しイライラした。」を
+  0.0秒から13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・
+  文字送りは使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「今日も、あの利用者さんの遅さに、少しイライラした。」のテロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic night-shift nursing station
 interior, dim warm desk lamp light. Close-up on a care record, an
@@ -45,7 +51,8 @@ patient information.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「書いた後で、自分の字が刺々しいことに気づいた。」）
+（下部テロップ：「書いた後で、自分の字が刺々しいことに気づいた。」上部固定
+ヘッダーはそのまま表示継続）
 ```
 Same setting. The hand stops, pen lifted, as it re-reads what was just
 written, the pen tip tracing back over the entry without adding
@@ -54,9 +61,9 @@ visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「正しさを振りかざしていたのは、私の方だったかもしれない。」
+（下部テロップ：「正しさを振りかざしていたのは、私の方だったかもしれない。」
 続けて主CTA「保存して、明日は少しだけ、言葉を選んでみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. The pen is set down gently beside the notebook, the hand
 withdrawing slowly. Soft lamp light, quiet, reflective mood. No face
@@ -69,3 +76,5 @@ clean for text to be added later.
 - [ ] 手のみの描写で、顔や個人を特定できる特徴が映っていないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか

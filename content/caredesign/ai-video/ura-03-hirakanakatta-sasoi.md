@@ -34,8 +34,14 @@
 
 ## シーン構成
 
+**テロップレイヤー構成（2層）**
+- 上部固定ヘッダー：「歓迎会のチラシが、もう3週間貼られたままだ。」を0.0秒から
+  13秒（動画終了）まで画面上部に小さく固定表示し続ける。フェードイン・文字送りは
+  使わず、他のテロップより控えめなサイズ・ウェイトにして主役にしない
+- 下部の独白テロップ：各シーンの切り替わりに合わせて以下の通り変化する
+
 **Scene 1（0〜4秒）**
-（後編集で「歓迎会のチラシが、もう3週間貼られたままだ。」のテロップを表示）
+（下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
 Vertical 9:16 cinematic, realistic care facility break room interior,
 a corkboard with several notices, one flyer slightly faded and
@@ -45,7 +51,8 @@ badges, no readable text on surrounding notices.
 ```
 
 **Scene 2（4〜9秒）**
-（テロップ切り替え：「断る理由は、いつも思いつく。」）
+（下部テロップ：「断る理由は、いつも思いつく。」上部固定ヘッダーはそのまま
+表示継続）
 ```
 Same setting. An anonymous hand reaches toward the flyer, pauses just
 short of touching it, then withdraws without taking it down. Natural
@@ -53,9 +60,9 @@ ambient sound only, no music, no captions. No face visible.
 ```
 
 **Scene 3（9〜13秒）**
-（テロップ：「もう、ここに馴染む必要がないと思っていたのかもしれない。」
+（下部テロップ：「もう、ここに馴染む必要がないと思っていたのかもしれない。」
 続けて主CTA「保存して、断った理由を、もう一度だけ振り返ってみてください。」
-を小さく添える）
+を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting. Camera slowly pulls back from the corkboard, the flyer
 left untouched, the room quiet and still. Soft daylight fading toward
@@ -68,3 +75,5 @@ of the frame clean for text to be added later.
 - [ ] コルクボード上の他の掲示物に読める個人情報・実在情報が入っていないか
 - [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
+- [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、下部の独白テロップより
+  目立たないサイズになっているか
