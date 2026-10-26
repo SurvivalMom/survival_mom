@@ -144,13 +144,15 @@ export const Telop: React.FC<Props> = ({segment}) => {
 };
 
 /**
- * Persistent small header for the ura series' two-layer telop format: the
+ * Persistent header for the ura series' two-layer telop format: the
  * original hook line stays pinned to the top of frame for the whole video
  * (not just the first scene), while the lower Telop changes per scene.
  * Deliberately NOT built on the pop/spring entrance above -- the brief
- * says no fade-in, no text-reveal, just present from frame 1 -- and
- * deliberately smaller/lighter than every other telop kind so it reads as
- * subordinate to whatever the lower layer is showing.
+ * says no fade-in, no text-reveal, just present from frame 1. Styled to
+ * match the account's established "hook" red/yellow card (same colors as
+ * the `hook` kind above) rather than a subordinate caption, since during
+ * Scene 1 -- where the lower telop is blank -- this is the only text on
+ * screen and needs to carry the hook's attention-grabbing job by itself.
  */
 export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	const {width} = useVideoConfig();
@@ -159,21 +161,24 @@ export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	return (
 		<div
 			style={{
-				maxWidth: '90%',
+				maxWidth: '92%',
 				textAlign: 'center',
-				background: 'rgba(10,10,12,0.55)',
-				borderRadius: 12 * rem,
-				padding: `${10 * rem}px ${22 * rem}px`,
+				background: '#d92b1f',
+				borderRadius: 18 * rem,
+				padding: `${16 * rem}px ${30 * rem}px`,
+				boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
 			}}
 		>
 			<div
 				style={{
 					fontFamily: FONT_STACK,
-					fontWeight: 700,
-					fontSize: 30 * rem,
+					fontWeight: 900,
+					fontSize: 46 * rem,
 					lineHeight: 1.3,
-					color: 'rgba(255,255,255,0.78)',
+					color: '#ffe8a3',
 					whiteSpace: 'pre-line',
+					textShadow: '0 3px 0 rgba(0,0,0,0.25)',
+					letterSpacing: '0.01em',
 				}}
 			>
 				{text}
