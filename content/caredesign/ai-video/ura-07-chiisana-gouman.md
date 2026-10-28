@@ -48,7 +48,7 @@ interior, dim warm desk lamp light. Close-up on a care record, an
 anonymous hand writing a short, clipped entry quickly, pressing the
 pen slightly harder than usual. Natural ambient sound only, no music,
 no on-screen captions. No face visible, no name badges, no readable
-patient information. Any visible handwriting or text is in Japanese, never English letters.
+patient information. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 2（4〜9秒）**
@@ -58,7 +58,7 @@ patient information. Any visible handwriting or text is in Japanese, never Engli
 Same setting. The hand stops, pen lifted, as it re-reads what was just
 written, the pen tip tracing back over the entry without adding
 anything. Natural ambient sound only, no music, no captions. No face
-visible. Any visible handwriting or text is in Japanese, never English letters.
+visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 3（9〜13秒）**
@@ -69,7 +69,7 @@ visible. Any visible handwriting or text is in Japanese, never English letters.
 Same setting. The pen is set down gently beside the notebook, the hand
 withdrawing slowly. Soft lamp light, quiet, reflective mood. No face
 visible, no music, no captions. Leave the lower third of the frame
-clean for text to be added later. Any visible handwriting or text is in Japanese, never English letters.
+clean for text to be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 ## 公開前の映り込み確認項目

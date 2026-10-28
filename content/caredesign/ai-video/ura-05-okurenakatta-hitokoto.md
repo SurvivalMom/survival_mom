@@ -49,7 +49,7 @@ messaging app open, text being typed and then deleted character by
 character -- the screen content kept abstract/illegible, camera
 framing stays tight so no real app UI or readable text is rendered.
 Natural ambient sound only, no music, no on-screen captions. No face
-visible. Any visible handwriting or text is in Japanese, never English letters.
+visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 2（4〜9秒）**
@@ -58,7 +58,7 @@ visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 Same setting. The hand stops typing entirely, thumb hovering over the
 screen without pressing anything. Natural ambient sound only, no
-music, no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
+music, no captions. No face visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 3（9〜13秒）**
@@ -69,7 +69,7 @@ music, no captions. No face visible. Any visible handwriting or text is in Japan
 Same setting. The phone screen dims to black as the hand sets it face
 down on the table. Quiet, unresolved mood. No face visible, no music,
 no captions. Leave the lower third of the frame clean for text to be
-added later. Any visible handwriting or text is in Japanese, never English letters.
+added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 ## 公開前の映り込み確認項目

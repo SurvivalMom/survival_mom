@@ -49,7 +49,7 @@ Vertical 9:16 cinematic, realistic care facility office interior, warm
 evening light. Close-up on a care record, an anonymous hand's pen
 pausing above the page, thinking, rather than writing immediately.
 Natural ambient sound only, no music, no on-screen captions. No face
-visible, no name badges. Any visible handwriting or text is in Japanese, never English letters.
+visible, no name badges. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 2（4〜9秒）**
@@ -59,7 +59,7 @@ visible, no name badges. Any visible handwriting or text is in Japanese, never E
 Same setting. The hand writes steadily now, unhurried, finishing a
 full sentence in its own words rather than a short clipped note.
 Natural ambient sound only, no music, no captions. No face visible, no
-legible text beyond an abstract filled line. Any visible handwriting or text is in Japanese, never English letters.
+legible text beyond an abstract filled line. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 3（9〜13秒）**
@@ -71,7 +71,7 @@ Same setting. The hand rests beside the finished entry for a moment
 before closing the notebook gently, calm and settled rather than
 hurried. Warm soft light, quiet, satisfied mood. No face visible, no
 music, no captions. Leave the lower third of the frame clean for text
-to be added later. Any visible handwriting or text is in Japanese, never English letters.
+to be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 ## 公開前の映り込み確認項目

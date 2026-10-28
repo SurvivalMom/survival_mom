@@ -49,7 +49,7 @@ Vertical 9:16 cinematic, realistic care facility break room interior.
 Close-up on a personal memo pad, handwritten notes crossed out and
 rewritten several times, clearly a self-made attempt at some kind of
 rule of thumb. An anonymous hand holds it open. Natural ambient sound
-only, no music, no on-screen captions. No face visible, no name badges. Any visible handwriting or text is in Japanese, never English letters.
+only, no music, no on-screen captions. No face visible, no name badges. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 2（4〜9秒）**
@@ -58,7 +58,7 @@ only, no music, no on-screen captions. No face visible, no name badges. Any visi
 ```
 Same setting. The hand flips back through several crossed-out
 revisions on earlier pages, pausing on the messiest one. Natural
-ambient sound only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
+ambient sound only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 3（9〜13秒）**
@@ -71,7 +71,7 @@ sections is set down beside the messy personal memo pad, the hand
 resting calmly on top of it. Soft light, settled mood. No face
 visible, no music, no captions, no legible text beyond abstract
 labeled blocks. Leave the lower third of the frame clean for text to
-be added later. Any visible handwriting or text is in Japanese, never English letters.
+be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 ## 公開前の映り込み確認項目

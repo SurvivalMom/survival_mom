@@ -53,7 +53,7 @@ interior, dim lighting, slightly tense mood. Close-up on a care record,
 an anonymous hand writing quickly, the pen moving faster than in a
 calm entry. Natural ambient sound only, no music, no on-screen
 captions. No face visible, no name badges, no readable patient
-information. Any visible handwriting or text is in Japanese, never English letters.
+information. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 2（4〜9秒）**
@@ -62,7 +62,7 @@ information. Any visible handwriting or text is in Japanese, never English lette
 ```
 Same setting. The hand finishes writing and rests on the desk, a
 slight tremor visible, pen set down unsteadily. Natural ambient sound
-only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
+only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 **Scene 3（9〜13秒）**
@@ -75,7 +75,7 @@ Same setting. The hand reaches toward a posted contact list or
 emergency procedure card on the wall, fingertips resting near it
 without pulling it down yet. Quiet, resolved mood. No face visible, no
 music, no captions. Leave the lower third of the frame clean for text
-to be added later. Any visible handwriting or text is in Japanese, never English letters.
+to be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
 ## 公開前の映り込み確認項目
