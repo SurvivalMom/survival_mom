@@ -44,20 +44,28 @@ export const SOURCE_VIDEO_DURATION_IN_SECONDS = 16.5;
 // lines than ura-01's header did.
 export const ura02Header = '気づけば、\nノートの字が\n全部、先輩の\nものになって\nいた。';
 
-// Lower telop layer. Scene 1 (0-4.5s, the forward page flip) is
-// deliberately blank per the script -- the header alone carries that
-// stretch. Each caption marks 1 key word/phrase with **…** for the
-// account's accent-color + white-stroke emphasis treatment.
+// Lower telop layer. Scene 1's blank window is 0-2.0s (shortened from an
+// original 4.5s) -- ura-01's posted Insights showed average watch time
+// landing almost exactly at its Scene 1/2 boundary (5.68s of 16.5s),
+// suggesting viewers swiped away before any lower-telop payoff appeared
+// at all. Moving the first caption up to 2.0s gets real content on
+// screen well before that drop-off point, instead of asking viewers to
+// sit through several seconds of page-flipping on the header alone.
+// Everything after is shifted earlier by 2.5s to match, and the final
+// CTA caption absorbs the leftover runtime (1.5s -> 4.0s) rather than
+// compressing every caption's reading time to make room. Each caption
+// marks 1 key word/phrase with **…** for the account's accent-color +
+// white-stroke emphasis treatment.
 export const ura02Segments: AlignedSegment[] = [
-	// Scene 2 (4.5-8.0s, searching backward through earlier pages).
-	{kind: 'line', text: '最後に**自分で**\n書いたのは、\nいつだった\nだろう。', startSeconds: 4.5, endSeconds: 8.0},
+	// Scene 2 (2.0-5.5s, searching backward through earlier pages).
+	{kind: 'line', text: '最後に**自分で**\n書いたのは、\nいつだった\nだろう。', startSeconds: 2.0, endSeconds: 5.5},
 
-	// Scene 3 (8.0-16.5s, the pen's pause and the close). Realization
+	// Scene 3 (5.5-16.5s, the pen's pause and the close). Realization
 	// sentence split across 2 short captions, then the CTA across 3 --
 	// same sequential-caption convention as ura-01's Scene 3.
-	{kind: 'line', text: '聞かれる前に\n**答えが来る**から、', startSeconds: 8.0, endSeconds: 10.0},
-	{kind: 'line', text: '考えなくなった\nのかもしれない。', startSeconds: 10.0, endSeconds: 12.0},
-	{kind: 'cta', text: '**保存して**、\n次に答えを', startSeconds: 12.0, endSeconds: 13.5},
-	{kind: 'cta', text: '渡される前に、\n**少しだけ**', startSeconds: 13.5, endSeconds: 15.0},
-	{kind: 'cta', text: '自分で考えて\nみてください。', startSeconds: 15.0, endSeconds: 16.5},
+	{kind: 'line', text: '聞かれる前に\n**答えが来る**から、', startSeconds: 5.5, endSeconds: 7.5},
+	{kind: 'line', text: '考えなくなった\nのかもしれない。', startSeconds: 7.5, endSeconds: 9.5},
+	{kind: 'cta', text: '**保存して**、\n次に答えを', startSeconds: 9.5, endSeconds: 11.0},
+	{kind: 'cta', text: '渡される前に、\n**少しだけ**', startSeconds: 11.0, endSeconds: 12.5},
+	{kind: 'cta', text: '自分で考えて\nみてください。', startSeconds: 12.5, endSeconds: 16.5},
 ];
