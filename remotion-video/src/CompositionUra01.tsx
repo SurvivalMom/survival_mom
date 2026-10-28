@@ -14,6 +14,13 @@ import {Telop, HeaderTelop} from './Telop';
  * the bottom third of frame here (not centered/top), both to match this
  * footage's own framing (the source prompts left the lower third clean for
  * text) and to stay clear of the persistent header above.
+ *
+ * Top/bottom padding is kept clear of where Instagram's own Reels chrome
+ * sits once posted (profile pic/follow button and the mute icon near the
+ * very top; caption text and the like/comment/share column near the very
+ * bottom) -- neither is visible in this raw render, so there's nothing to
+ * preview here, but the margin is sized generously against that UI rather
+ * than against this preview's own edges.
  */
 export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 	return (
@@ -23,7 +30,7 @@ export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 			{/* Persistent header layer -- not wrapped in a Sequence, so it
 			    renders from frame 0 through the composition's full duration
 			    with no mount/unmount re-trigger. */}
-			<AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', paddingTop: 48}}>
+			<AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', paddingTop: 96}}>
 				<HeaderTelop text={ura01Header} />
 			</AbsoluteFill>
 
@@ -44,7 +51,7 @@ export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 								justifyContent: 'flex-end',
 								alignItems: 'center',
 								padding: '0 36px',
-								paddingBottom: 120,
+								paddingBottom: 180,
 							}}
 						>
 							<Telop segment={segment} />
