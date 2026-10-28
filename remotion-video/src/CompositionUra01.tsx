@@ -21,6 +21,13 @@ import {Telop, HeaderTelop} from './Telop';
  * The header's own top padding is kept clear of Instagram's other chrome
  * near the very top (profile pic/follow button, the mute icon) for the
  * same reason.
+ *
+ * Horizontal padding on both layers is 90px -- 12.5% of this
+ * composition's 720px width -- per the account's telop design reference,
+ * which measured that margin against a real device comparison (content
+ * can crop at the left/right edges on a narrower-aspect phone than the
+ * one it was framed on). Telop/HeaderTelop's own maxWidth then narrows
+ * further within that, so this is a floor, not the only margin.
  */
 export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 	return (
@@ -30,7 +37,7 @@ export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 			{/* Persistent header layer -- not wrapped in a Sequence, so it
 			    renders from frame 0 through the composition's full duration
 			    with no mount/unmount re-trigger. */}
-			<AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', paddingTop: 96}}>
+			<AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', padding: '96px 90px 0'}}>
 				<HeaderTelop text={ura01Header} />
 			</AbsoluteFill>
 
@@ -50,7 +57,7 @@ export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 							style={{
 								justifyContent: 'center',
 								alignItems: 'center',
-								padding: '0 36px',
+								padding: '0 90px',
 							}}
 						>
 							<Telop segment={segment} />

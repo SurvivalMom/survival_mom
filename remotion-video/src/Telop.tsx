@@ -5,6 +5,49 @@ import {Segment} from './content';
 const FONT_STACK =
 	"'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Noto Sans JP', 'Meiryo', sans-serif";
 
+// Desaturated accent palette for emphasis words, paired with a white
+// stroke per the account's telop design reference: color carries the
+// impression, the stroke keeps it legible against any box/background
+// behind it. Cycled in order rather than picked per-word, since the
+// reference caps emphasis at 1-2 words per line and any of the 3 reads
+// fine together.
+const ACCENT_PALETTE = ['#5FB5FF', '#FF719D', '#5D79FF'];
+
+/**
+ * Renders `text`, treating `**word**` spans as emphasis: filled with the
+ * next color in ACCENT_PALETTE and given a white stroke, while everything
+ * else renders plain in the caller's own color. A caption with no `**`
+ * markers renders exactly as before -- this is opt-in per caption, not a
+ * change to the default look, and reserved for keywords/numbers/the call
+ * to action per the reference's "1-2 words per line, not the whole
+ * sentence" rule.
+ */
+const renderWithEmphasis = (text: string): React.ReactNode[] => {
+	const parts = text.split(/(\*\*.+?\*\*)/g);
+	let accentIndex = 0;
+	return parts.map((part, i) => {
+		const match = part.match(/^\*\*(.+)\*\*$/);
+		if (!match) {
+			return part;
+		}
+		const color = ACCENT_PALETTE[accentIndex % ACCENT_PALETTE.length];
+		accentIndex += 1;
+		return (
+			<span
+				key={i}
+				style={{
+					color,
+					WebkitTextStrokeWidth: '2px',
+					WebkitTextStrokeColor: '#ffffff',
+					paintOrder: 'stroke fill',
+				}}
+			>
+				{match[1]}
+			</span>
+		);
+	});
+};
+
 type Props = {
 	segment: Segment;
 };
@@ -103,7 +146,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 						whiteSpace: 'pre-line',
 					}}
 				>
-					{segment.text}
+					{renderWithEmphasis(segment.text)}
 				</div>
 				<div
 					style={{
@@ -144,7 +187,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					whiteSpace: 'pre-line',
 				}}
 			>
-				{segment.text}
+				{renderWithEmphasis(segment.text)}
 			</div>
 		</div>
 	);

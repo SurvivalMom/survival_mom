@@ -45,22 +45,34 @@ export const SOURCE_VIDEO_DURATION_IN_SECONDS = 16.5;
 
 // Persistent top-of-frame header, 0.0s through the full clip -- the
 // original hook line from the script, shown once and never re-triggered.
-// Manually broken after と (10 chars / 4 chars) -- left to auto-wrap at
-// HeaderTelop's size, the browser split it as 今日も「特変なし」と書い /
-// た。, an unbalanced 2-character orphan on the second line.
-export const ura01Header = '今日も「特変なし」と\n書いた。';
+// Re-broken into 3 shorter lines after CompositionUra01's safe-zone
+// padding narrowed this box (90px each side, ~7-8 chars/line budget at
+// HeaderTelop's size here, down from ~10 before): the old 2-line break
+// ("今日も「特変なし」と" / "書いた。") no longer fit its first line and
+// auto-wrapped a second time into a 3-line result with an orphaned "と".
+// This 3-line break keeps the quoted phrase intact on its own line
+// instead.
+export const ura01Header = '今日も\n「特変なし」\nと書いた。';
 
 // Lower telop layer. Scene 1 (0-5.5s, the writing beat) is deliberately
 // blank per the script -- the header alone carries that stretch.
+//
+// Each caption now marks 1 key word/phrase with **…** -- Telop.tsx renders
+// that span in an accent color with a white stroke, everything else stays
+// plain white, per the account's telop design reference ("emphasize 1-2
+// words per line, not the whole sentence"). The `\n` positions and visible
+// character count are unchanged from before, so the existing per-kind
+// line-length budget still holds -- the `**` markers themselves aren't
+// rendered.
 export const ura01Segments: AlignedSegment[] = [
 	// Scene 2 (5.5-9.5s, the pen's held pause).
-	{kind: 'line', text: '本当に、\n何もなかっただろうか。', startSeconds: 5.5, endSeconds: 9.5},
+	{kind: 'line', text: '本当に、\n**何もなかった**だろうか。', startSeconds: 5.5, endSeconds: 9.5},
 
 	// Scene 3 (9.5-16.5s, closing the notebook). Realization line first,
 	// then the CTA -- same sequential-caption convention as dokuhaku10's
 	// Scene 3, rather than stacking both in one block.
-	{kind: 'line', text: '変わったのは\n現場じゃなく、', startSeconds: 9.5, endSeconds: 11.5},
-	{kind: 'line', text: '気づく力の方\nかもしれない。', startSeconds: 11.5, endSeconds: 13.5},
-	{kind: 'cta', text: '保存して、\n次に書く前に、', startSeconds: 13.5, endSeconds: 15.3},
-	{kind: 'cta', text: '一度だけ手を\n止めてみてください。', startSeconds: 15.3, endSeconds: 16.5},
+	{kind: 'line', text: '変わったのは\n**現場じゃなく**、', startSeconds: 9.5, endSeconds: 11.5},
+	{kind: 'line', text: '**気づく力**の方\nかもしれない。', startSeconds: 11.5, endSeconds: 13.5},
+	{kind: 'cta', text: '**保存して**、\n次に書く前に、', startSeconds: 13.5, endSeconds: 15.3},
+	{kind: 'cta', text: '**一度だけ**手を\n止めてみてください。', startSeconds: 15.3, endSeconds: 16.5},
 ];
