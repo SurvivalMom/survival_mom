@@ -10,17 +10,17 @@ import {Telop, HeaderTelop} from './Telop';
  * no on-screen person, two-layer telop (see ura01Content.ts) --
  * HeaderTelop stays pinned to the top for the whole clip, while the lower
  * Telop layer changes per scene and is deliberately blank for Scene 1.
- * Unlike CompositionDokuhaku10, every lower-telop kind is anchored toward
- * the bottom third of frame here (not centered/top), both to match this
- * footage's own framing (the source prompts left the lower third clean for
- * text) and to stay clear of the persistent header above.
+ * The lower-telop layer is vertically centered (not bottom-anchored) --
+ * per explicit feedback, anchoring it near the bottom edge put it under
+ * Instagram's own posted-account chrome (username, caption text, the
+ * like/comment/share column), which isn't visible in this raw render but
+ * collides with text placed too close to that edge once actually posted.
+ * Centering keeps it clear of both that zone and the persistent header
+ * above regardless of how many lines a given caption wraps to.
  *
- * Top/bottom padding is kept clear of where Instagram's own Reels chrome
- * sits once posted (profile pic/follow button and the mute icon near the
- * very top; caption text and the like/comment/share column near the very
- * bottom) -- neither is visible in this raw render, so there's nothing to
- * preview here, but the margin is sized generously against that UI rather
- * than against this preview's own edges.
+ * The header's own top padding is kept clear of Instagram's other chrome
+ * near the very top (profile pic/follow button, the mute icon) for the
+ * same reason.
  */
 export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 	return (
@@ -48,10 +48,9 @@ export const Ura01WithFootage: React.FC<{fps: number}> = ({fps}) => {
 					>
 						<AbsoluteFill
 							style={{
-								justifyContent: 'flex-end',
+								justifyContent: 'center',
 								alignItems: 'center',
 								padding: '0 36px',
-								paddingBottom: 180,
 							}}
 						>
 							<Telop segment={segment} />
