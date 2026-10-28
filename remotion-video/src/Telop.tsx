@@ -76,6 +76,11 @@ export const Telop: React.FC<Props> = ({segment}) => {
 	}
 
 	if (segment.kind === 'cta') {
+		// Same dark "burned-in" box as the `line` kind below -- without it,
+		// the plain white text + drop-shadow combination this used to have
+		// read fine over a dark scene but lost contrast over a lighter
+		// background (e.g. the desk/notebook footage in the ura series),
+		// per explicit feedback that the CTA was hard to read.
 		return (
 			<div
 				style={{
@@ -83,6 +88,9 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					opacity,
 					maxWidth: '85%',
 					textAlign: 'center',
+					background: 'rgba(10,10,12,0.72)',
+					borderRadius: 18 * rem,
+					padding: `${22 * rem}px ${36 * rem}px`,
 				}}
 			>
 				<div
@@ -93,14 +101,13 @@ export const Telop: React.FC<Props> = ({segment}) => {
 						lineHeight: 1.32,
 						color: '#ffffff',
 						whiteSpace: 'pre-line',
-						textShadow: '0 6px 28px rgba(0,0,0,0.65)',
 					}}
 				>
 					{segment.text}
 				</div>
 				<div
 					style={{
-						marginTop: 28 * rem,
+						marginTop: 20 * rem,
 						height: 6 * rem,
 						width: 160 * rem,
 						marginLeft: 'auto',
