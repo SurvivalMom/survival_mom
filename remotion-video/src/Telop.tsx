@@ -81,8 +81,14 @@ export const Telop: React.FC<Props> = ({segment}) => {
 	// hand-fit to stay within these sizes' safe per-line character budget
 	// at this box's width, calibrated empirically against bold
 	// Hiragino/Gothic full-width glyphs (~1.35em/char, wider than the
-	// nominal 1em box): hook ~9 chars/line, line ~11 chars/line,
-	// cta ~10 chars/line. A caption needing more text than that reads
+	// nominal 1em box). Bumped up a size step from an earlier pass (hook
+	// 72->82, line 62->72, cta 64->74) per explicit feedback that the
+	// telop still read too small; maxWidth widened too (85-88% -> 95%)
+	// to recover some of the per-line character budget that a bigger
+	// font alone would have eaten: hook ~9 chars/line, line ~10
+	// chars/line, cta ~10 chars/line at this box's width -- tighter than
+	// before, so captions that fit 2 lines previously may now need 3
+	// shorter ones. A caption needing more text than the budget reads
 	// better split into several shorter sequential captions than packed
 	// into one tall multi-line block -- see content files for examples.
 
@@ -92,7 +98,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 				style={{
 					transform: `scale(${scale})`,
 					opacity,
-					maxWidth: '88%',
+					maxWidth: '95%',
 					padding: `${36 * rem}px ${44 * rem}px`,
 					borderRadius: 28 * rem,
 					background: '#d92b1f',
@@ -103,8 +109,8 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: 72 * rem,
-						lineHeight: 1.28,
+						fontSize: 82 * rem,
+						lineHeight: 1.26,
 						color: '#ffe8a3',
 						textAlign: 'center',
 						whiteSpace: 'pre-line',
@@ -129,7 +135,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 				style={{
 					transform: `scale(${scale})`,
 					opacity,
-					maxWidth: '85%',
+					maxWidth: '95%',
 					textAlign: 'center',
 					background: 'rgba(10,10,12,0.72)',
 					borderRadius: 18 * rem,
@@ -140,8 +146,8 @@ export const Telop: React.FC<Props> = ({segment}) => {
 					style={{
 						fontFamily: FONT_STACK,
 						fontWeight: 900,
-						fontSize: 64 * rem,
-						lineHeight: 1.32,
+						fontSize: 74 * rem,
+						lineHeight: 1.3,
 						color: '#ffffff',
 						whiteSpace: 'pre-line',
 					}}
@@ -170,7 +176,7 @@ export const Telop: React.FC<Props> = ({segment}) => {
 			style={{
 				transform: `scale(${scale})`,
 				opacity,
-				maxWidth: '86%',
+				maxWidth: '95%',
 				textAlign: 'center',
 				background: 'rgba(10,10,12,0.72)',
 				borderRadius: 18 * rem,
@@ -181,8 +187,8 @@ export const Telop: React.FC<Props> = ({segment}) => {
 				style={{
 					fontFamily: FONT_STACK,
 					fontWeight: 800,
-					fontSize: 62 * rem,
-					lineHeight: 1.3,
+					fontSize: 72 * rem,
+					lineHeight: 1.28,
 					color: '#ffffff',
 					whiteSpace: 'pre-line',
 				}}
@@ -203,16 +209,17 @@ export const Telop: React.FC<Props> = ({segment}) => {
  * the `hook` kind above) rather than a subordinate caption, since during
  * Scene 1 -- where the lower telop is blank -- this is the only text on
  * screen and needs to carry the hook's attention-grabbing job by itself.
- * Font size (68) is deliberately larger than both lower-telop kinds
- * (`line` 62, `cta` 64) so the header reads as more prominent than
- * whatever the lower layer is showing, not less -- per explicit feedback,
- * this replaced an earlier, smaller size that read as subordinate.
+ * Font size (78, bumped from an earlier 68 per the same feedback as the
+ * `line`/`cta` sizes above) is deliberately larger than both lower-telop
+ * kinds (`line` 72, `cta` 74) so the header reads as more prominent than
+ * whatever the lower layer is showing, not less -- per earlier explicit
+ * feedback, this replaced a smaller size that read as subordinate.
  * Same fixed-size-plus-manual-line-break convention as the rest of this
  * file applies here too: left to auto-wrap, this size fits roughly
- * ~10 chars/line within the box, but letting the browser pick the break
- * point produces lopsided splits (e.g. a 2-character orphan line) more
- * often than not, so header text longer than ~10 chars should carry its
- * own hand-placed `\n` at a natural clause boundary (see ura01Content.ts).
+ * ~7 chars/line within a 90px-safe-zone box like CompositionUra01's (down
+ * from ~10 before the size bump), so header text longer than that should
+ * carry its own hand-placed `\n` at natural clause boundaries, often
+ * meaning 3 shorter lines rather than 2 (see ura01Content.ts).
  */
 export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	const {width} = useVideoConfig();
@@ -221,7 +228,7 @@ export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	return (
 		<div
 			style={{
-				maxWidth: '92%',
+				maxWidth: '95%',
 				textAlign: 'center',
 				background: '#d92b1f',
 				borderRadius: 18 * rem,
@@ -233,8 +240,8 @@ export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 				style={{
 					fontFamily: FONT_STACK,
 					fontWeight: 900,
-					fontSize: 68 * rem,
-					lineHeight: 1.28,
+					fontSize: 78 * rem,
+					lineHeight: 1.26,
 					color: '#ffe8a3',
 					whiteSpace: 'pre-line',
 					textShadow: '0 3px 0 rgba(0,0,0,0.25)',

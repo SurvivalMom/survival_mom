@@ -60,13 +60,16 @@ export const ura01Header = '今日も\n「特変なし」\nと書いた。';
 // Each caption now marks 1 key word/phrase with **…** -- Telop.tsx renders
 // that span in an accent color with a white stroke, everything else stays
 // plain white, per the account's telop design reference ("emphasize 1-2
-// words per line, not the whole sentence"). The `\n` positions and visible
-// character count are unchanged from before, so the existing per-kind
-// line-length budget still holds -- the `**` markers themselves aren't
-// rendered.
+// words per line, not the whole sentence").
+//
+// Re-broken to a ~7 chars/line budget (down from ~10-11) after Telop.tsx's
+// font-size bump (line 62->72, cta 64->74) left less room per line within
+// this composition's 90px safe-zone box -- two captions below ("何もな
+// かっただろうか。", "一度だけ手を止めてみてください。") no longer fit
+// their old 2-line split and needed a 3rd line.
 export const ura01Segments: AlignedSegment[] = [
 	// Scene 2 (5.5-9.5s, the pen's held pause).
-	{kind: 'line', text: '本当に、\n**何もなかった**だろうか。', startSeconds: 5.5, endSeconds: 9.5},
+	{kind: 'line', text: '本当に、\n**何もなかった**\nだろうか。', startSeconds: 5.5, endSeconds: 9.5},
 
 	// Scene 3 (9.5-16.5s, closing the notebook). Realization line first,
 	// then the CTA -- same sequential-caption convention as dokuhaku10's
@@ -74,5 +77,5 @@ export const ura01Segments: AlignedSegment[] = [
 	{kind: 'line', text: '変わったのは\n**現場じゃなく**、', startSeconds: 9.5, endSeconds: 11.5},
 	{kind: 'line', text: '**気づく力**の方\nかもしれない。', startSeconds: 11.5, endSeconds: 13.5},
 	{kind: 'cta', text: '**保存して**、\n次に書く前に、', startSeconds: 13.5, endSeconds: 15.3},
-	{kind: 'cta', text: '**一度だけ**手を\n止めてみてください。', startSeconds: 15.3, endSeconds: 16.5},
+	{kind: 'cta', text: '**一度だけ**\n手を止めて\nみてください。', startSeconds: 15.3, endSeconds: 16.5},
 ];
