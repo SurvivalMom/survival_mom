@@ -49,7 +49,7 @@ soft daylight, natural ambient sound only, no music, no on-screen
 captions. Close-up on a spiral guidance notebook, an anonymous hand
 flipping through page after page filled entirely with one person's
 handwriting -- no blank space, no other handwriting visible. No face
-visible, no name badges.
+visible, no name badges. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 2（4〜9秒）**
@@ -58,7 +58,7 @@ visible, no name badges.
 ```
 Same setting. The hand flips backward through earlier pages, searching,
 slowing down, scanning each one. Natural ambient sound only, no music,
-no captions. No face visible.
+no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 3（9〜13秒）**
@@ -69,7 +69,7 @@ no captions. No face visible.
 Same setting. The hand holds a pen above a blank line at the end of the
 notebook, pauses, then closes the notebook without writing anything.
 Quiet, unresolved mood. No face visible, no music, no captions. Leave
-the lower third of the frame clean for text to be added later.
+the lower third of the frame clean for text to be added later. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 ## 公開前の映り込み確認項目

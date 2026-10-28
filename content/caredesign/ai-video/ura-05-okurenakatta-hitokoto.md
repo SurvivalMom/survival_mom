@@ -49,7 +49,7 @@ messaging app open, text being typed and then deleted character by
 character -- the screen content kept abstract/illegible, camera
 framing stays tight so no real app UI or readable text is rendered.
 Natural ambient sound only, no music, no on-screen captions. No face
-visible.
+visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 2（4〜9秒）**
@@ -58,7 +58,7 @@ visible.
 ```
 Same setting. The hand stops typing entirely, thumb hovering over the
 screen without pressing anything. Natural ambient sound only, no
-music, no captions. No face visible.
+music, no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 3（9〜13秒）**
@@ -69,7 +69,7 @@ music, no captions. No face visible.
 Same setting. The phone screen dims to black as the hand sets it face
 down on the table. Quiet, unresolved mood. No face visible, no music,
 no captions. Leave the lower third of the frame clean for text to be
-added later.
+added later. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 ## 公開前の映り込み確認項目

@@ -48,7 +48,7 @@ Vertical 9:16 cinematic, realistic care facility break room interior,
 a corkboard with several notices, one flyer slightly faded and
 curling at the corner compared to the others. Natural ambient sound
 only, no music, no on-screen captions. No face visible, no name
-badges, no readable text on surrounding notices.
+badges, no readable text on surrounding notices. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 2（4〜9秒）**
@@ -57,7 +57,7 @@ badges, no readable text on surrounding notices.
 ```
 Same setting. An anonymous hand reaches toward the flyer, pauses just
 short of touching it, then withdraws without taking it down. Natural
-ambient sound only, no music, no captions. No face visible.
+ambient sound only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 3（9〜13秒）**
@@ -68,7 +68,7 @@ ambient sound only, no music, no captions. No face visible.
 Same setting. Camera slowly pulls back from the corkboard, the flyer
 left untouched, the room quiet and still. Soft daylight fading toward
 evening. No face visible, no music, no captions. Leave the lower third
-of the frame clean for text to be added later.
+of the frame clean for text to be added later. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 ## 公開前の映り込み確認項目

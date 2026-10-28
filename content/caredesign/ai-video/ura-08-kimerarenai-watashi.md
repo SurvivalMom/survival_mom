@@ -49,7 +49,7 @@ Vertical 9:16 cinematic, realistic care facility office interior, soft
 daylight. Close-up on a record-keeping desk, an anonymous hand pausing
 mid-write, glancing sideways toward a nearby manual or a senior
 colleague's notebook just out of full focus. Natural ambient sound
-only, no music, no on-screen captions. No face visible, no name badges.
+only, no music, no on-screen captions. No face visible, no name badges. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 2（4〜9秒）**
@@ -59,7 +59,7 @@ only, no music, no on-screen captions. No face visible, no name badges.
 Same setting. The hand copies a phrasing from a reference notebook into
 the current record, mirroring the handwriting style rather than writing
 freely. Natural ambient sound only, no music, no captions. No face
-visible.
+visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 3（9〜13秒）**
@@ -70,7 +70,7 @@ visible.
 Same setting. The hand stops copying, pen lifted, pausing over a blank
 line as if about to write something in its own words. Quiet,
 reflective mood. No face visible, no music, no captions. Leave the
-lower third of the frame clean for text to be added later.
+lower third of the frame clean for text to be added later. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 ## 公開前の映り込み確認項目

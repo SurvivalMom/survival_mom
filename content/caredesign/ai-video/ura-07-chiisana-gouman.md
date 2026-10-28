@@ -48,7 +48,7 @@ interior, dim warm desk lamp light. Close-up on a care record, an
 anonymous hand writing a short, clipped entry quickly, pressing the
 pen slightly harder than usual. Natural ambient sound only, no music,
 no on-screen captions. No face visible, no name badges, no readable
-patient information.
+patient information. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 2（4〜9秒）**
@@ -58,7 +58,7 @@ patient information.
 Same setting. The hand stops, pen lifted, as it re-reads what was just
 written, the pen tip tracing back over the entry without adding
 anything. Natural ambient sound only, no music, no captions. No face
-visible.
+visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 3（9〜13秒）**
@@ -69,7 +69,7 @@ visible.
 Same setting. The pen is set down gently beside the notebook, the hand
 withdrawing slowly. Soft lamp light, quiet, reflective mood. No face
 visible, no music, no captions. Leave the lower third of the frame
-clean for text to be added later.
+clean for text to be added later. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 ## 公開前の映り込み確認項目

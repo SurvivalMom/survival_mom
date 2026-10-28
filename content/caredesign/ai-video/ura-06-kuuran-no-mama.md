@@ -48,7 +48,7 @@ Vertical 9:16 cinematic, realistic care facility office interior,
 close-up on a staff evaluation record, the feedback column blank
 across every entry, every month. An anonymous hand traces down the
 empty column. Natural ambient sound only, no music, no on-screen
-captions. No face visible, no name badges.
+captions. No face visible, no name badges. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 2（4〜9秒）**
@@ -57,7 +57,7 @@ captions. No face visible, no name badges.
 ```
 Same setting. The hand picks up a pen as if to write something in the
 blank column, hesitates, then sets the pen back down without writing.
-Natural ambient sound only, no music, no captions. No face visible.
+Natural ambient sound only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 3（9〜13秒）**
@@ -68,7 +68,7 @@ Natural ambient sound only, no music, no captions. No face visible.
 Same setting. The evaluation record is closed slowly and set aside.
 Soft daylight, quiet, unresolved mood. No face visible, no music, no
 captions. Leave the lower third of the frame clean for text to be
-added later.
+added later. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 ## 公開前の映り込み確認項目

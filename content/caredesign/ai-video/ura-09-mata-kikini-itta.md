@@ -47,7 +47,7 @@
 Vertical 9:16 cinematic, realistic care facility office interior.
 Close-up on a record form, an anonymous hand's pen stopping mid-sentence,
 the entry left unfinished. Natural ambient sound only, no music, no
-on-screen captions. No face visible, no name badges.
+on-screen captions. No face visible, no name badges. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 2（4〜9秒）**
@@ -56,7 +56,7 @@ on-screen captions. No face visible, no name badges.
 ```
 Same setting. The hand sets the pen down and starts to rise from the
 chair, as if about to go ask someone, the chair creaking slightly.
-Natural ambient sound only, no music, no captions. No face visible.
+Natural ambient sound only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 **Scene 3（9〜13秒）**
@@ -67,7 +67,7 @@ Natural ambient sound only, no music, no captions. No face visible.
 Same setting. The hand pauses halfway up, then sits back down and picks
 up the pen again, resuming the unfinished sentence in its own words.
 Quiet, resolved mood. No face visible, no music, no captions. Leave the
-lower third of the frame clean for text to be added later.
+lower third of the frame clean for text to be added later. Any visible handwriting or text is in Japanese, never English letters.
 ```
 
 ## 公開前の映り込み確認項目
