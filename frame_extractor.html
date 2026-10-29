@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <!-- iPhoneのノッチ・ホームバーまで考慮した表示設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no">
+    <title>動画フレーム抽出</title>
+    <!-- スタイリングにはTailwind CSSを使用（バージョン固定） -->
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <style>
+        /* 落ち着いた日本語フォントと配色のベース設定 */
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f7f9fa;
+            color: #333333;
+            /* iPhoneのノッチ・ホームバーに内容が隠れないようにする */
+            padding-left: max(16px, env(safe-area-inset-left, 0px));
+            padding-right: max(16px, env(safe-area-inset-right, 0px));
+            padding-top: max(16px, env(safe-area-inset-top, 0px));
+            padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+            -webkit-text-size-adjust: 100%;
+        }
+        /* スマホでのダブルタップ拡大・タップ時のハイライトを抑える */
+        button, label, a, input { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+        button:disabled { opacity: .6; cursor: wait; }
+
+        /* ドラッグ＆ドロップ領域のホバー時 */
+        .drag-active { background-color: #e2e8f0; border-color: #475569; }
+        /* 動画読み込み後はドロップ領域を小さくして、動画を画面上部に寄せる */
+        #dropZone.compact { padding: 12px; margin-bottom: 20px; }
+        #dropZone.compact .dz-extra { display: none; }
+
+        /* シークスライダー：指で掴みやすい大きさに（iOS/Android共通） */
+        #timeSlider { -webkit-appearance: none; appearance: none; width: 100%; height: 32px; background: transparent; cursor: pointer; }
+        #timeSlider::-webkit-slider-runnable-track { height: 8px; background: #cbd5e1; border-radius: 9999px; }
+        #timeSlider::-moz-range-track { height: 8px; background: #cbd5e1; border-radius: 9999px; }
+        #timeSlider::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -10px; border-radius: 50%; background: #475569; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+        #timeSlider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #475569; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+
+        /* iOSで入力欄にフォーカスしたとき画面が勝手に拡大されないよう16px以上にする */
+        #exactTimeInput { font-size: 16px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center">
+
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+        <!-- ヘッダー -->
+        <header class="bg-slate-700 text-white p-5 text-center">
+            <h1 class="text-xl md:text-2xl font-bold tracking-wider">動画フレーム抽出</h1>
+            <p class="text-sm text-slate-200 mt-2">高画質なPNG画像をブラウザ上で作成</p>
+        </header>
+
+        <!-- 3ステップの使い方ガイド -->
+        <section class="p-5 md:p-6 bg-slate-50 border-b border-slate-100">
+            <h2 class="text-sm font-bold text-slate-500 mb-3 tracking-widest">使い方</h2>
+            <ol class="list-decimal list-inside text-slate-700 space-y-2 text-sm md:text-base">
+                <li>下の領域から<strong>動画ファイル</strong>を選択、またはドロップします。</li>
+                <li>スライダーや「1コマ」ボタンで、保存したいシーンを探します。</li>
+                <li><strong>「このフレームを抽出」</strong>を押し、「保存」から端末に保存します。</li>
+            </ol>
+            <p class="text-xs text-slate-500 mt-3 leading-relaxed">
+                iPhone・Androidでは「保存」を押すと共有メニューが開きます。「画像を保存」を選ぶと写真アプリ（ギャラリー）に入ります。<br>
+                動画はお使いの端末の中だけで処理され、どこにも送信されません。
+            </p>
+        </section>
+
+        <!-- メインコンテンツ領域 -->
+        <main class="p-5 md:p-6">
+
+            <!-- お知らせ・エラーメッセージ表示領域 -->
+            <div id="statusMessage" role="status" aria-live="polite" class="mb-6 p-4 rounded-lg bg-blue-50 text-blue-800 text-sm border border-blue-200">
+                動画が選択されていません。お使いの端末から動画を読み込んでください。
+            </div>
+
+            <!-- ファイル入力（iOSでも確実に開くよう display:none ではなく sr-only で隠す） -->
+            <input type="file" id="fileInput" accept="video/*" class="sr-only">
+
+            <!-- 動画選択・ドラッグ＆ドロップ領域（領域全体がタップ可能） -->
+            <label for="fileInput" id="dropZone" class="block border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-colors cursor-pointer hover:bg-slate-50 mb-8">
+                <svg class="dz-extra mx-auto h-12 w-12 text-slate-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <p class="dz-extra text-slate-600 mb-2 font-medium">ここをタップして動画を選ぶ</p>
+                <p class="dz-extra text-sm text-slate-400 mb-4">パソコンではドロップもできます</p>
+                <span id="pickBtnLabel" class="inline-block bg-slate-600 text-white px-6 py-2.5 rounded-lg hover:bg-slate-700 transition shadow-sm font-medium">
+                    動画を選択
+                </span>
+            </label>
+
+            <!-- 動画プレイヤー・操作パネル（初期状態は非表示） -->
+            <div id="playerSection" class="hidden space-y-5">
+
+                <!-- 動画表示エリア -->
+                <div class="bg-black rounded-lg overflow-hidden flex justify-center items-center shadow-inner">
+                    <!-- playsinline: iPhoneで勝手に全画面にならないように / muted: 自動での映像デコードを許可させる -->
+                    <video id="videoElement" class="max-w-full max-h-[45vh]" playsinline webkit-playsinline muted preload="auto"></video>
+                </div>
+
+                <!-- コントロールパネル -->
+                <div class="bg-slate-100 p-4 rounded-xl border border-slate-200 space-y-3">
+
+                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                        <!-- 再生・一時停止ボタン -->
+                        <button id="playPauseBtn" type="button" aria-label="再生" class="bg-white border border-slate-300 text-slate-700 w-12 h-12 rounded-full flex items-center justify-center hover:bg-slate-50 shadow-sm transition shrink-0">
+                            <svg id="playIcon" class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+                            <svg id="pauseIcon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+                        </button>
+
+                        <!-- 時間表示と秒数直接入力 -->
+                        <div class="flex items-center gap-2 text-sm text-slate-700 font-mono">
+                            <span id="currentTimeDisplay">0:00</span>
+                            <span class="text-slate-400">/</span>
+                            <span id="durationDisplay">0:00</span>
+                            <div class="ml-1 pl-2 border-l border-slate-300 flex items-center gap-1">
+                                <input type="number" id="exactTimeInput" inputmode="decimal" step="0.01" min="0" class="w-24 px-2 py-1 rounded border border-slate-300 text-right focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500" placeholder="0.00" aria-label="秒数を指定">
+                                <span>秒</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- シークスライダー -->
+                    <input type="range" id="timeSlider" min="0" max="100" value="0" step="0.01" aria-label="再生位置">
+
+                    <!-- 細かい位置合わせボタン（スマホではスライダーだけだと狙ったコマに止めにくいため） -->
+                    <div class="grid grid-cols-4 gap-2">
+                        <button type="button" data-step="-1" class="step-btn bg-white border border-slate-300 rounded-lg py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">◀ 1秒</button>
+                        <button type="button" data-step="-frame" class="step-btn bg-white border border-slate-300 rounded-lg py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">◀ 1コマ</button>
+                        <button type="button" data-step="frame" class="step-btn bg-white border border-slate-300 rounded-lg py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">1コマ ▶</button>
+                        <button type="button" data-step="1" class="step-btn bg-white border border-slate-300 rounded-lg py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">1秒 ▶</button>
+                    </div>
+                </div>
+
+                <!-- フレーム抽出ボタン -->
+                <button id="extractBtn" type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <span id="extractBtnLabel">このフレームを抽出 (PNG)</span>
+                </button>
+            </div>
+
+            <!-- プレビューとダウンロード領域（初期状態は非表示） -->
+            <div id="previewSection" class="hidden mt-8 pt-6 border-t border-slate-200">
+                <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                    <h3 class="text-lg font-bold text-slate-700">抽出履歴</h3>
+                    <button id="saveAllBtn" type="button" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold py-2 px-4 rounded-lg transition">すべて保存</button>
+                </div>
+                <p class="text-xs text-slate-500 mb-3">画像をタップすると大きく表示されます。大きく表示した画像を長押ししても保存できます。</p>
+                <div id="historyList" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                    <!-- 動的に履歴が追加されます -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 拡大表示（長押し保存用） -->
+    <div id="viewer" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="画像の拡大表示">
+        <img id="viewerImg" class="max-w-full max-h-[75vh] object-contain rounded" alt="">
+        <p class="text-slate-200 text-xs mt-3 text-center">画像を長押しすると「写真に保存」できます</p>
+        <div class="flex gap-3 mt-4">
+            <button id="viewerSaveBtn" type="button" class="bg-white text-slate-800 font-bold py-2.5 px-6 rounded-lg">保存</button>
+            <button id="viewerCloseBtn" type="button" class="bg-slate-600 text-white font-bold py-2.5 px-6 rounded-lg">閉じる</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 要素の取得 ---
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const pickBtnLabel = document.getElementById('pickBtnLabel');
+        const videoElement = document.getElementById('videoElement');
+        const playerSection = document.getElementById('playerSection');
+        const previewSection = document.getElementById('previewSection');
+
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+
+        const timeSlider = document.getElementById('timeSlider');
+        const exactTimeInput = document.getElementById('exactTimeInput');
+        const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+        const durationDisplay = document.getElementById('durationDisplay');
+
+        const extractBtn = document.getElementById('extractBtn');
+        const extractBtnLabel = document.getElementById('extractBtnLabel');
+        const historyList = document.getElementById('historyList');
+        const saveAllBtn = document.getElementById('saveAllBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        const viewer = document.getElementById('viewer');
+        const viewerImg = document.getElementById('viewerImg');
+        const viewerSaveBtn = document.getElementById('viewerSaveBtn');
+        const viewerCloseBtn = document.getElementById('viewerCloseBtn');
+
+        let currentObjectUrl = null;
+        let currentVideoName = "video"; // 元動画の名前を保持
+        let pendingSeek = null;         // シーク中に来た次の移動先（連続シークで固まるのを防ぐ）
+        let sliderDragging = false;     // スライダー操作中は再生位置で上書きしない
+        let isExtracting = false;
+        let frames = [];                // 抽出履歴 { file, url, card }
+        let viewerFrame = null;
+
+        // 1コマの長さ。ブラウザから正確なfpsは取れないため、スマホ動画で一般的な30fpsとみなす
+        const FRAME_STEP = 1 / 30;
+
+        // タッチ端末（スマホ・タブレット）では共有メニュー経由の保存を優先する
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+
+        // --- ユーティリティ関数 ---
+        // 秒数を M:SS フォーマットに変換する
+        function formatTime(seconds) {
+            if (!isFinite(seconds)) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        // ステータスメッセージを更新し、UIの表示色を変える
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = 'mb-6 p-4 rounded-lg text-sm border';
+            if (type === 'error') {
+                statusMessage.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
+            } else if (type === 'success') {
+                statusMessage.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
+            } else {
+                statusMessage.classList.add('bg-blue-50', 'text-blue-800', 'border-blue-200');
+            }
+        }
+
+        // 動画ファイルかどうか（Androidの一部ではファイル形式(type)が空になるため拡張子でも判定）
+        function isVideoFile(file) {
+            if (file.type && file.type.startsWith('video/')) return true;
+            return /\.(mp4|m4v|mov|webm|3gp|3g2|mkv|avi|mpe?g|ts)$/i.test(file.name);
+        }
+
+        function clamp(t) {
+            const max = isFinite(videoElement.duration) ? videoElement.duration : 0;
+            return Math.min(Math.max(t, 0), max);
+        }
+
+        // --- 動画読み込み処理 ---
+        function handleVideoFile(file) {
+            if (!file) return;
+
+            if (!isVideoFile(file)) {
+                showStatus('未対応のファイルです。動画ファイルを選択してください。', 'error');
+                return;
+            }
+
+            // 以前のObjectURLがあれば解放し、メモリリークを防ぐ
+            if (currentObjectUrl) {
+                URL.revokeObjectURL(currentObjectUrl);
+            }
+
+            showStatus('動画を読み込んでいます...', 'info');
+            playerSection.classList.add('hidden');
+            pendingSeek = null;
+
+            // 動画変更時は履歴リストをリセットして非表示にする
+            clearHistory();
+
+            // 新しい動画URLを生成してセット
+            currentObjectUrl = URL.createObjectURL(file);
+            videoElement.src = currentObjectUrl;
+            videoElement.load();
+
+            // ファイル名の保持とサニタイズ（拡張子を外し、使用不可文字を_に置換）
+            const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+            currentVideoName = nameWithoutExt.replace(/[\\/:*?"<>|]/g, "_") || "video";
+
+            // 同じ動画をもう一度選んでも反応するように入力をリセット
+            fileInput.value = '';
+        }
+
+        // --- ドラッグ＆ドロップイベント（パソコン向け） ---
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-active');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-active');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-active');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleVideoFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // ファイル入力の変更イベント
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                handleVideoFile(e.target.files[0]);
+            }
+        });
+
+        // --- 動画プレイヤーのイベント ---
+        // メタデータ（長さや解像度）読み込み完了時
+        videoElement.addEventListener('loadedmetadata', () => {
+            timeSlider.max = isFinite(videoElement.duration) ? videoElement.duration : 0;
+            exactTimeInput.max = timeSlider.max;
+            durationDisplay.textContent = formatTime(videoElement.duration);
+
+            showStatus('動画の読み込みが完了しました。抽出したいシーンを探してください。', 'success');
+            playerSection.classList.remove('hidden');
+            dropZone.classList.add('compact');
+            pickBtnLabel.textContent = '別の動画を選ぶ';
+
+            // iPhoneは読み込んだだけでは映像を表示しないことがあるため、先頭へ少しだけシークして最初のコマを描画させる
+            if (videoElement.readyState < 2) {
+                videoElement.currentTime = 0.001;
+            }
+
+            updateTimeUI();
+        });
+
+        // 開けない動画（形式非対応など）のときのエラー表示
+        videoElement.addEventListener('error', () => {
+            if (!videoElement.getAttribute('src')) return;
+            const code = videoElement.error ? videoElement.error.code : 0;
+            playerSection.classList.add('hidden');
+            if (code === 4) {
+                showStatus('この動画の形式は、このブラウザでは開けません。iPhoneで撮った動画（HEVC形式）はAndroidやパソコンでは開けないことがあります。撮影した端末で開くか、MP4（H.264）形式に変換してからお試しください。', 'error');
+            } else {
+                showStatus('動画の読み込み中にエラーが起きました。もう一度動画を選び直してください。', 'error');
+            }
+        });
+
+        // 動画の再生時間が更新されたとき（再生中やシーク時）
+        videoElement.addEventListener('timeupdate', updateTimeUI);
+
+        // シークが終わったら、待っていた次の移動先へ進む
+        videoElement.addEventListener('seeked', () => {
+            if (pendingSeek !== null) {
+                const t = pendingSeek;
+                pendingSeek = null;
+                videoElement.currentTime = t;
+            }
+            updateTimeUI();
+        });
+
+        function updateTimeUI() {
+            const t = pendingSeek !== null ? pendingSeek : videoElement.currentTime;
+            // スライダーと入力欄を現在の再生時間に同期させる（操作中は上書きしない）
+            if (!sliderDragging) {
+                timeSlider.value = t;
+            }
+            if (document.activeElement !== exactTimeInput) {
+                exactTimeInput.value = t.toFixed(2);
+            }
+            currentTimeDisplay.textContent = formatTime(t);
+        }
+
+        // シーク中に次のシークを重ねると、スマホでは動画が固まりやすいので1つずつ処理する
+        function seekTo(t) {
+            t = clamp(t);
+            if (videoElement.seeking) {
+                pendingSeek = t;
+            } else {
+                videoElement.currentTime = t;
+            }
+            updateTimeUI();
+        }
+
+        // --- コントロールの操作 ---
+        // 再生・一時停止の切り替え
+        playPauseBtn.addEventListener('click', () => {
+            if (videoElement.paused) {
+                const p = videoElement.play();
+                if (p && p.catch) {
+                    p.catch(() => showStatus('再生できませんでした。もう一度再生ボタンを押してください。', 'error'));
+                }
+            } else {
+                videoElement.pause();
+            }
+        });
+
+        // 再生状態に合わせてアイコンを切り替え
+        videoElement.addEventListener('play', () => {
+            playIcon.classList.add('hidden');
+            pauseIcon.classList.remove('hidden');
+            playPauseBtn.setAttribute('aria-label', '一時停止');
+        });
+        videoElement.addEventListener('pause', () => {
+            pauseIcon.classList.add('hidden');
+            playIcon.classList.remove('hidden');
+            playPauseBtn.setAttribute('aria-label', '再生');
+        });
+
+        // スライダーでのシーク操作
+        timeSlider.addEventListener('input', (e) => {
+            sliderDragging = true;
+            seekTo(parseFloat(e.target.value));
+        });
+        timeSlider.addEventListener('change', () => {
+            sliderDragging = false;
+            updateTimeUI();
+        });
+
+        // 秒数入力欄での正確なシーク操作
+        exactTimeInput.addEventListener('change', (e) => {
+            let targetTime = parseFloat(e.target.value);
+            if (isNaN(targetTime)) targetTime = 0;
+            targetTime = clamp(targetTime);
+            seekTo(targetTime);
+            e.target.value = targetTime.toFixed(2);
+        });
+
+        // 1コマ・1秒送りボタン
+        document.querySelectorAll('.step-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                videoElement.pause();
+                const base = pendingSeek !== null ? pendingSeek : videoElement.currentTime;
+                const step = btn.dataset.step;
+                const delta = step === 'frame' ? FRAME_STEP : step === '-frame' ? -FRAME_STEP : parseFloat(step);
+                seekTo(base + delta);
+            });
+        });
+
+        // --- フレーム抽出処理 ---
+        // 映像が描画できる状態になるまで待つ（iPhoneは読み込み直後やシーク中だと真っ黒になるため）
+        function waitForFrame(timeoutMs = 5000) {
+            return new Promise((resolve, reject) => {
+                const isReady = () => videoElement.readyState >= 2 && !videoElement.seeking && pendingSeek === null;
+                if (isReady()) return resolve();
+
+                const events = ['seeked', 'loadeddata', 'canplay'];
+                const check = () => { if (isReady()) { cleanup(); resolve(); } };
+                const timer = setTimeout(() => {
+                    cleanup();
+                    reject(new Error('映像の準備ができませんでした。再生ボタンを押して少しだけ再生してから、もう一度「このフレームを抽出」を押してください。'));
+                }, timeoutMs);
+                function cleanup() {
+                    clearTimeout(timer);
+                    events.forEach((ev) => videoElement.removeEventListener(ev, check));
+                }
+                events.forEach((ev) => videoElement.addEventListener(ev, check));
+
+                // まだ映像が来ていなければ、同じ位置へシークし直して描画を促す
+                if (!videoElement.seeking && videoElement.readyState < 2) {
+                    videoElement.currentTime = videoElement.currentTime;
+                }
+            });
+        }
+
+        // 現在のコマを元の解像度でPNGにする
+        function captureFrame() {
+            const w = videoElement.videoWidth;
+            const h = videoElement.videoHeight;
+            if (!w || !h) {
+                return Promise.reject(new Error('映像のサイズが取得できませんでした。動画を選び直してください。'));
+            }
+
+            // iPhoneのSafariはCanvasの大きさに上限（約1677万画素）があるため、超える場合だけ縮小する
+            const MAX_PIXELS = 16777216;
+            const scale = w * h > MAX_PIXELS ? Math.sqrt(MAX_PIXELS / (w * h)) : 1;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.floor(w * scale);
+            canvas.height = Math.floor(h * scale);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            // toDataURLは画面を止めてしまうため、非同期のtoBlobで画像化する
+            return new Promise((resolve, reject) => {
+                canvas.toBlob((blob) => {
+                    // Canvasのメモリをすぐ解放する（スマホでのメモリ不足対策）
+                    canvas.width = 0;
+                    canvas.height = 0;
+                    if (blob) resolve(blob);
+                    else reject(new Error('画像の作成に失敗しました。端末のメモリが足りない可能性があります。ほかのアプリを閉じてからお試しください。'));
+                }, 'image/png');
+            });
+        }
+
+        extractBtn.addEventListener('click', async () => {
+            // 連打で同じ画像が何枚も追加されないようにする
+            if (isExtracting || !currentObjectUrl) return;
+            isExtracting = true;
+            extractBtn.disabled = true;
+            extractBtnLabel.textContent = '抽出しています...';
+
+            try {
+                // 再生中だと、保存される絵と記録する時刻がずれるため一時停止する
+                videoElement.pause();
+                await waitForFrame();
+                const timeInSeconds = videoElement.currentTime;
+                const blob = await captureFrame();
+                addHistory(blob, timeInSeconds);
+                showStatus('抽出しました。下の「保存」から端末に保存できます。', 'success');
+            } catch (err) {
+                showStatus(err.message, 'error');
+            } finally {
+                isExtracting = false;
+                extractBtn.disabled = false;
+                extractBtnLabel.textContent = 'このフレームを抽出 (PNG)';
+            }
+        });
+
+        // --- 保存処理 ---
+        function canShareFiles(files) {
+            try {
+                return !!(navigator.canShare && navigator.canShare({ files }));
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // パソコン向け：ダウンロードとして保存（iPhoneでは「ファイル」アプリに入る）
+        function downloadFile(file) {
+            const url = URL.createObjectURL(file);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        }
+
+        // スマホでは共有メニュー（「画像を保存」で写真アプリへ）、使えなければダウンロード
+        async function saveFiles(files) {
+            if (isTouchDevice && canShareFiles(files)) {
+                try {
+                    await navigator.share({ files });
+                    return;
+                } catch (err) {
+                    // ユーザーが共有メニューを閉じただけなら何もしない
+                    if (err && err.name === 'AbortError') return;
+                }
+            }
+            files.forEach((file, i) => setTimeout(() => downloadFile(file), i * 400));
+        }
+
+        // --- 履歴の管理 ---
+        function addHistory(blob, timeInSeconds) {
+            const formattedTime = formatTime(timeInSeconds);
+
+            // ファイル名用の時刻フォーマット (例: 00m12.3s)
+            const m = Math.floor(timeInSeconds / 60).toString().padStart(2, '0');
+            const s = (timeInSeconds % 60).toFixed(1).padStart(4, '0');
+            const fileName = `${currentVideoName}_${m}m${s}s.png`;
+
+            const file = new File([blob], fileName, { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            const frame = { file, url, card: null };
+
+            // 履歴カードのDOM要素を作成
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col';
+
+            // サムネイル画像領域（タップで拡大）
+            const imgBtn = document.createElement('button');
+            imgBtn.type = 'button';
+            imgBtn.className = 'bg-slate-100 p-2 flex-grow flex items-center justify-center';
+            imgBtn.setAttribute('aria-label', `${formattedTime} のフレームを拡大表示`);
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'max-h-32 object-contain rounded shadow-sm';
+            img.alt = `抽出フレーム (${formattedTime})`;
+            imgBtn.appendChild(img);
+            imgBtn.addEventListener('click', () => openViewer(frame));
+
+            // メタ情報・ボタン領域
+            const infoWrap = document.createElement('div');
+            infoWrap.className = 'p-2.5 bg-slate-50 border-t border-slate-100 flex flex-col gap-2';
+
+            const timeLabel = document.createElement('div');
+            timeLabel.className = 'text-xs text-slate-500 font-mono text-center';
+            timeLabel.textContent = `${formattedTime} (${timeInSeconds.toFixed(2)}s)`;
+
+            const btnWrap = document.createElement('div');
+            btnWrap.className = 'flex gap-2';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.type = 'button';
+            saveBtn.className = 'flex-1 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-2.5 px-2 rounded transition';
+            saveBtn.textContent = '保存';
+            saveBtn.addEventListener('click', () => saveFiles([file]));
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold py-2.5 px-3 rounded transition';
+            deleteBtn.textContent = '削除';
+            deleteBtn.addEventListener('click', () => removeFrame(frame));
+
+            btnWrap.appendChild(saveBtn);
+            btnWrap.appendChild(deleteBtn);
+            infoWrap.appendChild(timeLabel);
+            infoWrap.appendChild(btnWrap);
+            card.appendChild(imgBtn);
+            card.appendChild(infoWrap);
+            frame.card = card;
+
+            // リストの先頭（最新）に追加
+            frames.unshift(frame);
+            historyList.prepend(card);
+            refreshHistoryHeader();
+
+            previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function removeFrame(frame) {
+            frame.card.remove();
+            URL.revokeObjectURL(frame.url);
+            frames = frames.filter((f) => f !== frame);
+            refreshHistoryHeader();
+        }
+
+        function clearHistory() {
+            frames.forEach((f) => URL.revokeObjectURL(f.url));
+            frames = [];
+            historyList.innerHTML = '';
+            refreshHistoryHeader();
+        }
+
+        function refreshHistoryHeader() {
+            previewSection.classList.toggle('hidden', frames.length === 0);
+            saveAllBtn.classList.toggle('hidden', frames.length < 2);
+            saveAllBtn.textContent = `すべて保存（${frames.length}枚）`;
+        }
+
+        // 古い順に並べてまとめて保存
+        saveAllBtn.addEventListener('click', () => {
+            saveFiles(frames.slice().reverse().map((f) => f.file));
+        });
+
+        // --- 拡大表示 ---
+        function openViewer(frame) {
+            viewerFrame = frame;
+            viewerImg.src = frame.url;
+            viewerImg.alt = frame.file.name;
+            viewer.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeViewer() {
+            viewer.classList.add('hidden');
+            viewerImg.removeAttribute('src');
+            viewerFrame = null;
+            document.body.style.overflow = '';
+        }
+        viewerCloseBtn.addEventListener('click', closeViewer);
+        viewerSaveBtn.addEventListener('click', () => { if (viewerFrame) saveFiles([viewerFrame.file]); });
+        viewer.addEventListener('click', (e) => { if (e.target === viewer) closeViewer(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !viewer.classList.contains('hidden')) closeViewer(); });
+    </script>
+</body>
+</html>
