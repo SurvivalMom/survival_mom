@@ -57,24 +57,29 @@ export const ura04Header = '「要相談」の\n判子だけが、\nノートに
 // Telop.tsx -- longer sentences are split into sequential cards rather
 // than trimmed/reworded.
 //
-// Rewritten per explicit feedback that the first pass ("決めていいとは、
-// 誰にも言われていない。") read as generic indecisiveness rather than the
-// specific structural dilemma this episode pairs with dokuhaku-04-kengen
-// (responsibility handed down without the authority to match it). The
-// first two cards now name 権限 and 責任 directly and contrast them one
-// right after the other, instead of only implying the gap.
+// Rewritten a second time per explicit feedback: naming 権限/責任 as a
+// flat contrast still missed the actual dilemma -- it isn't that nobody
+// ever grants authority, it's the specific contradiction of being told
+// to use your own judgment ("考えて行動しなさい") while never being told
+// where that judgment is allowed to reach ("どこまで決めていいか"). Every
+// stamped "要相談" in the header's stack is this person quietly refusing
+// to guess at a line nobody drew for them. The cards below walk that
+// contradiction in order: the instruction given, then the unanswered
+// question underneath it.
 export const ura04Segments: AlignedSegment[] = [
-	// Scene 1 tail / Scene 2 start (2.0-4.25s, settling on the stamp):
-	// the authority was never granted.
-	{kind: 'line', text: '**権限**は、\nもらっていない。', startSeconds: 2.0, endSeconds: 4.25},
+	// Scene 1 tail / Scene 2 start (2.0-3.7s, settling on the stamp): the
+	// instruction they were actually given.
+	{kind: 'line', text: '**考えて**\n行動しなさい。', startSeconds: 2.0, endSeconds: 3.7},
+	{kind: 'line', text: 'と、言われる。', startSeconds: 3.7, endSeconds: 5.0},
 
-	// Scene 2 (4.25-8.5s, the pen's hover and withdrawal): but the
-	// responsibility keeps landing anyway.
-	{kind: 'line', text: '**責任**だけが、\n積もっていく。', startSeconds: 4.25, endSeconds: 6.5},
-	{kind: 'line', text: '決めても、\n決めなくても、', startSeconds: 6.5, endSeconds: 8.5},
+	// Scene 2 (5.0-9.5s, the pen's hover and withdrawal): but the
+	// boundary of that judgment was never actually defined.
+	{kind: 'line', text: 'でも、\n**どこまで**', startSeconds: 5.0, endSeconds: 6.3},
+	{kind: 'line', text: '決めていいかは、', startSeconds: 6.3, endSeconds: 7.8},
+	{kind: 'line', text: '誰も教えて\nくれない。', startSeconds: 7.8, endSeconds: 9.5},
 
-	// Scene 3 (8.5-14.0s, the folder closing and the resting hand).
-	{kind: 'line', text: '**責められる**\n気がしていた。', startSeconds: 8.5, endSeconds: 10.5},
+	// Scene 3 (9.5-14.0s, the folder closing and the resting hand).
+	{kind: 'line', text: '**責められる**\n気がしていた。', startSeconds: 9.5, endSeconds: 10.5},
 	{kind: 'cta', text: '**保存して**、\n自分に渡された', startSeconds: 10.5, endSeconds: 11.8},
 	{kind: 'cta', text: '**権限**を、\n一度だけ', startSeconds: 11.8, endSeconds: 13.0},
 	{kind: 'cta', text: '確認して\nみてください。', startSeconds: 13.0, endSeconds: 14.0},
