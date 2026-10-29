@@ -1,0 +1,49 @@
+# shots.yaml -- このパイプラインの唯一の構造化ソース(source of truth)。
+# brief.md / script.md の内容をもとに、ショット単位へ分解したもの。
+# prompts.md は、このファイルの各 shot.prompt を人間が読みやすくまとめた
+# ビューであり、構造データとしてはここが正本。
+#
+# スキーマ:
+#   project:  プロジェクト名
+#   fps / width / height: 出力動画の設定（縦型固定 1080x1920）
+#   shots:    ショットのリスト。配列の順序がそのまま最終的な連結順序になる
+#     - id:              ショットID（shots/<id>.mp4 のファイル名に対応）
+#       duration_seconds: このショットの尺（秒）
+#       prompt:           AI動画生成用の英語プロンプト（liveモード用。
+#                          モックモードでは使用せず、drawtextのラベルにのみ利用）
+#       narration:        ナレーション文（将来のTTS音声合成用。未使用でも可）
+#       subtitle:         画面に焼き込む字幕テキスト（空文字なら字幕なし）
+
+project: "sample-vertical-video"
+fps: 30
+width: 1080
+height: 1920
+
+shots:
+  - id: "01"
+    duration_seconds: 3.0
+    prompt: >
+      Vertical 9:16 cinematic, realistic desk interior at night, warm desk
+      lamp light. Close-up on a notebook, an anonymous hand opening it to a
+      blank page. Natural ambient sound only, no music, no on-screen
+      captions. No face visible.
+    narration: "一日の終わりに、机の上のノートを開く。"
+    subtitle: "一日の終わりに、机の上のノートを開く。"
+
+  - id: "02"
+    duration_seconds: 3.0
+    prompt: >
+      Same setting. The hand writes a short entry, unhurried. Natural
+      ambient sound only, no music, no captions. No face visible.
+    narration: "今日も、同じ言葉を書いた。"
+    subtitle: "今日も、同じ言葉を書いた。"
+
+  - id: "03"
+    duration_seconds: 3.0
+    prompt: >
+      Same setting. The hand pauses mid-air, pen lifted just above the
+      page, as if reconsidering. Natural ambient sound only, no music, no
+      captions. No face visible. Leave the lower third of the frame clean
+      for text to be added later.
+    narration: "けれど、本当にそれでよかったのか、少しだけ手が止まった。"
+    subtitle: "本当にそれでよかったのか、\n少しだけ手が止まった。"

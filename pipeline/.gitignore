@@ -1,0 +1,12 @@
+# Generated artifacts -- keep the directory structure (.gitkeep) but not
+# the (potentially large) rendered media.
+shots/*.mp4
+output/*.mp4
+
+# Secrets -- only .env.example is tracked.
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
