@@ -7,6 +7,7 @@ import {Dokuhaku10WithFootage} from './CompositionDokuhaku10';
 import {Ura01WithFootage} from './CompositionUra01';
 import {Ura02WithFootage} from './CompositionUra02';
 import {Ura03WithFootage} from './CompositionUra03';
+import {Ura04WithFootage} from './CompositionUra04';
 import {segments} from './content';
 import {totalDurationInFrames} from './timing';
 import {shoseijutsu02DurationInFrames} from './shoseijutsu02Content';
@@ -14,6 +15,7 @@ import {SOURCE_VIDEO_DURATION_IN_SECONDS as DOKUHAKU10_DURATION_IN_SECONDS} from
 import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA01_DURATION_IN_SECONDS} from './ura01Content';
 import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA02_DURATION_IN_SECONDS} from './ura02Content';
 import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA03_DURATION_IN_SECONDS} from './ura03Content';
+import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA04_DURATION_IN_SECONDS} from './ura04Content';
 
 const FPS = 30;
 
@@ -92,6 +94,17 @@ export const RemotionRoot: React.FC = () => {
 				component={Ura03WithFootage}
 				defaultProps={{fps: FPS}}
 				durationInFrames={Math.ceil(URA03_DURATION_IN_SECONDS * FPS)}
+				fps={FPS}
+				width={720}
+				height={1280}
+			/>
+			{/* ura-04: fourth episode of the "ura" series, same two-layer
+			    telop format as ura-01/ura-02/ura-03 (see ura04Content.ts). */}
+			<Composition
+				id="Ura04WithFootage"
+				component={Ura04WithFootage}
+				defaultProps={{fps: FPS}}
+				durationInFrames={Math.ceil(URA04_DURATION_IN_SECONDS * FPS)}
 				fps={FPS}
 				width={720}
 				height={1280}
