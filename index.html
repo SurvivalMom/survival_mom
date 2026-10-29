@@ -400,6 +400,14 @@
     .ar-dialog  .app-buy-btn { color: var(--rose);   border-color: rgba(184,80,112,0.4); background: var(--rose-lt); }
     .ar-quest   .app-buy-btn:hover { background: var(--violet); color: #fff; }
     .ar-train   .app-buy-btn:hover { background: var(--sky);    color: #fff; }
+    /* 無料ツール（販売アプリとは別枠） */
+    .apps-free-rule { margin-top: 40px; }
+    .ar-free::before, .ar-free::after { background: var(--sky); }
+    .ar-free .app-icon { background: var(--sky-lt); box-shadow: 0 3px 12px rgba(74,122,155,0.18); }
+    .ar-free .app-name { color: var(--sky); }
+    .ar-free .app-tag { color: var(--sky); border-color: rgba(74,122,155,0.28); background: var(--sky-lt); }
+    .ar-free .app-buy-btn { color: var(--sky); border-color: rgba(74,122,155,0.4); background: var(--sky-lt); }
+    .ar-free .app-buy-btn:hover { background: var(--sky); color: #fff; }
     .ar-step    .app-buy-btn:hover { background: var(--moss);   color: #fff; }
     .ar-sensory .app-buy-btn:hover { background: var(--terra);  color: #fff; }
     .ar-dialog  .app-buy-btn:hover { background: var(--rose);   color: #fff; }
@@ -1273,6 +1281,22 @@
         </div>
         <a class="app-buy-btn" href="https://buy.stripe.com/4gM8wRc3k9GGfv46G373G04" target="_blank">単体購入 →</a>
         <p class="after-purchase-note">※Stripe決済後、専用ページに自動遷移。パスワードをその場で確認できます。</p>
+      </div>
+    </div>
+
+    <div class="sec-rule apps-free-rule reveal">Free Tool</div>
+
+    <div class="app-row ar-free reveal">
+      <div class="app-icon">📸</div>
+      <div class="app-body">
+        <div class="app-name">動画フレーム抽出</div>
+        <div class="app-desc">子どもの動画から「この一瞬」を写真に。運動会や発表会の動画を1コマずつ送って、目をつぶっていないベストな瞬間を高画質な画像で保存できます。iPhone・Androidでそのまま使え、動画はどこにも送信されません。</div>
+        <div class="app-tags">
+          <span class="app-tag">無料</span>
+          <span class="app-tag">スマホ対応</span>
+          <span class="app-tag">成長記録</span>
+        </div>
+        <a class="app-buy-btn" href="frame_extractor.html" target="_blank">無料で使う →</a>
       </div>
     </div>
 
