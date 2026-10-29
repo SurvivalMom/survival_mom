@@ -56,13 +56,22 @@ export const ura04Header = '「要相談」の\n判子だけが、\nノートに
 // not just the longest line) per the account's lower-telop hard rule in
 // Telop.tsx -- longer sentences are split into sequential cards rather
 // than trimmed/reworded.
+//
+// Rewritten per explicit feedback that the first pass ("決めていいとは、
+// 誰にも言われていない。") read as generic indecisiveness rather than the
+// specific structural dilemma this episode pairs with dokuhaku-04-kengen
+// (responsibility handed down without the authority to match it). The
+// first two cards now name 権限 and 責任 directly and contrast them one
+// right after the other, instead of only implying the gap.
 export const ura04Segments: AlignedSegment[] = [
-	// Scene 1 tail / Scene 2 start (2.0-3.5s, settling on the stamp).
-	{kind: 'line', text: '決めていいとは、', startSeconds: 2.0, endSeconds: 3.5},
+	// Scene 1 tail / Scene 2 start (2.0-4.25s, settling on the stamp):
+	// the authority was never granted.
+	{kind: 'line', text: '**権限**は、\nもらっていない。', startSeconds: 2.0, endSeconds: 4.25},
 
-	// Scene 2 (3.5-8.5s, the pen's hover and withdrawal).
-	{kind: 'line', text: '**誰にも**\n言われていない。', startSeconds: 3.5, endSeconds: 6.0},
-	{kind: 'line', text: '決めても、\n決めなくても、', startSeconds: 6.0, endSeconds: 8.5},
+	// Scene 2 (4.25-8.5s, the pen's hover and withdrawal): but the
+	// responsibility keeps landing anyway.
+	{kind: 'line', text: '**責任**だけが、\n積もっていく。', startSeconds: 4.25, endSeconds: 6.5},
+	{kind: 'line', text: '決めても、\n決めなくても、', startSeconds: 6.5, endSeconds: 8.5},
 
 	// Scene 3 (8.5-14.0s, the folder closing and the resting hand).
 	{kind: 'line', text: '**責められる**\n気がしていた。', startSeconds: 8.5, endSeconds: 10.5},
