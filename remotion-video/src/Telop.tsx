@@ -91,6 +91,15 @@ export const Telop: React.FC<Props> = ({segment}) => {
 	// shorter ones. A caption needing more text than the budget reads
 	// better split into several shorter sequential captions than packed
 	// into one tall multi-line block -- see content files for examples.
+	//
+	// HARD RULE (explicit feedback, applies to `line`/`cta` only -- not
+	// HeaderTelop, which is a persistent banner rather than a sequential
+	// telop): a single card must show 14 characters or fewer in total,
+	// counting every line, not just the longest one. The per-line budget
+	// above bounds line *width*; this bounds how much a viewer has to
+	// read in one glance. A caption whose total exceeds 14 should be
+	// split into multiple sequential cards (shortening the timing window
+	// per card accordingly), never trimmed/reworded to force a fit.
 
 	if (segment.kind === 'hook') {
 		return (

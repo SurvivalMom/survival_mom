@@ -56,15 +56,25 @@ export const ura02Header = '気づけば、\nノートの字が\n全部、先輩
 // compressing every caption's reading time to make room. Each caption
 // marks 1 key word/phrase with **…** for the account's accent-color +
 // white-stroke emphasis treatment.
+//
+// Further re-split per explicit feedback that no single card should show
+// more than 14 characters total (not just per line): the original
+// "最後に自分で書いたのは、いつだっただろう。" card (21 chars) and
+// "考えなくなったのかもしれない。" card (15 chars) both exceeded that,
+// so each was split into 2 cards rather than trimmed.
 export const ura02Segments: AlignedSegment[] = [
-	// Scene 2 (2.0-5.5s, searching backward through earlier pages).
-	{kind: 'line', text: '最後に**自分で**\n書いたのは、\nいつだった\nだろう。', startSeconds: 2.0, endSeconds: 5.5},
+	// Scene 2 (2.0-5.5s, searching backward through earlier pages). Split
+	// into 2 cards (12 + 9 chars) -- was 1 card at 21 chars.
+	{kind: 'line', text: '最後に**自分で**\n書いたのは、', startSeconds: 2.0, endSeconds: 3.75},
+	{kind: 'line', text: 'いつだった\nだろう。', startSeconds: 3.75, endSeconds: 5.5},
 
 	// Scene 3 (5.5-16.5s, the pen's pause and the close). Realization
-	// sentence split across 2 short captions, then the CTA across 3 --
-	// same sequential-caption convention as ura-01's Scene 3.
+	// sentence split across 3 short captions (was 2), then the CTA across
+	// 3 -- same sequential-caption convention as ura-01's Scene 3.
 	{kind: 'line', text: '聞かれる前に\n**答えが来る**から、', startSeconds: 5.5, endSeconds: 7.5},
-	{kind: 'line', text: '考えなくなった\nのかもしれない。', startSeconds: 7.5, endSeconds: 9.5},
+	// Split into 2 cards (7 + 8 chars) -- was 1 card at 15 chars.
+	{kind: 'line', text: '考えなくなった', startSeconds: 7.5, endSeconds: 8.5},
+	{kind: 'line', text: 'のかもしれない。', startSeconds: 8.5, endSeconds: 9.5},
 	{kind: 'cta', text: '**保存して**、\n次に答えを', startSeconds: 9.5, endSeconds: 11.0},
 	{kind: 'cta', text: '渡される前に、\n**少しだけ**', startSeconds: 11.0, endSeconds: 12.5},
 	{kind: 'cta', text: '自分で考えて\nみてください。', startSeconds: 12.5, endSeconds: 16.5},

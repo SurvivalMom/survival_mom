@@ -53,15 +53,22 @@ export const ura03Header = '歓迎会の\nチラシが、\nもう3週間\n貼ら
 // see ura02Content.ts for the full rationale. Each caption marks 1 key
 // word/phrase with **…** for the account's accent-color + white-stroke
 // emphasis treatment.
+//
+// Further re-split per explicit feedback that no single card should show
+// more than 14 characters total (not just per line): the original
+// "ないと思っていたのかもしれない。" card (16 chars) exceeded that, so
+// it was split into 2 cards rather than trimmed.
 export const ura03Segments: AlignedSegment[] = [
 	// Scene 2 (2.0-6.0s, the hand reaching/withdrawing from the flyer).
 	{kind: 'line', text: '断る理由は、\n**いつも**\n思いつく。', startSeconds: 2.0, endSeconds: 6.0},
 
 	// Scene 3 (6.0-15.0s, the pulled-back closing shot). Realization
-	// sentence split across 2 short captions, then the CTA across 3 --
-	// same sequential-caption convention as ura-01/ura-02's Scene 3.
+	// sentence split across 3 short captions (was 2), then the CTA across
+	// 3 -- same sequential-caption convention as ura-01/ura-02's Scene 3.
 	{kind: 'line', text: 'もう、ここに\n**馴染む必要**が', startSeconds: 6.0, endSeconds: 8.5},
-	{kind: 'line', text: 'ないと思って\nいたのかも\nしれない。', startSeconds: 8.5, endSeconds: 11.0},
+	// Split into 2 cards (11 + 5 chars) -- was 1 card at 16 chars.
+	{kind: 'line', text: 'ないと思って\nいたのかも', startSeconds: 8.5, endSeconds: 9.75},
+	{kind: 'line', text: 'しれない。', startSeconds: 9.75, endSeconds: 11.0},
 	{kind: 'cta', text: '**保存して**、\n断った理由を、', startSeconds: 11.0, endSeconds: 12.3},
 	{kind: 'cta', text: 'もう一度だけ\n振り返って', startSeconds: 12.3, endSeconds: 13.6},
 	{kind: 'cta', text: 'みてください。', startSeconds: 13.6, endSeconds: 15.0},

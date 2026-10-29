@@ -64,18 +64,26 @@ export const ura01Header = '今日も\n「特変なし」\nと書いた。';
 //
 // Re-broken to a ~7 chars/line budget (down from ~10-11) after Telop.tsx's
 // font-size bump (line 62->72, cta 64->74) left less room per line within
-// this composition's 90px safe-zone box -- two captions below ("何もな
-// かっただろうか。", "一度だけ手を止めてみてください。") no longer fit
-// their old 2-line split and needed a 3rd line.
+// this composition's 90px safe-zone box.
+//
+// Further re-split per explicit feedback that no single card should show
+// more than 14 characters total (not just per line) -- two captions below
+// ("本当に、何もなかっただろうか。" at 15, "一度だけ手を止めてみてくだ
+// さい。" at 16) exceeded that and were split into 2 cards each rather
+// than trimmed, so no wording was lost.
 export const ura01Segments: AlignedSegment[] = [
-	// Scene 2 (5.5-9.5s, the pen's held pause).
-	{kind: 'line', text: '本当に、\n**何もなかった**\nだろうか。', startSeconds: 5.5, endSeconds: 9.5},
+	// Scene 2 (5.5-9.5s, the pen's held pause). Split into 2 cards (10 +
+	// 5 chars) -- was 1 card at 15 chars.
+	{kind: 'line', text: '本当に、\n**何もなかった**', startSeconds: 5.5, endSeconds: 7.5},
+	{kind: 'line', text: 'だろうか。', startSeconds: 7.5, endSeconds: 9.5},
 
 	// Scene 3 (9.5-16.5s, closing the notebook). Realization line first,
 	// then the CTA -- same sequential-caption convention as dokuhaku10's
 	// Scene 3, rather than stacking both in one block.
 	{kind: 'line', text: '変わったのは\n**現場じゃなく**、', startSeconds: 9.5, endSeconds: 11.5},
 	{kind: 'line', text: '**気づく力**の方\nかもしれない。', startSeconds: 11.5, endSeconds: 13.5},
-	{kind: 'cta', text: '**保存して**、\n次に書く前に、', startSeconds: 13.5, endSeconds: 15.3},
-	{kind: 'cta', text: '**一度だけ**\n手を止めて\nみてください。', startSeconds: 15.3, endSeconds: 16.5},
+	{kind: 'cta', text: '**保存して**、\n次に書く前に、', startSeconds: 13.5, endSeconds: 14.5},
+	// Split into 2 cards (9 + 7 chars) -- was 1 card at 16 chars.
+	{kind: 'cta', text: '**一度だけ**\n手を止めて', startSeconds: 14.5, endSeconds: 15.5},
+	{kind: 'cta', text: 'みてください。', startSeconds: 15.5, endSeconds: 16.5},
 ];
