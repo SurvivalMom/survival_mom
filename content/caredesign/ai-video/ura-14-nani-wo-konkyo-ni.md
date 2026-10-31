@@ -18,6 +18,8 @@
 - 尺目安：12〜15秒
 - 主CTA：保存
 - 参考元：sunao-07-ichido-kiku.mdと同一のテーマを、裏側の視点として独自に構成
+- カメラワーク：一人称視点（POV）。視聴者自身の目線・自身の手として画面に
+  入ってくるよう、各シーンのプロンプトに明記する
 
 ## タイトル
 根拠を聞かれた日
@@ -45,9 +47,12 @@
 **Scene 1（0〜4秒）**
 （下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
-Vertical 9:16 cinematic, realistic care facility office interior, warm
-evening light. Close-up on a care record, an anonymous hand's pen
-pausing above the page, thinking, rather than writing immediately.
+Vertical 9:16 cinematic, first-person POV (camera at the viewer's own
+eye line looking down at the desk, the hand entering frame from the
+bottom as the viewer's own hand, not a third person's), realistic care
+facility office interior, warm evening light. Close-up on a care
+record, the viewer's own hand's pen pausing above the page, thinking,
+rather than writing immediately.
 Natural ambient sound only, no music, no on-screen captions. No face
 visible, no name badges. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
@@ -56,8 +61,9 @@ visible, no name badges. Any visible handwriting or text is in Japanese, styled 
 （下部テロップ：「初めて、自分の考えを言葉にできた気がした。」上部固定
 ヘッダーはそのまま表示継続）
 ```
-Same setting. The hand writes steadily now, unhurried, finishing a
-full sentence in its own words rather than a short clipped note.
+Same setting, same first-person POV framing as Scene 1. The hand
+writes steadily now, unhurried, finishing a full sentence in its own
+words rather than a short clipped note.
 Natural ambient sound only, no music, no captions. No face visible, no
 legible text beyond an abstract filled line. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
@@ -67,8 +73,9 @@ legible text beyond an abstract filled line. Any visible handwriting or text is 
 続けて主CTA「保存して、次は誰かに、同じ問いを投げかけてみてください。」を
 小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
-Same setting. The hand rests beside the finished entry for a moment
-before closing the notebook gently, calm and settled rather than
+Same setting, same first-person POV framing as Scene 1. The hand rests
+beside the finished entry for a moment before closing the notebook
+gently, calm and settled rather than
 hurried. Warm soft light, quiet, satisfied mood. No face visible, no
 music, no captions. Leave the lower third of the frame clean for text
 to be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.

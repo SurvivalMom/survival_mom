@@ -16,6 +16,8 @@
 - 尺目安：12〜15秒
 - 主CTA：保存
 - 参考元：既存dokuhaku-05と同じ状況を、裏側の視点として独自に構成
+- カメラワーク：一人称視点（POV）。視聴者自身の目線・自身の手として画面に
+  入ってくるよう、各シーンのプロンプトに明記する
 
 ## タイトル
 送れなかった一言
@@ -43,8 +45,11 @@
 **Scene 1（0〜4秒）**
 （下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
-Vertical 9:16 cinematic, realistic break room interior at night, dim
-lighting. Close-up on a smartphone screen in an anonymous hand, a
+Vertical 9:16 cinematic, first-person POV (camera at the viewer's own
+eye line looking down at the desk, the hand entering frame from the
+bottom as the viewer's own hand, not a third person's), realistic
+break room interior at night, dim lighting. Close-up on a smartphone
+screen in the viewer's own hand, a
 messaging app open, text being typed and then deleted character by
 character -- the screen content kept abstract/illegible, camera
 framing stays tight so no real app UI or readable text is rendered.
@@ -56,8 +61,9 @@ visible. Any visible handwriting or text is in Japanese, styled like a real care
 （下部テロップ：「正しいことを言われただけなのに、なぜか悔しかった。」上部固定
 ヘッダーはそのまま表示継続）
 ```
-Same setting. The hand stops typing entirely, thumb hovering over the
-screen without pressing anything. Natural ambient sound only, no
+Same setting, same first-person POV framing as Scene 1. The hand stops
+typing entirely, thumb hovering over the screen without pressing
+anything. Natural ambient sound only, no
 music, no captions. No face visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
@@ -66,8 +72,8 @@ music, no captions. No face visible. Any visible handwriting or text is in Japan
 続けて主CTA「保存して、今度こそ、送らなかった理由を考えてみてください。」
 を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
-Same setting. The phone screen dims to black as the hand sets it face
-down on the table. Quiet, unresolved mood. No face visible, no music,
+Same setting, same first-person POV framing as Scene 1. The phone
+screen dims to black as the hand sets it face down on the table. Quiet, unresolved mood. No face visible, no music,
 no captions. Leave the lower third of the frame clean for text to be
 added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```

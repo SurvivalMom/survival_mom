@@ -19,6 +19,8 @@
 - 主CTA：保存
 - 参考元：sunao-03-kourisuku-wa-betsu.mdと同一のテーマを、裏側の視点として
   独自に構成
+- カメラワーク：一人称視点（POV）。視聴者自身の目線・自身の手として画面に
+  入ってくるよう、各シーンのプロンプトに明記する
 - **重要**：安全・リスクに関わる場面は一人で抱えず必ず報告・相談・連携する、
   という表ペアの注意喚起を薄めず、Scene3・CTAで明確に伝える
 
@@ -48,10 +50,12 @@
 **Scene 1（0〜4秒）**
 （下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
-Vertical 9:16 cinematic, realistic night-shift nursing station
-interior, dim lighting, slightly tense mood. Close-up on a care record,
-an anonymous hand writing quickly, the pen moving faster than in a
-calm entry. Natural ambient sound only, no music, no on-screen
+Vertical 9:16 cinematic, first-person POV (camera at the viewer's own
+eye line looking down at the desk, the hand entering frame from the
+bottom as the viewer's own hand, not a third person's), realistic
+night-shift nursing station interior, dim lighting, slightly tense
+mood. Close-up on a care record, the viewer's own hand writing
+quickly, the pen moving faster than in a calm entry. Natural ambient sound only, no music, no on-screen
 captions. No face visible, no name badges, no readable patient
 information. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
@@ -60,8 +64,8 @@ information. Any visible handwriting or text is in Japanese, styled like a real 
 （下部テロップ：「正しかったのか、まだ自分でも分からない。」上部固定ヘッダーは
 そのまま表示継続）
 ```
-Same setting. The hand finishes writing and rests on the desk, a
-slight tremor visible, pen set down unsteadily. Natural ambient sound
+Same setting, same first-person POV framing as Scene 1. The hand
+finishes writing and rests on the desk, a slight tremor visible, pen set down unsteadily. Natural ambient sound
 only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
@@ -71,8 +75,9 @@ only, no music, no captions. No face visible. Any visible handwriting or text is
 確認してみてください。安全に関わることは、一人で抱えずに必ず報告・相談して
 ください。」を添える。上部固定ヘッダーはそのまま表示継続）
 ```
-Same setting. The hand reaches toward a posted contact list or
-emergency procedure card on the wall, fingertips resting near it
+Same setting, same first-person POV framing as Scene 1. The hand
+reaches toward a posted contact list or emergency procedure card on
+the wall, fingertips resting near it
 without pulling it down yet. Quiet, resolved mood. No face visible, no
 music, no captions. Leave the lower third of the frame clean for text
 to be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.

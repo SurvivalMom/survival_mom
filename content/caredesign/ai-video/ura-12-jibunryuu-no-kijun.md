@@ -18,6 +18,8 @@
 - 主CTA：保存
 - 参考元：sunao-05-yottsu-no-kijun.mdと同一のテーマを、裏側の視点として
   独自に構成
+- カメラワーク：一人称視点（POV）。視聴者自身の目線・自身の手として画面に
+  入ってくるよう、各シーンのプロンプトに明記する
 
 ## タイトル
 自分流の基準
@@ -45,10 +47,13 @@
 **Scene 1（0〜4秒）**
 （下部テロップは表示しない。上部固定ヘッダーのみ表示した状態で始まる）
 ```
-Vertical 9:16 cinematic, realistic care facility break room interior.
-Close-up on a personal memo pad, handwritten notes crossed out and
-rewritten several times, clearly a self-made attempt at some kind of
-rule of thumb. An anonymous hand holds it open. Natural ambient sound
+Vertical 9:16 cinematic, first-person POV (camera at the viewer's own
+eye line looking down at the desk, the hand entering frame from the
+bottom as the viewer's own hand, not a third person's), realistic care
+facility break room interior. Close-up on a personal memo pad,
+handwritten notes crossed out and rewritten several times, clearly a
+self-made attempt at some kind of rule of thumb. The viewer's own hand
+holds it open. Natural ambient sound
 only, no music, no on-screen captions. No face visible, no name badges. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
@@ -56,8 +61,8 @@ only, no music, no on-screen captions. No face visible, no name badges. Any visi
 （下部テロップ：「これで合っているのか、ずっと手探りだった。」上部固定ヘッダーは
 そのまま表示継続）
 ```
-Same setting. The hand flips back through several crossed-out
-revisions on earlier pages, pausing on the messiest one. Natural
+Same setting, same first-person POV framing as Scene 1. The hand flips
+back through several crossed-out revisions on earlier pages, pausing on the messiest one. Natural
 ambient sound only, no music, no captions. No face visible. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
 
@@ -66,8 +71,9 @@ ambient sound only, no music, no captions. No face visible. Any visible handwrit
 続けて主CTA「保存して、今の自分の判断基準を、一度書き出してみてください。」
 を小さく添える。上部固定ヘッダーはそのまま表示継続）
 ```
-Same setting. A clean printed reference card with four short labeled
-sections is set down beside the messy personal memo pad, the hand
+Same setting, same first-person POV framing as Scene 1. A clean
+printed reference card with four short labeled sections is set down
+beside the messy personal memo pad, the hand
 resting calmly on top of it. Soft light, settled mood. No face
 visible, no music, no captions, no legible text beyond abstract
 labeled blocks. Leave the lower third of the frame clean for text to
