@@ -15,7 +15,13 @@ import {Telop, HeaderTelop} from './Telop';
 export const Ura05WithFootage: React.FC<{fps: number}> = ({fps}) => {
 	return (
 		<AbsoluteFill style={{backgroundColor: '#000'}}>
-			<VideoBackground src={SOURCE_VIDEO} />
+			{/* Blurred: the AI-generated footage renders the phone's
+			    messaging-app screen legibly (e.g. "利用者状況：夜間良眠"),
+			    even though the brief called for that content to stay
+			    abstract/illegible -- left sharp, it reads as a staff member
+			    discussing resident information over a personal messaging
+			    app, which this account must not appear to endorse. */}
+			<VideoBackground src={SOURCE_VIDEO} blurPx={18} />
 
 			{/* Persistent header layer -- not wrapped in a Sequence, so it
 			    renders from frame 0 through the composition's full duration
