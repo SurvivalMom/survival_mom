@@ -18,6 +18,43 @@ export const Ura06WithFootage: React.FC<{fps: number}> = ({fps}) => {
 		<AbsoluteFill style={{backgroundColor: '#000'}}>
 			<VideoBackground src={SOURCE_VIDEO} />
 
+			{/* The evaluation record's printed heading renders as a garbled
+			    Latin-letter brand name (e.g. "Flocolesen評価表"), which the
+			    brief said to avoid entirely. It's small and easy to miss,
+			    but blurred out regardless rather than left as-is. Two
+			    time-boxed overlays, not one: the heading sits in a
+			    different screen position before vs. after the camera
+			    settles into its close framing, so a single fixed box can't
+			    cover both without also blurring the blank feedback column
+			    in between. Each box's position was read off a rendered
+			    frame from that window, not computed. */}
+			<Sequence from={0} durationInFrames={Math.round(2.0 * fps)}>
+				<div
+					style={{
+						position: 'absolute',
+						left: 230,
+						top: 693,
+						width: 180,
+						height: 36,
+						backdropFilter: 'blur(10px)',
+						WebkitBackdropFilter: 'blur(10px)',
+					}}
+				/>
+			</Sequence>
+			<Sequence from={Math.round(2.0 * fps)} durationInFrames={Math.round(3.5 * fps)}>
+				<div
+					style={{
+						position: 'absolute',
+						left: 225,
+						top: 438,
+						width: 235,
+						height: 52,
+						backdropFilter: 'blur(10px)',
+						WebkitBackdropFilter: 'blur(10px)',
+					}}
+				/>
+			</Sequence>
+
 			{/* Persistent header layer -- not wrapped in a Sequence, so it
 			    renders from frame 0 through the composition's full duration
 			    with no mount/unmount re-trigger. */}
