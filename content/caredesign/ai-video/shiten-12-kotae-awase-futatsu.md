@@ -9,7 +9,7 @@
   blazer。前半のみ顔を映す）。後半は過去の記録と職員の手元のみ、
   顔・名札は映さない
 - テロップ・BGMなし。前半はセリフあり、後半は無音の独白テロップのみ
-- 尺目安：26〜30秒
+- 尺目安：38〜41秒（成長モード §9 の締めカードを含む）
 - 主CTA：フォロー（成長モード §9）
 - 参考元：sunao-06-kotae-awase.md（アナリスト視点）とura-13-
   awasekotae-no-nai-mama.md（職員視点）の統合。新規文面は転換部分と
@@ -58,7 +58,7 @@ Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "'Sono konkyo wa ii
 desu ne. Tada konkai wa anzen-men kara, koko wa kanrisha ni soudan
 shimashou.' Handan no kyoukaisen made, kotoba ni shite tsutaeru koto
-ga daiji na you desu." Natural ambient sound only, no music, no
+ga daiji desu." Natural ambient sound only, no music, no
 captions.
 ```
 
@@ -83,9 +83,9 @@ Scene B1〜B3（14〜27秒／ura-13の映像を再利用）
 「今度は、自分から聞いてみようと思う。」の順で、この動画の時間軸に
 シフトして表示）
 
-**締め（27〜29秒／新規・オリジナル）**
+**締め（27〜39秒／新規・オリジナル）**
 （後編集で大きく「同じ『答え合わせ』を、\n二人とも待っていた。」を
-表示。続けて締めテロップ「現場を守るために、管理者が先に整えること。」と、主CTA「毎週土曜、管理職の"良かれと思って"を1つ解剖。フォローして続きを。」を添える。カード分割（各14文字以内）：「現場を守るために、」「管理者が先に」「整えること。」／「毎週土曜、」「管理職の」「"良かれと思って"を」「1つ解剖。」「フォローして続きを。」）
+表示。続けて締めテロップ「現場を守るために、管理者が先に整えること。」と、主CTA「毎週土曜、管理職の"良かれと思って"を1つ解剖。フォローして続きを。」を添える。カード分割（各14文字以内）：「現場を守るために、」「管理者が先に」「整えること。」／「毎週土曜、」「管理職の」「"良かれと思って"を」「1つ解剖。」「フォローして続きを。」。表示時間の目安：大きな締めの一文 2.0秒、締めカード3枚 各1.2秒、主CTAカード5枚 各1.2秒。）
 
 ## 公開前の映り込み確認項目
 - [ ] アナリストの衣装がlight gray blazerで統一されているか

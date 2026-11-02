@@ -52,7 +52,7 @@ Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "'Sono konkyo wa ii
 desu ne. Tada konkai wa anzen-men kara, koko wa kanrisha ni soudan
 shimashou.' Handan no kyoukaisen made, kotoba ni shite tsutaeru koto
-ga daiji na you desu." Natural ambient sound only, no music, no
+ga daiji desu." Natural ambient sound only, no music, no
 captions.
 ```
 

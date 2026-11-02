@@ -9,7 +9,7 @@
   blazer。前半のみ顔を映す）。後半は自己流のメモと職員の手元のみ、
   顔・名札は映さない
 - テロップ・BGMなし。前半はセリフあり、後半は無音の独白テロップのみ
-- 尺目安：26〜30秒
+- 尺目安：38〜41秒（成長モード §9 の締めカードを含む）
 - 主CTA：フォロー（成長モード §9）
 - 参考元：sunao-05-yottsu-no-kijun.md（アナリスト視点）とura-12-
   jibunryuu-no-kijun.md（職員視点）の統合。新規文面は転換部分と締めの
@@ -46,7 +46,7 @@ natural ambient sound only, no music, no on-screen captions. Opens
 already in motion. Analyst (mid-50s man, gentle demeanor, light gray
 blazer, no necktie) looks directly into the camera, speaking calmly
 and clearly to the viewer, in Japanese (romanized): "Kaigo genba de
-watashitai handan kijun wa, yottsu aru you desu."
+watashitai handan kijun wa, yottsu arimasu."
 ```
 
 Scene A2（4〜8秒・4点をテンポよく列挙）
@@ -67,7 +67,7 @@ Scene A3（8〜12秒）
 Same setting. Analyst pauses briefly, then delivers the line directly
 to camera, calm and quiet, in Japanese (romanized): "Kono yottsu ni
 terashite kangaeru to, soudan no shitsu mo handan no shitsu mo
-kawatte kuru you desu." Natural ambient sound only, no music, no
+kawatte kimasu." Natural ambient sound only, no music, no
 captions.
 ```
 
@@ -82,9 +82,9 @@ Scene B1〜B3（14〜27秒／ura-12の映像を再利用）
 「初めて、迷わずに決められた。」の順で、この動画の時間軸にシフトして
 表示）
 
-**締め（27〜29秒／新規・オリジナル）**
+**締め（27〜39秒／新規・オリジナル）**
 （後編集で大きく「同じ4つの基準に、\n二つの道のりがあった。」を表示。
-続けて締めテロップ「現場を守るために、管理者が先に整えること。」と、主CTA「毎週土曜、管理職の"良かれと思って"を1つ解剖。フォローして続きを。」を添える。カード分割（各14文字以内）：「現場を守るために、」「管理者が先に」「整えること。」／「毎週土曜、」「管理職の」「"良かれと思って"を」「1つ解剖。」「フォローして続きを。」）
+続けて締めテロップ「現場を守るために、管理者が先に整えること。」と、主CTA「毎週土曜、管理職の"良かれと思って"を1つ解剖。フォローして続きを。」を添える。カード分割（各14文字以内）：「現場を守るために、」「管理者が先に」「整えること。」／「毎週土曜、」「管理職の」「"良かれと思って"を」「1つ解剖。」「フォローして続きを。」。表示時間の目安：大きな締めの一文 2.0秒、締めカード3枚 各1.2秒、主CTAカード5枚 各1.2秒。）
 
 ## 公開前の映り込み確認項目
 - [ ] アナリストの衣装がlight gray blazerで統一されているか

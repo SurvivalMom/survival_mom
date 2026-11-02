@@ -41,7 +41,7 @@ already in motion. Analyst (mid-50s man, gentle demeanor, light gray
 blazer, no necktie, no name badge) looks directly into the camera,
 speaking calmly and clearly to the viewer, in Japanese (romanized for
 correct pronunciation): "Kaigo genba de watashitai handan kijun wa,
-yottsu aru you desu."
+yottsu arimasu."
 ```
 
 **Scene 2（構造の説明・4点をテンポよく列挙）**
@@ -61,7 +61,7 @@ renkei." Natural ambient sound only, no music, no captions.
 Same setting. Analyst pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized): "Kono
 yottsu ni terashite kangaeru to, soudan no shitsu mo handan no shitsu
-mo kawatte kuru you desu. Hozon shite, shokuin to no mendan de
+mo kawatte kimasu. Hozon shite, shokuin to no mendan de
 tsukatte mite kudasai." Natural ambient sound only, no music, no
 captions. Leave the upper third of the frame clean for text to be
 added later.

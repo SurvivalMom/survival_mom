@@ -51,7 +51,7 @@ sugu kotaeru mae ni."
 Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "'Anata wa, nani wo
 konkyo ni sou kangaemashita ka.' Kono hitokoto ga, handan dekiru
-shokuin wo sodatete iku you desu." Natural ambient sound only, no
+shokuin wo sodatete ikimasu." Natural ambient sound only, no
 music, no captions.
 ```
 
