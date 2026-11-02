@@ -8,6 +8,7 @@ import {Ura01WithFootage} from './CompositionUra01';
 import {Ura02WithFootage} from './CompositionUra02';
 import {Ura03WithFootage} from './CompositionUra03';
 import {Ura04WithFootage} from './CompositionUra04';
+import {Ura05WithFootage} from './CompositionUra05';
 import {segments} from './content';
 import {totalDurationInFrames} from './timing';
 import {shoseijutsu02DurationInFrames} from './shoseijutsu02Content';
@@ -16,6 +17,7 @@ import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA01_DURATION_IN_SECONDS} from './u
 import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA02_DURATION_IN_SECONDS} from './ura02Content';
 import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA03_DURATION_IN_SECONDS} from './ura03Content';
 import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA04_DURATION_IN_SECONDS} from './ura04Content';
+import {SOURCE_VIDEO_DURATION_IN_SECONDS as URA05_DURATION_IN_SECONDS} from './ura05Content';
 
 const FPS = 30;
 
@@ -105,6 +107,17 @@ export const RemotionRoot: React.FC = () => {
 				component={Ura04WithFootage}
 				defaultProps={{fps: FPS}}
 				durationInFrames={Math.ceil(URA04_DURATION_IN_SECONDS * FPS)}
+				fps={FPS}
+				width={720}
+				height={1280}
+			/>
+			{/* ura-05: fifth episode of the "ura" series, same two-layer
+			    telop format as ura-01〜04 (see ura05Content.ts). */}
+			<Composition
+				id="Ura05WithFootage"
+				component={Ura05WithFootage}
+				defaultProps={{fps: FPS}}
+				durationInFrames={Math.ceil(URA05_DURATION_IN_SECONDS * FPS)}
 				fps={FPS}
 				width={720}
 				height={1280}
