@@ -33,7 +33,7 @@
 判断できていますか」の太字テロップを全文表示。フェードイン・文字送りは使わない。画面上部に
 小さく「答えより、判断の基準を」管理者のための問いかけシリーズ #5」の
 シリーズテロップを添えてもよい）
-アナリスト（視聴者へ）：「介護現場で渡したい判断基準は、4つあるようです。」
+アナリスト（視聴者へ）：「介護現場で渡したい判断基準は、4つあります。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
@@ -56,7 +56,7 @@ renkei." Natural ambient sound only, no music, no captions.
 
 **Scene 3（締め・問いかけ）**
 アナリスト（視聴者へ）：「この4つに照らして考えると、相談の質も判断の質も
-変わってくるようです。保存して、職員との面談で使ってみてください。」
+変わってきます。保存して、職員との面談で使ってみてください。」
 ```
 Same setting. Analyst pauses briefly, then delivers the closing line
 directly to camera, calm and quiet, in Japanese (romanized): "Kono

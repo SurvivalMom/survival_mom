@@ -61,7 +61,7 @@ Natural ambient sound only, no music, no captions.
 
 Scene A3（8〜12秒）
 アナリスト（視聴者へ）：「素直さが悪いわけではありません。『育っている』
-の意味を、見直す必要があるようです。」
+の意味を、見直す必要があります。」
 ```
 Same setting. Analyst pauses briefly, then delivers the line directly
 to camera, calm and quiet, in Japanese (romanized): "Sunao-sa ga warui

@@ -50,7 +50,7 @@ kangae wo kiita ato, sono mama ni shite imasen ka."
 Scene A2（4〜8秒）
 アナリスト（視聴者へ）：「『その根拠はいいですね。ただ今回は安全面
 から、ここは管理者に相談しましょう』。判断の境界線まで、言葉にして
-伝えることが大事なようです。」
+伝えることが大事です。」
 ```
 Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "'Sono konkyo wa ii

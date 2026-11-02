@@ -60,7 +60,7 @@ captions.
 
 Scene A3（8〜12秒）
 アナリスト（視聴者へ）：「この4つに照らして考えると、相談の質も判断の
-質も変わってくるようです。」
+質も変わってきます。」
 ```
 Same setting. Analyst pauses briefly, then delivers the line directly
 to camera, calm and quiet, in Japanese (romanized): "Kono yottsu ni

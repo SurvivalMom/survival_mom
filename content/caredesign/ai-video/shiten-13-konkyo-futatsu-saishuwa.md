@@ -51,7 +51,7 @@ kara shitsumon wo uketara, sugu kotaeru mae ni."
 
 Scene A2（4〜8秒）
 アナリスト（視聴者へ）：「『あなたは、何を根拠にそう考えましたか』。
-この一言が、判断できる職員を育てていくようです。」
+この一言が、判断できる職員を育てていきます。」
 ```
 Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "'Anata wa, nani wo

@@ -37,7 +37,7 @@ Scene A1（0〜4秒）
 （後編集で0.0秒から「ひとつの『正解待ち』に、二つの物語があった」の
 太字テロップを全文表示）
 アナリスト（視聴者へ）：「管理者がすぐに答えを渡していると、職員は
-『上司の正解待ち』になりやすいようです。」
+『上司の正解待ち』になりやすくなります。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens

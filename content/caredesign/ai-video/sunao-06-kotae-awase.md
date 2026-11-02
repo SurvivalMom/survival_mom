@@ -46,7 +46,7 @@ shite imasen ka."
 
 **Scene 2（構造の説明）**
 アナリスト（視聴者へ）：「『その根拠はいいですね。ただ今回は安全面から、ここは
-管理者に相談しましょう』。判断の境界線まで、言葉にして伝えることが大事なようです。」
+管理者に相談しましょう』。判断の境界線まで、言葉にして伝えることが大事です。」
 ```
 Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "'Sono konkyo wa ii
