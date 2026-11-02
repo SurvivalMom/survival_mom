@@ -46,12 +46,12 @@ sugu kotaeru mae ni."
 
 **Scene 2（構造の説明）**
 アナリスト（視聴者へ）：「『あなたは、何を根拠にそう考えましたか』。この一言が、
-判断できる職員を育てていくようです。」
+判断できる職員を育てていきます。」
 ```
 Same setting, same framing. Analyst continues speaking directly to
 camera, calm and clear, in Japanese (romanized): "'Anata wa, nani wo
 konkyo ni sou kangaemashita ka.' Kono hitokoto ga, handan dekiru
-shokuin wo sodatete iku you desu." Natural ambient sound only, no
+shokuin wo sodatete ikimasu." Natural ambient sound only, no
 music, no captions.
 ```
 

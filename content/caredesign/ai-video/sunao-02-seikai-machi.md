@@ -34,7 +34,7 @@
 画面上部に小さく「答えより、判断の基準を」管理者のための問いかけシリーズ #2」の
 シリーズテロップを添えてもよい）
 アナリスト（視聴者へ）：「管理者がすぐに答えを渡していると、職員は『上司の
-正解待ち』になりやすいようです。」
+正解待ち』になりやすくなります。」
 ```
 Vertical 9:16 cinematic, realistic care facility office interior,
 natural ambient sound only, no music, no on-screen captions. Opens
@@ -42,7 +42,7 @@ already in motion. Analyst (mid-50s man, gentle demeanor, light gray
 blazer, no necktie, no name badge) looks directly into the camera,
 speaking calmly and clearly to the viewer, in Japanese (romanized for
 correct pronunciation): "Kanrisha ga sugu ni kotae wo watashiteiru to,
-shokuin wa 'joushi no seikai machi' ni nari yasui you desu."
+shokuin wa 'joushi no seikai machi' ni nari yasuku narimasu."
 ```
 
 **Scene 2（構造の説明）**
