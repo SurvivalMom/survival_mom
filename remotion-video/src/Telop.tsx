@@ -229,6 +229,23 @@ export const Telop: React.FC<Props> = ({segment}) => {
  * from ~10 before the size bump), so header text longer than that should
  * carry its own hand-placed `\n` at natural clause boundaries, often
  * meaning 3 shorter lines rather than 2 (see ura01Content.ts).
+ *
+ * HYPOTHESIS UNDER TEST (from ura-07 onward, not yet confirmed): posted
+ * Instagram Insights for ura-02 and ura-04 showed the per-second
+ * retention curve dropping to ~40-55% within the first couple seconds --
+ * well before any lower-telop card, and regardless of how short Scene
+ * 1's blank-lower-telop window already was (2.0s, per the earlier
+ * pacing fix documented in ura02Content.ts/ura03Content.ts/etc.). That
+ * points at the header itself, not the lower-telop cadence, as the
+ * likely lever: a long multi-clause header may simply take too long for
+ * a scrolling viewer's eye to parse in that window. Headers in
+ * ura-07.md onward were tightened to one short, single-clause line
+ * (dropping lead-in/explanatory clauses that the lower telop can carry
+ * instead) to test this. If a future episode's data doesn't show
+ * improvement, don't keep shortening headers on faith -- this was a
+ * reasoned guess from where the drop-off concentrated, not a proven fix
+ * (the earlier Scene-1-pacing fix looked reasonable too and the data
+ * didn't bear it out).
  */
 export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	const {width} = useVideoConfig();
