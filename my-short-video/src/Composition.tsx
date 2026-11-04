@@ -3,6 +3,7 @@ import { AbsoluteFill, Sequence } from "remotion";
 import { Atmosphere } from "./ura07/Background";
 import { DeskScene } from "./ura07/DeskScene";
 import { HeaderBanner } from "./ura07/HeaderBanner";
+import { Sfx } from "./ura07/Sfx";
 import { Telop } from "./ura07/Telop";
 import { CARDS } from "./ura07/script";
 
@@ -11,9 +12,7 @@ import { CARDS } from "./ura07/script";
  * Layers, back to front: illustrated desk scene (stand-in for the md's AI
  * footage), atmosphere, center telops, fixed header.
  *
- * Audio: the md asks that the video never be fully silent (a quiet pen
- * scratch or room tone, no BGM). Put an ambient file in public/ and enable
- * the <Audio> line below.
+ * Audio: natural SFX only (pen, room tone), see ura07/Sfx.tsx.
  */
 export const Ura07ChiisanaGouman: React.FC = () => {
   return (
@@ -35,7 +34,7 @@ export const Ura07ChiisanaGouman: React.FC = () => {
         );
       })}
       <HeaderBanner />
-      {/* <Audio src={staticFile("ambient-room.mp3")} volume={0.35} /> */}
+      <Sfx />
     </AbsoluteFill>
   );
 };
