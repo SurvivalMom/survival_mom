@@ -2,12 +2,24 @@ import { Composition, Folder } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
+import { Ura07ChiisanaGouman } from "./Composition";
+import { DURATION_IN_FRAMES, FPS } from "./ura07/script";
 
 // Each <Composition> is an entry in the sidebar!
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      {/* ura-07「小さな傲慢に気づいた夜」 9:16 short.
+          npx remotion render Ura07ChiisanaGouman out/ura-07.mp4 */}
+      <Composition
+        id="Ura07ChiisanaGouman"
+        component={Ura07ChiisanaGouman}
+        durationInFrames={DURATION_IN_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
+      />
       <Folder name="Elements">
         <Composition
           id="Logo"
