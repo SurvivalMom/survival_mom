@@ -1,3 +1,6 @@
 node_modules
 out
 .remotion
+
+# Ad-hoc renders written next to package.json (e.g. `npx remotion render ... out.mp4`)
+/*.mp4
