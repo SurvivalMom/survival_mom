@@ -39,9 +39,10 @@ description: survival_mom の有料・無料Webアプリ（HTML1枚完結）と�
 ### C. 複数アプリのセット（例：`omatome.html`）
 - **パスワード一覧をページに載せない。** ゲートを付けても、一覧の文字列はソースに残る
 - `omatome.html` の方式に合わせる：
-  1. セットのページをWorker方式（`app: 'omatome'`）で解錠する
-  2. 成功したら `localStorage` の `sm_omatome_license_v1` に `{ok, expiry}` を保存する
+  1. セットのページは、ハッシュ照合のパスワードで開く（パスワードはStripeの購入メールで届ける）
+  2. 正しく入力されたら、`localStorage` の `sm_omatome_license_v1` に `{ok, expiry}` を保存する
   3. セット内の各アプリは、この値があればパスワード入力を省略する
+- パスワードを変えるときは、Stripeのメール文面と `OMATOME.HASH` を必ず同時に変える
 - 新しいアプリをセットに加えるときは、そのアプリのゲートに同じチェックを1行追加する（`quest.html` などの `_om` の行が実例）
 - 販売者用のパスワード早見表などを、公開リポジトリに置かない
 

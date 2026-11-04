@@ -486,11 +486,11 @@
 
     <div class="pw-brand">survival_mam — 5 Apps Collection</div>
     <h1 class="pw-title">おまとめ<em>パック</em></h1>
-    <p class="pw-sub">ご購入ありがとうございます。<br>メールでお届けした<strong>アクティベーションコード</strong>を入力してください。</p>
+    <p class="pw-sub">ご購入ありがとうございます。<br>メールでお届けした<strong>パスワード</strong>を入力してください。</p>
 
-    <input class="pw-input" id="pwInput" type="text" placeholder="アクティベーションコード"
+    <input class="pw-input" id="pwInput" type="password" placeholder="パスワードを入力"
       maxlength="64" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter')tryUnlock()" />
-    <button class="pw-btn" id="pwBtn" onclick="tryUnlock()">コレクションを開く　→</button>
+    <button class="pw-btn" onclick="tryUnlock()">コレクションを開く　→</button>
     <div class="pw-error" id="pwError"></div>
 
     <div class="pw-bottom-deco">
@@ -608,11 +608,11 @@
   <div class="pw-ref-panel fade-up" style="animation-delay:0.35s">
     <div class="pw-ref-title">パスワードの入力は、もう要りません</div>
     <p style="font-size:0.85rem;line-height:1.9;color:var(--ink2);margin:0 0 10px">
-      このページでコードを入力したスマホ・PCなら、上の5つのアプリは<strong>タップするだけで開きます</strong>。
+      このページでパスワードを入力したスマホ・PCなら、上の5つのアプリは<strong>タップするだけで開きます</strong>。
     </p>
     <p style="font-size:0.78rem;line-height:1.8;color:var(--ink3);margin:0">
-      別のスマホやPCで使うときは、その端末でもこのページを開いて、同じコードを入力してください。<br>
-      ブラウザの履歴やデータを消した場合も、もう一度コードを入力すれば元どおり使えます。
+      別のスマホやPCで使うときは、その端末でもこのページを開いて、同じパスワードを入力してください。<br>
+      ブラウザの履歴やデータを消した場合も、もう一度パスワードを入力すれば元どおり使えます。
     </p>
   </div>
 
@@ -631,28 +631,25 @@
 </div>
 </div>
 
+<script>/* パスワード照合用（SHA-256）。平文のパスワードはソースに書かない */
+function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,c=0,i,j;while(c<64){for(i=2;i*i<=p;i++)if(p%i==0)break;if(i*i>p){if(c<8)H[c]=(Math.pow(p,.5)*4294967296)|0;K[c++]=(Math.pow(p,1/3)*4294967296)|0}p++}var b=unescape(encodeURIComponent(String(s))),L=b.length*8,w=[];b+='\x80';while(b.length%64-56)b+='\x00';for(i=0;i<b.length;i++)w[i>>2]|=b.charCodeAt(i)<<((3-i%4)*8);w.push((L/4294967296)|0,L|0);for(j=0;j<w.length;j+=16){var a=H.slice(0),W=w.slice(j,j+16);for(i=0;i<64;i++){if(i>15){var x=W[i-15],y=W[i-2];W[i]=(W[i-16]+(r(x,7)^r(x,18)^(x>>>3))+W[i-7]+(r(y,17)^r(y,19)^(y>>>10)))|0}var t1=(a[7]+(r(a[4],6)^r(a[4],11)^r(a[4],25))+((a[4]&a[5])^(~a[4]&a[6]))+K[i]+W[i])|0,t2=((r(a[0],2)^r(a[0],13)^r(a[0],22))+((a[0]&a[1])^(a[0]&a[2])^(a[1]&a[2])))|0;a=[(t1+t2)|0].concat(a);a[4]=(a[4]+t1)|0;a.pop()}for(i=0;i<8;i++)H[i]=(H[i]+a[i])|0}var o='';for(i=0;i<8;i++)o+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);return o}
+</script>
 <script>
-/* ══════════ アクティベーション（Cloudflare Worker で照合） ══════════
-   コードは購入者ごとに Worker 側で発行・管理する（app: 'omatome'）。
-   照合に成功すると、この端末の localStorage に利用許可を保存し、
+/* ══════════ パスワードゲート ══════════
+   パスワードは Stripe の購入メールで届く。ソースにはハッシュ値だけを置く。
+   パスワードを変えるときは、Stripe のメール文面とこの HASH を同時に変えること。
+     python3 -c "import hashlib,sys;print(hashlib.sha256(sys.argv[1].encode()).hexdigest())" '新しいパスワード'
+   正しく入力された端末には利用許可（sm_omatome_license_v1）を保存し、
    同じサイト内の5アプリ（quest / training / smallstep / sensory / dialog）は
    パスワード入力なしで開けるようになる。 */
 var OMATOME = {
-  WORKER_URL: 'https://cocolog-license.sr-g-solti.workers.dev/',
-  PRODUCT:    'omatome',
+  HASH:       '650ae556c8958a0fd80ac05de1e5c8d76cc57bce1ac0c739d7595020a49c5d41',
   TOKEN_KEY:  'sm_omatome_license_v1',
-  DEVICE_KEY: 'sm_omatome_device_id',
   TOKEN_DAYS: 365
 };
 
 function omGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
 function omSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
-
-function omDeviceId(){
-  var id = omGet(OMATOME.DEVICE_KEY);
-  if (!id) { id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36); omSet(OMATOME.DEVICE_KEY, id); }
-  return id;
-}
 
 function omOpen(){
   var overlay = document.getElementById('pw-overlay');
@@ -665,7 +662,7 @@ function omOpen(){
   var overlay = document.getElementById('pw-overlay');
   try {
     var t = JSON.parse(omGet(OMATOME.TOKEN_KEY) || 'null');
-    if (t && t.ok && t.expiry > Date.now()) {
+    if (t && t.ok && t.expiry > Date.now() && t.h === OMATOME.HASH) {
       overlay.style.display = 'none';
       document.getElementById('app').classList.add('visible');
       return;
@@ -675,50 +672,18 @@ function omOpen(){
   setTimeout(function(){ document.getElementById('pwInput').focus(); }, 400);
 })();
 
-function omError(msg){
+function tryUnlock() {
   var input = document.getElementById('pwInput');
   var err   = document.getElementById('pwError');
-  var btn   = document.getElementById('pwBtn');
-  btn.disabled = false; btn.textContent = 'コレクションを開く　→';
-  input.classList.add('shake');
-  err.textContent = msg;
-  setTimeout(function(){ input.classList.remove('shake'); input.focus(); }, 480);
-}
-
-async function tryUnlock() {
-  var input = document.getElementById('pwInput');
-  var btn   = document.getElementById('pwBtn');
-  var code  = input.value.trim();
-  document.getElementById('pwError').textContent = '';
-  if (!code) { omError('アクティベーションコードを入力してください。'); return; }
-
-  btn.disabled = true; btn.textContent = '確認中…';
-  try {
-    var res  = await fetch(OMATOME.WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: code, deviceId: omDeviceId(), app: OMATOME.PRODUCT })
-    });
-    var data = await res.json();
-    if (data.ok) {
-      omSet(OMATOME.TOKEN_KEY, JSON.stringify({
-        ok: true, plan: data.plan, code: code,
-        expiry: Date.now() + OMATOME.TOKEN_DAYS * 24 * 60 * 60 * 1000
-      }));
-      omOpen();
-    } else if (data.error === 'invalid_code') {
-      omError('コードが正しくありません。メールに記載のコードをご確認ください。');
-    } else if (data.error === 'expired') {
-      omError('このコードは有効期限が切れています。');
-    } else if (data.error === 'limit_reached') {
-      omError('このコードで使える端末数の上限' + (data.max ? '（' + data.max + '台）' : '') + 'に達しています。');
-    } else if (data.error === 'wrong_product') {
-      omError('このコードはおまとめパック用ではありません。ご確認ください。');
-    } else {
-      omError('確認できませんでした。少し時間をおいて、もう一度お試しください。');
-    }
-  } catch(e) {
-    omError('通信エラーが発生しました。インターネット接続をご確認ください。');
+  var val   = input.value.trim();
+  if (smHash(val) === OMATOME.HASH) {
+    omSet(OMATOME.TOKEN_KEY, JSON.stringify({ ok: true, h: OMATOME.HASH, expiry: Date.now() + OMATOME.TOKEN_DAYS * 24 * 60 * 60 * 1000 }));
+    omOpen();
+  } else {
+    input.classList.add('shake');
+    err.textContent = 'パスワードが違います。購入時のメールをご確認ください。';
+    input.value = '';
+    setTimeout(function(){ input.classList.remove('shake'); err.textContent = ''; input.focus(); }, 1800);
   }
 }
 </script>
