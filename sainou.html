@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script>/* パスワード照合用（SHA-256）。平文のパスワードはソースに書かない */
+function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,c=0,i,j;while(c<64){for(i=2;i*i<=p;i++)if(p%i==0)break;if(i*i>p){if(c<8)H[c]=(Math.pow(p,.5)*4294967296)|0;K[c++]=(Math.pow(p,1/3)*4294967296)|0}p++}var b=unescape(encodeURIComponent(String(s))),L=b.length*8,w=[];b+='\x80';while(b.length%64-56)b+='\x00';for(i=0;i<b.length;i++)w[i>>2]|=b.charCodeAt(i)<<((3-i%4)*8);w.push((L/4294967296)|0,L|0);for(j=0;j<w.length;j+=16){var a=H.slice(0),W=w.slice(j,j+16);for(i=0;i<64;i++){if(i>15){var x=W[i-15],y=W[i-2];W[i]=(W[i-16]+(r(x,7)^r(x,18)^(x>>>3))+W[i-7]+(r(y,17)^r(y,19)^(y>>>10)))|0}var t1=(a[7]+(r(a[4],6)^r(a[4],11)^r(a[4],25))+((a[4]&a[5])^(~a[4]&a[6]))+K[i]+W[i])|0,t2=((r(a[0],2)^r(a[0],13)^r(a[0],22))+((a[0]&a[1])^(a[0]&a[2])^(a[1]&a[2])))|0;a=[(t1+t2)|0].concat(a);a[4]=(a[4]+t1)|0;a.pop()}for(i=0;i<8;i++)H[i]=(H[i]+a[i])|0}var o='';for(i=0;i<8;i++)o+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);return o}
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>才能はっくつシート</title>
@@ -509,9 +513,9 @@
         // パスワードチェック機能
         function checkPassword() {
             const password = document.getElementById('passwordInput').value;
-            const correctPassword = 'hakkutsu';
+            const correctPassword = 'dfd93d4667dd2e64462e46d3026af95169ac924a0d6ac42f00969fba9f311e2b';
             
-            if (password === correctPassword) {
+            if (smHash(password) === correctPassword) {
                 document.getElementById('passwordScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
                 document.getElementById('errorMessage').style.display = 'none';

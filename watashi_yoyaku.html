@@ -755,14 +755,10 @@ async function generateScript() {
 ・ラベル（【切り出し方】など）はそのまま使用してください`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://survivalmom-ai.sr-g-solti.workers.dev/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ app: 'watashi_yoyaku', prompt: prompt, max_tokens: 1000 }) /* AI中継Worker（workers/ai-proxy.js）経由。APIキーはWorker側に保管 */
     });
     const data = await res.json();
     const text = data.content.map(c => c.text || '').join('');
