@@ -744,7 +744,8 @@ async function generateScript() {
 ・お願いではなく"宣言に近い依頼"のトーンで（100〜160字）
 
 【相手への感謝・安心のひとこと】
-反論や不安を先に受け止め、「大丈夫、あなたならできる」という信頼を伝える。謝罪ではなく、感謝と信頼で締める。（50〜80字）
+反論や不安を先に受け止め、「大丈夫、あなたならできる」という信頼を伝える。最後の一文は必ず「ありがとう」か、相手を信頼する言葉で終える。（50〜80字）
+良い締めの例：「いつも支えてくれてありがとう。あなたに一番に話したかったんだ。」「あなたがいてくれるから、安心して行ってこられる。ありがとう。」
 
 ───────────────────────
 文体の注意：
@@ -752,20 +753,36 @@ async function generateScript() {
 ・「〜してもいいですか？」より「〜したいと思ってる」
 ・"正論"ではなく"本音"が伝わる温度感
 ・survival_mamらしい：静かに強く、自分を諦めない女性の言葉
-・ラベル（【切り出し方】など）はそのまま使用してください`;
+・ラベル（【切り出し方】など）はそのまま使用してください
+
+【絶対に守ること】
+このママは、自分の時間を求めることに何も悪いことはしていない。
+だから、3つのパートすべてで、謝罪や自分を小さくする言葉を一切使わない。
+禁止：「ごめん」「ごめんね」「すみません」「申し訳ない」「わがまま」「迷惑をかけて」「こんなお願いをして」「私なんかが」
+書き終えたら、禁止の言葉が入っていないか必ず見直し、入っていたら感謝の言葉に置き換えてから出力すること。`;
 
   try {
-    const res = await fetch('https://survivalmom-ai.sr-g-solti.workers.dev/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ app: 'watashi_yoyaku', prompt: prompt, max_tokens: 1000 }) /* AI中継Worker（workers/ai-proxy.js）経由。APIキーはWorker側に保管 */
-    });
-    const data = await res.json();
-    const text = data.content.map(c => c.text || '').join('');
+    /* AI中継Worker（workers/ai-proxy.js）経由。APIキーはWorker側に保管 */
+    const askAI = async (p) => {
+      const res = await fetch('https://survivalmom-ai.sr-g-solti.workers.dev/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ app: 'watashi_yoyaku', prompt: p, max_tokens: 1000 })
+      });
+      const data = await res.json();
+      return data.content.map(c => c.text || '').join('');
+    };
+    // 罪悪感ゼロの約束：謝罪・自己卑下の言葉が混ざったら、1回だけ作り直す
+    const APOLOGY = /ごめん|すみません|すいません|申し訳|わがまま|迷惑をかけ|迷惑かけ/;
+    let text = await askAI(prompt);
+    if (APOLOGY.test(text)) {
+      const retry = await askAI(prompt + '\n\n※前回の案に謝罪や自分を小さくする言葉が入っていました。それらを一切使わず、感謝と信頼の言葉で書き直してください。');
+      if (retry && !APOLOGY.test(retry)) text = retry;
+    }
     state.lastScript = text;
     renderScript(text);
   } catch (e) {
-    renderScript('【切り出し方】\nねえ、ちょっといい？少し相談があるんだけど。\n\n【本題の伝え方】\n最近ずっと自分のことを後回しにしてきたんだけど、${wish}に行きたいなって。正直、すごく楽しみにしてる。その間、子どものことお願いできる？私がリフレッシュできると、家族にも笑顔でいられる気がして。\n\n【相手への配慮・感謝のひとこと】\n無理なお願いで申し訳ないんだけど、あなたなら大丈夫って信じてる。ありがとう、いつも支えてくれて。'.replace('${wish}', wish));
+    renderScript('【切り出し方】\nねえ、ちょっといい？少し相談があるんだけど。\n\n【本題の伝え方】\n最近ずっと自分のことを後回しにしてきたんだけど、${wish}に行きたいなって。正直、すごく楽しみにしてる。その間、子どものことお願いできる？私がリフレッシュできると、家族にも笑顔でいられる気がして。\n\n【相手への感謝・安心のひとこと】\n急に話してびっくりしたよね。でも、あなたなら大丈夫って信じてる。いつも支えてくれて、ありがとう。'.replace('${wish}', wish));
   }
 }
 
