@@ -247,25 +247,41 @@ export const Telop: React.FC<Props> = ({segment}) => {
  * (the earlier Scene-1-pacing fix looked reasonable too and the data
  * didn't bear it out).
  *
- * SECOND, STACKED HYPOTHESIS (ura-07/ura-08 only so far): reviewed two
- * unrelated high-performing TikTok "listicle" videos (a Claude-skills
- * hype video, a GitHub-tricks video) for hook mechanics, since both
- * open and hold viewers through a numbered list the way this format's
- * header could. Common pattern: they open on a loss/cost claim ("doing
- * it the old way is costing you") rather than a neutral description,
- * and state the count up front so the viewer can see the finish line.
- * ura's headers were already mostly tension-bearing by accident (a
- * snap decision, an unanswered question), but ura-07 ("今日も、少し
- * イライラした。") and ura-08 ("まず、周りを見る癖がある。") read as
- * flat description rather than a stake, so those two were reworded to
- * name what's being lost ("また、イライラしてしまった。" -- it keeps
- * happening; "決める力が、減っている。" -- a capacity eroding) while
- * holding the same short length. This stacks on top of the
- * header-length hypothesis above rather than replacing it, which makes
- * the two harder to tell apart in the data if retention improves --
- * accepted here because iteration speed matters more than a clean
- * isolated test on an account this small, but worth knowing if later
- * deciding which change to keep.
+ * SECOND, STACKED HYPOTHESIS (applied across ura-07..14, selectively):
+ * reviewed two unrelated high-performing TikTok "listicle" videos (a
+ * Claude-skills hype video, a GitHub-tricks video) for hook mechanics,
+ * since both open and hold viewers through a numbered list the way
+ * this format's header could. Common pattern: they open on a loss/cost
+ * claim ("doing it the old way is costing you") rather than a neutral
+ * description, and state the count up front so the viewer can see the
+ * finish line. Checked each not-yet-produced header against this and
+ * only reworded the ones that read as flat description rather than a
+ * stake:
+ *   - ura-07 "今日も、少しイライラした。" -> "また、イライラしてしまった。"
+ *     (one-off -> recurring)
+ *   - ura-08 "まず、周りを見る癖がある。" -> "決める力が、減っている。"
+ *     (neutral habit -> an eroding capacity)
+ *   - ura-09 "また、書きかけで手が止まった。" -> "自分の言葉が、出てこない。"
+ *     (the physical action -> what's actually missing)
+ *   - ura-10 "とっさの判断だった。" -> "相談する間も、なかった。"
+ *     (the fact of a snap decision -> what was missing when it happened)
+ *   - ura-11 "『あなたはどう思う？』と聞き返された。" ->
+ *     "答えが、返ってこない。" (kept factual, not "拒絶された" or
+ *     similar, since this episode is the series' one warm-reversal
+ *     episode and overstating the opening beat would misrepresent it;
+ *     the quote itself still appears in the lower telop)
+ * ura-12 ("基準なんて、誰も教えてくれなかった。") and ura-13 ("あの
+ * 判断、正しかったか分からない。") already read as a loss/unresolved
+ * stake on their own and were left untouched. ura-14 ("『何を根拠に、
+ * そう考えた？』と聞かれた。" -> "『何を根拠に？』と聞かれた。") was
+ * only trimmed for length, not reworded for loss-framing, since it's
+ * the series' positive-finale episode and the quote-driven tension
+ * already does the job without implying something was taken away.
+ * This stacks on top of the header-length hypothesis above rather than
+ * replacing it, which makes the two harder to tell apart in the data if
+ * retention improves -- accepted here because iteration speed matters
+ * more than a clean isolated test on an account this small, but worth
+ * knowing if later deciding which change to keep.
  */
 export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	const {width} = useVideoConfig();
