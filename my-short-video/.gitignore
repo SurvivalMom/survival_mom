@@ -9,3 +9,7 @@ out
 # Licensed font files must not be committed (redistribution not allowed).
 public/fonts/*
 !public/fonts/README.md
+
+# Python bytecode cache
+__pycache__/
+*.pyc
