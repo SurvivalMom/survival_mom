@@ -36,9 +36,14 @@ description: survival_mom の有料・無料Webアプリ（HTML1枚完結）と�
 - `WORKER_URL = 'https://cocolog-license.sr-g-solti.workers.dev'` に `{ code, deviceId, app }` をPOSTし、`data.ok` で解錠する
 - コード発行の手順は `kirokuwake_SETUP.md` を参照する
 
-### C. パスワード一覧を中に表示するページ（例：`omatome.html`）
-- ゲートを付けても、一覧の文字列はソースに残る。「ゲートをハッシュにしたから安全」と説明しない
-- 守りたい場合は B方式にするか、一覧そのものを暗号化する
+### C. 複数アプリのセット（例：`omatome.html`）
+- **パスワード一覧をページに載せない。** ゲートを付けても、一覧の文字列はソースに残る
+- `omatome.html` の方式に合わせる：
+  1. セットのページをWorker方式（`app: 'omatome'`）で解錠する
+  2. 成功したら `localStorage` の `sm_omatome_license_v1` に `{ok, expiry}` を保存する
+  3. セット内の各アプリは、この値があればパスワード入力を省略する
+- 新しいアプリをセットに加えるときは、そのアプリのゲートに同じチェックを1行追加する（`quest.html` などの `_om` の行が実例）
+- 販売者用のパスワード早見表などを、公開リポジトリに置かない
 
 ### 作った後の確認
 - `grep -rn "実際のパスワード" *.html` を実行し、何も出てこないこと（平文が残っていないこと）を確認する

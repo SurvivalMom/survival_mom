@@ -489,11 +489,11 @@ function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,
 
     <div class="pw-brand">survival_mam — 5 Apps Collection</div>
     <h1 class="pw-title">おまとめ<em>パック</em></h1>
-    <p class="pw-sub">ご購入ありがとうございます。<br>パスワードを入力してコレクションを開いてください。</p>
+    <p class="pw-sub">ご購入ありがとうございます。<br>メールでお届けした<strong>アクティベーションコード</strong>を入力してください。</p>
 
-    <input class="pw-input" id="pwInput" type="password" placeholder="パスワードを入力"
-      maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter')tryUnlock()" />
-    <button class="pw-btn" onclick="tryUnlock()">コレクションを開く　→</button>
+    <input class="pw-input" id="pwInput" type="text" placeholder="アクティベーションコード"
+      maxlength="64" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter')tryUnlock()" />
+    <button class="pw-btn" id="pwBtn" onclick="tryUnlock()">コレクションを開く　→</button>
     <div class="pw-error" id="pwError"></div>
 
     <div class="pw-bottom-deco">
@@ -605,60 +605,18 @@ function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,
 
   </div>
 
-  <!-- パスワード参照 -->
-  <div class="sec-label">Passwords — 各アプリの起動パスワード</div>
+  <!-- 使い方 -->
+  <div class="sec-label">How to use — 各アプリの開き方</div>
 
   <div class="pw-ref-panel fade-up" style="animation-delay:0.35s">
-
-    <div class="pw-master">
-      <div class="pw-master-label">このページのパスワード</div>
-      <div class="pw-master-val">omatome</div>
-      <div class="pw-master-note">このページ自体の起動に使用したパスワードです</div>
-    </div>
-
-    <div class="pw-ref-title">各アプリのパスワード</div>
-    <div class="pw-ref-grid">
-      <div class="pw-ref-item">
-        <div class="pw-ref-ico">🗡️</div>
-        <div class="pw-ref-body">
-          <div class="pw-ref-app">ライフ・クエスト・ボード</div>
-          <div class="pw-ref-pw" id="pw-quest">quest25</div>
-        </div>
-      </div>
-      <div class="pw-ref-item">
-        <div class="pw-ref-ico">✋</div>
-        <div class="pw-ref-body">
-          <div class="pw-ref-app">巧緻性×言語カード</div>
-          <div class="pw-ref-pw" id="pw-training">train25</div>
-        </div>
-      </div>
-      <div class="pw-ref-item">
-        <div class="pw-ref-ico">✅</div>
-        <div class="pw-ref-body">
-          <div class="pw-ref-app">スモールステップカード</div>
-          <div class="pw-ref-pw" id="pw-step">step25</div>
-        </div>
-      </div>
-      <div class="pw-ref-item">
-        <div class="pw-ref-ico">📝</div>
-        <div class="pw-ref-body">
-          <div class="pw-ref-app">感覚プロファイル観察ノート</div>
-          <div class="pw-ref-pw" id="pw-sensory">sens25</div>
-        </div>
-      </div>
-      <div class="pw-ref-item" style="grid-column: span 2">
-        <div class="pw-ref-ico">💬</div>
-        <div class="pw-ref-body">
-          <div class="pw-ref-app">対話プロンプト100</div>
-          <div class="pw-ref-pw" id="pw-dialog">dial25</div>
-        </div>
-      </div>
-    </div>
-
-    <button class="pw-copy-btn" id="copyAllBtn" onclick="copyAllPw()">
-      📋 全パスワードをコピーする
-    </button>
-
+    <div class="pw-ref-title">パスワードの入力は、もう要りません</div>
+    <p style="font-size:0.85rem;line-height:1.9;color:var(--ink2);margin:0 0 10px">
+      このページでコードを入力したスマホ・PCなら、上の5つのアプリは<strong>タップするだけで開きます</strong>。
+    </p>
+    <p style="font-size:0.78rem;line-height:1.8;color:var(--ink3);margin:0">
+      別のスマホやPCで使うときは、その端末でもこのページを開いて、同じコードを入力してください。<br>
+      ブラウザの履歴やデータを消した場合も、もう一度コードを入力すれば元どおり使えます。
+    </p>
   </div>
 
   <!-- フッター -->
@@ -677,78 +635,105 @@ function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,
 </div>
 
 <script>
-/* ══════════ パスワードゲート ══════════ */
-(function(){
-  var PW      = '650ae556c8958a0fd80ac05de1e5c8d76cc57bce1ac0c739d7595020a49c5d41';
-  var overlay = document.getElementById('pw-overlay');
-  var appEl   = document.getElementById('app');
+/* ══════════ アクティベーション（Cloudflare Worker で照合） ══════════
+   コードは購入者ごとに Worker 側で発行・管理する（app: 'omatome'）。
+   照合に成功すると、この端末の localStorage に利用許可を保存し、
+   同じサイト内の5アプリ（quest / training / smallstep / sensory / dialog）は
+   パスワード入力なしで開けるようになる。 */
+var OMATOME = {
+  WORKER_URL: 'https://cocolog-license.sr-g-solti.workers.dev/',
+  PRODUCT:    'omatome',
+  TOKEN_KEY:  'sm_omatome_license_v1',
+  DEVICE_KEY: 'sm_omatome_device_id',
+  TOKEN_DAYS: 365,
+  /* 移行期間：これまでの共通パスワードを、この日時まで受け付ける。
+     既存の購入者へコードを配り終えたら、LEGACY_UNTIL を過去の日付にする（または LEGACY_HASH を '' にする）。 */
+  LEGACY_HASH:  '650ae556c8958a0fd80ac05de1e5c8d76cc57bce1ac0c739d7595020a49c5d41',
+  LEGACY_UNTIL: new Date('2027-01-01T00:00:00+09:00').getTime()
+};
 
-  // sessionStorage でログイン維持
-  if (sessionStorage.getItem('sm_omatome') === '1') {
-    overlay.style.display = 'none';
-    appEl.classList.add('visible');
-    return;
-  }
+function omGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function omSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+
+function omDeviceId(){
+  var id = omGet(OMATOME.DEVICE_KEY);
+  if (!id) { id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36); omSet(OMATOME.DEVICE_KEY, id); }
+  return id;
+}
+
+function omOpen(){
+  var overlay = document.getElementById('pw-overlay');
+  overlay.classList.add('hide');
+  setTimeout(function(){ overlay.style.display = 'none'; }, 650);
+  document.getElementById('app').classList.add('visible');
+}
+
+(function(){
+  var overlay = document.getElementById('pw-overlay');
+  try {
+    var t = JSON.parse(omGet(OMATOME.TOKEN_KEY) || 'null');
+    if (t && t.ok && t.expiry > Date.now()) {
+      overlay.style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+      return;
+    }
+  } catch(e) {}
   overlay.style.display = 'flex';
   setTimeout(function(){ document.getElementById('pwInput').focus(); }, 400);
 })();
 
-function tryUnlock() {
+function omError(msg){
   var input = document.getElementById('pwInput');
   var err   = document.getElementById('pwError');
-  var val   = input.value.trim();
-
-  if (smHash(val) === '650ae556c8958a0fd80ac05de1e5c8d76cc57bce1ac0c739d7595020a49c5d41') {
-    sessionStorage.setItem('sm_omatome', '1');
-    var overlay = document.getElementById('pw-overlay');
-    overlay.classList.add('hide');
-    setTimeout(function(){ overlay.style.display = 'none'; }, 650);
-    document.getElementById('app').classList.add('visible');
-  } else {
-    input.classList.add('shake');
-    err.textContent = 'パスワードが違います。メールをご確認ください。';
-    input.value = '';
-    setTimeout(function(){
-      input.classList.remove('shake');
-      err.textContent = '';
-      input.focus();
-    }, 480);
-  }
+  var btn   = document.getElementById('pwBtn');
+  btn.disabled = false; btn.textContent = 'コレクションを開く　→';
+  input.classList.add('shake');
+  err.textContent = msg;
+  setTimeout(function(){ input.classList.remove('shake'); input.focus(); }, 480);
 }
 
-/* ══════════ 全PW一括コピー ══════════ */
-function copyAllPw() {
-  var text = [
-    '【survival_mam 5アプリ パスワード一覧】',
-    '',
-    '● このページ（おまとめパック）: omatome',
-    '● ライフ・クエスト・ボード: quest25',
-    '● 巧緻性×言語カード: train25',
-    '● スモールステップカード: step25',
-    '● 感覚プロファイル観察ノート: sens25',
-    '● 対話プロンプト100: dial25',
-  ].join('\n');
+async function tryUnlock() {
+  var input = document.getElementById('pwInput');
+  var btn   = document.getElementById('pwBtn');
+  var code  = input.value.trim();
+  document.getElementById('pwError').textContent = '';
+  if (!code) { omError('アクティベーションコードを入力してください。'); return; }
 
-  var btn = document.getElementById('copyAllBtn');
-  navigator.clipboard.writeText(text).then(function(){
-    btn.textContent = '✅ コピーしました！メモ帳などに貼り付けて保存できます';
-    btn.classList.add('copied');
-    setTimeout(function(){
-      btn.textContent = '📋 全パスワードをコピーする';
-      btn.classList.remove('copied');
-    }, 3000);
-  }).catch(function(){
-    var ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta);
-    btn.textContent = '✅ コピーしました！';
-    btn.classList.add('copied');
-    setTimeout(function(){
-      btn.textContent = '📋 全パスワードをコピーする';
-      btn.classList.remove('copied');
-    }, 3000);
-  });
+  // 移行期間中だけ、これまでの共通パスワードも受け付ける
+  if (OMATOME.LEGACY_HASH && Date.now() < OMATOME.LEGACY_UNTIL && smHash(code) === OMATOME.LEGACY_HASH) {
+    omSet(OMATOME.TOKEN_KEY, JSON.stringify({ ok: true, legacy: true, expiry: OMATOME.LEGACY_UNTIL }));
+    omOpen();
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = '確認中…';
+  try {
+    var res  = await fetch(OMATOME.WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code, deviceId: omDeviceId(), app: OMATOME.PRODUCT })
+    });
+    var data = await res.json();
+    if (data.ok) {
+      omSet(OMATOME.TOKEN_KEY, JSON.stringify({
+        ok: true, plan: data.plan, code: code,
+        expiry: Date.now() + OMATOME.TOKEN_DAYS * 24 * 60 * 60 * 1000
+      }));
+      omOpen();
+    } else if (data.error === 'invalid_code') {
+      omError('コードが正しくありません。メールに記載のコードをご確認ください。');
+    } else if (data.error === 'expired') {
+      omError('このコードは有効期限が切れています。');
+    } else if (data.error === 'limit_reached') {
+      omError('このコードで使える端末数の上限' + (data.max ? '（' + data.max + '台）' : '') + 'に達しています。');
+    } else if (data.error === 'wrong_product') {
+      omError('このコードはおまとめパック用ではありません。ご確認ください。');
+    } else {
+      omError('確認できませんでした。少し時間をおいて、もう一度お試しください。');
+    }
+  } catch(e) {
+    omError('通信エラーが発生しました。インターネット接続をご確認ください。');
+  }
 }
 </script>
 </body>

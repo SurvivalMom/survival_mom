@@ -118,6 +118,7 @@ function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,
 (function(){
   var PWS = ["54c020a09965f5e541e3075497647f83af9e3a6d716e9dc48296188eada6f089","fe25bd72ec02b95a3734da12b20e1e8f3c5b833eea105e0f3a868f64572db915","eb6cc280035a7d7931731ebc08f855992e774cb79fe2ce8dbd80cdcef76274ac"];
   var overlay = document.getElementById("pwOverlay");
+  try{var _om=JSON.parse(localStorage.getItem("sm_omatome_license_v1")||"null");if(_om&&_om.ok&&_om.expiry>Date.now()){sessionStorage.setItem("tdl_pw_ok","1");}}catch(e){} /* おまとめパック購入者はパスワード不要 */
   if(sessionStorage.getItem("tdl_pw_ok")==="1"){ overlay.style.display="none"; return; }
   overlay.style.display="flex";
 })();

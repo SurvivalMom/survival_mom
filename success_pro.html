@@ -211,7 +211,7 @@
     <div class="complete-eyebrow">Purchase Complete</div>
     <h1 class="complete-title">ご購入ありがとうございます</h1>
     <p class="complete-sub">
-      以下のパスワードとURLを保存してください。<br>
+      以下のURLを保存し、メールでお届けするコードをお手元にご用意ください。<br>
       メールにも同内容をお送りしています。
     </p>
   </div>
@@ -223,30 +223,19 @@
     <div class="product-desc">全5アプリ（ライフクエスト・巧緻性カード・スモールステップ・感覚ノート・対話プロンプト）のコンプリートセット。教育・福祉関係者向け。</div>
 
     <div class="pw-display-wrap">
-      <div class="pw-display-label">起動パスワード</div>
-      <div class="pw-value" id="pwVal">omatome</div>
-      <button class="pw-copy-btn" id="copyBtn" onclick="copyPw()">📋 パスワードをコピーする</button>
-      <div class="pw-note">セット内の全アプリで同じパスワードを使用します</div>
+      <div class="pw-display-label">アクティベーションコード</div>
+      <div class="pw-note" style="font-size:0.9rem;line-height:1.8;color:var(--ink)">
+        ご購入時のメールアドレス宛に、<strong>あなた専用のコード</strong>をお送りします。<br>
+        下のボタンから「おまとめパック」を開き、そのコードを入力してください。
+      </div>
     </div>
   </div>
 
   <!-- 起動ボタン -->
-  <a class="launch-btn" href="quest.html" target="_blank" style="margin-bottom:10px">
-    🗡️ ライフ・クエスト・ボード →
+  <a class="launch-btn" href="omatome.html" target="_blank" style="margin-bottom:10px">
+    📦 おまとめパックを開く →
   </a>
-  <a class="launch-btn" href="training.html" target="_blank" style="margin-bottom:10px">
-    ✋ 巧緻性×言語カード →
-  </a>
-  <a class="launch-btn" href="smallstep.html" target="_blank" style="margin-bottom:10px">
-    ✅ スモールステップカード →
-  </a>
-  <a class="launch-btn" href="sensory.html" target="_blank" style="margin-bottom:10px">
-    📝 感覚プロファイル観察ノート →
-  </a>
-  <a class="launch-btn" href="dialog.html" target="_blank" style="margin-bottom:10px">
-    💬 対話プロンプト100 →
-  </a>
-  <p class="launch-btn-note">各アプリを開いたらパスワード <strong style="color:var(--ink)">omatome</strong> を入力してください</p>
+  <p class="launch-btn-note">一度コードを入力すれば、その端末では5つのアプリがパスワードなしで開きます</p>
 
   <!-- 使い方ステップ -->
   <div class="card card-gold">
@@ -255,15 +244,15 @@
       <li class="step">
         <div class="step-num">1</div>
         <div class="step-body">
-          <div class="step-title">上の「アプリを起動する」を開く</div>
+          <div class="step-title">上の「おまとめパックを開く」をタップ</div>
           <div class="step-desc">ブラウザで直接動作します。ダウンロード不要。</div>
         </div>
       </li>
       <li class="step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <div class="step-title">パスワードを入力する</div>
-          <div class="step-desc">上記の起動パスワードをアプリ画面に入力してください。</div>
+          <div class="step-title">コードを入力する</div>
+          <div class="step-desc">メールでお届けしたアクティベーションコードを入力してください。</div>
         </div>
       </li>
       <li class="step">
@@ -286,7 +275,7 @@
   <!-- メール注記 -->
   <div class="mail-note">
     📧 <strong>メールを確認してください</strong><br>
-    ご登録のメールアドレスに、アプリURL・パスワードを送付しています。<br>
+    ご登録のメールアドレスに、アプリURLとアクティベーションコードをお送りします。<br>
     届いていない場合は迷惑メールフォルダをご確認ください。
   </div>
 
