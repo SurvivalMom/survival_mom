@@ -49,7 +49,13 @@ export const SOURCE_VIDEO_DURATION_IN_SECONDS = 14.0;
 // Persistent top-of-frame header, 0.0s through the full clip. Broken at
 // this account's ~6-7 chars/line budget for HeaderTelop's current font
 // size within a 90px safe-zone box.
-export const ura06Header = 'フィードバック\n欄が、また\n空欄で\n返ってきた。';
+// Reworded from the original "フィードバック\n欄が、また\n空欄で\n
+// 返ってきた。" (21 chars across 4 lines -- the longest header in the
+// series, authored before the header-length hypothesis existed). Per
+// the same hypothesis applied to ura-07 onward (see Telop.tsx), tightened
+// to keep the loss/recurrence it already had ("また" + a blank column)
+// while cutting the line count roughly in half. Not yet posted/measured.
+export const ura06Header = 'また、\n空欄のまま\n返ってきた。';
 
 // Lower telop layer. Scene 1's blank window is 0-2.0s per the pacing
 // lesson. Each caption marks 1 key word/phrase with **…** for the

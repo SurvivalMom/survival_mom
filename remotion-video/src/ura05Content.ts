@@ -55,7 +55,14 @@ export const SOURCE_VIDEO_DURATION_IN_SECONDS = 17.0;
 // Persistent top-of-frame header, 0.0s through the full clip. Broken at
 // this account's ~6-7 chars/line budget for HeaderTelop's current font
 // size within a 90px safe-zone box.
-export const ura05Header = '反論を\n打っては、\n消した。';
+// Reworded from the original "反論を\n打っては、\n消した。" per the same
+// loss-framing hypothesis applied to ura-07 onward (see Telop.tsx):
+// naming what's being held back ("言いたいことを、飲み込んだ。" -- I
+// swallowed what I wanted to say), rather than only implying it through
+// the typed-then-erased action, to test whether a stronger stake in the
+// first glance helps the severe early drop-off seen in ura-02/ura-04's
+// posted Insights. Not yet posted/measured for this specific episode.
+export const ura05Header = '言いたいことを、\n飲み込んだ。';
 
 // Lower telop layer. Scene 1's blank window is 0-2.0s per the pacing
 // lesson. Each caption marks 1 key word/phrase with **…** for the
