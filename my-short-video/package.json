@@ -6,7 +6,8 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "start": "remotion studio"
   },
   "repository": {},
   "license": "UNLICENSED",
