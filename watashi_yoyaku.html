@@ -419,7 +419,8 @@
   .tab-content.active { display: block; }
 
   /* ===== COPY BUTTON ===== */
-  .copy-btn {
+  .copy-btn,
+  .share-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -435,6 +436,8 @@
     margin-top: 16px;
   }
   .copy-btn:hover { background: var(--sage); color: white; border-color: var(--sage); }
+  .share-btn:hover { background: var(--rust); color: white; border-color: var(--rust); }
+  .share-btn:disabled { opacity: 0.6; cursor: wait; }
 
   .actions-row {
     display: flex;
