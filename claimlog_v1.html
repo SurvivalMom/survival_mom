@@ -505,9 +505,10 @@ async function generateResponse() {
 {"policy":"対応方針・確認事項（3〜5項目、具体的に）","message":"申出人への連絡文案（敬語・謝罪を含む実用的な文章、200字程度）"}`;
 
   try {
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
+    const res=await fetch('https://survivalmom-ai.sr-g-solti.workers.dev/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app: 'claimlog', prompt: prompt, max_tokens: 1000 }) /* AI中継Worker（workers/ai-proxy.js）経由。APIキーはWorker側に保管 */
     });
     const data=await res.json();
     const text=data.content?.[0]?.text||'';
