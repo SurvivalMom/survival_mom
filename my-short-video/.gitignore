@@ -5,3 +5,7 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Licensed font files must not be committed (redistribution not allowed).
+public/fonts/*
+!public/fonts/README.md

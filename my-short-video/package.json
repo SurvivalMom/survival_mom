@@ -13,6 +13,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@remotion/cli": "^4.0.0",
+    "@remotion/fonts": "^4.0.540",
     "@remotion/google-fonts": "^4.0.540",
     "@remotion/zod-types": "^4.0.0",
     "react": "19.3.1",
