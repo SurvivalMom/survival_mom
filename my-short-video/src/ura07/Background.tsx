@@ -75,6 +75,38 @@ export const Background: React.FC = () => {
   );
 };
 
+/**
+ * Atmosphere only (dust, vignette, grain), with no base gradient, for
+ * laying over the illustrated DeskScene.
+ */
+export const Atmosphere: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  const warm = interpolate(frame, [TURN_FRAME - 30, TURN_FRAME + 90], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <AbsoluteFill>
+      <Dust frame={frame} width={width} height={height} warm={warm} />
+      <AbsoluteFill
+        style={{
+          background:
+            "radial-gradient(ellipse 75% 60% at 50% 50%, transparent 45%, rgba(0,0,0,0.6) 100%)",
+        }}
+      />
+      {/* Soft dark band behind the center telop, so it reads over the page. */}
+      <AbsoluteFill
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 14% at 50% 44%, rgba(10,6,12,0.55) 0%, transparent 100%)",
+        }}
+      />
+      <Grain frame={frame} />
+    </AbsoluteFill>
+  );
+};
+
 /** Dust floating in the lamp light. Fixed seeds, so every render is the same. */
 const Dust: React.FC<{ frame: number; width: number; height: number; warm: number }> = ({
   frame,

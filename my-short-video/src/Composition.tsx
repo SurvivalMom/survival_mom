@@ -1,13 +1,15 @@
 import React from "react";
 import { AbsoluteFill, Sequence } from "remotion";
-import { Background } from "./ura07/Background";
+import { Atmosphere } from "./ura07/Background";
+import { DeskScene } from "./ura07/DeskScene";
 import { HeaderBanner } from "./ura07/HeaderBanner";
 import { Telop } from "./ura07/Telop";
 import { CARDS } from "./ura07/script";
 
 /**
  * ura-07「小さな傲慢に気づいた夜」 9:16 short (1080x1920).
- * Layers, back to front: gradient background, center telops, fixed header.
+ * Layers, back to front: illustrated desk scene (stand-in for the md's AI
+ * footage), atmosphere, center telops, fixed header.
  *
  * Audio: the md asks that the video never be fully silent (a quiet pen
  * scratch or room tone, no BGM). Put an ambient file in public/ and enable
@@ -16,7 +18,8 @@ import { CARDS } from "./ura07/script";
 export const Ura07ChiisanaGouman: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#070a18" }}>
-      <Background />
+      <DeskScene />
+      <Atmosphere />
       {CARDS.map((card, i) => {
         const next = CARDS[i + 1];
         const isLastOfScene = !next || next.scene !== card.scene;
