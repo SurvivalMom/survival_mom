@@ -246,6 +246,26 @@ export const Telop: React.FC<Props> = ({segment}) => {
  * reasoned guess from where the drop-off concentrated, not a proven fix
  * (the earlier Scene-1-pacing fix looked reasonable too and the data
  * didn't bear it out).
+ *
+ * SECOND, STACKED HYPOTHESIS (ura-07/ura-08 only so far): reviewed two
+ * unrelated high-performing TikTok "listicle" videos (a Claude-skills
+ * hype video, a GitHub-tricks video) for hook mechanics, since both
+ * open and hold viewers through a numbered list the way this format's
+ * header could. Common pattern: they open on a loss/cost claim ("doing
+ * it the old way is costing you") rather than a neutral description,
+ * and state the count up front so the viewer can see the finish line.
+ * ura's headers were already mostly tension-bearing by accident (a
+ * snap decision, an unanswered question), but ura-07 ("今日も、少し
+ * イライラした。") and ura-08 ("まず、周りを見る癖がある。") read as
+ * flat description rather than a stake, so those two were reworded to
+ * name what's being lost ("また、イライラしてしまった。" -- it keeps
+ * happening; "決める力が、減っている。" -- a capacity eroding) while
+ * holding the same short length. This stacks on top of the
+ * header-length hypothesis above rather than replacing it, which makes
+ * the two harder to tell apart in the data if retention improves --
+ * accepted here because iteration speed matters more than a clean
+ * isolated test on an account this small, but worth knowing if later
+ * deciding which change to keep.
  */
 export const HeaderTelop: React.FC<{text: string}> = ({text}) => {
 	const {width} = useVideoConfig();
