@@ -131,6 +131,13 @@ https://survivalmom.github.io/survival_mom/lp_jikolog.html
 3つまとめて揃えたい場合はこちら。
 https://survivalmom.github.io/survival_mom/lp_index.html
 
+**ここログ**（対話記録システム、個人プラン¥9,800買い切り／法人サブスク¥4,980
+月額／法人買い切り¥49,800）
+「大丈夫です」の裏にある予兆を、感覚ではなく記録で捉えるための対話記録システム
+です。このアカウントが一貫して伝えてきた「予兆は、数字に出る」という考え方を、
+日々の対話の記録として運用できる形にしたツールです。
+https://survivalmom.github.io/survival_mom/cocolog_lp.html
+
 ## アイキャッチ用nanobananaプロンプト（英語・画像内文字なし）
 ```
 Vertical 4:5 photo, realistic Japanese care facility office interior
