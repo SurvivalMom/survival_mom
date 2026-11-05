@@ -1,6 +1,6 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { Card } from "./script";
+import { Card } from "./types";
 import { FONT_FAMILY } from "./font";
 
 const EMPHASIS: Record<Card["mood"], string> = {

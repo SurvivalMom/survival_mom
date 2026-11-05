@@ -7,20 +7,19 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { TURN_FRAME } from "./script";
 
 /**
  * Night-shift desk at night, under a lamp.
  * - Starts cold and heavy (navy / bruised purple), with a small,
  *   unsteady lamp glow to read as irritation.
- * - From the turn of the monologue (TURN_FRAME), the glow widens and
+ * - From the turn of the monologue (turnFrame), the glow widens and
  *   warms to amber, so the picture itself moves from "neglect" to "care".
  */
-export const Background: React.FC = () => {
+export const Background: React.FC<{ turnFrame: number }> = ({ turnFrame }) => {
   const frame = useCurrentFrame();
   const { durationInFrames, width, height } = useVideoConfig();
 
-  const warm = interpolate(frame, [TURN_FRAME - 30, TURN_FRAME + 90], [0, 1], {
+  const warm = interpolate(frame, [turnFrame - 30, turnFrame + 90], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -79,10 +78,13 @@ export const Background: React.FC = () => {
  * Atmosphere only (dust, vignette, grain), with no base gradient, for
  * laying over the illustrated DeskScene.
  */
-export const Atmosphere: React.FC = () => {
+export const Atmosphere: React.FC<{ turnFrame: number; scrim?: number }> = ({
+  turnFrame,
+  scrim = 0.55,
+}) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
-  const warm = interpolate(frame, [TURN_FRAME - 30, TURN_FRAME + 90], [0, 1], {
+  const warm = interpolate(frame, [turnFrame - 30, turnFrame + 90], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -99,7 +101,7 @@ export const Atmosphere: React.FC = () => {
       <AbsoluteFill
         style={{
           background:
-            "radial-gradient(ellipse 70% 14% at 50% 44%, rgba(10,6,12,0.55) 0%, transparent 100%)",
+            `radial-gradient(ellipse 70% 14% at 50% 44%, rgba(10,6,12,${scrim}) 0%, transparent 100%)`,
         }}
       />
       <Grain frame={frame} />

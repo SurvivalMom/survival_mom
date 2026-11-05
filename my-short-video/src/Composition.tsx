@@ -1,11 +1,11 @@
 import React from "react";
 import { AbsoluteFill, Sequence } from "remotion";
-import { Atmosphere } from "./ura07/Background";
+import { Atmosphere } from "./common/Atmosphere";
 import { DeskScene } from "./ura07/DeskScene";
-import { HeaderBanner } from "./ura07/HeaderBanner";
+import { HeaderBanner } from "./common/HeaderBanner";
 import { Sfx } from "./ura07/Sfx";
-import { Telop } from "./ura07/Telop";
-import { CARDS } from "./ura07/script";
+import { Telop } from "./common/Telop";
+import { CARDS, HEADER_TEXT, TURN_FRAME } from "./ura07/script";
 
 /**
  * ura-07「小さな傲慢に気づいた夜」 9:16 short (1080x1920).
@@ -18,7 +18,7 @@ export const Ura07ChiisanaGouman: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#070a18" }}>
       <DeskScene />
-      <Atmosphere />
+      <Atmosphere turnFrame={TURN_FRAME} />
       {CARDS.map((card, i) => {
         const next = CARDS[i + 1];
         const isLastOfScene = !next || next.scene !== card.scene;
@@ -33,8 +33,10 @@ export const Ura07ChiisanaGouman: React.FC = () => {
           </Sequence>
         );
       })}
-      <HeaderBanner />
+      <HeaderBanner text={HEADER_TEXT} />
       <Sfx />
     </AbsoluteFill>
   );
 };
+
+export { Ura08KimerarenaiWatashi } from "./ura08/Ura08";

@@ -2,8 +2,9 @@ import { Composition, Folder } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
-import { Ura07ChiisanaGouman } from "./Composition";
+import { Ura07ChiisanaGouman, Ura08KimerarenaiWatashi } from "./Composition";
 import { DURATION_IN_FRAMES, FPS } from "./ura07/script";
+import { DURATION_IN_FRAMES as URA08_DURATION, FPS as URA08_FPS } from "./ura08/script";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -17,6 +18,16 @@ export const RemotionRoot: React.FC = () => {
         component={Ura07ChiisanaGouman}
         durationInFrames={DURATION_IN_FRAMES}
         fps={FPS}
+        width={1080}
+        height={1920}
+      />
+      {/* ura-08「自分で決められない私」 9:16 short, on Gemini footage.
+          npx remotion render Ura08KimerarenaiWatashi out/ura-08.mp4 */}
+      <Composition
+        id="Ura08KimerarenaiWatashi"
+        component={Ura08KimerarenaiWatashi}
+        durationInFrames={URA08_DURATION}
+        fps={URA08_FPS}
         width={1080}
         height={1920}
       />

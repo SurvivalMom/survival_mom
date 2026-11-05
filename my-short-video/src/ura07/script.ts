@@ -1,3 +1,5 @@
+import type { Card } from "../common/types";
+
 /**
  * Source: content/caredesign/ai-video/ura-07-chiisana-gouman.md
  * (裏・申し送りノート #7「小さな傲慢に気づいた夜」)
@@ -18,16 +20,7 @@ export const DURATION_IN_FRAMES = 450; // 15s (md target: 12-15s)
 /** Fixed top header, shown from frame 0 to the end with no fade (per md). */
 export const HEADER_TEXT = "また、\nイライラしてしまった。";
 
-export type Mood = "tense" | "turn" | "soft" | "cta";
-
-export type Card = {
-  from: number;
-  to: number;
-  text: string;
-  mood: Mood;
-  /** Scene number in the md (1-3) or 4 for the closing CTA. */
-  scene: 1 | 2 | 3 | 4;
-};
+export type { Card, Mood } from "../common/types";
 
 export const CARDS: Card[] = [
   // Scene 1 (0-4s): frames 0-24 show the header only, so it stops the

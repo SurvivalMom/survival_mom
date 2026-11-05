@@ -1,13 +1,12 @@
 import React from "react";
 import { FONT_FAMILY } from "./font";
-import { HEADER_TEXT } from "./script";
 
 /**
  * Fixed top header from the md: red box, yellow text, shown from 0s to the
  * end. No fade-in and no typewriter effect (the md asks for this, so the
  * header alone stops the scroll in the first frames).
  */
-export const HeaderBanner: React.FC = () => (
+export const HeaderBanner: React.FC<{ text: string }> = ({ text }) => (
   <div
     style={{
       position: "absolute",
@@ -34,7 +33,7 @@ export const HeaderBanner: React.FC = () => (
         boxShadow: "0 18px 46px rgba(0,0,0,0.5)",
       }}
     >
-      {HEADER_TEXT}
+      {text}
     </div>
   </div>
 );
