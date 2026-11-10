@@ -1,3 +1,4 @@
+import type { Cut } from "../common/Footage";
 import type { Card } from "../common/types";
 
 /**
@@ -52,7 +53,7 @@ export const CARDS: Card[] = [
  * Footage cuts: output frame `from` plays the source starting at `srcSec`.
  * Picked from the 30s clip by eye (contact sheets at 0.5s steps).
  */
-export type Cut = { from: number; srcSec: number; note: string };
+export const FOOTAGE = "source-videos/ura-08/ura-08-src.mp4";
 
 export const CUTS: Cut[] = [
   { from: 0, srcSec: 0.4, note: "S1 hand writing in the care record" },

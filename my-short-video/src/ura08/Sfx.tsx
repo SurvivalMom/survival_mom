@@ -1,13 +1,10 @@
-import React from "react";
-import { Audio, Sequence, interpolate, staticFile } from "remotion";
+import type { Cue } from "../common/Sfx";
 
 /**
- * Sound for ura-08 (files from scripts/generate_sfx_ura08.py). Frames match
- * the footage cuts in script.ts. md: no BGM, nothing flashy, never silent.
+ * Sound cues for ura-08 (files from scripts/generate_sfx_ura08.py). Frames
+ * match the footage cuts in script.ts. md: no BGM, nothing flashy, never silent.
  */
-type Cue = { from: number; file: string; volume: number };
-
-const CUES: Cue[] = [
+export const CUES: Cue[] = [
   // Scene 1: writing in the record, then the pen stops and the eyes go
   // sideways to the reference notebook.
   { from: 0, file: "pen-write.wav", volume: 0.5 },
@@ -22,17 +19,3 @@ const CUES: Cue[] = [
   // 「同じじゃない」.
   { from: 300, file: "realization.wav", volume: 0.45 },
 ];
-
-export const Sfx: React.FC = () => (
-  <>
-    <Audio
-      src={staticFile("sfx/ura08/room-tone.wav")}
-      volume={(f) => interpolate(f, [0, 228, 330], [0.22, 0.22, 0.3], { extrapolateRight: "clamp" })}
-    />
-    {CUES.map((c) => (
-      <Sequence key={`${c.file}-${c.from}`} from={c.from} layout="none">
-        <Audio src={staticFile(`sfx/ura08/${c.file}`)} volume={c.volume} />
-      </Sequence>
-    ))}
-  </>
-);

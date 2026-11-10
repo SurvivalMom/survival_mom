@@ -8,21 +8,24 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { CUTS, TURN_FRAME } from "./script";
+export type Cut = { from: number; srcSec: number; note: string };
 
-const SRC = staticFile("source-videos/ura-08/ura-08-src.mp4");
 const XFADE = 8; // frames of cross-dissolve between cuts
 
 /**
- * The Gemini footage, cut per CUTS with short dissolves, then graded:
+ * AI footage (path relative to public/), cut per `cuts` with short dissolves, then graded:
  * cool and slightly heavy at first (deferring to others), warming once the
- * monologue turns inward (TURN_FRAME). Slight push-in for life.
+ * monologue turns inward (`turnFrame`). Slight push-in for life.
  */
-export const Footage: React.FC = () => {
+export const Footage: React.FC<{ src: string; cuts: Cut[]; turnFrame: number }> = ({
+  src,
+  cuts,
+  turnFrame,
+}) => {
   const frame = useCurrentFrame();
   const { durationInFrames, fps } = useVideoConfig();
 
-  const warm = interpolate(frame, [TURN_FRAME - 20, TURN_FRAME + 90], [0, 1], {
+  const warm = interpolate(frame, [turnFrame - 20, turnFrame + 90], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -31,13 +34,13 @@ export const Footage: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <AbsoluteFill style={{ transform: `scale(${zoom})` }}>
-        {CUTS.map((cut, i) => {
-          const next = CUTS[i + 1];
+        {cuts.map((cut, i) => {
+          const next = cuts[i + 1];
           const end = next ? next.from + XFADE : durationInFrames;
           const start = Math.max(0, cut.from);
           return (
             <Sequence key={cut.from} from={start} durationInFrames={end - start}>
-              <CutLayer srcSec={cut.srcSec} fadeIn={i > 0} fps={fps} />
+              <CutLayer src={staticFile(src)} srcSec={cut.srcSec} fadeIn={i > 0} fps={fps} />
             </Sequence>
           );
         })}
@@ -63,7 +66,8 @@ export const Footage: React.FC = () => {
   );
 };
 
-const CutLayer: React.FC<{ srcSec: number; fadeIn: boolean; fps: number }> = ({
+const CutLayer: React.FC<{ src: string; srcSec: number; fadeIn: boolean; fps: number }> = ({
+  src,
   srcSec,
   fadeIn,
   fps,
@@ -75,7 +79,7 @@ const CutLayer: React.FC<{ srcSec: number; fadeIn: boolean; fps: number }> = ({
   return (
     <AbsoluteFill style={{ opacity }}>
       <OffthreadVideo
-        src={SRC}
+        src={src}
         muted
         trimBefore={Math.round(srcSec * fps)}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
