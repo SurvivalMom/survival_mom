@@ -20,6 +20,13 @@
     --warn:#e3a85a; --warn-soft:#3a2d1b; --shadow:0 2px 14px rgba(0,0,0,.35);
   }
 }
+:root[data-brand="cdl"]{ --accent:#2E7A6C; --accent-soft:#e3f0ed; }
+@media (prefers-color-scheme: dark){ :root[data-brand="cdl"]:not([data-theme="light"]){ --accent:#6cc2b0; --accent-soft:#1f3531; } }
+.brand-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:5px;margin-top:14px}
+.brand-switch button{background:transparent;color:var(--sub);padding:10px 8px;font-size:14px;border-radius:10px}
+.brand-switch button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.slot{border-left:3px solid var(--accent);padding:8px 12px;margin:10px 0;background:var(--bg);border-radius:0 10px 10px 0;font-size:14px}
+.slot b{color:var(--accent)}
 :root[data-theme="dark"]{
   --bg:#1d1916; --card:#28231f; --ink:#f1eae1; --sub:#c3b6a7; --faint:#8c8072;
   --line:#3b342e; --accent:#e58662; --accent-soft:#3e2a22; --sage:#93b596; --sage-soft:#26332a;
@@ -105,7 +112,12 @@ ol.steps li{margin:4px 0}
   <header>
     <div class="eyebrow">伸びたリールを、自分の発信に「翻訳」する</div>
     <h1>リール研究ノート</h1>
-    <p>テーマとペルソナを入れて、1万回以上見られている参考リールを集め、伸びた理由を分解して、スプレッドシートに1行ずつ貯めていきます。</p>
+    <p>テーマとペルソナを入れて、1万回以上見られている参考リールを集め、伸びた理由を分解し、今週の投稿計画まで落とし込んで、スプレッドシートに貯めていきます。</p>
+    <div class="brand-switch" role="group" aria-label="発信ブランド">
+      <button type="button" data-brand="sm">survival_mom</button>
+      <button type="button" data-brand="cdl">CARE DESIGN LAB</button>
+    </div>
+    <p class="hint" style="margin-top:6px">ブランドごとに、テーマ・ペルソナ・リール・送り先シートを別々に覚えます。</p>
   </header>
 
   <!-- STEP 1 -->
@@ -170,7 +182,29 @@ ol.steps li{margin:4px 0}
 
   <!-- STEP 4 -->
   <section class="card">
-    <div class="step"><div class="num">4</div><h2>スプレッドシートに付け加える</h2></div>
+    <div class="step"><div class="num">4</div><h2>今週の戦略にまとめる</h2></div>
+    <p class="hint">分解したリールの共通点から「今週の勝ちパターン」を出し、投稿枠ごとの企画に落とし込みます。</p>
+    <label for="slots">今週の投稿枠<span class="opt">1行に1枠「曜日：形式」</span></label>
+    <textarea id="slots"></textarea>
+    <label for="weekNote">今週の状況<span class="opt">任意・季節や時事、出したい商品など</span></label>
+    <textarea id="weekNote" placeholder="例：年度末の人事評価の時期／新しいワークシートを告知したい"></textarea>
+    <label for="stratScope">使うリール</label>
+    <select id="stratScope">
+      <option value="7">直近7日に分解したもの</option>
+      <option value="all">分解済みすべて（新しい順に最大12本）</option>
+    </select>
+    <button class="btn" id="stratBtn">今週の戦略を出す</button>
+    <div id="stratOut"></div>
+    <div class="btns hidden" id="stratBtns">
+      <button class="btn2" id="stratSend">シートに送る</button>
+      <button class="btn2" id="stratCopy">表としてコピー</button>
+    </div>
+    <p id="stratMsg"></p>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="card">
+    <div class="step"><div class="num">5</div><h2>スプレッドシートに付け加える</h2></div>
     <label for="gasUrl">Googleスプレッドシートの受け取りURL</label>
     <input id="gasUrl" inputmode="url" placeholder="https://script.google.com/macros/s/.../exec">
     <div class="btns">
@@ -189,7 +223,8 @@ ol.steps li{margin:4px 0}
         <li>「次のユーザーとして実行：自分」「アクセスできるユーザー：全員」→「デプロイ」</li>
         <li>許可を求められたら自分のアカウントで許可 → 出てきた「ウェブアプリのURL」をコピーして上に貼る</li>
       </ol>
-      <p class="hint">シートに「リール分析」というタブができ、送るたびに下に1行ずつ増えます。URLは他の人に教えないでください。</p>
+      <p class="hint">シートに「リール分析」「週次戦略」のタブができ、送るたびに下に1行ずつ増えます。1列目がブランド名なので、2つのブランドで同じシートを使っても、別々のシートにしても大丈夫です。URLは他の人に教えないでください。</p>
+      <p class="hint">すでにURLを作ってある場合：コードを貼り直して保存し、「デプロイ」→「デプロイを管理」→ 鉛筆マーク →「バージョン：新バージョン」→「デプロイ」。URLは変わりません。</p>
       <button class="btn3" id="copyGas">コードをコピー</button>
       <pre id="gasCode"></pre>
     </details>
@@ -204,15 +239,50 @@ ol.steps li{margin:4px 0}
 const PW_HASH = 'af6775d7376b613da94fd65af7914b220c2b21dde30272589ffeb131786f299d';
 const AI_URL = 'https://survivalmom-ai.sr-g-solti.workers.dev/';
 const KEY = 'sm_reel_kenkyu_v1';
-const DEFAULT_PERSONA = '不登校・発達グレー・中学受験のどれか（または複数）を抱える30代の母親。朝の登校しぶり、宿題の時間の衝突、学校からの電話、夜中のスマホ検索で疲れている。正論や専門家の上から目線には反発し、「うちだけダメなのでは」と孤独を感じている。';
+const BRANDS = {
+  sm: {
+    label: 'survival_mom',
+    persona: '不登校・発達グレー・中学受験のどれか（または複数）を抱える30代の母親。朝の登校しぶり、宿題の時間の衝突、学校からの電話、夜中のスマホ検索で疲れている。正論や専門家の上から目線には反発し、「うちだけダメなのでは」と孤独を感じている。',
+    themeEx: '例：不登校の朝、親が言わなくていい一言',
+    scenes: '朝の玄関、宿題の時間、学校からの電話、深夜の検索、SNSでの比較',
+    avoid: '正論・専門家目線・「できない親」を責める言い方',
+    feel: '「わかる…」「うちだけじゃなかった」「これならできそう」',
+    slots: '火：表系画像（Before/After・3ステップ・NG行動など）\n木：表系画像\n土：10秒リール（note本編の公開告知）',
+    rules: '週内のCTAは1つのリードマグネットに統一し「プロフィールから受け取れます」に集約する。キャプションには検索キーワードを自然文で最低1つ入れ、ハッシュタグは3〜5個。DMシェアを促す一文を入れる。家族構成を出生順や性別で決めつけない。',
+  },
+  cdl: {
+    label: 'CARE DESIGN LAB',
+    persona: '介護・福祉の現場で、上（施設長・本部）と下（スタッフ）の板挟みになっている現場リーダー・施設管理者。人手不足のシフト、新人の早期離職、家族からのクレーム、事故報告書、申し送りの抜け漏れに追われ、「自分はリーダーに向いていないのでは」と感じている。研修の正論や管理職論には「現場を知らない」と反発する。',
+    themeEx: '例：部下に「どうすればいいですか？」と毎回聞かれるリーダーへ',
+    scenes: '朝の申し送り、夜勤明け、シフトの穴埋め電話、家族からのクレーム、事故報告書を書く夜、新人の「辞めたいです」、施設長からの急な指示',
+    avoid: '研修の正論・コンサル目線・「リーダーなのにできていない」と責める言い方',
+    feel: '「うちの現場のことだ」「自分だけじゃなかった」「明日の申し送りで試せる」',
+    slots: '月：リール（板挟みあるある）\n水：表系画像（判断基準・チェックリスト）\n金：リール（明日から使える一言・仕組み）',
+    rules: '「向いていないのではなく、設計を知らなかっただけ」という視点を軸にする。個人の根性ではなく、仕組み・判断基準・記録で現場を回す提案にする。CTAは週内で1つに統一し、無料のワークシートや診断（プロフィールから）に集約する。利用者や家族を笑いものにしない。',
+  },
+};
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /* ---------- 保存 ---------- */
-let state = { theme:'', persona:DEFAULT_PERSONA, minViews:'10000', gasUrl:'', reels:[] };
-function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && typeof s === 'object') state = Object.assign(state, s); }catch(e){} }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+const blank = k => ({ theme:'', persona:BRANDS[k].persona, minViews:'10000', gasUrl:'', reels:[], slots:BRANDS[k].slots, weekNote:'', strategy:null });
+let store = { brand:'sm', brands:{ sm:blank('sm'), cdl:blank('cdl') } };
+let state = store.brands.sm;   // いま選んでいるブランドのデータ
+const brand = () => BRANDS[store.brand];
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (s && s.brands) {
+      store.brand = BRANDS[s.brand] ? s.brand : 'sm';
+      Object.keys(BRANDS).forEach(k => { store.brands[k] = Object.assign(blank(k), s.brands[k] || {}); });
+    } else if (s && Array.isArray(s.reels)) {
+      store.brands.sm = Object.assign(blank('sm'), s);   // 旧バージョンのデータを引き継ぐ
+    }
+  }catch(e){}
+  state = store.brands[store.brand];
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
 const frames = {}; // reelId -> [{t, data}]  ※メモリのみ（容量のため保存しない）
 
 /* ---------- 合言葉 ---------- */
@@ -287,10 +357,24 @@ const errText = e => {
 };
 
 /* ---------- STEP 1：探し場所 ---------- */
+const FIELDS = ['theme','persona','minViews','gasUrl','slots','weekNote'];
+function fillSettings(){
+  FIELDS.forEach(id => { $(id).value = state[id] || ''; });
+  $('theme').placeholder = brand().themeEx;
+  document.documentElement.setAttribute('data-brand', store.brand);
+  document.querySelectorAll('.brand-switch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.brand === store.brand)));
+  document.title = 'リール研究ノート｜' + brand().label;
+}
 function bindSettings(){
-  $('theme').value = state.theme; $('persona').value = state.persona;
-  $('minViews').value = state.minViews; $('gasUrl').value = state.gasUrl;
-  ['theme','persona','minViews','gasUrl'].forEach(id => $(id).addEventListener('change', () => { state[id] = $(id).value.trim(); save(); }));
+  FIELDS.forEach(id => $(id).addEventListener('change', () => { state[id] = $(id).value.trim(); save(); }));
+  document.querySelectorAll('.brand-switch button').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.brand === store.brand) return;
+    FIELDS.forEach(id => { state[id] = $(id).value.trim(); });
+    store.brand = b.dataset.brand; state = store.brands[store.brand]; save();
+    ['findOut','addMsg','progress','sendMsg','stratMsg'].forEach(id => { $(id).innerHTML = ''; $(id).className = id === 'progress' ? 'progress' : ''; });
+    fillSettings(); renderList(); renderStrategy();
+  }));
+  fillSettings();
 }
 $('findBtn').onclick = async () => {
   state.theme = $('theme').value.trim(); state.persona = $('persona').value.trim(); save();
@@ -298,8 +382,10 @@ $('findBtn').onclick = async () => {
   const btn = $('findBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>考えています…';
   const prompt = `あなたはInstagramリールの市場調査担当です。次の発信者が「参考にすべき、再生数${fmt(+state.minViews)}回以上のリール」をInstagram内で見つけるための探し方を出してください。
 
+ブランド：${brand().label}
 発信テーマ：${state.theme}
 届けたい人：${state.persona}
+届けたい人の日常の場面：${brand().scenes}
 
 条件：
 - 同じジャンルだけでなく、「型（あるある・How-to・ビフォーアフター）やテンポ」を借りられる他ジャンルも入れる
@@ -408,6 +494,7 @@ function analysisPrompt(r, fr){
   return `あなたはInstagramリールの分析者です。下の参考リールが伸びた理由を因数分解し、発信者が自分のジャンルで再現できる形に翻訳してください。
 
 【発信者】
+ブランド：${brand().label}
 テーマ：${state.theme || '（未入力）'}
 届けたい人：${state.persona}
 今日の日付：${new Date().toISOString().slice(0,10)}
@@ -420,7 +507,7 @@ ${frameNote}
 【大事なルール】
 - 視聴維持率・0〜3秒の離脱・保存数・シェア数・流入元は、投稿者本人しか見られない数字。実数が入力に無いものは「推定」として、根拠（いいね率、コメント率、再生/フォロワー倍率、冒頭の絵、内容の性質）を必ず書く。数値をでっち上げない
 - 目安：いいね率3%以上は高め、1%未満は低め。再生/フォロワーが3倍以上なら非フォロワー（発見タブ・リール面・シェア）起点の可能性が高い
-- 翻訳案は、届けたい人の生々しい一場面（朝の玄関、宿題の時間、学校からの電話、深夜の検索、SNSでの比較など）から入る。正論・専門家目線・「できない親」を責める言い方は避け、「わかる…」「うちだけじゃなかった」と思える言葉にする
+- 翻訳案は、届けたい人の生々しい一場面（${brand().scenes}など）から入る。${brand().avoid}は避け、${brand().feel}と思える言葉にする
 - 日本語で、一項目は2文以内で具体的に
 
 次のJSONだけを返す：
@@ -468,7 +555,7 @@ $('analyzeBtn').onclick = async () => {
     try{ await analyze(todo[i]); renderList(); }
     catch(e){ $('progress').textContent = errText(e); btn.disabled = false; return; }
   }
-  $('progress').textContent = `${todo.length}本、分解できました。4でシートに付け加えましょう。`;
+  $('progress').textContent = `${todo.length}本、分解できました。4で今週の戦略にまとめましょう。`;
   btn.disabled = false;
 };
 
@@ -540,7 +627,7 @@ $('reelList').addEventListener('click', async e => {
 });
 
 /* ---------- STEP 4：シート ---------- */
-const HEADER = ['記録日','テーマ','ペルソナ','URL','アカウント','投稿日','再生数','いいね','コメント','保存(実数)','シェア(実数)','フォロワー数','いいね率','コメント率','再生/フォロワー倍率',
+const HEADER = ['ブランド','記録日','テーマ','ペルソナ','URL','アカウント','投稿日','再生数','いいね','コメント','保存(実数)','シェア(実数)','フォロワー数','いいね率','コメント率','再生/フォロワー倍率',
   '【定量】0〜3秒の維持(推定)','【定量】離脱ポイント(推定)','【定量】保存の評価','【定量】シェア・コメントの評価','【定量】初動の拡散起点(推定)',
   '【構造】フック内容','【構造】フックの型','【構造】フック強さ(5段階)','【構造】フックの理由','【構造】企画の型','【構造】企画の型の理由','【構造】表現・テンポ','【構造】トレンド音源','【構造】時事・季節性',
   '【再現】最大のバズ要因','【再現】要因の理由','【再現】借りる成功法則','【再現】翻訳案1','【再現】翻訳案2','【再現】今日の一歩','一言まとめ','分析の確度','音源名','冒頭メモ','気づき','動画コマ数'];
@@ -548,7 +635,7 @@ const idea = x => x ? `「${x.hook_telop || ''}」${x.scene || ''} → ${x.flow 
 const lvt = o => o ? `${o.level || o.estimate || ''}${o.reason ? '：' + o.reason : ''}` : '';
 function toRow(r){
   const c = computed(r), a = r.result || {}, q = a.quant || {}, s = a.structure || {}, p = a.reproduce || {}, h = s.hook || {}, f = s.format || {}, ideas = p.ideas || [];
-  return [ (r.analyzedAt || r.added || '').slice(0,10), state.theme, state.persona, r.url, r.account, r.date, r.views, r.likes, r.comments, r.saves, r.shares, r.followers,
+  return [ brand().label, (r.analyzedAt || r.added || '').slice(0,10), state.theme, state.persona, r.url, r.account, r.date, r.views, r.likes, r.comments, r.saves, r.shares, r.followers,
     p2(c.likeRate), p2(c.commentRate), c.reachRatio ? c.reachRatio.toFixed(2) : '',
     lvt(q.retention_0_3s), q.dropoff || '', lvt(q.save), lvt(q.share_comment), lvt(q.origin) + (c.originHint ? '（数字：' + c.originHint + '）' : ''),
     h.what || '', h.type || '', h.score || '', h.reason || '', f.type || '', f.reason || '', s.tempo || '', s.trend || '', s.timeliness || '',
@@ -560,13 +647,13 @@ const ready = () => state.reels.filter(r => r.result);
 $('sendBtn').onclick = async () => {
   const url = $('gasUrl').value.trim(); state.gasUrl = url; save();
   const msg = $('sendMsg');
-  if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec/.test(url)) { msg.className = 'note'; msg.textContent = '受け取りURL（https://script.google.com/macros/s/…/exec）を入れてください。作り方は下にあります。'; return; }
+  if (!SHEET_RE.test(url)) { msg.className = 'note'; msg.textContent = '受け取りURL（https://script.google.com/macros/s/…/exec）を入れてください。作り方は下にあります。'; return; }
   const list = ready().filter(r => !r.sent);
   if (!list.length) { msg.className = 'note'; msg.textContent = 'まだ送っていない分解済みのリールがありません。'; return; }
   msg.className = 'hint'; msg.innerHTML = '<span class="spin"></span>送っています…';
   try{
     // Apps Script は送り先の返事を読めないことがあるため、no-cors で確実に届ける
-    await fetch(url, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ header: HEADER, rows: list.map(toRow) }) });
+    await fetch(url, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ sheet: 'リール分析', header: HEADER, rows: list.map(toRow) }) });
     list.forEach(r => r.sent = true); save(); renderList();
     msg.className = 'ok'; msg.textContent = `${list.length}行を送りました。シートの「リール分析」タブを確認してください。`;
   }catch(e){ msg.className = 'note'; msg.textContent = '送れませんでした。電波を確認するか、「表としてコピー」で貼り付けてください。'; }
@@ -594,7 +681,8 @@ $('csvBtn').onclick = () => {
 const GAS = `function doPost(e) {
   var data = JSON.parse(e.postData.contents);
   var book = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = book.getSheetByName('リール分析') || book.insertSheet('リール分析');
+  var name = data.sheet || 'リール分析';
+  var sheet = book.getSheetByName(name) || book.insertSheet(name);
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(data.header);
     sheet.setFrozenRows(1);
@@ -606,7 +694,120 @@ const GAS = `function doPost(e) {
 $('gasCode').textContent = GAS;
 $('copyGas').onclick = async () => { try{ await navigator.clipboard.writeText(GAS); $('copyGas').textContent = 'コピーしました'; }catch(e){ $('copyGas').textContent = '長押しでコピーしてください'; } };
 
-load(); bindSettings(); renderList();
+/* ---------- STEP 4：今週の戦略 ---------- */
+const SHEET_RE = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec/;
+function stratSource(){
+  const list = ready().slice().sort((a, b) => String(b.analyzedAt).localeCompare(String(a.analyzedAt)));
+  if ($('stratScope').value === '7') {
+    const since = Date.now() - 7 * 864e5;
+    return list.filter(r => Date.parse(r.analyzedAt) >= since).slice(0, 12);
+  }
+  return list.slice(0, 12);
+}
+function reelDigest(r, i){
+  const a = r.result || {}, s = a.structure || {}, p = a.reproduce || {}, c = computed(r);
+  return `【${i + 1}】${r.account || r.url || ''}／再生${fmt(r.views)}${c.likeRate != null ? '／いいね率' + p2(c.likeRate) : ''}${c.reachRatio ? '／再生はフォロワーの' + c.reachRatio.toFixed(1) + '倍' : ''}
+要約：${a.summary || ''}
+フック：${(s.hook || {}).type || ''}（${(s.hook || {}).what || ''}）
+型：${(s.format || {}).type || ''}／最大要因：${p.main_factor || ''}（${p.main_factor_reason || ''}）
+借りる法則：${p.borrow || ''}
+保存：${((a.quant || {}).save || {}).level || ''}／シェア・コメント：${((a.quant || {}).share_comment || {}).level || ''}`;
+}
+$('stratBtn').onclick = async () => {
+  FIELDS.forEach(id => { state[id] = $(id).value.trim(); }); save();
+  const src = stratSource(), msg = $('stratMsg');
+  if (!src.length) { msg.className = 'note'; msg.textContent = $('stratScope').value === '7' ? '直近7日に分解したリールがありません。「分解済みすべて」に切り替えるか、3で分解してください。' : '分解済みのリールがありません。3で分解してください。'; return; }
+  const slots = state.slots.split('\n').map(x => x.trim()).filter(Boolean);
+  if (!slots.length) { msg.className = 'note'; msg.textContent = '投稿枠を1行以上入れてください。'; return; }
+  msg.className = ''; msg.textContent = '';
+  const btn = $('stratBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>今週の戦略を考えています…';
+  const prompt = `あなたは${brand().label}のInstagram週次コンテンツ戦略の担当です。今週分析した参考リールの共通点から勝ちパターンを抜き出し、今週の投稿枠ごとの企画に落とし込んでください。
+
+【ブランド】${brand().label}
+【発信テーマ】${state.theme || '（未入力）'}
+【届けたい人】${state.persona}
+【届けたい人の日常の場面】${brand().scenes}
+【今週の状況】${state.weekNote || '（特になし）'}
+【今日の日付】${new Date().toISOString().slice(0,10)}
+【ブランドの決まりごと】${brand().rules}
+
+【今週の投稿枠】
+${slots.map((x, i) => (i + 1) + '. ' + x).join('\n')}
+
+【分析済みの参考リール（${src.length}本）】
+${src.map(reelDigest).join('\n\n')}
+
+【大事なルール】
+- 勝ちパターンは、複数のリールに共通する要素から出す。1本だけの特徴なら、そう書く
+- 企画は投稿枠の数だけ、枠の順番どおりに出す。形式（リール・画像など）は枠の指定に従う
+- どの企画も、届けたい人の生々しい一場面から入る。${brand().avoid}は避け、${brand().feel}と思える言葉にする
+- 週全体で1本の筋が通るようにし、CTAは1つに統一する
+- 日本語で、各項目は2文以内で具体的に
+
+次のJSONだけを返す：
+{
+ "patterns":[{"name":"勝ちパターン名","why":"なぜ伸びるか","evidence":"どのリール番号に共通しているか"}],
+ "axis":"今週の軸（1文）",
+ "keywords":["検索キーワード（Instagram検索で使われそうな自然な言葉）",3個],
+ "cta":"週内で統一するCTA（1文）",
+ "posts":[{"slot":"枠をそのまま","title":"企画名","hook_telop":"冒頭テロップ・画像タイトル（20字以内）","outline":"0-3秒／中盤／最後の流れ（画像なら構成）","target_reaction":"保存|シェア|コメント","reference":"参考にしたリール番号と借りる要素","caption_point":"キャプションで外さないこと"}],
+ "check_next_week":["来週見る数字や確かめること",3個],
+ "avoid":"今週はやらないこと（1文）"
+}`;
+  try{
+    const res = await askAI(prompt, { max: 5000 });
+    state.strategy = { createdAt: new Date().toISOString(), theme: state.theme, slots, refs: src.map(r => r.account || r.url || ''), result: res, sent: false };
+    save(); renderStrategy();
+  }catch(e){ msg.className = 'note'; msg.textContent = errText(e); }
+  btn.disabled = false; btn.textContent = '今週の戦略を出す';
+};
+function renderStrategy(){
+  const st = state.strategy, out = $('stratOut');
+  $('stratBtns').classList.toggle('hidden', !st);
+  if (!st) { out.innerHTML = ''; return; }
+  const r = st.result || {};
+  out.innerHTML = `<div class="res">
+    <p class="hint">${esc(st.createdAt.slice(0,10))} 作成／参考リール ${st.refs.length}本${st.sent ? '／シート送信済み' : ''}</p>
+    <h4>今週の軸</h4><p><b>${esc(r.axis)}</b></p>
+    <h4>勝ちパターン</h4>
+    ${(r.patterns || []).map(x => `<div class="idea"><b>${esc(x.name)}</b><br>${esc(x.why)}<br><span style="color:var(--sub);font-size:13px">${esc(x.evidence)}</span></div>`).join('')}
+    <h4>投稿枠ごとの企画</h4>
+    ${(r.posts || []).map(x => `<div class="slot"><b>${esc(x.slot)}</b>　${esc(x.title)}<br>
+      「${esc(x.hook_telop)}」<br>${esc(x.outline)}<br>
+      <span style="color:var(--sub);font-size:13px">狙う反応：${esc(x.target_reaction)}／参考：${esc(x.reference)}<br>キャプション：${esc(x.caption_point)}</span></div>`).join('')}
+    <dl>
+      <dt>検索キーワード</dt><dd>${(r.keywords || []).map(esc).join('、')}</dd>
+      <dt>統一CTA</dt><dd>${esc(r.cta)}</dd>
+      <dt>やらないこと</dt><dd>${esc(r.avoid)}</dd>
+      <dt>来週見る数字</dt><dd>${(r.check_next_week || []).map(esc).join('<br>')}</dd>
+    </dl></div>`;
+}
+const STRAT_HEADER = ['ブランド','作成日','テーマ','今週の軸','勝ちパターン','検索キーワード','統一CTA','投稿枠','企画名','冒頭テロップ','流れ・構成','狙う反応','参考リール','キャプションの要点','やらないこと','来週見る数字','参考にしたリール一覧'];
+function stratRows(){
+  const st = state.strategy, r = st.result || {};
+  const pats = (r.patterns || []).map(x => `${x.name}：${x.why}（${x.evidence}）`).join('\n');
+  return (r.posts || []).map(x => [ brand().label, st.createdAt.slice(0,10), st.theme, r.axis || '', pats, (r.keywords || []).join('、'), r.cta || '',
+    x.slot || '', x.title || '', x.hook_telop || '', x.outline || '', x.target_reaction || '', x.reference || '', x.caption_point || '',
+    r.avoid || '', (r.check_next_week || []).join('\n'), st.refs.join('\n') ]);
+}
+$('stratSend').onclick = async () => {
+  const url = $('gasUrl').value.trim(), msg = $('stratMsg'); state.gasUrl = url; save();
+  if (!SHEET_RE.test(url)) { msg.className = 'note'; msg.textContent = '5の「受け取りURL」を入れてください。'; return; }
+  msg.className = 'hint'; msg.innerHTML = '<span class="spin"></span>送っています…';
+  try{
+    await fetch(url, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ sheet: '週次戦略', header: STRAT_HEADER, rows: stratRows() }) });
+    state.strategy.sent = true; save(); renderStrategy();
+    msg.className = 'ok'; msg.textContent = 'シートの「週次戦略」タブに送りました。';
+  }catch(e){ msg.className = 'note'; msg.textContent = '送れませんでした。「表としてコピー」で貼り付けてください。'; }
+};
+$('stratCopy').onclick = async () => {
+  const msg = $('stratMsg');
+  const tsv = [STRAT_HEADER].concat(stratRows()).map(r => r.map(cell).join('\t')).join('\n');
+  try{ await navigator.clipboard.writeText(tsv); msg.className = 'ok'; msg.textContent = 'コピーしました。シートのA列のセルに貼り付けてください。'; }
+  catch(e){ msg.className = 'note'; msg.textContent = 'コピーできませんでした。'; }
+};
+
+load(); bindSettings(); renderList(); renderStrategy();
 })();
 </script>
 </body>
