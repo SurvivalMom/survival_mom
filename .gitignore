@@ -1,0 +1,7 @@
+
+# Obsidian: keep each device's window layout and cache out of git
+content/.obsidian/workspace*.json
+content/.obsidian/cache
+.obsidian/workspace*.json
+.trash/
+content/.trash/
