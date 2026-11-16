@@ -18,11 +18,13 @@ const XFADE = 8; // frames of cross-dissolve between cuts
  * cool and slightly heavy at first (deferring to others), warming once the
  * monologue turns inward (`turnFrame`). Slight push-in for life.
  */
-export const Footage: React.FC<{ src: string; cuts: Cut[]; turnFrame: number }> = ({
-  src,
-  cuts,
-  turnFrame,
-}) => {
+export const Footage: React.FC<{
+  src: string;
+  cuts: Cut[];
+  turnFrame: number;
+  /** Drawn on top of the footage, inside the same push-in (e.g. blurs, marks). */
+  children?: React.ReactNode;
+}> = ({ src, cuts, turnFrame, children }) => {
   const frame = useCurrentFrame();
   const { durationInFrames, fps } = useVideoConfig();
 
@@ -51,6 +53,7 @@ export const Footage: React.FC<{ src: string; cuts: Cut[]; turnFrame: number }> 
             </Sequence>
           );
         })}
+        {children}
       </AbsoluteFill>
       {/* Cool, heavy tint at first */}
       <AbsoluteFill
