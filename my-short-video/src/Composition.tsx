@@ -41,3 +41,4 @@ export const Ura07ChiisanaGouman: React.FC = () => {
 
 export { Ura08KimerarenaiWatashi } from "./ura08/Ura08";
 export { Ura09MataKikiniItta } from "./ura09/Ura09";
+export { Ura10HitoriDeKimetaYoru } from "./ura10/Ura10";

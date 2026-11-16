@@ -8,7 +8,8 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-export type Cut = { from: number; srcSec: number; note: string };
+/** `rate` < 1 plays the source slower (e.g. to hold a quiet final shot). */
+export type Cut = { from: number; srcSec: number; note: string; rate?: number };
 
 const XFADE = 8; // frames of cross-dissolve between cuts
 
@@ -40,7 +41,13 @@ export const Footage: React.FC<{ src: string; cuts: Cut[]; turnFrame: number }> 
           const start = Math.max(0, cut.from);
           return (
             <Sequence key={cut.from} from={start} durationInFrames={end - start}>
-              <CutLayer src={staticFile(src)} srcSec={cut.srcSec} fadeIn={i > 0} fps={fps} />
+              <CutLayer
+                src={staticFile(src)}
+                srcSec={cut.srcSec}
+                rate={cut.rate ?? 1}
+                fadeIn={i > 0}
+                fps={fps}
+              />
             </Sequence>
           );
         })}
@@ -66,9 +73,16 @@ export const Footage: React.FC<{ src: string; cuts: Cut[]; turnFrame: number }> 
   );
 };
 
-const CutLayer: React.FC<{ src: string; srcSec: number; fadeIn: boolean; fps: number }> = ({
+const CutLayer: React.FC<{
+  src: string;
+  srcSec: number;
+  rate: number;
+  fadeIn: boolean;
+  fps: number;
+}> = ({
   src,
   srcSec,
+  rate,
   fadeIn,
   fps,
 }) => {
@@ -82,6 +96,7 @@ const CutLayer: React.FC<{ src: string; srcSec: number; fadeIn: boolean; fps: nu
         src={src}
         muted
         trimBefore={Math.round(srcSec * fps)}
+        playbackRate={rate}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </AbsoluteFill>

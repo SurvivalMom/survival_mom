@@ -2,10 +2,11 @@ import { Composition, Folder } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
-import { Ura07ChiisanaGouman, Ura08KimerarenaiWatashi, Ura09MataKikiniItta } from "./Composition";
+import { Ura07ChiisanaGouman, Ura08KimerarenaiWatashi, Ura09MataKikiniItta, Ura10HitoriDeKimetaYoru } from "./Composition";
 import { DURATION_IN_FRAMES, FPS } from "./ura07/script";
 import { DURATION_IN_FRAMES as URA08_DURATION, FPS as URA08_FPS } from "./ura08/script";
 import { DURATION_IN_FRAMES as URA09_DURATION, FPS as URA09_FPS } from "./ura09/script";
+import { DURATION_IN_FRAMES as URA10_DURATION, FPS as URA10_FPS } from "./ura10/script";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -38,6 +39,15 @@ export const RemotionRoot: React.FC = () => {
         component={Ura09MataKikiniItta}
         durationInFrames={URA09_DURATION}
         fps={URA09_FPS}
+        width={1080}
+        height={1920}
+      />
+      {/* ura-10「一人で決めた夜」 9:16 short, on Gemini footage. */}
+      <Composition
+        id="Ura10HitoriDeKimetaYoru"
+        component={Ura10HitoriDeKimetaYoru}
+        durationInFrames={URA10_DURATION}
+        fps={URA10_FPS}
         width={1080}
         height={1920}
       />
