@@ -70,7 +70,9 @@ def main(src, tpl_sec, x, y, w, h, start, end, out):
             if mx > best[0]:
                 best = (mx, (loc[0] + x0, loc[1] + y0, tw, th, s, a))
         score, (bx, by, bw, bh, s, a) = best
-        prev = (bx + bw / 2, by + bh / 2) if score > 0.45 else prev
+        # Only lock on to confident hits, so frames where the region is not
+        # visible yet do not drag the search window somewhere wrong.
+        prev = (bx + bw / 2, by + bh / 2) if score > 0.6 else prev
         results.append(
             {"t": round(sec, 4), "x": bx, "y": by, "w": bw, "h": bh, "scale": round(float(s), 2), "angle": a, "score": round(float(score), 3)}
         )

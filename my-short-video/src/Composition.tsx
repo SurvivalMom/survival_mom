@@ -43,3 +43,4 @@ export { Ura08KimerarenaiWatashi } from "./ura08/Ura08";
 export { Ura09MataKikiniItta } from "./ura09/Ura09";
 export { Ura10HitoriDeKimetaYoru } from "./ura10/Ura10";
 export { Ura11KikikaesaretaToki } from "./ura11/Ura11";
+export { Ura12JibunryuuNoKijun } from "./ura12/Ura12";

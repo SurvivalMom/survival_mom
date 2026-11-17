@@ -2,12 +2,13 @@ import { Composition, Folder } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { Logo } from "./HelloWorld/Logo";
 import { Title } from "./HelloWorld/Title";
-import { Ura07ChiisanaGouman, Ura08KimerarenaiWatashi, Ura09MataKikiniItta, Ura10HitoriDeKimetaYoru, Ura11KikikaesaretaToki } from "./Composition";
+import { Ura07ChiisanaGouman, Ura08KimerarenaiWatashi, Ura09MataKikiniItta, Ura10HitoriDeKimetaYoru, Ura11KikikaesaretaToki, Ura12JibunryuuNoKijun } from "./Composition";
 import { DURATION_IN_FRAMES, FPS } from "./ura07/script";
 import { DURATION_IN_FRAMES as URA08_DURATION, FPS as URA08_FPS } from "./ura08/script";
 import { DURATION_IN_FRAMES as URA09_DURATION, FPS as URA09_FPS } from "./ura09/script";
 import { DURATION_IN_FRAMES as URA10_DURATION, FPS as URA10_FPS } from "./ura10/script";
 import { DURATION_IN_FRAMES as URA11_DURATION, FPS as URA11_FPS } from "./ura11/script";
+import { DURATION_IN_FRAMES as URA12_DURATION, FPS as URA12_FPS } from "./ura12/script";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -58,6 +59,15 @@ export const RemotionRoot: React.FC = () => {
         component={Ura11KikikaesaretaToki}
         durationInFrames={URA11_DURATION}
         fps={URA11_FPS}
+        width={1080}
+        height={1920}
+      />
+      {/* ura-12「自分流の基準」 9:16 short, on Gemini footage. */}
+      <Composition
+        id="Ura12JibunryuuNoKijun"
+        component={Ura12JibunryuuNoKijun}
+        durationInFrames={URA12_DURATION}
+        fps={URA12_FPS}
         width={1080}
         height={1920}
       />

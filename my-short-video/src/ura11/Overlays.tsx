@@ -1,64 +1,13 @@
 import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { RegionBlur } from "../common/RegionBlur";
 import { CUTS } from "./script";
 import { NAME_TRACK, SRC_H, SRC_W } from "./nameTrack";
 
+/** Blurs the name written on the memo (tracked in nameTrack.ts). */
+export const NameBlur: React.FC = () => <RegionBlur track={NAME_TRACK} cuts={CUTS} />;
+
 const XFADE = 8; // must match common/Footage.tsx
-
-/** Source seconds shown by each cut that is visible at output frame `f`. */
-const sourceTimesAt = (f: number, fps: number): number[] => {
-  const times: number[] = [];
-  CUTS.forEach((cut, i) => {
-    const next = CUTS[i + 1];
-    const end = next ? next.from + XFADE : Infinity;
-    if (f >= cut.from && f < end) {
-      times.push(cut.srcSec + ((f - cut.from) / fps) * (cut.rate ?? 1));
-    }
-  });
-  return times;
-};
-
-/**
- * Blurs the name written on the memo (md checklist: the memo must not read
- * as real personal information). Follows the tracked box per source frame.
- */
-export const NameBlur: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const boxes = sourceTimesAt(frame, fps)
-    .map((t) => {
-      let best = NAME_TRACK[0];
-      for (const e of NAME_TRACK) if (Math.abs(e[0] - t) < Math.abs(best[0] - t)) best = e;
-      return Math.abs(best[0] - t) <= 0.06 ? best : null;
-    })
-    .filter((b): b is (typeof NAME_TRACK)[number] => b !== null);
-
-  return (
-    <AbsoluteFill style={{ pointerEvents: "none" }}>
-      {boxes.map(([t, x, y, w, h, angle]) => {
-        const padX = w * 0.3;
-        const padY = h * 0.45;
-        return (
-          <div
-            key={t}
-            style={{
-              position: "absolute",
-              left: `${((x - padX) / SRC_W) * 100}%`,
-              top: `${((y - padY) / SRC_H) * 100}%`,
-              width: `${((w + padX * 2) / SRC_W) * 100}%`,
-              height: `${((h + padY * 2) / SRC_H) * 100}%`,
-              transform: `rotate(${-angle}deg)`,
-              borderRadius: 12,
-              backdropFilter: "blur(14px)",
-              WebkitBackdropFilter: "blur(14px)",
-              backgroundColor: "rgba(225,215,195,0.35)",
-            }}
-          />
-        );
-      })}
-    </AbsoluteFill>
-  );
-};
 
 // Answer 「良好予定。」 in the source frame: drifts slightly as the camera
 // settles (measured at 19.0s and 24.0s).

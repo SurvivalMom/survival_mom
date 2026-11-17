@@ -6,10 +6,12 @@
  * after that the memo is gone from the shot).
  * Columns: [source seconds, x, y, w, h, angle] in source pixels (720x1280).
  */
+import type { TrackEntry } from "../common/RegionBlur";
+
 export const SRC_W = 720;
 export const SRC_H = 1280;
 
-export const NAME_TRACK: [number, number, number, number, number, number][] = [
+export const NAME_TRACK: TrackEntry[] = [
   [0.1667, 587, 251, 42, 15, 16],
   [0.7917, 212, 547, 89, 32, -4],
   [0.8333, 212, 509, 99, 36, 4],
