@@ -184,7 +184,7 @@ Aさんはあなたにこう言う。
 
 ### ■NG→OK言い換えセリフ20
 
-【画像挿入：images/pawahara/02-iikae-20.webp】※画像内 No.9「聞こえたがもしれない」→「聞こえたかもしれない」修正後に差し替え
+【画像挿入：images/pawahara/02-iikae-20.jpg】
 
 現場でよくある5つの場面ごとに、4つずつ。
 
@@ -222,7 +222,7 @@ Aさんはあなたにこう言う。
 
 ### ■相手別：3つのパターン
 
-【画像挿入：images/pawahara/03-aite-betsu.webp】※画像内「迷なていて」→「迷っていて」修正後に差し替え
+【画像挿入：images/pawahara/03-aite-betsu.webp】
 
 
 **①新人さん**
