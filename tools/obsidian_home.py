@@ -48,6 +48,8 @@ for sub, head in [('mode1', 'MODE1：note記事'), ('mode2', 'MODE2：ショー�
                   ('mode3', 'MODE3：表系画像'), ('mode4', 'MODE4：ループ動画'), ('mode5', 'MODE5：SNS投稿文')]:
     out += section(head, files(sub))
 
+out += section('リサーチ', files('research'))
+
 cd = files('caredesign/ai-video')
 if (ROOT / 'caredesign').is_dir():
     out += ['---', '', '## CARE DESIGN LAB（介護経営・管理者向け）', '']
