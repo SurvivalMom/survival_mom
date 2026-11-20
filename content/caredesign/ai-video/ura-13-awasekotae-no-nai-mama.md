@@ -15,7 +15,10 @@
   必ず重ねる。派手な効果音・BGMは入れず、「無音ではない」状態を
   保証することが目的
 - 尺目安：12〜15秒
-- 主CTA：保存
+- 主CTA：保存（Scene 3に「判断の答え合わせ、してもらえてる？」の二択の問いかけを
+  補助的に追加。主CTAは保存のまま）
+- ループ設計：Scene 3の最後を、Scene 1と同じ「記録の1行に指先を置く」画角に戻し、
+  2周目につなげる
 - 参考元：sunao-06-kotae-awase.mdと同一のテーマを、裏側の視点として独自に構成
 - カメラワーク：一人称視点（POV）。視聴者自身の目線・自身の手として画面に
   入ってくるよう、各シーンのプロンプトに明記する
@@ -26,6 +29,9 @@
 ## キャプション
 あの時の判断が合っていたのか、今でも分かりません。
 根拠を聞かれないまま、ただ時間だけが過ぎていきました。今度は、自分から聞いてみようと思います。
+
+判断の答え合わせ、あなたはしてもらえていますか？
+👍ある　🙌ない
 
 ## ハッシュタグ
 #介護職 #介護士の本音 #介護現場あるある #モヤモヤ #自己内省
@@ -71,11 +77,15 @@ captions. No face visible. Any visible handwriting or text is in Japanese, style
 **Scene 3（9〜13秒）**
 （下部テロップ：「今度は、自分から聞いてみようと思う。」
 続けて主CTA「保存して、気になっていた判断を、一度誰かに話してみてください。」
-を小さく添える。上部固定ヘッダーはそのまま表示継続）
+を小さく添える。最後の2秒で「判断の答え合わせ、してもらえてる？　👍ある　🙌ない」の
+二択の問いかけを小さく表示する。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting, same first-person POV framing as Scene 1. The hand picks
 up a pen and writes a short note to bring up later -- a reminder to ask, not a full answer -- the handwriting
-small and deliberate. Quiet, resolved mood. No face visible, no music,
+small and deliberate. In the final seconds, the fingertip slides back to
+the same line of the record shown in Scene 1 and rests there, matching
+the Scene 1 framing exactly (so the end visually loops back into the
+opening). Quiet, resolved mood. No face visible, no music,
 no captions, no legible text beyond an abstract short line. Leave the
 lower third of the frame clean for text to be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
@@ -83,6 +93,7 @@ lower third of the frame clean for text to be added later. Any visible handwriti
 ## 公開前の映り込み確認項目
 - [ ] 実在施設・記録画面・患者情報・名札・ロゴが写り込んでいないか
 - [ ] 手のみの描写で、顔や個人を特定できる特徴が映っていないか
-- [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
+- [ ] Scene3に主CTAと二択の問いかけ以外の要素・音楽・テロップが入っていないか
+- [ ] Scene3の最後の画角が、Scene1の「記録の1行に指先を置く」画角とつながって見えるか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
 - [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、赤地に黄文字で正しく表示されているか

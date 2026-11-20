@@ -16,7 +16,10 @@
   必ず重ねる。派手な効果音・BGMは入れず、「無音ではない」状態を
   保証することが目的
 - 尺目安：12〜15秒
-- 主CTA：保存
+- 主CTA：保存（Scene 3に「『何を根拠に？』と聞かれたこと、ある？」の二択の問いかけを
+  補助的に追加。主CTAは保存のまま）
+- ループ設計：Scene 3の最後を、Scene 1と同じ「ペンがページの上で止まる」画角に戻し、
+  2周目につなげる
 - 参考元：sunao-07-ichido-kiku.mdと同一のテーマを、裏側の視点として独自に構成
 - カメラワーク：一人称視点（POV）。視聴者自身の目線・自身の手として画面に
   入ってくるよう、各シーンのプロンプトに明記する
@@ -27,6 +30,9 @@
 ## キャプション
 「あなたは、何を根拠にそう考えましたか」と聞かれました。
 正解じゃなくてもいい、自分の考えで決めていいんだと思えた、初めての夜でした。
+
+「何を根拠に？」と聞かれたこと、あなたはありますか？
+👍ある　🙌まだない
 
 ## ハッシュタグ
 #介護職 #介護士の本音 #介護現場あるある #判断力 #成長記録
@@ -75,12 +81,15 @@ legible text beyond an abstract filled line. Any visible handwriting or text is 
 **Scene 3（9〜13秒）**
 （下部テロップ：「正解じゃなくても、自分の考えで決めていいんだと思えた夜だった。」
 続けて主CTA「保存して、次は誰かに、同じ問いを投げかけてみてください。」を
-小さく添える。上部固定ヘッダーはそのまま表示継続）
+小さく添える。最後の2秒で「『何を根拠に？』と聞かれたこと、ある？　👍ある　🙌まだない」の
+二択の問いかけを小さく表示する。上部固定ヘッダーはそのまま表示継続）
 ```
 Same setting, same first-person POV framing as Scene 1. The hand rests
 beside the finished entry for a moment before closing the notebook
 gently, calm and settled rather than
-hurried. Warm soft light, quiet, satisfied mood. No face visible, no
+hurried. In the final seconds, the hand reopens the notebook to a fresh
+page, picks up the pen again and pauses it above the page, matching the Scene 1 framing exactly (so
+the end visually loops back into the opening). Warm soft light, quiet, satisfied mood. No face visible, no
 music, no captions. Leave the lower third of the frame clean for text
 to be added later. Any visible handwriting or text is in Japanese, styled like a real care-facility handover log or functional-training record (short dated line entries, brief condition notes, common Japanese care terminology), never English letters, and never containing real or identifiable patient information -- invented, generic entries only.
 ```
@@ -88,6 +97,7 @@ to be added later. Any visible handwriting or text is in Japanese, styled like a
 ## 公開前の映り込み確認項目
 - [ ] 実在施設・記録画面・名札・ロゴが写り込んでいないか
 - [ ] 手のみの描写で、顔や個人を特定できる特徴が映っていないか
-- [ ] Scene3に主CTA以外の要素・音楽・テロップが入っていないか
+- [ ] Scene3に主CTAと二択の問いかけ以外の要素・音楽・テロップが入っていないか
+- [ ] Scene3の最後の画角が、Scene1の「ペンがページの上で止まる」画角とつながって見えるか
 - [ ] テロップが各シーンの冒頭で正しく切り替わっているか
 - [ ] 上部固定ヘッダーが13秒間ずっと表示され続け、赤地に黄文字で正しく表示されているか
