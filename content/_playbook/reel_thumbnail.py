@@ -9,7 +9,8 @@ AI画像生成で作った背景（サムネ用プロンプトで生成したも
   - 字幕（フック以外）：フックの35〜40%・細字・行間1.2〜1.3・影なし
   - 文字色：白
 
-usage: python3 thumb.py bg.png out.png "フック" "字幕1行目" ["字幕2行目"] [--erase y0,y1]
+usage: python3 thumb.py bg.png out.png "フック" "字幕1行目" ["字幕2行目"] [--erase y0,y1] [--dark]
+  --dark: 暗い背景用（care_design_lab）。フックに黒の控えめな影を付ける
   --erase: AIが描いた文字を消す縦の範囲（高さに対する割合）。既定 0.39,0.56
 """
 import sys
@@ -19,6 +20,9 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 args = sys.argv[1:]
 erase = (0.39, 0.56)
+dark = '--dark' in args
+if dark:
+    args.remove('--dark')
 if '--erase' in args:
     i = args.index('--erase')
     erase = tuple(float(v) for v in args[i + 1].split(','))
@@ -68,13 +72,13 @@ dt, ds = ImageDraw.Draw(txt), ImageDraw.Draw(shadow)
 y = y0
 for l in hook_lines:
     x = (w - fh.getlength(l)) / 2
-    ds.text((x, y + 3), l, font=fh, fill=(90, 70, 50, 70))
+    ds.text((x, y + 4), l, font=fh, fill=(0, 0, 0, 150) if dark else (90, 70, 50, 70))
     dt.text((x, y), l, font=fh, fill=(255, 255, 255, 255))
     y += hook_lh
 y += gap
 for s in subs:
     x = (w - fs.getlength(s)) / 2
-    ds.text((x, y + 2), s, font=fs, fill=(90, 70, 50, 80))
+    ds.text((x, y + 2), s, font=fs, fill=(0, 0, 0, 60) if dark else (90, 70, 50, 80))
     dt.text((x, y), s, font=fs, fill=(255, 255, 255, 255))
     y += sub_lh
 shadow = shadow.filter(ImageFilter.GaussianBlur(6))
