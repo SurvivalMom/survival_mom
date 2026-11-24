@@ -211,7 +211,7 @@
     <div class="complete-eyebrow">Purchase Complete</div>
     <h1 class="complete-title">ご購入ありがとうございます</h1>
     <p class="complete-sub">
-      以下のパスワードとURLを保存してください。<br>
+      以下のURLを保存し、メールでお届けするパスワードをお手元にご用意ください。<br>
       メールにも同内容をお送りしています。
     </p>
   </div>
@@ -224,9 +224,10 @@
 
     <div class="pw-display-wrap">
       <div class="pw-display-label">起動パスワード</div>
-      <div class="pw-value" id="pwVal">home25</div>
-      <button class="pw-copy-btn" id="copyBtn" onclick="copyPw()">📋 パスワードをコピーする</button>
-      <div class="pw-note">セット内の全アプリで同じパスワードを使用します</div>
+      <div class="pw-note" style="font-size:0.9rem;line-height:1.8;color:var(--ink)">
+        ご購入時のメールアドレス宛に、<strong>起動パスワード</strong>をお送りしています。<br>
+        下のボタンからアプリを開き、そのパスワードを入力してください。
+      </div>
     </div>
   </div>
 
@@ -240,7 +241,7 @@
   <a class="launch-btn" href="dialog.html" target="_blank" style="margin-bottom:10px">
     💬 対話プロンプト100 →
   </a>
-  <p class="launch-btn-note">各アプリを開いたらパスワード <strong style="color:var(--ink)">home25</strong> を入力してください</p>
+  <p class="launch-btn-note">アプリを開いたら、メールでお届けしたパスワードを入力してください</p>
 
   <!-- 使い方ステップ -->
   <div class="card card-gold">
@@ -257,7 +258,7 @@
         <div class="step-num">2</div>
         <div class="step-body">
           <div class="step-title">パスワードを入力する</div>
-          <div class="step-desc">上記の起動パスワードをアプリ画面に入力してください。</div>
+          <div class="step-desc">メールでお届けしたパスワードを入力してください。</div>
         </div>
       </li>
       <li class="step">
