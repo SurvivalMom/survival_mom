@@ -1,6 +1,6 @@
 """
 @light_kaigo型テロップで、15秒前後の4場面リールを仕上げる（AI動画を4場面で生成したとき用）。
-手順と配置の考え方は reel-telop-handoff.md の「4. テロップ配置のヒント」を参照。
+手順と配置の考え方は reel-telop-handoff.md の「5. テロップ配置のヒント」を参照。
 （SurvivalMom/survival_mom の content/caredesign/_playbook/reel-telop-handoff.md と
  telop_overlays_example.py の決めごとに合わせたもの）
 
