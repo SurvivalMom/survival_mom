@@ -16,6 +16,7 @@ const APPS = {
   jikolog:        { maxPrompt: 8000,  maxOutput: 2000, images: 0 },
   watashi_yoyaku: { maxPrompt: 8000,  maxOutput: 2000, images: 0 },
   reel_kenkyu:    { maxPrompt: 16000, maxOutput: 8000, images: 24 },
+  hook_yosoku:    { maxPrompt: 16000, maxOutput: 4000, images: 13 },
 };
 const MAX_IMAGE_CHARS_TOTAL = 2_000_000; // base64 の合計（約1.5MB）
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp'];
