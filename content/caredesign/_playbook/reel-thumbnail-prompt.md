@@ -96,3 +96,4 @@ Only the [BOTTOM_LEFT_SUBJECT] is allowed.
 | 2026-11-24 | 言えなかった『助かったよ』。褒め方を、教わってこなかっただけ。 | 言えなかった『助かったよ』 | A cold, untouched cup of green tea on a dark desk under a single desk lamp | AIのまま |
 | 2026-11-26 | とりあえず私がやる。守っていたのは、自分の安心だったのかも。 | とりあえず私がやる | A clipboard lying face-down on a dark desk in cold light | AIのまま |
 | 2026-11-28 | 要点だけでいいよ。その一言で、新人の報告は半分になった。 | 要点だけでいいよ | A small spiral memo pad with mostly blank pages and a pen, on a dark desk in cold light | AIのまま |
+| 2026-11-26（note告知） | それでも人が辞める。全部やろうとするから、苦しくなる。 | それでも人が辞める | A tall, precarious stack of paperwork on a dark desk under a single desk lamp | AIのまま（原寸で要確認） |
