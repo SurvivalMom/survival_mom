@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script>function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,c=0,i,j;while(c<64){for(i=2;i*i<=p;i++)if(p%i==0)break;if(i*i>p){if(c<8)H[c]=(Math.pow(p,.5)*4294967296)|0;K[c++]=(Math.pow(p,1/3)*4294967296)|0}p++}var b=unescape(encodeURIComponent(String(s))),L=b.length*8,w=[];b+='\x80';while(b.length%64-56)b+='\x00';for(i=0;i<b.length;i++)w[i>>2]|=b.charCodeAt(i)<<((3-i%4)*8);w.push((L/4294967296)|0,L|0);for(j=0;j<w.length;j+=16){var a=H.slice(0),W=w.slice(j,j+16);for(i=0;i<64;i++){if(i>15){var x=W[i-15],y=W[i-2];W[i]=(W[i-16]+(r(x,7)^r(x,18)^(x>>>3))+W[i-7]+(r(y,17)^r(y,19)^(y>>>10)))|0}var t1=(a[7]+(r(a[4],6)^r(a[4],11)^r(a[4],25))+((a[4]&a[5])^(~a[4]&a[6]))+K[i]+W[i])|0,t2=((r(a[0],2)^r(a[0],13)^r(a[0],22))+((a[0]&a[1])^(a[0]&a[2])^(a[1]&a[2])))|0;a=[(t1+t2)|0].concat(a);a[4]=(a[4]+t1)|0;a.pop()}for(i=0;i<8;i++)H[i]=(H[i]+a[i])|0}var o='';for(i=0;i<8;i++)o+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);return o}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>冒頭6秒チェッカー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1ea; --card:#fffdf9; --ink:#2c2620; --sub:#6e6357; --faint:#a3978a;
+  --line:#e6ddd1; --accent:#c4623f; --accent-soft:#f6e3da; --sage:#5f7a62; --sage-soft:#e3ece2;
+  --warn:#a8641c; --warn-soft:#fbefdc; --shadow:0 2px 14px rgba(60,40,20,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1d1916; --card:#28231f; --ink:#f1eae1; --sub:#c3b6a7; --faint:#8c8072;
+    --line:#3b342e; --accent:#e58662; --accent-soft:#3e2a22; --sage:#93b596; --sage-soft:#26332a;
+    --warn:#e3a85a; --warn-soft:#3a2d1b; --shadow:0 2px 14px rgba(0,0,0,.35);
+  }
+}
+:root[data-brand="cdl"]{ --accent:#2E7A6C; --accent-soft:#e3f0ed; }
+@media (prefers-color-scheme: dark){ :root[data-brand="cdl"]:not([data-theme="light"]){ --accent:#6cc2b0; --accent-soft:#1f3531; } }
+.brand-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:5px;margin-top:14px}
+.brand-switch button{background:transparent;color:var(--sub);padding:10px 8px;font-size:14px;border-radius:10px}
+.brand-switch button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.slot{border-left:3px solid var(--accent);padding:8px 12px;margin:10px 0;background:var(--bg);border-radius:0 10px 10px 0;font-size:14px}
+.slot b{color:var(--accent)}
+:root[data-theme="dark"]{
+  --bg:#1d1916; --card:#28231f; --ink:#f1eae1; --sub:#c3b6a7; --faint:#8c8072;
+  --line:#3b342e; --accent:#e58662; --accent-soft:#3e2a22; --sage:#93b596; --sage-soft:#26332a;
+  --warn:#e3a85a; --warn-soft:#3a2d1b; --shadow:0 2px 14px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 80px}
+h1,h2,h3{font-family:'Zen Kaku Gothic New',sans-serif;line-height:1.4}
+header{padding:12px 0 18px}
+header .eyebrow{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.08em}
+header h1{font-size:26px;font-weight:900;margin:4px 0 8px}
+header p{color:var(--sub);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin:14px 0;box-shadow:var(--shadow)}
+.step{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.step .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px}
+.step h2{font-size:18px}
+.hint{font-size:13px;color:var(--sub);margin:4px 0 10px}
+label{display:block;font-size:13px;font-weight:700;color:var(--sub);margin:12px 0 4px}
+label .opt{font-weight:400;color:var(--faint);margin-left:4px}
+input,textarea,select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:420px){.row3{grid-template-columns:1fr 1fr}}
+button{font:inherit;cursor:pointer;border:none;border-radius:12px;padding:12px 16px;font-weight:700;font-size:15px}
+.btn{background:var(--accent);color:#fff;width:100%;margin-top:14px}
+.btn:disabled{opacity:.5;cursor:default}
+.btn2{background:var(--accent-soft);color:var(--accent)}
+.btn3{background:transparent;color:var(--sub);border:1px solid var(--line);padding:8px 12px;font-size:13px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btns > button{flex:1 1 auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{display:inline-block;background:var(--sage-soft);color:var(--sage);border-radius:999px;padding:4px 10px;font-size:13px;text-decoration:none;font-weight:500}
+a.chip:hover{text-decoration:underline}
+.note{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0}
+.ok{background:var(--sage-soft);color:var(--sage);border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0}
+.reel{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:var(--bg)}
+.reel-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.reel-title{font-weight:700;word-break:break-all}
+.metrics{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.metric{font-size:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:2px 8px;color:var(--sub)}
+.badge{font-size:12px;border-radius:999px;padding:2px 10px;font-weight:700;white-space:nowrap}
+.badge.done{background:var(--sage-soft);color:var(--sage)}
+.badge.wait{background:var(--warn-soft);color:var(--warn)}
+.res{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.res h4{font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:12px 0 4px}
+.res dl{display:grid;grid-template-columns:7.5em 1fr;gap:4px 10px;font-size:14px}
+.res dt{color:var(--faint);font-size:12px;padding-top:2px}
+.res dd{word-break:break-word}
+.est{font-size:11px;color:var(--warn);border:1px solid var(--warn);border-radius:4px;padding:0 4px;margin-right:4px;white-space:nowrap}
+.idea{background:var(--accent-soft);border-radius:10px;padding:10px 12px;margin:6px 0;font-size:14px}
+.idea b{color:var(--accent)}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--sub);font-size:14px}
+pre{white-space:pre-wrap;word-break:break-all;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:8px;max-height:260px;overflow:auto}
+ol.steps{padding-left:1.4em;font-size:14px}
+ol.steps li{margin:4px 0}
+.frames{display:flex;gap:4px;overflow-x:auto;margin-top:8px}
+.frames img{height:72px;border-radius:4px;flex:none}
+.progress{font-size:13px;color:var(--sub);margin-top:8px;min-height:1.5em}
+#gate{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;padding:16px;z-index:10}
+#gate .card{width:100%;max-width:380px}
+.hidden{display:none!important}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.tabs button{background:transparent;color:var(--sub);padding:9px 2px;font-size:13px;border-radius:9px;line-height:1.3}
+.tabs button[aria-selected="true"]{background:var(--accent);color:#fff}
+.tabs .ico{display:block;font-size:18px}
+.score-wrap{display:flex;align-items:center;gap:16px;margin:6px 0 4px}
+.score{flex:none;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;text-align:center;background:conic-gradient(var(--accent) calc(var(--p)*1%), var(--line) 0)}
+.score > div{width:84px;height:84px;border-radius:50%;background:var(--card);display:grid;place-items:center;align-content:center}
+.score b{font-size:28px;font-family:'Zen Kaku Gothic New',sans-serif;line-height:1}
+.score small{font-size:11px;color:var(--sub)}
+.verdict{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;font-size:17px;line-height:1.5}
+.grade{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;margin-bottom:4px}
+.g-hi{background:var(--sage-soft);color:var(--sage)}.g-mid{background:var(--warn-soft);color:var(--warn)}.g-lo{background:var(--accent-soft);color:var(--accent)}
+.curve{width:100%;height:auto;display:block;margin:8px 0}
+.curve .ax{stroke:var(--line);stroke-width:1}
+.curve .lb{fill:var(--faint);font-size:10px}
+.curve .ln{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round}
+.curve .ar{fill:var(--accent-soft)}
+.curve .dot{fill:var(--accent)}
+.curve .dp{fill:var(--warn)}
+.bars{display:grid;gap:6px;margin:6px 0}
+.bar{display:grid;grid-template-columns:8.5em 1fr 2.2em;align-items:center;gap:8px;font-size:13px}
+.bar .t{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--sage);border-radius:99px}
+.bar .v{text-align:right;color:var(--sub);font-variant-numeric:tabular-nums}
+.drop{border-left:3px solid var(--warn);padding:6px 10px;margin:6px 0;background:var(--warn-soft);border-radius:0 8px 8px 0;font-size:14px}
+.drop b{color:var(--warn)}
+ul.list{padding-left:1.2em;font-size:14px}
+ul.list li{margin:3px 0}
+.rw{position:relative;background:var(--accent-soft);border-radius:10px;padding:10px 12px 10px;margin:8px 0;font-size:14px}
+.rw .hk{font-weight:700;font-size:15px;color:var(--ink);display:block;margin-bottom:4px}
+.rw .copy{position:absolute;right:8px;top:8px;padding:4px 8px;font-size:12px}
+.rw .hk{padding-right:56px}
+.voice{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;font-size:15px;margin:6px 0}
+.chat{margin-top:8px}
+.msg{border-radius:12px;padding:8px 12px;margin:6px 0;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.msg.me{background:var(--sage-soft);margin-left:18%}
+.msg.ai{background:var(--bg);border:1px solid var(--line);margin-right:8%}
+.hist{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0;background:var(--bg);font-size:14px;cursor:pointer}
+.hist .s{flex:none;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.hist .h{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.disc{font-size:12px;color:var(--faint);margin-top:10px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <h2 style="font-size:20px;margin-bottom:6px">冒頭6秒チェッカー</h2>
+    <p class="hint">合言葉を入れてください（リール研究ノートと同じです）。</p>
+    <input id="gatePw" type="password" autocomplete="current-password" placeholder="合言葉">
+    <button class="btn" id="gateBtn">ひらく</button>
+    <p id="gateErr" class="note hidden">合言葉がちがうようです。</p>
+  </div>
+</div>
+
+<div class="wrap hidden" id="app">
+  <header>
+    <div class="eyebrow">出す前に、最初の6秒で何人残るかを予測する</div>
+    <h1>冒頭6秒チェッカー</h1>
+    <p>動画・台本・フック案のどれか1つを入れるだけ。6秒でどれだけ見続けてもらえるかをAIが予測し、離脱しそうな瞬間と、言い換え案を出します。</p>
+    <div class="brand-switch" role="group" aria-label="発信ブランド">
+      <button type="button" data-brand="sm">survival_mom</button>
+      <button type="button" data-brand="cdl">CARE DESIGN LAB</button>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="step"><span class="num">1</span><h2>チェックしたいものを入れる</h2></div>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-mode="video"><span class="ico">🎬</span>動画</button>
+      <button type="button" role="tab" data-mode="link"><span class="ico">🔗</span>リンク</button>
+      <button type="button" role="tab" data-mode="script"><span class="ico">📝</span>台本</button>
+      <button type="button" role="tab" data-mode="idea"><span class="ico">💡</span>フック案</button>
+    </div>
+
+    <div data-pane="video">
+      <label for="vFile">完成した動画</label>
+      <input id="vFile" type="file" accept="video/*">
+      <p class="hint">最初の6秒から0.5秒ごとに13枚の静止画を切り出して送ります。動画そのものと音声は送りません。</p>
+      <div class="frames" id="vFrames"></div>
+      <label for="vSpoken">最初の6秒で話している言葉・流れる音<span class="opt">任意・精度が上がります</span></label>
+      <textarea id="vSpoken" placeholder="例：（ため息）「…また今日も行かないって言われた」／BGM：静かなピアノ"></textarea>
+    </div>
+
+    <div data-pane="link">
+      <label for="lUrl">公開リールのURL</label>
+      <input id="lUrl" type="url" inputmode="url" placeholder="https://www.instagram.com/reel/...">
+      <p class="note">InstagramやTikTokは外から動画を取り出せないようになっているため、リンクだけでは中身を見られません。動画を保存できる場合は「🎬動画」に入れるのがいちばん正確です。保存できない場合は、下に冒頭の様子を書き写してください。</p>
+      <label for="lDesc">冒頭6秒に何が映り、何と言っているか</label>
+      <textarea id="lDesc" placeholder="例：0秒 玄関で座り込む子どもの後ろ姿／テロップ「朝7時半、また動けない」／1.5秒で母親の手元に切り替わる"></textarea>
+      <label for="lCap">キャプション<span class="opt">任意</span></label>
+      <textarea id="lCap"></textarea>
+    </div>
+
+    <div data-pane="script">
+      <label for="sText">動画の台本</label>
+      <textarea id="sText" style="min-height:160px" placeholder="テロップ・ナレーション・映像の指示など、そのまま貼ってください"></textarea>
+      <p class="hint">冒頭6秒（日本語のナレーションなら約40文字）を重点的に見ます。</p>
+    </div>
+
+    <div data-pane="idea">
+      <label for="iText">フック案（最初のひと言・テロップ）</label>
+      <textarea id="iText" placeholder="例：「学校に行けない子の母親が、朝いちばんにやめたこと」"></textarea>
+      <label for="iVisual">そのとき映すもの<span class="opt">任意</span></label>
+      <input id="iVisual" placeholder="例：散らかったランドセルのアップ">
+    </div>
+
+    <label for="theme">この動画で伝えたいこと<span class="opt">任意</span></label>
+    <input id="theme" placeholder="例：登校しぶりの朝に、親が言わなくていい一言">
+    <button class="btn" id="runBtn">6秒で何人残るか予測する</button>
+    <div class="progress" id="progress"></div>
+  </section>
+
+  <section class="card hidden" id="result"></section>
+
+  <section class="card hidden" id="talk">
+    <div class="step"><span class="num">2</span><h2>このフックを一緒に直す</h2></div>
+    <p class="hint">「もっと短く」「共感寄りに」「CTAとつなげたい」など、思ったことをそのまま書いてください。</p>
+    <div class="chat" id="chat"></div>
+    <textarea id="ask" placeholder="例：2つ目の案、もう少しやわらかくしたい"></textarea>
+    <button class="btn btn2" id="askBtn" style="width:100%">相談する</button>
+  </section>
+
+  <section class="card">
+    <div class="step"><span class="num">3</span><h2>これまでの予測</h2></div>
+    <p class="hint">この端末に保存されます（動画の画像は保存しません）。押すと結果をもう一度開きます。</p>
+    <div id="history"></div>
+    <div class="btns"><button class="btn3" id="clearBtn" type="button">履歴を消す</button></div>
+  </section>
+
+  <p class="disc">予測はAIによる見立てで、実際の視聴維持率ではありません。投稿後はインサイトの数字と見比べて、自分の感覚を育てる材料にしてください。</p>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const PW_HASH = 'af6775d7376b613da94fd65af7914b220c2b21dde30272589ffeb131786f299d';
+const AI_URL = 'https://survivalmom-ai.sr-g-solti.workers.dev/';
+const APP = 'hook_yosoku';
+const KEY = 'sm_hook_yosoku_v1';
+const BRANDS = {
+  sm: {
+    persona: '不登校・発達グレー・中学受験のどれか（または複数）を抱える30代の母親。朝の登校しぶり、宿題の時間の衝突、学校からの電話、夜中のスマホ検索で疲れている。正論や専門家の上から目線には反発し、「うちだけダメなのでは」と孤独を感じている。',
+    scenes: '朝の玄関、宿題の時間、学校からの電話、深夜の検索、SNSでの比較',
+    avoid: '正論・専門家目線・「できない親」を責める言い方・綺麗事',
+  },
+  cdl: {
+    persona: '介護・福祉の現場で、上（施設長・本部）と下（スタッフ）の板挟みになっている現場リーダー・施設管理者。人手不足のシフト、新人の早期離職、家族からのクレーム、事故報告書に追われ、「自分はリーダーに向いていないのでは」と感じている。研修の正論には「現場を知らない」と反発する。',
+    scenes: '朝の申し送り、夜勤明け、シフトの穴埋め電話、家族からのクレーム、事故報告書を書く夜、新人の「辞めたいです」',
+    avoid: '研修の正論・コンサル目線・「リーダーなのにできていない」と責める言い方',
+  },
+};
+const MODES = { video:'完成した動画（冒頭の静止画）', link:'公開リール（書き写した説明）', script:'動画の台本', idea:'フック案' };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (n, a, b) => Math.max(a, Math.min(b, Number(n) || 0));
+
+/* ---------- 保存 ---------- */
+let store = { brand:'sm', mode:'video', history:[] };
+try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) store = Object.assign(store, s); }catch(e){}
+if (!BRANDS[store.brand]) store.brand = 'sm';
+if (!MODES[store.mode]) store.mode = 'video';
+if (!Array.isArray(store.history)) store.history = [];
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
+
+/* ---------- 合言葉 ---------- */
+function unlock(){ $('gate').classList.add('hidden'); $('app').classList.remove('hidden'); }
+try{ if (sessionStorage.getItem(KEY + '_ok') === '1') unlock(); }catch(e){}
+function tryGate(){
+  if (smHash($('gatePw').value.trim()) === PW_HASH){
+    try{ sessionStorage.setItem(KEY + '_ok','1'); }catch(e){}
+    unlock();
+  } else $('gateErr').classList.remove('hidden');
+}
+$('gateBtn').onclick = tryGate;
+$('gatePw').addEventListener('keydown', e => { if (e.key === 'Enter') tryGate(); });
+
+/* ---------- ブランド・タブ ---------- */
+function paintBrand(){
+  document.documentElement.setAttribute('data-brand', store.brand);
+  document.querySelectorAll('.brand-switch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.brand === store.brand)));
+}
+document.querySelectorAll('.brand-switch button').forEach(b => b.onclick = () => { store.brand = b.dataset.brand; save(); paintBrand(); });
+function paintMode(){
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === store.mode)));
+  document.querySelectorAll('[data-pane]').forEach(p => p.classList.toggle('hidden', p.dataset.pane !== store.mode));
+}
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { store.mode = b.dataset.mode; save(); paintMode(); });
+paintBrand(); paintMode();
+
+/* ---------- 動画 → 冒頭の静止画 ---------- */
+let frames = [];
+let videoName = '';
+function extractHead(file){
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const v = document.createElement('video');
+    v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = url;
+    const out = [];
+    const cv = document.createElement('canvas'); const ctx = cv.getContext('2d');
+    const finish = () => { URL.revokeObjectURL(url); out.length ? resolve(out) : reject(new Error('video')); };
+    const timer = setTimeout(finish, 40000);
+    v.onerror = () => { clearTimeout(timer); URL.revokeObjectURL(url); reject(new Error('video')); };
+    v.onloadedmetadata = () => {
+      const d = isFinite(v.duration) ? v.duration : 6;
+      const times = [];
+      for (let t = 0; t <= 6.001 && t <= d; t += 0.5) times.push(Math.round(t * 10) / 10);
+      if (!times.length) times.push(0);
+      const w = 360, h = Math.round(w * (v.videoHeight || 640) / (v.videoWidth || 360));
+      cv.width = w; cv.height = h;
+      let i = 0;
+      const next = () => { if (i >= times.length) { clearTimeout(timer); return finish(); } v.currentTime = Math.min(times[i] + 0.01, Math.max(0, d - 0.05)); };
+      v.onseeked = () => {
+        try{ ctx.drawImage(v, 0, 0, w, h); out.push({ t: times[i], data: cv.toDataURL('image/jpeg', 0.6).split(',')[1] }); }catch(e){}
+        i++; next();
+      };
+      next();
+    };
+  });
+}
+$('vFile').addEventListener('change', async () => {
+  const f = $('vFile').files[0];
+  frames = []; $('vFrames').innerHTML = '';
+  if (!f) return;
+  videoName = f.name;
+  $('vFrames').innerHTML = '<span class="hint"><span class="spin"></span>冒頭6秒を切り出しています…</span>';
+  try{
+    frames = await extractHead(f);
+    $('vFrames').innerHTML = frames.map(fr => `<img alt="${fr.t}秒" title="${fr.t}秒" src="data:image/jpeg;base64,${fr.data}">`).join('');
+  }catch(e){
+    $('vFrames').innerHTML = '<span class="note">この動画は読み込めませんでした。別の形式（mp4）で保存し直すか、「📝台本」から試してください。</span>';
+  }
+});
+
+/* ---------- AI ---------- */
+async function askAI(prompt, opts){
+  opts = opts || {};
+  const body = { app: APP, prompt, max_tokens: opts.max || 3000, json: true };
+  if (opts.images && opts.images.length) body.images = opts.images;
+  const res = await fetch(AI_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  let data = null; try{ data = await res.json(); }catch(e){}
+  if (!res.ok || !data || !data.content) throw new Error((data && data.error) || ('HTTP ' + res.status));
+  return parseJSON(data.content.map(c => c.text || '').join(''));
+}
+function parseJSON(t){
+  t = String(t).trim().replace(/^```(?:json)?\s*/i,'').replace(/```\s*$/,'');
+  try{ return JSON.parse(t); }catch(e){}
+  const a = t.indexOf('{'), b = t.lastIndexOf('}');
+  if (a >= 0 && b > a) return JSON.parse(t.slice(a, b + 1));
+  throw new Error('AIの返事を読み取れませんでした');
+}
+const errText = e => {
+  const m = String(e && e.message || e);
+  if (/unknown_app/.test(m)) return 'AI中継Workerがまだこのアプリ用に更新されていません（workers/README.md の「すでにWorkerを作ってある場合」を参照）。';
+  if (/forbidden_origin/.test(m)) return 'このページは survivalmom.github.io から開いたときだけAIが動きます。';
+  if (/Failed to fetch|NetworkError|Load failed/.test(m)) return '通信できませんでした。電波を確認して、もう一度押してください。';
+  return 'うまくいきませんでした（' + m + '）。少し待ってもう一度押してください。';
+};
+
+/* ---------- 入力をまとめる ---------- */
+function collect(){
+  const m = store.mode, theme = $('theme').value.trim();
+  const v = id => $(id).value.trim();
+  let material = '', images = [], label = '';
+  if (m === 'video') {
+    if (!frames.length) return { err: '動画を選んでください（切り出しが終わるまで少し待ってください）。' };
+    images = frames.map(f => ({ mime:'image/jpeg', data:f.data }));
+    material = `添付の静止画${frames.length}枚は、動画の ${frames.map(f => f.t + '秒').join('、')} の画面です（順番どおり）。\n最初の6秒の言葉・音：${v('vSpoken') || '（記入なし。画面のテロップから読み取ってください）'}`;
+    label = v('vSpoken').slice(0, 40) || videoName || '動画';
+  } else if (m === 'link') {
+    if (!v('lDesc')) return { err: '冒頭6秒に映っているもの・話していることを書き写してください。' };
+    material = `URL：${v('lUrl') || '（なし）'}\n冒頭6秒の様子：${v('lDesc')}\nキャプション：${v('lCap') || '（なし）'}`;
+    label = v('lDesc').slice(0, 40);
+  } else if (m === 'script') {
+    if (!v('sText')) return { err: '台本を貼ってください。' };
+    material = `台本：\n${v('sText').slice(0, 6000)}`;
+    label = v('sText').replace(/\s+/g,' ').slice(0, 40);
+  } else {
+    if (!v('iText')) return { err: 'フック案を書いてください。' };
+    material = `フック案：${v('iText')}\nそのとき映すもの：${v('iVisual') || '（未定）'}`;
+    label = v('iText').slice(0, 40);
+  }
+  return { mode:m, theme, material, images, label };
+}
+
+function predictPrompt(inp){
+  const b = BRANDS[store.brand];
+  return `あなたはInstagramリール・TikTok・YouTubeショートの「冒頭6秒の視聴維持」を専門に見てきた編集者です。
+これから投稿する（または参考にする）縦型ショート動画の冒頭6秒について、何%の人が6秒時点まで見続けるかを予測してください。
+
+【ターゲット】${b.persona}
+【ターゲットの生活の場面】${b.scenes}
+【避けたい伝え方】${b.avoid}
+【伝えたいこと】${inp.theme || '（記入なし）'}
+【入力の種類】${MODES[inp.mode]}
+【入力】
+${inp.material}
+
+【予測の考え方】
+- 0秒：最初のフレームで親指が止まるか（意外性・違和感・顔や手元・文字の大きさ）
+- 0〜2秒：「これは自分のことだ」と思えるか（ターゲットの呼びかけ・生活の一場面・本音のひと言）
+- 2〜4秒：続きを見る理由があるか（問い・ギャップ・答えの予告）
+- 4〜6秒：期待を裏切らずに本題へつながっているか（前置き・自己紹介・説明が長いと落ちる）
+- 一般的な縦型動画では6秒時点の残存はおおむね40〜70%。根拠のない高得点はつけないこと。
+- 正論・上から目線・綺麗事・「自分だけダメ」と思わせる言い方は離脱要因として扱う。
+
+【出力】次のJSONだけを返す。文章はすべて日本語、です・ます調で、やさしく具体的に。
+{
+ "retention6s": 6秒時点で見続けている人の割合の予測（0〜100の整数）,
+ "curve": [0,1,2,3,4,5,6秒それぞれの残存率の整数を7個。0秒は100],
+ "verdict": "ひと言での見立て（30字以内）",
+ "scores": {"stop":0〜10の整数（親指が止まるか）, "relate":0〜10（自分のことだと思えるか）, "curiosity":0〜10（続きが気になるか）, "clarity":0〜10（一瞬で意味がわかるか）, "tempo":0〜10（テンポ・前置きの短さ）},
+ "dropPoints": [{"sec":"1.5秒","reason":"そこで離れる理由"}]（1〜3個）,
+ "good": ["効いている点"]（1〜3個）,
+ "fix": ["直すとよい点。何をどう変えるか具体的に"]（1〜3個）,
+ "rewrites": [{"hook":"冒頭のひと言・テロップの言い換え案","visual":"そのとき映すもの","why":"なぜ残るか"}]（3個。ターゲットへの呼びかけ・共感・「あなただけじゃない」のどれかを含める）,
+ "innerVoice": "ターゲットがこの冒頭を見た瞬間、心の中でつぶやく一言"
+}`;
+}
+
+/* ---------- 実行 ---------- */
+let current = null; // { id, label, mode, theme, material, result, chat:[] }
+$('runBtn').onclick = async () => {
+  const inp = collect();
+  const pg = $('progress');
+  if (inp.err) { pg.innerHTML = `<span class="note" style="display:block">${esc(inp.err)}</span>`; return; }
+  $('runBtn').disabled = true;
+  pg.innerHTML = '<span class="spin"></span>冒頭6秒を見ています…（20秒ほど）';
+  try{
+    const r = await askAI(predictPrompt(inp), { images: inp.images, max: 3000 });
+    current = { id: 'h' + Date.now().toString(36), at: new Date().toISOString(), brand: store.brand,
+      label: inp.label, mode: inp.mode, theme: inp.theme, material: inp.material, result: normalize(r), chat: [] };
+    store.history.unshift(current); store.history = store.history.slice(0, 50); save();
+    pg.textContent = '';
+    renderResult(); renderHistory();
+    $('result').scrollIntoView({ behavior:'smooth', block:'start' });
+  }catch(e){
+    pg.innerHTML = `<span class="note" style="display:block">${esc(errText(e))}</span>`;
+  }finally{ $('runBtn').disabled = false; }
+};
+
+function normalize(r){
+  r = r || {};
+  const score = clamp(r.retention6s, 0, 100);
+  let c = Array.isArray(r.curve) ? r.curve.map(x => clamp(x, 0, 100)).slice(0, 7) : [];
+  if (c.length !== 7) c = [0,1,2,3,4,5,6].map(t => Math.round(100 - (100 - score) * t / 6));
+  c[0] = 100; c[6] = score;
+  for (let i = 1; i < 7; i++) if (c[i] > c[i-1]) c[i] = c[i-1]; // 残存は増えない
+  const s = r.scores || {};
+  const arr = x => Array.isArray(x) ? x : [];
+  return { score, curve: c, verdict: r.verdict || '',
+    scores: { stop:clamp(s.stop,0,10), relate:clamp(s.relate,0,10), curiosity:clamp(s.curiosity,0,10), clarity:clamp(s.clarity,0,10), tempo:clamp(s.tempo,0,10) },
+    dropPoints: arr(r.dropPoints).slice(0,3), good: arr(r.good).slice(0,3), fix: arr(r.fix).slice(0,3),
+    rewrites: arr(r.rewrites).slice(0,3), innerVoice: r.innerVoice || '' };
+}
+
+/* ---------- 表示 ---------- */
+function curveSVG(c, drops){
+  const W = 320, H = 150, L = 30, R = 10, T = 10, B = 24;
+  const x = t => L + (W - L - R) * t / 6, y = p => T + (H - T - B) * (1 - p / 100);
+  const pts = c.map((p, t) => `${x(t).toFixed(1)},${y(p).toFixed(1)}`);
+  let g = '';
+  [0,50,100].forEach(p => g += `<line class="ax" x1="${L}" x2="${W-R}" y1="${y(p)}" y2="${y(p)}"/><text class="lb" x="${L-4}" y="${y(p)+3}" text-anchor="end">${p}%</text>`);
+  for (let t = 0; t <= 6; t++) g += `<text class="lb" x="${x(t)}" y="${H-6}" text-anchor="middle">${t}秒</text>`;
+  const area = `<polygon class="ar" points="${x(0)},${y(0)} ${pts.join(' ')} ${x(6)},${y(0)}"/>`;
+  const dots = c.map((p, t) => `<circle class="dot" cx="${x(t)}" cy="${y(p)}" r="3"/>`).join('');
+  const dp = drops.map(d => { const s = parseFloat(String(d.sec).replace(/[^\d.]/g,'')); if (!isFinite(s) || s < 0 || s > 6) return '';
+    const i = Math.min(5, Math.floor(s)), f = s - i, p = c[i] + (c[Math.min(6,i+1)] - c[i]) * f;
+    return `<circle class="dp" cx="${x(s)}" cy="${y(p)}" r="5"/>`; }).join('');
+  return `<svg class="curve" viewBox="0 0 ${W} ${H}" role="img" aria-label="0秒から6秒までの予測残存率">${g}${area}<polyline class="ln" points="${pts.join(' ')}"/>${dots}${dp}</svg>`;
+}
+function grade(s){ return s >= 65 ? ['g-hi','このまま出せる'] : s >= 45 ? ['g-mid','ひと工夫で伸びる'] : ['g-lo','冒頭を作り直したい']; }
+const SC = [['stop','親指が止まる'],['relate','自分のことだと思える'],['curiosity','続きが気になる'],['clarity','一瞬で意味がわかる'],['tempo','テンポ・前置きの短さ']];
+
+function renderResult(){
+  const r = current.result, [gc, gl] = grade(r.score);
+  $('result').innerHTML = `
+    <div class="score-wrap">
+      <div class="score" style="--p:${r.score}"><div><b>${r.score}%</b><small>6秒残存</small></div></div>
+      <div><span class="grade ${gc}">${gl}</span><div class="verdict">${esc(r.verdict)}</div></div>
+    </div>
+    ${curveSVG(r.curve, r.dropPoints)}
+    ${r.innerVoice ? `<h4 class="res-h">見た人の心の声</h4><div class="voice">「${esc(String(r.innerVoice).replace(/^「|」$/g,''))}」</div>` : ''}
+    <h4 class="res-h">5つの観点</h4>
+    <div class="bars">${SC.map(([k, n]) => `<div class="bar"><span>${n}</span><span class="t"><i style="width:${r.scores[k]*10}%"></i></span><span class="v">${r.scores[k]}/10</span></div>`).join('')}</div>
+    ${r.dropPoints.length ? `<h4 class="res-h">離れやすい瞬間</h4>${r.dropPoints.map(d => `<div class="drop"><b>${esc(d.sec)}</b>　${esc(d.reason)}</div>`).join('')}` : ''}
+    ${r.good.length ? `<h4 class="res-h">効いているところ</h4><ul class="list">${r.good.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+    ${r.fix.length ? `<h4 class="res-h">直すとよいところ</h4><ul class="list">${r.fix.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+    ${r.rewrites.length ? `<h4 class="res-h">冒頭の言い換え案</h4>${r.rewrites.map((w, i) => `<div class="rw"><button class="btn3 copy" type="button" data-copy="${i}">コピー</button><span class="hk">${esc(w.hook)}</span>${w.visual ? `<div class="hint" style="margin:0">映すもの：${esc(w.visual)}</div>` : ''}<div style="font-size:13px;color:var(--sub)">${esc(w.why)}</div></div>`).join('')}` : ''}
+    <div class="btns"><button class="btn3" type="button" id="reBtn">言い換え案の1つ目で予測し直す</button></div>`;
+  $('result').querySelectorAll('h4.res-h').forEach(h => h.style.cssText = "font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px");
+  $('result').classList.remove('hidden');
+  $('result').querySelectorAll('[data-copy]').forEach(b => b.onclick = async () => {
+    const w = r.rewrites[+b.dataset.copy];
+    try{ await navigator.clipboard.writeText(w.hook); b.textContent = 'コピー済'; }catch(e){ b.textContent = '失敗'; }
+    setTimeout(() => b.textContent = 'コピー', 1500);
+  });
+  const re = $('reBtn');
+  if (!r.rewrites.length) re.parentNode.remove();
+  else re.onclick = () => {
+    const w = r.rewrites[0];
+    store.mode = 'idea'; save(); paintMode();
+    $('iText').value = w.hook || ''; $('iVisual').value = w.visual || '';
+    $('iText').scrollIntoView({ behavior:'smooth', block:'center' });
+  };
+  $('talk').classList.remove('hidden');
+  renderChat();
+}
+
+function renderChat(){
+  $('chat').innerHTML = (current.chat || []).map(m => `<div class="msg ${m.role === 'me' ? 'me' : 'ai'}">${esc(m.text)}</div>`).join('');
+}
+$('askBtn').onclick = async () => {
+  const q = $('ask').value.trim();
+  if (!q || !current) return;
+  const b = BRANDS[store.brand], r = current.result;
+  current.chat.push({ role:'me', text:q }); renderChat(); $('ask').value = '';
+  $('askBtn').disabled = true; $('askBtn').innerHTML = '<span class="spin"></span>考えています…';
+  const log = current.chat.slice(-8).map(m => (m.role === 'me' ? '相談者：' : 'あなた：') + m.text).join('\n');
+  const prompt = `あなたは縦型ショート動画の冒頭6秒を一緒に磨く編集者です。相談者は発信者本人です。上から目線にならず、すぐ使える形で答えてください。
+【ターゲット】${b.persona}
+【避けたい伝え方】${b.avoid}
+【元の入力】
+${current.material.slice(0, 4000)}
+【予測結果】6秒残存${r.score}%／見立て：${r.verdict}／直す点：${r.fix.join('／')}
+【これまでに出した言い換え案】${r.rewrites.map(w => w.hook).join('／')}
+【これまでの会話】
+${log}
+
+次のJSONだけを返す：{"reply":"相談への返事（300字以内。言い換え案を出すときは「」で囲んで箇条書きに）"}`;
+  try{
+    const a = await askAI(prompt, { max: 1500 });
+    current.chat.push({ role:'ai', text: String(a.reply || '').trim() || '（返事が空でした。もう一度聞いてみてください）' });
+  }catch(e){
+    current.chat.push({ role:'ai', text: errText(e) });
+  }
+  save(); renderChat();
+  $('askBtn').disabled = false; $('askBtn').textContent = '相談する';
+};
+
+function renderHistory(){
+  const list = store.history;
+  $('history').innerHTML = list.length ? list.map(h => {
+    const d = new Date(h.at);
+    return `<div class="hist" data-id="${esc(h.id)}"><span class="h">${esc((h.brand === 'cdl' ? '[CDL] ' : '') + (h.label || MODES[h.mode]))}</span><span class="s">${h.result.score}%<span class="hint" style="margin-left:6px">${d.getMonth()+1}/${d.getDate()}</span></span></div>`;
+  }).join('') : '<p class="hint">まだありません。</p>';
+  $('history').querySelectorAll('.hist').forEach(el => el.onclick = () => {
+    current = store.history.find(h => h.id === el.dataset.id);
+    if (!current) return;
+    if (current.brand && current.brand !== store.brand) { store.brand = current.brand; save(); paintBrand(); }
+    renderResult(); $('result').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+}
+$('clearBtn').onclick = () => {
+  if (!confirm('これまでの予測をすべて消します。よろしいですか？')) return;
+  store.history = []; save(); renderHistory();
+};
+renderHistory();
+
+})();
+</script>
+</body>
+</html>
