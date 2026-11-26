@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<script>function smHash(s){var r=function(x,n){return(x>>>n)|(x<<(32-n))},K=[],H=[],p=2,c=0,i,j;while(c<64){for(i=2;i*i<=p;i++)if(p%i==0)break;if(i*i>p){if(c<8)H[c]=(Math.pow(p,.5)*4294967296)|0;K[c++]=(Math.pow(p,1/3)*4294967296)|0}p++}var b=unescape(encodeURIComponent(String(s))),L=b.length*8,w=[];b+='\x80';while(b.length%64-56)b+='\x00';for(i=0;i<b.length;i++)w[i>>2]|=b.charCodeAt(i)<<((3-i%4)*8);w.push((L/4294967296)|0,L|0);for(j=0;j<w.length;j+=16){var a=H.slice(0),W=w.slice(j,j+16);for(i=0;i<64;i++){if(i>15){var x=W[i-15],y=W[i-2];W[i]=(W[i-16]+(r(x,7)^r(x,18)^(x>>>3))+W[i-7]+(r(y,17)^r(y,19)^(y>>>10)))|0}var t1=(a[7]+(r(a[4],6)^r(a[4],11)^r(a[4],25))+((a[4]&a[5])^(~a[4]&a[6]))+K[i]+W[i])|0,t2=((r(a[0],2)^r(a[0],13)^r(a[0],22))+((a[0]&a[1])^(a[0]&a[2])^(a[1]&a[2])))|0;a=[(t1+t2)|0].concat(a);a[4]=(a[4]+t1)|0;a.pop()}for(i=0;i<8;i++)H[i]=(H[i]+a[i])|0}var o='';for(i=0;i<8;i++)o+=('00000000'+(H[i]>>>0).toString(16)).slice(-8);return o}</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>介護事業所のためのマネジメント・ワークシート｜care_design_lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--ac:#2f6f68;--ac2:#e7f1ef;--ink:#2f2a27;--mut:#6f6760;--line:#d6d2cb;--bg:#fbf7ef;--card:#fff;--ex:#8a5a2b;--exbg:#fbf1e4;--warn:#fff6dc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;font-size:16px;line-height:1.75}
+header{background:var(--ac);color:#fff;padding:18px 16px 14px}
+header .in{max-width:860px;margin:0 auto}
+header small{opacity:.85;font-size:13px}
+header h1{margin:2px 0 0;font-size:21px;line-height:1.4}
+nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
+nav .in{max-width:860px;margin:0 auto;display:flex;gap:4px;padding:8px 12px}
+nav button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:20px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer;flex:none}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:860px;margin:0 auto;padding:16px 16px 60px}
+.panel{display:none}.panel.on{display:block}
+h2{color:var(--ac);font-size:22px;margin:8px 0 6px;line-height:1.4}
+h3{font-size:17px;margin:26px 0 8px;border-left:4px solid var(--ac);padding-left:10px}
+.drucker{background:var(--ac2);border-radius:10px;padding:12px 14px;font-size:14px;margin:10px 0 6px}
+.drucker b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}
+label{display:block;font-weight:700;font-size:14px;margin:10px 0 4px}
+label .h{font-weight:500;color:var(--mut);font-size:12.5px}
+textarea,input[type=text],input[type=number],input[type=date],select{width:100%;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:8px;padding:9px 10px;background:#fffdf9;color:var(--ink)}
+textarea{min-height:76px;resize:vertical}
+textarea:focus,input:focus,select:focus{outline:2px solid #9cc7bf;border-color:var(--ac)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:600px){.row2,.row3{grid-template-columns:1fr}}
+details.ex{margin-top:6px;font-size:14px}
+details.ex summary{cursor:pointer;color:var(--ex);font-weight:700;list-style:none}
+details.ex summary::before{content:"▶ ";font-size:11px}
+details.ex[open] summary::before{content:"▼ "}
+details.ex div{background:var(--exbg);border-radius:8px;padding:8px 12px;margin-top:6px;color:var(--ex)}
+.sentence{border:2px solid var(--ac);border-radius:12px;padding:12px 14px;background:#fff}
+.sentence span{font-weight:700}
+.note{background:var(--warn);border:1px solid #ecd9a0;border-radius:10px;padding:10px 14px;font-size:14px;margin:12px 0}
+.total{font-size:20px;font-weight:900;color:var(--ac);text-align:right;margin-top:8px}
+.btn{display:inline-block;border:none;border-radius:24px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--ac);color:#fff}
+.btn.sub{background:#fff;color:var(--ac);border:1.5px solid var(--ac)}
+.btn.danger{background:#fff;color:#a4442c;border:1.5px solid #d9a08f}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.saved{font-size:12.5px;color:var(--mut)}
+.chk{border-bottom:1px dashed var(--line);padding:10px 0}
+.chk p{margin:0 0 6px;font-weight:700;font-size:15px}
+.chk .opts{display:flex;gap:6px;flex-wrap:wrap}
+.chk .opts label{font-weight:500;margin:0;border:1px solid var(--line);border-radius:20px;padding:4px 12px;cursor:pointer;background:#fff;font-size:14px}
+.chk .opts input{margin-right:4px}
+.chk .opts label:has(input:checked){background:var(--ac);color:#fff;border-color:var(--ac)}
+.msg{background:var(--ac2);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:15px}
+.taskrow{position:relative}
+.taskrow .del{position:absolute;right:10px;top:8px;background:none;border:none;color:var(--mut);cursor:pointer;font-size:13px}
+table.guide{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+table.guide th,table.guide td{border:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+table.guide th{background:var(--ac2);color:var(--ac)}
+footer{max-width:860px;margin:0 auto;padding:0 16px 40px;font-size:12px;color:var(--mut)}
+/* gate */
+#gate{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+#gate .box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 22px;max-width:380px;width:100%;text-align:center}
+#gate h2{font-size:19px}
+#gate p{font-size:14px;color:var(--mut)}
+#gate .err{color:#a4442c;font-size:13px;min-height:1.4em}
+@media print{
+ #gate,nav,.tools,header small,details.ex,.del,.noprint{display:none!important}
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:var(--ac);padding:0 0 8px}
+ .panel{display:block!important;page-break-after:always}
+ .card{border-color:#bbb;break-inside:avoid}
+ textarea,input,select{border:none;border-bottom:1px solid #999;border-radius:0;background:#fff;padding:2px 0;min-height:0}
+ textarea{height:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="gate">
+ <div class="box">
+  <small style="color:var(--ac)">care_design_lab</small>
+  <h2>介護事業所のための<br>マネジメント・ワークシート</h2>
+  <p>note記事の有料部分に記載したパスワードを入力してください。</p>
+  <input type="text" id="pw" placeholder="パスワード" autocomplete="off" autocapitalize="off">
+  <div class="err" id="pwerr"></div>
+  <button class="btn" id="pwbtn" style="width:100%">ひらく</button>
+ </div>
+</div>
+
+<header><div class="in">
+ <small>care_design_lab ／ ドラッカー『マネジメント』の考え方を現場で使う</small>
+ <h1>介護事業所のためのマネジメント・ワークシート</h1>
+</div></header>
+
+<nav><div class="in" id="tabs">
+ <button data-t="p0" class="on">使い方</button>
+ <button data-t="p1">1 何のために</button>
+ <button data-t="p2">2 最低限の目標</button>
+ <button data-t="p3">3 やめる仕事</button>
+ <button data-t="p4">4 意思決定メモ</button>
+ <button data-t="p5">5 真摯さチェック</button>
+</div></nav>
+
+<main>
+
+<!-- 使い方 -->
+<section class="panel on" id="p0">
+ <h2>全部やらなくて大丈夫です</h2>
+ <p>このワークシートは「もっと頑張るため」のものではありません。抱えているものを整理して、下ろすためのものです。</p>
+ <div class="note">入力した内容は<b>この端末のブラウザにだけ</b>自動で保存されます（ほかの人には見えません）。別の端末やブラウザでは引き継がれないのでご注意ください。紙で残したいときは、下の「印刷・PDF保存」をご利用ください。</div>
+ <h3>いま一番しんどいことから選んでください</h3>
+ <table class="guide">
+  <tr><th>いま一番しんどいこと</th><th>まず使うシート</th><th>時間の目安</th></tr>
+  <tr><td>とにかく時間がない、業務が多すぎる</td><td>3 やめる仕事</td><td>一人で30分</td></tr>
+  <tr><td>会議で決まっても動かない</td><td>4 意思決定メモ</td><td>次の会議で1回</td></tr>
+  <tr><td>理念が飾りになっている</td><td>1 何のために</td><td>リーダー2〜3名で60分</td></tr>
+  <tr><td>お金の話がしにくい、来年が不安</td><td>2 最低限の目標</td><td>経営者・管理者で60分</td></tr>
+  <tr><td>リーダーとしての自信がない</td><td>5 真摯さチェック</td><td>一人で10分</td></tr>
+ </table>
+ <p>迷ったら、<b>シート3</b>から始めてください。仕事が一つ減るだけで、ほかのシートに向き合う余裕が生まれます。</p>
+ <h3>3つのお約束</h3>
+ <p><b>1. 正解を書こうとしない。</b>空欄があってもかまいません。<br>
+ <b>2. 一人で抱えない。</b>シート1・2・4は、できれば誰かと一緒に。<br>
+ <b>3. 書いたら、一つだけ動く。</b>どのシートも最後は「明日やる一つ」で終わります。</p>
+ <p>各欄の下にある <span style="color:var(--ex);font-weight:700">▶ 記入例</span> を押すと、架空の通所介護事業所（定員25名・職員14名）の記入例が見られます。</p>
+</section>
+
+<!-- シート1 -->
+<section class="panel" id="p1">
+ <h2>シート1　うちの事業所は「何のため」にあるか</h2>
+ <div class="drucker"><b>ドラッカーの考え方：</b>事業を決めるのは事業者ではなく顧客。「われわれの事業は何か」は顧客の視点から問い続けるもので、うまくいっている時こそ問い直す。</div>
+ <h3>Q1. うちの「顧客」は誰？ その人が本当に価値を感じていることは？</h3>
+ <p style="font-size:14px;color:var(--mut);margin:0">職員も「この職場を選ぶ顧客」として考えてみてください。想像で大丈夫です。</p>
+ <div class="card">
+  <label>利用者</label><textarea name="s1_user"></textarea>
+  <details class="ex"><summary>記入例</summary><div>「行かされる場所」ではなく、自分で今日の過ごし方を選べること。名前で呼ばれること。</div></details>
+  <label>ご家族</label><textarea name="s1_family"></textarea>
+  <details class="ex"><summary>記入例</summary><div>安心して預けられること。家での様子を相談できる相手がいること。</div></details>
+  <label>ケアマネジャー</label><textarea name="s1_cm"></textarea>
+  <details class="ex"><summary>記入例</summary><div>急な相談でも返事が早いこと。状態の変化をこまめに教えてもらえること。</div></details>
+  <label>職員</label><textarea name="s1_staff"></textarea>
+  <details class="ex"><summary>記入例</summary><div>シフトが急に変わらないこと。自分の得意なことが認められること。</div></details>
+  <label>地域</label><textarea name="s1_area"></textarea>
+  <details class="ex"><summary>記入例</summary><div>困ったときに相談できる場所が近くにあること。</div></details>
+ </div>
+ <h3>Q2. 私たちが本当に支えているものを、一文にすると？</h3>
+ <div class="sentence">
+  <span>私たちは</span><input type="text" name="s1_who" placeholder="例：家に閉じこもりがちになった"><span>人の、</span>
+  <input type="text" name="s1_what" placeholder="例：自分で選んで過ごす1日"><span>を支える事業所です。</span>
+ </div>
+ <div class="total" id="s1_sentence" style="font-size:16px;text-align:left;font-weight:700"></div>
+ <h3>Q3. 選ばれている理由と、選ばれていない理由は？</h3>
+ <div class="row2">
+  <div><label>選ばれている理由</label><textarea name="s1_win"></textarea>
+  <details class="ex"><summary>記入例</summary><div>送迎の時間が正確。入浴がゆっくりできる。ケアマネへの報告が早い。</div></details></div>
+  <div><label>選ばれていない・断られた理由</label><textarea name="s1_lose"></textarea>
+  <details class="ex"><summary>記入例</summary><div>リハビリ特化型と比べられる。土曜日に対応していない。プログラムが毎回同じ。</div></details></div>
+ </div>
+ <h3>Q4. 3年後、この事業所は「何であるべき」？</h3>
+ <textarea name="s1_future"></textarea>
+ <details class="ex"><summary>記入例</summary><div>「ここに来ると自分で決められる」と言われるデイ。職員が友人に紹介したくなる職場。</div></details>
+ <h3>Q5. 明日やる一つ</h3>
+ <textarea name="s1_action" style="min-height:56px"></textarea>
+ <details class="ex"><summary>記入例</summary><div>Q2の一文を、来週の朝礼で読んで職員に感想を聞く。</div></details>
+</section>
+
+<!-- シート2 -->
+<section class="panel" id="p2">
+ <h2>シート2　8分野の「必要最低限」目標シート</h2>
+ <div class="drucker"><b>ドラッカーの考え方：</b>目標は8つの分野に置く。利益は目的ではなく「未来のためのコスト」。考えるべきは「最大の利益」ではなく「必要な最低限の利益」。</div>
+ <p style="font-size:14px">「理想」ではなく「ここだけは守る」というラインを書きます。全部埋まらなくても大丈夫です。</p>
+ <div id="s2_rows"></div>
+ <h3>「未来のコスト」から、必要最低限の利益を出す</h3>
+ <div class="card">
+  <label>職員の昇給・賞与の上乗せ（円／年）</label><input type="number" inputmode="numeric" name="s2_c1" class="cost">
+  <details class="ex"><summary>記入例</summary><div>月5,000円 × 12名 × 12か月 ＝ 720,000円</div></details>
+  <label>設備の修繕・買い替え（円／年）<span class="h">　送迎車・浴室など</span></label><input type="number" inputmode="numeric" name="s2_c2" class="cost">
+  <details class="ex"><summary>記入例</summary><div>送迎車の買い替えの積み立て 1,000,000円</div></details>
+  <label>採用・研修（円／年）</label><input type="number" inputmode="numeric" name="s2_c3" class="cost">
+  <details class="ex"><summary>記入例</summary><div>300,000円</div></details>
+  <label>万一に備える資金（円／年）<span class="h">　報酬改定・感染症など</span></label><input type="number" inputmode="numeric" name="s2_c4" class="cost">
+  <details class="ex"><summary>記入例</summary><div>500,000円</div></details>
+  <div class="total">必要最低限の利益：<span id="s2_total">0</span> 円／年</div>
+ </div>
+ <h3>明日やる一つ</h3>
+ <textarea name="s2_action" style="min-height:56px"></textarea>
+ <details class="ex"><summary>記入例</summary><div>この表を職員会議で見せて、「利益は皆さんの昇給と車のためのお金」と説明する。</div></details>
+</section>
+
+<!-- シート3 -->
+<section class="panel" id="p3">
+ <h2>シート3　「やめる仕事」洗い出しシート</h2>
+ <div class="drucker"><b>ドラッカーの考え方：</b>予算で動く組織は「やっていること」自体が成果になりがち。成果の出ない活動はやめる。明日をつくるには、昨日を計画的に捨てる。</div>
+ <h3>STEP1　会議・委員会・記録・書類・「昔からの習慣」を書き出す</h3>
+ <div id="s3_rows"></div>
+ <button class="btn sub noprint" id="s3_add">＋ 仕事を追加</button>
+ <div class="total">書き出した仕事の合計：月 <span id="s3_sum">0</span> 時間</div>
+ <details class="ex"><summary>記入例を見る</summary><div>
+  ・毎朝の申し送り（30分）／目的：利用者の状態共有／月10時間／半分は記録の読み上げ → <b>減らす</b>：15分に短縮し、記録は各自で確認<br>
+  ・月1回の全体会議／方針の共有／月14時間（全員分）／議題がない月もある → <b>形を変える</b>：議題がない月は中止<br>
+  ・紙の業務日誌とPC記録の二重入力／月20時間／同じ内容を2回書いている → <b>やめる</b>：PC記録に一本化<br>
+  ・各種委員会（別々の日に開催）／月6時間／形だけになっている → <b>形を変える</b>：同じ日にまとめて開き、議事録の書式をそろえる
+ </div></details>
+ <div class="note"><b>大事な注意：</b>運営基準で義務づけられている委員会・研修・指針（虐待防止、身体拘束適正化、感染症対策、業務継続計画など）は「やめる」ではなく<b>「形を変える」</b>（時間を短くする、ほかの会議とまとめるなど）で考えてください。迷うときは、指定権者（自治体）の最新の通知を確認してください。</div>
+ <h3>STEP2　今月「やめる・減らす」のは、この一つ</h3>
+ <textarea name="s3_one" style="min-height:56px"></textarea>
+ <details class="ex"><summary>記入例</summary><div>紙の業務日誌をやめて、PC記録に一本化する（月に約20時間浮く）。</div></details>
+ <h3>STEP3　伝え方メモ</h3>
+ <div class="card">
+  <div class="row2">
+   <div><label>誰に伝える？</label><input type="text" name="s3_who"></div>
+   <div><label>いつ伝える？</label><input type="text" name="s3_when"></div>
+  </div>
+  <label>やめる理由（浮いた時間を何に使うか）</label><textarea name="s3_why"></textarea>
+  <details class="ex"><summary>記入例</summary><div>全職員に、来週の申し送り後に伝える（ベテランのCさんには先に個別に）。二重入力の負担をなくし、浮いた時間を利用者と話す時間にあてる。まず1か月試す。</div></details>
+ </div>
+</section>
+
+<!-- シート4 -->
+<section class="panel" id="p4">
+ <h2>シート4　会議で使う「意思決定メモ」</h2>
+ <div class="drucker"><b>ドラッカーの考え方：</b>正しい意思決定は「正しい問い」から始まる。全会一致は危険で、反対意見こそ別の選択肢を生む。実行する人と期限まで決めて、決定は完成する。</div>
+ <div class="tools noprint"><button class="btn sub" id="s4_new">このメモを保存して、新しい議題を書く</button></div>
+ <div id="s4_hist" class="noprint"></div>
+ <h3>① 何が「本当の問題」か？</h3>
+ <div class="row2">
+  <div><label>起きていること（症状）</label><textarea name="s4_sym"></textarea>
+  <details class="ex"><summary>記入例</summary><div>夜勤（宿泊）の欠員が続き、毎月管理者が穴埋めに入っている。</div></details></div>
+  <div><label>本当の問題（原因）</label><textarea name="s4_cause"></textarea>
+  <details class="ex"><summary>記入例</summary><div>人数が足りないのではなく、夜勤に入れる職員が3名に偏っている。新人に夜勤の研修をする仕組みがない。</div></details></div>
+ </div>
+ <h3>② 今日、決めなければならないことは？</h3>
+ <textarea name="s4_q" style="min-height:56px"></textarea>
+ <h3>③ 選択肢</h3>
+ <div id="s4_opts"></div>
+ <details class="ex"><summary>記入例</summary><div>A：夜勤専従のパートを募集（すぐ効く／採用費・来るかわからない）<br>B：日勤職員2名に夜勤の同行研修（長く続く・偏りが減る／研修中はベテランの負担増）<br>C：宿泊の受け入れ日数を減らす（負担がすぐ減る／収入とケアマネの信頼が下がる）</div></details>
+ <h3>④ 出た反対意見・懸念 <span style="font-size:13px;color:var(--mut)">（誰の意見か、あとで聞き直せるように）</span></h3>
+ <textarea name="s4_obj"></textarea>
+ <details class="ex"><summary>記入例</summary><div>Dさん（ベテラン）：「同行研修中は自分の負担が増える」→ 研修期間中は夜勤手当を上乗せする案が出た。</div></details>
+ <h3>⑤〜⑧ 決定と、実行する人・期限</h3>
+ <div class="card">
+  <label>⑤ 決定</label><textarea name="s4_dec" style="min-height:56px"></textarea>
+  <div class="row3">
+   <div><label>⑥ 実行する人</label><input type="text" name="s4_who"></div>
+   <div><label>⑦ 期限</label><input type="date" name="s4_due"></div>
+   <div><label>⑧ 振り返る日</label><input type="date" name="s4_rev"></div>
+  </div>
+ </div>
+ <h3>⑨ 振り返り：やってみてどうだった？</h3>
+ <textarea name="s4_ref"></textarea>
+</section>
+
+<!-- シート5 -->
+<section class="panel" id="p5">
+ <h2>シート5　若手リーダーのための「真摯さ」セルフチェック</h2>
+ <div class="drucker"><b>ドラッカーの考え方：</b>マネージャーに欠かせないのは才能ではなく「真摯さ」。「誰が正しいか」ではなく「何が正しいか」を問う。部下は上司の真摯さを必ず見抜く。</div>
+ <p style="font-size:14px">点数はあなたを評価するためのものではなく、気づきのためのものです。正直につけた点数ほど役に立ちます。</p>
+ <div class="card" id="s5_items"></div>
+ <div class="total">合計：<span id="s5_total">0</span> ／ 20点 <span id="s5_count" style="font-size:13px;color:var(--mut);font-weight:500"></span></div>
+ <div class="msg" id="s5_msg">10項目すべてに答えると、点数の受け止め方が表示されます。</div>
+ <div class="row2">
+  <div><label>一番自信がない項目は？</label><textarea name="s5_weak"></textarea></div>
+  <div><label>来週、試してみることは一つだけ</label><textarea name="s5_try"></textarea></div>
+ </div>
+</section>
+
+<div class="tools noprint">
+ <button class="btn" onclick="window.print()">印刷・PDF保存</button>
+ <button class="btn danger" id="clear">入力をすべて消去</button>
+ <span class="saved" id="saved"></span>
+</div>
+</main>
+
+<footer>
+ 参考文献：P.F.ドラッカー 著／上田惇生 編訳『マネジメント［エッセンシャル版］基本と原則』ダイヤモンド社<br>
+ © care_design_lab　ご購入者さまご自身の事業所でのご利用に限ります。無断での転載・再配布はご遠慮ください。
+</footer>
+
+<script>
+(function(){
+// ===== パスワード（SHA-256のハッシュで照合） =====
+const PW_HASH = "a8852097c9d00246d7103f6de2e4e1c5b942149e19e4988c40a2dcf4644ed2ac";
+const KEY = "cdl_mgmt_ws_v1";
+const UNLOCK = "cdl_mgmt_ws_unlocked";
+const gate = document.getElementById("gate");
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+async function sha(s){return smHash(s)}
+async function tryPw(){
+  const v=document.getElementById("pw").value.trim();
+  if(await sha(v)===PW_HASH){store(UNLOCK,PW_HASH);gate.style.display="none"}
+  else document.getElementById("pwerr").textContent="パスワードが違います。半角で入力してください。";
+}
+if(load(UNLOCK)===PW_HASH) gate.style.display="none";
+document.getElementById("pwbtn").onclick=tryPw;
+document.getElementById("pw").addEventListener("keydown",e=>{if(e.key==="Enter")tryPw()});
+
+// ===== タブ =====
+const tabs=document.querySelectorAll("#tabs button");
+function show(id){tabs.forEach(b=>b.classList.toggle("on",b.dataset.t===id));document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id===id));store(KEY+"_tab",id);window.scrollTo(0,0)}
+tabs.forEach(b=>b.onclick=()=>show(b.dataset.t));
+
+// ===== シート2の8分野 =====
+const areas=[
+ ["選ばれる力","稼働率・紹介数","稼働率 82%","85%を下回らない","管理者","毎月末"],
+ ["新しい取り組み","","プログラムが固定化","利用者が選べるメニューを月1つ追加","リーダーA","3か月ごと"],
+ ["人材","定着・採用・育成","昨年の退職者 4名","退職者は2名以内／入職者に1か月面談","管理者","四半期"],
+ ["資金","手元資金・入金サイクル","手元資金 約1.5か月分","2か月分を確保","経営者","半年ごと"],
+ ["設備・物的資源","","送迎車が10年目","来年度の買い替え資金を積み立て","経営者","半年ごと"],
+ ["生産性","記録時間・残業","記録に1日60分","40分以内（タブレット入力に統一）","リーダーB","毎月"],
+ ["地域への責任","","特になし","地域の集まりに年2回参加","管理者","年度末"],
+ ["利益","","ほぼ収支トントン","下の計算で決める","経営者","年度末"]];
+document.getElementById("s2_rows").innerHTML=areas.map((a,i)=>`
+ <div class="card"><b style="color:var(--ac)">${i+1}. ${a[0]}</b>${a[1]?` <span class="h" style="font-size:12.5px;color:var(--mut)">（${a[1]}）</span>`:""}
+  <div class="row2"><div><label>今の状態</label><input type="text" name="s2_${i}_now"></div>
+  <div><label>今年の最低ライン</label><input type="text" name="s2_${i}_line"></div></div>
+  <div class="row2"><div><label>担当</label><input type="text" name="s2_${i}_who"></div>
+  <div><label>確認する時期</label><input type="text" name="s2_${i}_when"></div></div>
+  <details class="ex"><summary>記入例</summary><div>今：${a[2]}　→　最低ライン：${a[3]}（担当：${a[4]}／${a[5]}）</div></details>
+ </div>`).join("");
+
+// ===== シート4の選択肢 =====
+document.getElementById("s4_opts").innerHTML=["A","B","C"].map(k=>`
+ <div class="card"><b style="color:var(--ac)">選択肢${k}</b>
+  <label>内容</label><input type="text" name="s4_${k}">
+  <div class="row2"><div><label>よい点</label><input type="text" name="s4_${k}_pro"></div><div><label>心配な点</label><input type="text" name="s4_${k}_con"></div></div>
+ </div>`).join("");
+
+// ===== シート5 =====
+const items=["職員の弱みより先に、強みを話せている","意見が割れたとき「誰が」ではなく「何が」正しいかで考えている","自分の失敗を、自分から報告できている","言っていることと、やっていることが一致している","ベテランにも新人にも、同じ基準で接している","わからないことを「わからない」と言えている","決めたことの理由を、職員に説明できている","反対意見を言った人を、あとで遠ざけていない","利用者のためと職員の負担、その両方を見て判断している","うまくいったとき、手柄を職員に返している"];
+document.getElementById("s5_items").innerHTML=items.map((t,i)=>`
+ <div class="chk"><p>${i+1}. ${t}</p><div class="opts">
+  <label><input type="radio" name="s5_${i}" value="2">できている</label>
+  <label><input type="radio" name="s5_${i}" value="1">ときどき</label>
+  <label><input type="radio" name="s5_${i}" value="0">まだ</label></div></div>`).join("");
+
+// ===== データ保存 =====
+let data={};
+try{data=JSON.parse(load(KEY)||"{}")}catch(e){data={}}
+let s3n=data.__s3n||5;
+
+function s3render(){
+  const box=document.getElementById("s3_rows");box.innerHTML="";
+  for(let i=0;i<s3n;i++){
+    box.insertAdjacentHTML("beforeend",`<div class="card taskrow">
+     ${s3n>1?`<button class="del noprint" data-i="${i}">削除</button>`:""}
+     <b style="color:var(--ac)">仕事 ${i+1}</b>
+     <div class="row2"><div><label>仕事</label><input type="text" name="s3_${i}_task"></div>
+     <div><label>本来の目的</label><input type="text" name="s3_${i}_goal"></div></div>
+     <div class="row3"><div><label>月の時間（時間）</label><input type="number" inputmode="decimal" step="0.5" name="s3_${i}_hrs" class="hrs"></div>
+     <div><label>成果は出ている？</label><input type="text" name="s3_${i}_res"></div>
+     <div><label>判定</label><select name="s3_${i}_v"><option value="">選ぶ</option><option>続ける</option><option>減らす</option><option>形を変える</option><option>やめる</option></select></div></div>
+    </div>`);
+  }
+  box.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
+    const d=+b.dataset.i;
+    for(let i=d;i<s3n-1;i++){["task","goal","hrs","res","v"].forEach(f=>{data[`s3_${i}_${f}`]=data[`s3_${i+1}_${f}`]||""})}
+    ["task","goal","hrs","res","v"].forEach(f=>delete data[`s3_${s3n-1}_${f}`]);
+    s3n--;data.__s3n=s3n;save();s3render();fill();
+  });
+  bind();
+}
+function fields(){return document.querySelectorAll("main [name]")}
+function fill(){
+  fields().forEach(el=>{
+    const v=data[el.name];
+    if(el.type==="radio") el.checked=(v===el.value);
+    else if(v!==undefined) el.value=v;
+  });
+  calc();
+}
+let timer;
+function save(){store(KEY,JSON.stringify(data));const s=document.getElementById("saved");s.textContent="自動保存しました";clearTimeout(timer);timer=setTimeout(()=>s.textContent="",1500)}
+function bind(){
+  fields().forEach(el=>{
+    if(el.dataset.b) return; el.dataset.b=1;
+    el.addEventListener(el.type==="radio"||el.tagName==="SELECT"?"change":"input",()=>{
+      if(el.type==="radio"){if(el.checked)data[el.name]=el.value}else data[el.name]=el.value;
+      save();calc();
+    });
+  });
+}
+const yen=n=>n.toLocaleString("ja-JP");
+function calc(){
+  // シート1の一文
+  const w=data.s1_who,t=data.s1_what;
+  document.getElementById("s1_sentence").textContent=(w||t)?`→ 私たちは「${w||"　　"}」人の、「${t||"　　"}」を支える事業所です。`:"";
+  // シート2
+  let sum=0;document.querySelectorAll(".cost").forEach(e=>sum+=(+e.value||0));
+  document.getElementById("s2_total").textContent=yen(sum);
+  // シート3
+  let h=0;document.querySelectorAll(".hrs").forEach(e=>h+=(+e.value||0));
+  document.getElementById("s3_sum").textContent=Math.round(h*10)/10;
+  // シート5
+  let sc=0,n=0;for(let i=0;i<10;i++){const v=data["s5_"+i];if(v!==undefined&&v!==""){sc+=+v;n++}}
+  document.getElementById("s5_total").textContent=sc;
+  document.getElementById("s5_count").textContent=n<10?`（${n}／10項目に回答）`:"";
+  const m=document.getElementById("s5_msg");
+  if(n<10) m.textContent="10項目すべてに答えると、点数の受け止め方が表示されます。";
+  else if(sc>=15) m.innerHTML="<b>15点以上：</b>信頼の土台はできています。今の自分を一つ言葉にして、後輩に伝えてみてください。";
+  else if(sc>=8) m.innerHTML="<b>8〜14点：</b>多くのリーダーがここにいます。「まだ」の項目を一つだけ選んで、来週試してみましょう。";
+  else m.innerHTML="<b>7点以下：</b>あなたがダメなのではなく、余裕がないサインかもしれません。シート3で、まず仕事を一つ減らすところから始めてください。";
+}
+document.getElementById("s3_add").onclick=()=>{s3n++;data.__s3n=s3n;save();s3render();fill()};
+
+// シート4：履歴
+function s4hist(){
+  const h=data.__s4hist||[];const box=document.getElementById("s4_hist");
+  box.innerHTML=h.length?`<details class="ex"><summary>これまでの意思決定メモ（${h.length}件）</summary><div>${h.map(x=>`<p style="margin:4px 0"><b>${x.date}</b>　${esc(x.q||x.sym||"（議題なし）")}<br>決定：${esc(x.dec||"")}／担当：${esc(x.who||"")}／期限：${esc(x.due||"")}</p>`).join("")}</div></details>`:"";
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+document.getElementById("s4_new").onclick=()=>{
+  const keys=Object.keys(data).filter(k=>/^s4_/.test(k));
+  if(!keys.some(k=>data[k])){alert("まだ何も書かれていません。");return}
+  const rec={date:new Date().toLocaleDateString("ja-JP")};keys.forEach(k=>rec[k.slice(3)]=data[k]);
+  (data.__s4hist=data.__s4hist||[]).unshift(rec);
+  keys.forEach(k=>delete data[k]);
+  document.querySelectorAll("#p4 [name]").forEach(e=>e.value="");
+  save();s4hist();window.scrollTo(0,0);
+};
+document.getElementById("clear").onclick=()=>{
+  if(!confirm("このワークシートの入力内容をすべて消去します。よろしいですか？（元に戻せません）"))return;
+  data={};s3n=5;save();
+  fields().forEach(el=>{if(el.type==="radio")el.checked=false;else el.value=""});
+  s3render();s4hist();calc();
+};
+
+s3render();fill();s4hist();
+const lastTab=load(KEY+"_tab");if(lastTab&&document.getElementById(lastTab))show(lastTab);
+})();
+</script>
+</body>
+</html>
