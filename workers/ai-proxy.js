@@ -81,7 +81,11 @@ export default {
     } catch {
       return json({ error: 'upstream_unreachable' }, 502);
     }
-    if (!res.ok) return json({ error: 'upstream_error', status: res.status }, 502);
+    if (!res.ok) {
+      // 原因がわかるよう、Gemini のエラー文の先頭だけ返す（キーなどは含まれない）
+      const detail = data && data.error && typeof data.error.message === 'string' ? data.error.message.slice(0, 200) : undefined;
+      return json({ error: 'upstream_error', status: res.status, detail }, 502);
+    }
 
     const out  = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
     const text = out.map(p => p.text || '').join('');

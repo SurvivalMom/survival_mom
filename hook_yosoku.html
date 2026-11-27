@@ -335,10 +335,22 @@ async function askAI(prompt, opts){
   opts = opts || {};
   const body = { app: APP, prompt, max_tokens: opts.max || 3000, json: true };
   if (opts.images && opts.images.length) body.images = opts.images;
-  const res = await fetch(AI_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-  let data = null; try{ data = await res.json(); }catch(e){}
-  if (!res.ok || !data || !data.content) throw new Error((data && data.error) || ('HTTP ' + res.status));
-  return parseJSON(data.content.map(c => c.text || '').join(''));
+  const waits = [4000, 10000];   // 混み合い（429・500・503）のときは自動でやり直す
+  for (let n = 0; ; n++) {
+    const res = await fetch(AI_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    let data = null; try{ data = await res.json(); }catch(e){}
+    if (res.ok && data && data.content) return parseJSON(data.content.map(c => c.text || '').join(''));
+    const err = (data && data.error) || ('HTTP ' + res.status);
+    const up = data && data.status;
+    if (err === 'upstream_error' && [429, 500, 503].includes(up) && n < waits.length) {
+      if (opts.onRetry) opts.onRetry(n + 1);
+      await new Promise(r => setTimeout(r, waits[n]));
+      continue;
+    }
+    const e = new Error(err + (up ? ':' + up : ''));
+    e.detail = data && data.detail;
+    throw e;
+  }
 }
 function parseJSON(t){
   t = String(t).trim().replace(/^```(?:json)?\s*/i,'').replace(/```\s*$/,'');
@@ -349,10 +361,16 @@ function parseJSON(t){
 }
 const errText = e => {
   const m = String(e && e.message || e);
+  const d = e && e.detail ? '\n（詳細：' + e.detail + '）' : '';
   if (/unknown_app/.test(m)) return 'AI中継Workerがまだこのアプリ用に更新されていません（workers/README.md の「すでにWorkerを作ってある場合」を参照）。';
   if (/forbidden_origin/.test(m)) return 'このページは survivalmom.github.io から開いたときだけAIが動きます。';
   if (/Failed to fetch|NetworkError|Load failed/.test(m)) return '通信できませんでした。電波を確認して、もう一度押してください。';
-  return 'うまくいきませんでした（' + m + '）。少し待ってもう一度押してください。';
+  if (/upstream_error:429/.test(m)) return 'Gemini の利用上限に達しています（429）。1〜2分待ってもう一度押してください。何度やっても同じなら、無料枠の1日の上限です。明日まで待つか、Google AI Studio で請求先（お支払い）を設定すると解消します。' + d;
+  if (/upstream_error:(500|503)/.test(m)) return 'Gemini が混み合っています（' + m.split(':')[1] + '）。3回やり直しましたがつながりませんでした。数分おいてもう一度押してください。' + d;
+  if (/upstream_error:400/.test(m)) return 'Gemini が依頼の形を受け付けませんでした（400）。動画を変えるか、「台本」「フック案」で試してください。' + d;
+  if (/upstream_error:(401|403)/.test(m)) return 'Gemini のAPIキーが使えない状態です（' + m.split(':')[1] + '）。Cloudflare の GEMINI_API_KEY が正しいか、Google AI Studio でキーが有効かを確認してください。' + d;
+  if (/upstream_error:404/.test(m)) return 'Gemini のモデル名が見つかりません（404）。ai-proxy.js の MODEL を確認してください。' + d;
+  return 'うまくいきませんでした（' + m + '）。少し待ってもう一度押してください。' + d;
 };
 
 /* ---------- 入力をまとめる ---------- */
@@ -425,7 +443,7 @@ $('runBtn').onclick = async () => {
   $('runBtn').disabled = true;
   pg.innerHTML = '<span class="spin"></span>冒頭6秒を見ています…（20秒ほど）';
   try{
-    const r = await askAI(predictPrompt(inp), { images: inp.images, max: 3000 });
+    const r = await askAI(predictPrompt(inp), { images: inp.images, max: 3000, onRetry: n => { pg.innerHTML = `<span class="spin"></span>Gemini が混み合っています。自動でやり直しています（${n}回目）…`; } });
     current = { id: 'h' + Date.now().toString(36), at: new Date().toISOString(), brand: store.brand,
       label: inp.label, mode: inp.mode, theme: inp.theme, material: inp.material, result: normalize(r), chat: [] };
     store.history.unshift(current); store.history = store.history.slice(0, 50); save();
@@ -433,7 +451,7 @@ $('runBtn').onclick = async () => {
     renderResult(); renderHistory();
     $('result').scrollIntoView({ behavior:'smooth', block:'start' });
   }catch(e){
-    pg.innerHTML = `<span class="note" style="display:block">${esc(errText(e))}</span>`;
+    pg.innerHTML = `<span class="note" style="display:block;white-space:pre-wrap">${esc(errText(e))}</span>`;
   }finally{ $('runBtn').disabled = false; }
 };
 
