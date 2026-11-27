@@ -1,16 +1,17 @@
 """
-冒頭6秒チェッカー（hook_yosoku.html）と同じ採点を、完成したリール動画にかける。
+冒頭6秒チェッカー（hook_yosoku.html）と同じ分析を、完成したリール動画にかける。
 
 アプリの「🎬動画」モードと同じく、最初の6秒から0.5秒ごとに13枚の静止画を切り出し、
-アプリと同じ文言（hook_yosoku.html の predictPrompt と BRANDS をそのまま読み込む）で
-同じAIの窓口に送る。動画そのものと音声は送らない。
+アプリと同じ文言（hook_yosoku.html の analyzePrompt と BRANDS をそのまま読み込む）で
+同じAIの窓口に送る。動画そのものと音声は送らない（音は --audio と --spoken で言葉で伝える）。
 
 usage:
-  python3 hook_check.py 動画.mp4 --brand sm|cdl [--theme 伝えたいこと] [--spoken 最初の6秒の言葉] [--out 結果.json]
+  python3 hook_check.py 動画.mp4 --brand sm|cdl [--theme 伝えたいこと] [--spoken 最初の6秒の言葉]
+                        [--audio "人の声（ナレーション・セリフ）あり・BGMなし"] [--out 結果.json]
 
   --brand  sm＝survival_mom_diary、cdl＝CARE DESIGN LAB（care_design_lab）
-  結果は「6秒残存の予測」「見立て」「離れやすい瞬間」「直すとよいところ」「言い換え案」を表示し、--out にJSONで保存する。
-  判定の目安（アプリと同じ）：65%以上＝このまま出せる／45〜64%＝ひと工夫で伸びる／44%以下＝冒頭を作り直したい
+  何%残るかの予測はしない。8つの要素（あり／弱い／なし）、伸びた例と同じ要素の数（x/8）、
+  秒ごとの分解、伸びた例との違い、直すとよいところ（撮り直し不要／必要）、言い換え案を表示し、--out にJSONで保存する。
 """
 import argparse, base64, json, os, re, subprocess, sys, tempfile, time, urllib.request, urllib.error
 
@@ -26,14 +27,16 @@ def load_app():
     brands = {}
     for key in ('sm', 'cdl'):
         block = re.search(key + r":\s*\{(.*?)\n\s*\},", html, re.S).group(1)
-        brands[key] = {f: re.search(f + r":\s*'([^']*)'", block).group(1) for f in ('persona', 'scenes', 'avoid')}
-    tpl = re.search(r"function predictPrompt\(inp\)\{.*?return `(.*?)`;\n\}", html, re.S).group(1)
-    return ai_url, app, brands, tpl
+        brands[key] = {f: re.search(f + r":\s*'([^']*)'", block).group(1) for f in ('persona', 'scenes', 'avoid', 'winners')}
+    tpl = re.search(r"function analyzePrompt\(inp\)\{.*?return `(.*?)`;\n\}", html, re.S).group(1)
+    elements = re.findall(r"\['(\w+)', '([^']+)', '[^']*'\]", re.search(r"const ELEMENTS = \[(.*?)\n\];", html, re.S).group(1))
+    return ai_url, app, brands, tpl, elements
 
 
 def build_prompt(tpl, b, theme, material):
     rep = {
-        '${b.persona}': b['persona'], '${b.scenes}': b['scenes'], '${b.avoid}': b['avoid'],
+        '${b.persona}': b['persona'], '${b.scenes}': b['scenes'], '${b.avoid}': b['avoid'], '${b.winners}': b['winners'],
+        '${inp.mine}': '（まだ記録なし）',
         "${inp.theme || '（記入なし）'}": theme or '（記入なし）',
         '${MODES[inp.mode]}': MODES_VIDEO, '${inp.material}': material,
     }
@@ -95,22 +98,31 @@ def main():
     ap.add_argument('--brand', choices=['sm', 'cdl'], required=True)
     ap.add_argument('--theme', default='')
     ap.add_argument('--spoken', default='')
+    ap.add_argument('--audio', default='')
     ap.add_argument('--out')
     a = ap.parse_args()
-    ai_url, app, brands, tpl = load_app()
+    ai_url, app, brands, tpl, elements = load_app()
     fr = frames(a.video)
     material = (f"添付の静止画{len(fr)}枚は、動画の {'、'.join(f'{t:g}秒' for t, _ in fr)} の画面です（順番どおり）。\n"
-                f"最初の6秒の言葉・音：{a.spoken or '（記入なし。画面のテロップから読み取ってください）'}")
+                f"最初の6秒の言葉・音：{a.spoken or '（記入なし。画面のテロップから読み取ってください）'}\n"
+                f"音：{a.audio or '（記入なし）'}")
     r = ask(ai_url, app, build_prompt(tpl, brands[a.brand], a.theme, material), fr)
-    s = int(r.get('retention6s', 0))
-    grade = 'このまま出せる' if s >= 65 else 'ひと工夫で伸びる' if s >= 45 else '冒頭を作り直したい'
-    print(f'6秒残存の予測：{s}%（{grade}）　{r.get("verdict", "")}')
-    print('曲線：', r.get('curve'))
-    print('5つの観点：', r.get('scores'))
-    for d in r.get('dropPoints', []):
-        print(f"離れやすい：{d.get('sec')}　{d.get('reason')}")
-    for t in r.get('fix', []):
-        print('直す：', t)
+    st = {'あり': 1, '弱い': 0.5, 'なし': 0}
+    el = r.get('elements') or {}
+    match = sum(st.get((el.get(k) or {}).get('status'), 0.5) for k, _ in elements)
+    r['match'] = match
+    print(f'見立て：{r.get("verdict", "")}　冒頭の型：{r.get("hookType", "")}')
+    print(f'0〜1秒：{r.get("firstLine", "")}')
+    print(f'伸びた例と同じ要素：{match:g}/8')
+    for k, name in elements:
+        e = el.get(k) or {}
+        print(f"  [{e.get('status', '?')}] {name}：{e.get('note', '')}")
+    for t in r.get('timeline', []):
+        print(f"秒ごと：{t.get('sec')}（離れる人：{t.get('risk')}）見える：{t.get('see')}／聞こえる：{t.get('hear')}／頭の中：{t.get('mind')}")
+    print('伸びた例との違い：', r.get('vsWinner'))
+    for f in r.get('fix', []):
+        f = f if isinstance(f, dict) else {'what': f}
+        print(f"直す：［{f.get('reshoot', '')}］{f.get('what')}")
     for w in r.get('rewrites', []):
         print(f"言い換え：{w.get('hook')}（映すもの：{w.get('visual')}）")
     print('心の声：', r.get('innerVoice'))
