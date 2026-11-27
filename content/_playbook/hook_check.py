@@ -61,7 +61,13 @@ def ask(ai_url, app, prompt, images):
     body = json.dumps({'app': app, 'prompt': prompt, 'max_tokens': 3000, 'json': True,
                        'images': [{'mime': 'image/jpeg', 'data': d} for _, d in images]}).encode()
     for n, wait in enumerate([4, 10, None]):
-        req = urllib.request.Request(ai_url, data=body, headers={'Content-Type': 'application/json'})
+        headers = {'Content-Type': 'application/json'}
+        # 窓口は、公開ページ以外からの呼び出しを合言葉ヘッダー x-sm-key で受け付ける（workers/README.md ステップ5）。
+        # Claude Code のクラウド環境では、ネットワークのシークレットとして登録した合言葉を通信の途中で自動で付ける。
+        # 手元のパソコンで動かすときは、環境変数 SM_KEY に合言葉を入れる。
+        if os.environ.get('SM_KEY'):
+            headers['x-sm-key'] = os.environ['SM_KEY']
+        req = urllib.request.Request(ai_url, data=body, headers=headers)
         try:
             with urllib.request.urlopen(req, timeout=180) as r:
                 data = json.loads(r.read())
