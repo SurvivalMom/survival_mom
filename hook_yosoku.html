@@ -159,6 +159,16 @@ ul.list li{margin:3px 0}
 .ins-r{border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
 .ins-r small{color:var(--faint);margin-left:2px}
 select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.gates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px}
+.gate{border-radius:12px;padding:8px 10px;font-size:13px;border:1px solid var(--line)}
+.gate-h{font-weight:700;color:var(--sub);font-size:12px;line-height:1.4}.gate-h small{display:block;font-weight:400;color:var(--faint)}
+.gate b{display:block;font-size:18px;font-family:'Zen Kaku Gothic New',sans-serif;margin:2px 0}
+.gate-r{color:var(--sub);font-size:12px;line-height:1.6}
+.gate-ok{background:var(--sage-soft)}.gate-ok b{color:var(--sage)}
+.gate-mid{background:var(--warn-soft)}.gate-mid b{color:var(--warn)}
+.gate-ng{background:var(--accent-soft)}.gate-ng b{color:var(--accent)}
+.tl-t{font-weight:700;color:var(--accent);font-size:13px}
+.ins4 .ins-h,.ins4 .ins-r{grid-template-columns:1.3fr 1fr 1fr 1fr}
 </style>
 </head>
 <body>
@@ -446,7 +456,7 @@ function mineText(){
   const done = store.history.filter(h => h.brand === store.brand && h.actual && h.actual.views > 0 && h.result && h.result.elements)
     .sort((a, b) => b.actual.views - a.actual.views).slice(0, 3);
   if (!done.length) return '（まだ記録なし）';
-  return done.map(h => `・「${h.label}」${h.actual.views}ビュー${h.actual.watch ? '・平均視聴' + h.actual.watch + '秒' : ''}／あった要素：${ELEMENTS.filter(([k]) => h.result.elements[k] && h.result.elements[k].status === 'あり').map(e => e[1]).join('、') || 'なし'}`).join('\n');
+  return done.map(h => `・「${h.label}」${h.actual.views}ビュー${h.actual.hold3 != null ? '・3秒視聴率' + h.actual.hold3 + '%' : ''}${h.actual.watch ? '・平均視聴' + h.actual.watch + '秒' : ''}／あった要素：${ELEMENTS.filter(([k]) => h.result.elements[k] && h.result.elements[k].status === 'あり').map(e => e[1]).join('、') || 'なし'}`).join('\n');
 }
 
 function analyzePrompt(inp){
@@ -484,7 +494,8 @@ ${inp.material}
  "firstLine": "0〜1秒で目と耳に入る言葉（読み取ったまま。なければ映っているもの）",
  "hookType": "逆説の言い切り／問いかけ／独白・つぶやき／状況の説明／結末の先出し／呼びかけ／その他 のどれか1つ",
  "elements": {"reversal":{"status":"あり|弱い|なし","note":"根拠"},"face":{...},"voice":{...},"cuts":{...},"short":{...},"concrete":{...},"target":{...},"forward":{...}},
- "timeline": [{"sec":"0〜1秒","see":"映っているもの","hear":"聞こえる・読める言葉","mind":"見た人の頭の中","risk":"小|中|大（ここで離れる人の多さ）"}]（0〜6秒を3〜6個に分ける）,
+ "gates": {"g2":{"result":"通る|あやうい|通らない","reason":"0〜2秒で、指を止める理由があるか（一文）"},"g6":{"result":"通る|あやうい|通らない","reason":"2〜6秒で、続きを見る理由が生まれているか（一文）"}},
+ "timeline": [{"sec":"0〜1秒","title":"この区間で起きていることの見出し（12文字前後。例：常識が裏返る／答えを待たせる／説明で足が止まる）","see":"映っているもの","hear":"聞こえる・読める言葉","mind":"見た人の頭の中","risk":"小|中|大（ここで離れる人の多さ）"}]（0〜6秒を3〜6個に分ける）,
  "vsWinner": "大きく伸びた例と比べて、いちばん大きな違い（80字以内）",
  "strengths": ["効いている点"]（1〜3個）,
  "fix": [{"what":"何をどう変えるか、具体的に","reshoot":"撮り直し不要|撮り直しが必要"}]（1〜3個。撮り直し不要のものを先に）,
@@ -526,7 +537,8 @@ function normalize(r){
   const match = ELEMENTS.reduce((s, [k]) => s + ST[el[k].status], 0);
   return { v: 2, verdict: r.verdict || '', firstLine: r.firstLine || '', hookType: r.hookType || '',
     elements: el, match,
-    timeline: arr(r.timeline).slice(0, 6).map(t => ({ sec: t.sec || '', see: t.see || '', hear: t.hear || '', mind: t.mind || '', risk: ['小','中','大'].includes(t.risk) ? t.risk : '中' })),
+    gates: ['g2','g6'].reduce((o, k) => { const g = (r.gates || {})[k] || {}; o[k] = { result: ['通る','あやうい','通らない'].includes(g.result) ? g.result : 'あやうい', reason: g.reason || '' }; return o; }, {}),
+    timeline: arr(r.timeline).slice(0, 6).map(t => ({ sec: t.sec || '', title: t.title || '', see: t.see || '', hear: t.hear || '', mind: t.mind || '', risk: ['小','中','大'].includes(t.risk) ? t.risk : '中' })),
     vsWinner: r.vsWinner || '', strengths: arr(r.strengths).slice(0,3),
     fix: arr(r.fix).slice(0,3).map(f => typeof f === 'string' ? { what: f, reshoot: '' } : { what: f.what || '', reshoot: f.reshoot || '' }),
     rewrites: arr(r.rewrites).slice(0,3), innerVoice: r.innerVoice || '' };
@@ -551,11 +563,12 @@ function renderResult(){
     <div class="verdict">${esc(r.verdict)}</div>
     <div class="chips">${r.hookType ? `<span class="chip">冒頭の型：${esc(r.hookType)}</span>` : ''}</div>
     ${r.firstLine ? `<div class="voice">0〜1秒：「${esc(String(r.firstLine).replace(/^「|」$/g,''))}」</div>` : ''}
+    ${r.gates ? `<div class="gates">${[['g2','2秒の関門','指が止まるか'],['g6','6秒の関門','続きを見る理由があるか']].map(([k, n, d]) => `<div class="gate ${r.gates[k].result === '通る' ? 'gate-ok' : r.gates[k].result === '通らない' ? 'gate-ng' : 'gate-mid'}"><div class="gate-h">${n}<small>${d}</small></div><b>${esc(r.gates[k].result)}</b><div class="gate-r">${esc(r.gates[k].reason)}</div></div>`).join('')}</div>` : ''}
     ${H4('伸びた例と同じ要素')}
     <div class="match"><b>${fmtMatch(r.match)}</b><span>/ 8</span><span class="t"><i style="width:${r.match / 8 * 100}%"></i></span></div>
     <p class="hint">点数の予測ではありません。実際に大きく伸びた例にあった8つの要素のうち、いくつあるかの目安です（弱い＝0.5）。</p>
     <div class="els">${ELEMENTS.map(([k, n, d]) => `<div class="el"><span class="st ${stCls(r.elements[k].status)}">${esc(r.elements[k].status)}</span><div><b>${n}</b><div class="hint" style="margin:0">${esc(r.elements[k].note || d)}</div></div></div>`).join('')}</div>
-    ${r.timeline.length ? H4('秒ごとの分解') + `<div class="tl">${r.timeline.map(t => `<div class="tl-r risk-${t.risk === '大' ? 'hi' : t.risk === '中' ? 'mid' : 'lo'}"><div class="tl-s">${esc(t.sec)}<small>離れる人：${esc(t.risk)}</small></div><div>${t.see ? `<div>👀 ${esc(t.see)}</div>` : ''}${t.hear ? `<div>💬 ${esc(t.hear)}</div>` : ''}${t.mind ? `<div class="tl-m">💭 ${esc(t.mind)}</div>` : ''}</div></div>`).join('')}</div>` : ''}
+    ${r.timeline.length ? H4('秒ごとの分解') + `<div class="tl">${r.timeline.map(t => `<div class="tl-r risk-${t.risk === '大' ? 'hi' : t.risk === '中' ? 'mid' : 'lo'}"><div class="tl-s">${esc(t.sec)}<small>離れる人：${esc(t.risk)}</small></div><div>${t.title ? `<div class="tl-t">${esc(t.title)}</div>` : ''}${t.see ? `<div>👀 ${esc(t.see)}</div>` : ''}${t.hear ? `<div>💬 ${esc(t.hear)}</div>` : ''}${t.mind ? `<div class="tl-m">💭 ${esc(t.mind)}</div>` : ''}</div></div>`).join('')}</div>` : ''}
     ${r.vsWinner ? H4('伸びた例との、いちばん大きな違い') + `<div class="drop">${esc(r.vsWinner)}</div>` : ''}
     ${r.innerVoice ? H4('見た人の心の声') + `<div class="voice">「${esc(String(r.innerVoice).replace(/^「|」$/g,''))}」</div>` : ''}
     ${r.strengths.length ? H4('効いているところ') + `<ul class="list">${r.strengths.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
@@ -590,8 +603,9 @@ function recordHTML(){
   const f = (id, l, v, ph) => `<div><label for="${id}">${l}</label><input id="${id}" type="number" inputmode="decimal" min="0" step="any" value="${v == null ? '' : esc(v)}" placeholder="${ph}"></div>`;
   return `<div class="rec">
     ${H4('投稿後の数字を記録する')}
-    <p class="hint">インサイトの数字を入れると、伸びた投稿の要素が「これまでの分析」にたまり、次の分析でも手本として使われます。</p>
-    <div class="row">${f('aViews','ビュー（再生数）',a.views,'例：20000')}${f('aWatch','平均視聴時間（秒）',a.watch,'例：6.5')}</div>
+    <p class="hint">Instagram のインサイト（リール→インサイトを見る）の数字を入れてください。3秒視聴率は「3秒以上見られた割合」、ない場合は「100 − スキップ率」で入れます。数字を入れると、伸びた投稿の要素が「これまでの分析」にたまり、次の分析でも手本として使われます。</p>
+    <div class="row">${f('aViews','ビュー（再生数）',a.views,'例：20000')}${f('aHold3','3秒視聴率（%）',a.hold3,'例：45')}</div>
+    <div class="row">${f('aWatch','平均視聴時間（秒）',a.watch,'例：6.5')}<div></div></div>
     <div class="row">${f('aSaves','保存',a.saves,'例：12')}${f('aShares','シェア',a.shares,'例：30')}</div>
     <button class="btn btn2" type="button" id="aSave">数字を記録する</button>
     <div class="progress" id="aMsg"></div></div>`;
@@ -600,7 +614,7 @@ function bindRecord(){
   const b = $('aSave'); if (!b) return;
   b.onclick = () => {
     const n = id => { const v = parseFloat($(id).value); return isFinite(v) && v >= 0 ? v : null; };
-    current.actual = { views: n('aViews'), watch: n('aWatch'), saves: n('aSaves'), shares: n('aShares'), at: new Date().toISOString() };
+    current.actual = { views: n('aViews'), hold3: n('aHold3'), watch: n('aWatch'), saves: n('aSaves'), shares: n('aShares'), at: new Date().toISOString() };
     save(); renderHistory();
     $('aMsg').textContent = '記録しました。';
   };
@@ -661,9 +675,20 @@ function renderInsight(){
       <div class="ins-h"><span>要素</span><span>あり</span><span>それ以外</span></div>
       ${rows.map(r => `<div class="ins-r"><span>${r.n}</span><span>${r.y == null ? '―' : r.y.toLocaleString() + '<small>（' + r.ny + '本）</small>'}</span><span>${r.no == null ? '―' : r.no.toLocaleString() + '<small>（' + r.nn + '本）</small>'}</span></div>`).join('')}
     </div>
+    ${calibHTML(done)}
     <h4 class="res-h" style="font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px">伸びた順</h4>
     ${top.map(h => `<div class="hist" data-id="${esc(h.id)}"><span class="h">${esc(h.label || MODES[h.mode])}</span><span class="s">${Number(h.actual.views).toLocaleString()}<small class="hint" style="margin-left:4px">ビュー</small></span></div>`).join('')}`;
   bindHist($('insight'));
+}
+
+function calibHTML(done){
+  const avg = (a, d) => { a = a.filter(x => x != null); return a.length ? (Math.round(a.reduce((s, x) => s + x, 0) / a.length * Math.pow(10, d)) / Math.pow(10, d)).toLocaleString() : '―'; };
+  const g = [['6〜8', h => h.result.match >= 6], ['4〜5.5', h => h.result.match >= 4 && h.result.match < 6], ['0〜3.5', h => h.result.match < 4]]
+    .map(([n, f]) => { const a = done.filter(f); return { n, c: a.length, v: avg(a.map(h => h.actual.views), 0), h3: avg(a.map(h => h.actual.hold3), 0), w: avg(a.map(h => h.actual.watch), 1) }; });
+  return `<h4 class="res-h" style="font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px">要素の数と、実際の数字は合っているか</h4>
+    <p class="hint">伸びた例と同じ要素の数ごとに、実際の数字の平均を並べています。上の段ほど数字が良ければ、この分析は自分のアカウントで当たっています。${done.length < 10 ? `いま${done.length}本。10本ほどたまると、目安として使えるようになります。` : ''}</p>
+    <div class="ins ins4"><div class="ins-h"><span>同じ要素</span><span>ビュー</span><span>3秒視聴率</span><span>平均視聴</span></div>
+    ${g.map(r => `<div class="ins-r"><span>${r.n}<small>（${r.c}本）</small></span><span>${r.v}</span><span>${r.h3 === '―' ? '―' : r.h3 + '%'}</span><span>${r.w === '―' ? '―' : r.w + '秒'}</span></div>`).join('')}</div>`;
 }
 
 function renderHistory(){

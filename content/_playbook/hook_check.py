@@ -117,8 +117,11 @@ def main():
     for k, name in elements:
         e = el.get(k) or {}
         print(f"  [{e.get('status', '?')}] {name}：{e.get('note', '')}")
+    for k, n in (('g2', '2秒の関門（指が止まるか）'), ('g6', '6秒の関門（続きを見る理由があるか）')):
+        g = (r.get('gates') or {}).get(k) or {}
+        print(f"{n}：{g.get('result', '?')}　{g.get('reason', '')}")
     for t in r.get('timeline', []):
-        print(f"秒ごと：{t.get('sec')}（離れる人：{t.get('risk')}）見える：{t.get('see')}／聞こえる：{t.get('hear')}／頭の中：{t.get('mind')}")
+        print(f"秒ごと：{t.get('sec')}【{t.get('title', '')}】（離れる人：{t.get('risk')}）見える：{t.get('see')}／聞こえる：{t.get('hear')}／頭の中：{t.get('mind')}")
     print('伸びた例との違い：', r.get('vsWinner'))
     for f in r.get('fix', []):
         f = f if isinstance(f, dict) else {'what': f}
