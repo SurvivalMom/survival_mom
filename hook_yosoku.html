@@ -259,7 +259,11 @@ select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--
     <h4 style="font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px">履歴</h4>
     <p class="hint">この端末に保存されます（動画の画像は保存しません）。押すと結果をもう一度開き、投稿後の数字も記録できます。</p>
     <div id="history"></div>
-    <div class="btns"><button class="btn3" id="clearBtn" type="button">履歴を消す</button></div>
+    <h4 style="font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:16px 0 4px">スプレッドシートに集める</h4>
+    <p class="hint">この端末の記録を、両アカウント分まとめて表の形でコピーします。スプレッドシートの「冒頭分析」タブを開き、A1 のマスを選んで貼り付けてください（毎回、上書きで大丈夫です）。</p>
+    <div class="btns"><button class="btn btn2" id="copyTsv" type="button" style="margin-top:0">スプレッドシート用にコピー</button></div>
+    <div class="btns"><button class="btn3" id="dlCsv" type="button">CSVファイルで保存</button><button class="btn3" id="clearBtn" type="button">履歴を消す</button></div>
+    <div class="progress" id="exMsg"></div>
   </section>
 
   <p class="disc">分析はAIによる見立てです。「何%残るか」は当てられないので出しません。投稿後はインサイトの数字を記録して、自分のアカウントで本当に効いている要素を確かめてください。</p>
@@ -710,6 +714,39 @@ function bindHist(root){
     renderResult(); $('result').scrollIntoView({ behavior:'smooth', block:'start' });
   });
 }
+/* ---------- スプレッドシートに集める ---------- */
+function exportRows(){
+  const head = ['分析日','アカウント','タイトル','入力の種類','冒頭の型','0〜1秒の言葉','伸びた例と同じ要素（/8）','2秒の関門','6秒の関門']
+    .concat(ELEMENTS.map(e => e[1]))
+    .concat(['閲覧数','3秒視聴率（%）','平均再生時間（秒）','保存','シェア','数字を記録した日','見立て','伸びた例との違い','直すとよいところ','旧予測（%）','ID']);
+  const rows = store.history.slice().reverse().map(h => {
+    const r = h.result || {}, a = h.actual || {}, el = r.elements || {}, g = r.gates || {};
+    const d = x => x ? new Date(x).toLocaleDateString('ja-JP') : '';
+    return [d(h.at), h.brand === 'cdl' ? 'care_design_lab' : 'survival_mom_diary', h.label || '', MODES[h.mode] || '', r.hookType || '', r.firstLine || '',
+      r.match != null ? r.match : '', (g.g2 || {}).result || '', (g.g6 || {}).result || '']
+      .concat(ELEMENTS.map(([k]) => (el[k] || {}).status || ''))
+      .concat([a.views, a.hold3, a.watch, a.saves, a.shares].map(v => v == null ? '' : v))
+      .concat([d(a.at), r.verdict || '', r.vsWinner || '', (r.fix || []).map(f => typeof f === 'string' ? f : f.what).join(' ／ '), r.score != null && !r.elements ? r.score : '', h.id]);
+  });
+  return [head].concat(rows);
+}
+const cell = v => String(v == null ? '' : v).replace(/[\t\r\n]+/g, ' ');
+$('copyTsv').onclick = async () => {
+  const t = exportRows().map(r => r.map(cell).join('\t')).join('\n');
+  try{ await navigator.clipboard.writeText(t); $('exMsg').textContent = `${store.history.length}件をコピーしました。スプレッドシートの「冒頭分析」タブの A1 に貼り付けてください。`; }
+  catch(e){ $('exMsg').textContent = 'コピーできませんでした。「CSVファイルで保存」を使ってください。'; }
+};
+$('dlCsv').onclick = () => {
+  const q = v => '"' + cell(v).replace(/"/g, '""') + '"';
+  const t = '\ufeff' + exportRows().map(r => r.map(q).join(',')).join('\r\n');
+  try{
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([t], { type: 'text/csv' }));
+    a.download = 'boutou_bunseki_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    $('exMsg').textContent = 'CSVファイルを保存しました。スプレッドシートの「ファイル → インポート」で読み込めます。';
+  }catch(e){ $('exMsg').textContent = '保存できませんでした。'; }
+};
 $('clearBtn').onclick = () => {
   if (!confirm('これまでの分析と記録した数字をすべて消します。よろしいですか？')) return;
   store.history = []; save(); renderHistory();
