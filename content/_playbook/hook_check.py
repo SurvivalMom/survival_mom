@@ -61,7 +61,8 @@ def ask(ai_url, app, prompt, images):
     body = json.dumps({'app': app, 'prompt': prompt, 'max_tokens': 3000, 'json': True,
                        'images': [{'mime': 'image/jpeg', 'data': d} for _, d in images]}).encode()
     for n, wait in enumerate([4, 10, None]):
-        headers = {'Content-Type': 'application/json'}
+        # Cloudflare は Python の標準の名前（Python-urllib）をロボットとして弾く（エラー1010）ので、名前を付ける
+        headers = {'Content-Type': 'application/json', 'User-Agent': 'survivalmom-hook-check/1.0'}
         # 窓口は、公開ページ以外からの呼び出しを合言葉ヘッダー x-sm-key で受け付ける（workers/README.md ステップ5）。
         # Claude Code のクラウド環境では、ネットワークのシークレットとして登録した合言葉を通信の途中で自動で付ける。
         # 手元のパソコンで動かすときは、環境変数 SM_KEY に合言葉を入れる。
