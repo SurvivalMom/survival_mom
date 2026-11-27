@@ -135,6 +135,40 @@ ul.list li{margin:3px 0}
 .hist .s{flex:none;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
 .hist .h{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .disc{font-size:12px;color:var(--faint);margin-top:10px}
+.verdict{margin:2px 0 6px}
+.match{display:grid;grid-template-columns:auto auto 1fr;align-items:baseline;gap:6px}
+.match b{font-size:30px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--accent);line-height:1}
+.match span{color:var(--sub);font-size:14px}
+.match .t{align-self:center;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.match .t i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.els{display:grid;gap:6px;margin:6px 0}
+.el{display:grid;grid-template-columns:3.4em 1fr;gap:8px;align-items:start;font-size:14px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.st{display:inline-block;text-align:center;font-size:12px;font-weight:700;border-radius:999px;padding:2px 0;margin-top:2px}
+.st-y{background:var(--sage-soft);color:var(--sage)}.st-m{background:var(--warn-soft);color:var(--warn)}.st-n{background:var(--accent-soft);color:var(--accent)}
+.tl{display:grid;gap:6px}
+.tl-r{display:grid;grid-template-columns:5.2em 1fr;gap:8px;font-size:14px;border-left:3px solid var(--line);padding:4px 0 4px 8px}
+.tl-r.risk-mid{border-left-color:var(--warn)}.tl-r.risk-hi{border-left-color:var(--accent)}
+.tl-s{font-weight:700;color:var(--ink)}.tl-s small{display:block;font-weight:400;font-size:11px;color:var(--faint)}
+.tl-m{color:var(--sub)}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:0 5px;margin-right:6px;vertical-align:1px}
+.tag-ok{background:var(--sage-soft);color:var(--sage)}.tag-ng{background:var(--warn-soft);color:var(--warn)}
+.rec{margin-top:16px;border-top:1px dashed var(--line);padding-top:4px}
+.ins{font-size:13px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ins-h,.ins-r{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:6px;padding:6px 10px}
+.ins-h{background:var(--bg);font-weight:700;color:var(--sub)}
+.ins-r{border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.ins-r small{color:var(--faint);margin-left:2px}
+select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.gates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px}
+.gate{border-radius:12px;padding:8px 10px;font-size:13px;border:1px solid var(--line)}
+.gate-h{font-weight:700;color:var(--sub);font-size:12px;line-height:1.4}.gate-h small{display:block;font-weight:400;color:var(--faint)}
+.gate b{display:block;font-size:18px;font-family:'Zen Kaku Gothic New',sans-serif;margin:2px 0}
+.gate-r{color:var(--sub);font-size:12px;line-height:1.6}
+.gate-ok{background:var(--sage-soft)}.gate-ok b{color:var(--sage)}
+.gate-mid{background:var(--warn-soft)}.gate-mid b{color:var(--warn)}
+.gate-ng{background:var(--accent-soft)}.gate-ng b{color:var(--accent)}
+.tl-t{font-weight:700;color:var(--accent);font-size:13px}
+.ins4 .ins-h,.ins4 .ins-r{grid-template-columns:1.3fr 1fr 1fr 1fr}
 </style>
 </head>
 <body>
@@ -151,9 +185,9 @@ ul.list li{margin:3px 0}
 
 <div class="wrap hidden" id="app">
   <header>
-    <div class="eyebrow">出す前に、最初の6秒で何人残るかを予測する</div>
+    <div class="eyebrow">出す前も、出した後も。最初の6秒をコマ送りで分析する</div>
     <h1>冒頭6秒チェッカー</h1>
-    <p>動画・台本・フック案のどれか1つを入れるだけ。6秒でどれだけ見続けてもらえるかをAIが予測し、離脱しそうな瞬間と、言い換え案を出します。</p>
+    <p>動画・台本・フック案のどれか1つを入れるだけ。冒頭6秒を8つの要素と秒ごとの流れに分けて、実際に伸びた動画と何が違うかを見せます。投稿後の数字を記録すると、自分のアカウントで「何があると伸びるか」がたまっていきます。</p>
     <div class="brand-switch" role="group" aria-label="発信ブランド">
       <button type="button" data-brand="sm">survival_mom</button>
       <button type="button" data-brand="cdl">CARE DESIGN LAB</button>
@@ -201,9 +235,11 @@ ul.list li{margin:3px 0}
       <input id="iVisual" placeholder="例：散らかったランドセルのアップ">
     </div>
 
+    <label for="audio">音</label>
+    <select id="audio"><option value="">分からない・未定</option><option>人の声（ナレーション・セリフ）あり・BGMなし</option><option>人の声とBGMの両方</option><option>BGMだけ</option><option>環境音だけ</option><option>音なし</option></select>
     <label for="theme">この動画で伝えたいこと<span class="opt">任意</span></label>
     <input id="theme" placeholder="例：登校しぶりの朝に、親が言わなくていい一言">
-    <button class="btn" id="runBtn">6秒で何人残るか予測する</button>
+    <button class="btn" id="runBtn">冒頭6秒を分析する</button>
     <div class="progress" id="progress"></div>
   </section>
 
@@ -218,13 +254,15 @@ ul.list li{margin:3px 0}
   </section>
 
   <section class="card">
-    <div class="step"><span class="num">3</span><h2>これまでの予測</h2></div>
-    <p class="hint">この端末に保存されます（動画の画像は保存しません）。押すと結果をもう一度開きます。</p>
+    <div class="step"><span class="num">3</span><h2>これまでの分析</h2></div>
+    <div id="insight"></div>
+    <h4 style="font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px">履歴</h4>
+    <p class="hint">この端末に保存されます（動画の画像は保存しません）。押すと結果をもう一度開き、投稿後の数字も記録できます。</p>
     <div id="history"></div>
     <div class="btns"><button class="btn3" id="clearBtn" type="button">履歴を消す</button></div>
   </section>
 
-  <p class="disc">予測はAIによる見立てで、実際の視聴維持率ではありません。投稿後はインサイトの数字と見比べて、自分の感覚を育てる材料にしてください。</p>
+  <p class="disc">分析はAIによる見立てです。「何%残るか」は当てられないので出しません。投稿後はインサイトの数字を記録して、自分のアカウントで本当に効いている要素を確かめてください。</p>
 </div>
 
 <script>
@@ -240,11 +278,13 @@ const BRANDS = {
     persona: '不登校・発達グレー・中学受験のどれか（または複数）を抱える30代の母親。朝の登校しぶり、宿題の時間の衝突、学校からの電話、夜中のスマホ検索で疲れている。正論や専門家の上から目線には反発し、「うちだけダメなのでは」と孤独を感じている。',
     scenes: '朝の玄関、宿題の時間、学校からの電話、深夜の検索、SNSでの比較',
     avoid: '正論・専門家目線・「できない親」を責める言い方・綺麗事',
+    winners: '（まだ大きく伸びた例の記録はありません。投稿後の数字を記録すると、伸びた例が下に加わります）',
   },
   cdl: {
     persona: '介護・福祉の現場で、上（施設長・本部）と下（スタッフ）の板挟みになっている現場リーダー・施設管理者。人手不足のシフト、新人の早期離職、家族からのクレーム、事故報告書に追われ、「自分はリーダーに向いていないのでは」と感じている。研修の正論には「現場を知らない」と反発する。',
     scenes: '朝の申し送り、夜勤明け、シフトの穴埋め電話、家族からのクレーム、事故報告書を書く夜、新人の「辞めたいです」',
     avoid: '研修の正論・コンサル目線・「リーダーなのにできていない」と責める言い方',
+    winners: '「特変なしが一番危ない」（10秒、2万ビュー超。ふだんは100〜150ビュー）。0秒から「特変なしが一番危ない」と常識をひっくり返す言い切り。40代男性リーダーの顔と表情が見える。BGMなしで、低い男性の声がテロップと同じ言葉を淡々と読む。10秒・4場面・1場面1文（「特変なし」が並ぶ申し送りノートの寄り→眉をひそめる男性→「報告がない職場は平和じゃない」→「沈黙しているだけだ」）。字幕は小さめの1行で、大きなタイトルカードはない。管理する側の気づきで、職場の人に送りたくなる中身',
   },
 };
 const MODES = { video:'完成した動画（冒頭の静止画）', link:'公開リール（書き写した説明）', script:'動画の台本', idea:'フック案' };
@@ -382,7 +422,7 @@ function collect(){
     if (!frames.length) return { err: '動画を選んでください（切り出しが終わるまで少し待ってください）。' };
     images = frames.map(f => ({ mime:'image/jpeg', data:f.data }));
     material = `添付の静止画${frames.length}枚は、動画の ${frames.map(f => f.t + '秒').join('、')} の画面です（順番どおり）。\n最初の6秒の言葉・音：${v('vSpoken') || '（記入なし。画面のテロップから読み取ってください）'}`;
-    label = v('vSpoken').slice(0, 40) || videoName || '動画';
+    label = videoName || v('vSpoken').slice(0, 40) || '動画';
   } else if (m === 'link') {
     if (!v('lDesc')) return { err: '冒頭6秒に映っているもの・話していることを書き写してください。' };
     material = `URL：${v('lUrl') || '（なし）'}\n冒頭6秒の様子：${v('lDesc')}\nキャプション：${v('lCap') || '（なし）'}`;
@@ -396,57 +436,88 @@ function collect(){
     material = `フック案：${v('iText')}\nそのとき映すもの：${v('iVisual') || '（未定）'}`;
     label = v('iText').slice(0, 40);
   }
+  material += `\n音：${$('audio').value || '（記入なし）'}`;
   return { mode:m, theme, material, images, label };
 }
 
-function predictPrompt(inp){
+const ELEMENTS = [
+  ['reversal', '常識をひっくり返す一言', '安心のはずの言葉・良いはずの行動を「一番危ない」「〜じゃない」と言い切っている'],
+  ['face', '人の顔・表情が見える', '0〜6秒のどこかで、人の顔と表情の変化が見える'],
+  ['voice', '人の声がある', 'ナレーションやセリフなど、人の声で言葉が届く（BGMだけ・環境音だけは「なし」）'],
+  ['cuts', '2〜3秒ごとに画が変わる', '場面・画角・寄り引きが2〜3秒ごとに切り替わる'],
+  ['short', '字幕が短い', '1場面1文・15文字前後。一瞬で読める'],
+  ['concrete', '具体的な場面', '現場や生活の一コマ（物・場所・時間）が映る、または言葉にある'],
+  ['target', 'ターゲット本人の目線', 'ターゲットが「自分のことだ」「うちの職場のことだ」と思える立場と言葉'],
+  ['forward', '6秒までに先が気になる', '問い・ギャップ・結末の先出しなど、続きを見る理由がある'],
+];
+const ST = { 'あり':1, '弱い':0.5, 'なし':0 };
+
+function mineText(){
+  const done = store.history.filter(h => h.brand === store.brand && h.actual && h.actual.views > 0 && h.result && h.result.elements)
+    .sort((a, b) => b.actual.views - a.actual.views).slice(0, 3);
+  if (!done.length) return '（まだ記録なし）';
+  return done.map(h => `・「${h.label}」${h.actual.views}ビュー${h.actual.hold3 != null ? '・3秒視聴率' + h.actual.hold3 + '%' : ''}${h.actual.watch ? '・平均視聴' + h.actual.watch + '秒' : ''}／あった要素：${ELEMENTS.filter(([k]) => h.result.elements[k] && h.result.elements[k].status === 'あり').map(e => e[1]).join('、') || 'なし'}`).join('\n');
+}
+
+function analyzePrompt(inp){
   const b = BRANDS[store.brand];
-  return `あなたはInstagramリール・TikTok・YouTubeショートの「冒頭6秒の視聴維持」を専門に見てきた編集者です。
-これから投稿する（または参考にする）縦型ショート動画の冒頭6秒について、何%の人が6秒時点まで見続けるかを予測してください。
+  return `あなたはInstagramリール・TikTok・YouTubeショートの冒頭6秒を、コマ送りで分析してきた編集者です。
+これから投稿する（または参考にする）縦型ショート動画の冒頭6秒を、要素に分けて分析してください。
+何%残るかの予測はしません。点数で当てようとせず、「何が映り、何が聞こえ、見た人の頭の中で何が起きるか」を事実に沿って書いてください。
 
 【ターゲット】${b.persona}
 【ターゲットの生活の場面】${b.scenes}
 【避けたい伝え方】${b.avoid}
+【このアカウントで実際に大きく伸びた例】${b.winners}
+【このアプリに記録された、実際の数字が良かった投稿】
+${inp.mine}
 【伝えたいこと】${inp.theme || '（記入なし）'}
 【入力の種類】${MODES[inp.mode]}
 【入力】
 ${inp.material}
 
-【予測の考え方】
-- 0秒：最初のフレームで親指が止まるか（意外性・違和感・顔や手元・文字の大きさ）
-- 0〜2秒：「これは自分のことだ」と思えるか（ターゲットの呼びかけ・生活の一場面・本音のひと言）
-- 2〜4秒：続きを見る理由があるか（問い・ギャップ・答えの予告）
-- 4〜6秒：期待を裏切らずに本題へつながっているか（前置き・自己紹介・説明が長いと落ちる）
-- 一般的な縦型動画では6秒時点の残存はおおむね40〜70%。根拠のない高得点はつけないこと。
-- 正論・上から目線・綺麗事・「自分だけダメ」と思わせる言い方は離脱要因として扱う。
+【見る要素（8つ）】それぞれ「あり」「弱い」「なし」で判定し、根拠を一文で書く。入力から分からないものは「なし」にせず、根拠に「入力からは分からない」と書いて「弱い」にする。
+- reversal：常識をひっくり返す一言（安心のはずの言葉・良いはずの行動を「一番危ない」「〜じゃない」と言い切る）
+- face：人の顔・表情が見える
+- voice：人の声がある（ナレーション・セリフ。BGMだけ、環境音だけは「なし」）
+- cuts：2〜3秒ごとに画が変わる（場面・画角・寄り引き）
+- short：字幕が短い（1場面1文・15文字前後）
+- concrete：具体的な場面（現場や生活の一コマ）
+- target：ターゲット本人の目線・言葉
+- forward：6秒までに先が気になる（問い・ギャップ・結末の先出し）
+
+【書き方】正論・上から目線・綺麗事・「自分だけダメ」と思わせる言い方は、離れる原因として扱う。言葉を足して長くする直しは、テンポを落とすので最後の手段にする。
 
 【出力】次のJSONだけを返す。文章はすべて日本語、です・ます調で、やさしく具体的に。
 {
- "retention6s": 6秒時点で見続けている人の割合の予測（0〜100の整数）,
- "curve": [0,1,2,3,4,5,6秒それぞれの残存率の整数を7個。0秒は100],
  "verdict": "ひと言での見立て（30字以内）",
- "scores": {"stop":0〜10の整数（親指が止まるか）, "relate":0〜10（自分のことだと思えるか）, "curiosity":0〜10（続きが気になるか）, "clarity":0〜10（一瞬で意味がわかるか）, "tempo":0〜10（テンポ・前置きの短さ）},
- "dropPoints": [{"sec":"1.5秒","reason":"そこで離れる理由"}]（1〜3個）,
- "good": ["効いている点"]（1〜3個）,
- "fix": ["直すとよい点。何をどう変えるか具体的に"]（1〜3個）,
- "rewrites": [{"hook":"冒頭のひと言・テロップの言い換え案","visual":"そのとき映すもの","why":"なぜ残るか"}]（3個。ターゲットへの呼びかけ・共感・「あなただけじゃない」のどれかを含める）,
+ "firstLine": "0〜1秒で目と耳に入る言葉（読み取ったまま。なければ映っているもの）",
+ "hookType": "逆説の言い切り／問いかけ／独白・つぶやき／状況の説明／結末の先出し／呼びかけ／その他 のどれか1つ",
+ "elements": {"reversal":{"status":"あり|弱い|なし","note":"根拠"},"face":{...},"voice":{...},"cuts":{...},"short":{...},"concrete":{...},"target":{...},"forward":{...}},
+ "gates": {"g2":{"result":"通る|あやうい|通らない","reason":"0〜2秒で、指を止める理由があるか（一文）"},"g6":{"result":"通る|あやうい|通らない","reason":"2〜6秒で、続きを見る理由が生まれているか（一文）"}},
+ "timeline": [{"sec":"0〜1秒","title":"この区間で起きていることの見出し（12文字前後。例：常識が裏返る／答えを待たせる／説明で足が止まる）","see":"映っているもの","hear":"聞こえる・読める言葉","mind":"見た人の頭の中","risk":"小|中|大（ここで離れる人の多さ）"}]（0〜6秒を3〜6個に分ける）,
+ "vsWinner": "大きく伸びた例と比べて、いちばん大きな違い（80字以内）",
+ "strengths": ["効いている点"]（1〜3個）,
+ "fix": [{"what":"何をどう変えるか、具体的に","reshoot":"撮り直し不要|撮り直しが必要"}]（1〜3個。撮り直し不要のものを先に）,
+ "rewrites": [{"hook":"冒頭のひと言・テロップの言い換え案（短く）","visual":"そのとき映すもの","why":"なぜ効くか"}]（3個）,
  "innerVoice": "ターゲットがこの冒頭を見た瞬間、心の中でつぶやく一言"
 }`;
 }
 
 /* ---------- 実行 ---------- */
-let current = null; // { id, label, mode, theme, material, result, chat:[] }
+let current = null; // { id, label, mode, theme, material, result, chat:[], actual }
 $('runBtn').onclick = async () => {
   const inp = collect();
   const pg = $('progress');
   if (inp.err) { pg.innerHTML = `<span class="note" style="display:block">${esc(inp.err)}</span>`; return; }
+  inp.mine = mineText();
   $('runBtn').disabled = true;
-  pg.innerHTML = '<span class="spin"></span>冒頭6秒を見ています…（20秒ほど）';
+  pg.innerHTML = '<span class="spin"></span>冒頭6秒をコマ送りで見ています…（20秒ほど）';
   try{
-    const r = await askAI(predictPrompt(inp), { images: inp.images, max: 3000, onRetry: n => { pg.innerHTML = `<span class="spin"></span>Gemini が混み合っています。自動でやり直しています（${n}回目）…`; } });
+    const r = await askAI(analyzePrompt(inp), { images: inp.images, max: 4000, onRetry: n => { pg.innerHTML = `<span class="spin"></span>Gemini が混み合っています。自動でやり直しています（${n}回目）…`; } });
     current = { id: 'h' + Date.now().toString(36), at: new Date().toISOString(), brand: store.brand,
       label: inp.label, mode: inp.mode, theme: inp.theme, material: inp.material, result: normalize(r), chat: [] };
-    store.history.unshift(current); store.history = store.history.slice(0, 50); save();
+    store.history.unshift(current); store.history = store.history.slice(0, 80); save();
     pg.textContent = '';
     renderResult(); renderHistory();
     $('result').scrollIntoView({ behavior:'smooth', block:'start' });
@@ -457,54 +528,55 @@ $('runBtn').onclick = async () => {
 
 function normalize(r){
   r = r || {};
-  const score = clamp(r.retention6s, 0, 100);
-  let c = Array.isArray(r.curve) ? r.curve.map(x => clamp(x, 0, 100)).slice(0, 7) : [];
-  if (c.length !== 7) c = [0,1,2,3,4,5,6].map(t => Math.round(100 - (100 - score) * t / 6));
-  c[0] = 100; c[6] = score;
-  for (let i = 1; i < 7; i++) if (c[i] > c[i-1]) c[i] = c[i-1]; // 残存は増えない
-  const s = r.scores || {};
   const arr = x => Array.isArray(x) ? x : [];
-  return { score, curve: c, verdict: r.verdict || '',
-    scores: { stop:clamp(s.stop,0,10), relate:clamp(s.relate,0,10), curiosity:clamp(s.curiosity,0,10), clarity:clamp(s.clarity,0,10), tempo:clamp(s.tempo,0,10) },
-    dropPoints: arr(r.dropPoints).slice(0,3), good: arr(r.good).slice(0,3), fix: arr(r.fix).slice(0,3),
+  const el = {};
+  ELEMENTS.forEach(([k]) => {
+    const e = (r.elements || {})[k] || {};
+    el[k] = { status: ST[e.status] !== undefined ? e.status : '弱い', note: e.note || '' };
+  });
+  const match = ELEMENTS.reduce((s, [k]) => s + ST[el[k].status], 0);
+  return { v: 2, verdict: r.verdict || '', firstLine: r.firstLine || '', hookType: r.hookType || '',
+    elements: el, match,
+    gates: ['g2','g6'].reduce((o, k) => { const g = (r.gates || {})[k] || {}; o[k] = { result: ['通る','あやうい','通らない'].includes(g.result) ? g.result : 'あやうい', reason: g.reason || '' }; return o; }, {}),
+    timeline: arr(r.timeline).slice(0, 6).map(t => ({ sec: t.sec || '', title: t.title || '', see: t.see || '', hear: t.hear || '', mind: t.mind || '', risk: ['小','中','大'].includes(t.risk) ? t.risk : '中' })),
+    vsWinner: r.vsWinner || '', strengths: arr(r.strengths).slice(0,3),
+    fix: arr(r.fix).slice(0,3).map(f => typeof f === 'string' ? { what: f, reshoot: '' } : { what: f.what || '', reshoot: f.reshoot || '' }),
     rewrites: arr(r.rewrites).slice(0,3), innerVoice: r.innerVoice || '' };
 }
 
 /* ---------- 表示 ---------- */
-function curveSVG(c, drops){
-  const W = 320, H = 150, L = 30, R = 10, T = 10, B = 24;
-  const x = t => L + (W - L - R) * t / 6, y = p => T + (H - T - B) * (1 - p / 100);
-  const pts = c.map((p, t) => `${x(t).toFixed(1)},${y(p).toFixed(1)}`);
-  let g = '';
-  [0,50,100].forEach(p => g += `<line class="ax" x1="${L}" x2="${W-R}" y1="${y(p)}" y2="${y(p)}"/><text class="lb" x="${L-4}" y="${y(p)+3}" text-anchor="end">${p}%</text>`);
-  for (let t = 0; t <= 6; t++) g += `<text class="lb" x="${x(t)}" y="${H-6}" text-anchor="middle">${t}秒</text>`;
-  const area = `<polygon class="ar" points="${x(0)},${y(0)} ${pts.join(' ')} ${x(6)},${y(0)}"/>`;
-  const dots = c.map((p, t) => `<circle class="dot" cx="${x(t)}" cy="${y(p)}" r="3"/>`).join('');
-  const dp = drops.map(d => { const s = parseFloat(String(d.sec).replace(/[^\d.]/g,'')); if (!isFinite(s) || s < 0 || s > 6) return '';
-    const i = Math.min(5, Math.floor(s)), f = s - i, p = c[i] + (c[Math.min(6,i+1)] - c[i]) * f;
-    return `<circle class="dp" cx="${x(s)}" cy="${y(p)}" r="5"/>`; }).join('');
-  return `<svg class="curve" viewBox="0 0 ${W} ${H}" role="img" aria-label="0秒から6秒までの予測残存率">${g}${area}<polyline class="ln" points="${pts.join(' ')}"/>${dots}${dp}</svg>`;
+const stCls = s => s === 'あり' ? 'st-y' : s === '弱い' ? 'st-m' : 'st-n';
+const fmtMatch = m => (Math.round(m * 10) / 10).toString().replace(/\.0$/, '');
+const H4 = t => `<h4 class="res-h">${t}</h4>`;
+
+function renderLegacy(r){
+  return `<div class="note">前のバージョン（6秒残存の予測）で見た結果です。予測：${esc(r.score)}%　${esc(r.verdict || '')}</div>
+    ${arr0(r.dropPoints).length ? H4('離れやすい瞬間') + r.dropPoints.map(d => `<div class="drop"><b>${esc(d.sec)}</b>　${esc(d.reason)}</div>`).join('') : ''}
+    ${arr0(r.fix).length ? H4('直すとよいところ') + `<ul class="list">${r.fix.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}`;
 }
-function grade(s){ return s >= 65 ? ['g-hi','このまま出せる'] : s >= 45 ? ['g-mid','ひと工夫で伸びる'] : ['g-lo','冒頭を作り直したい']; }
-const SC = [['stop','親指が止まる'],['relate','自分のことだと思える'],['curiosity','続きが気になる'],['clarity','一瞬で意味がわかる'],['tempo','テンポ・前置きの短さ']];
+function arr0(x){ return Array.isArray(x) ? x : []; }
 
 function renderResult(){
-  const r = current.result, [gc, gl] = grade(r.score);
+  const r = current.result;
+  if (!r.elements) { $('result').innerHTML = renderLegacy(r) + recordHTML(); bindRecord(); styleH4(); $('result').classList.remove('hidden'); $('talk').classList.remove('hidden'); renderChat(); return; }
   $('result').innerHTML = `
-    <div class="score-wrap">
-      <div class="score" style="--p:${r.score}"><div><b>${r.score}%</b><small>6秒残存</small></div></div>
-      <div><span class="grade ${gc}">${gl}</span><div class="verdict">${esc(r.verdict)}</div></div>
-    </div>
-    ${curveSVG(r.curve, r.dropPoints)}
-    ${r.innerVoice ? `<h4 class="res-h">見た人の心の声</h4><div class="voice">「${esc(String(r.innerVoice).replace(/^「|」$/g,''))}」</div>` : ''}
-    <h4 class="res-h">5つの観点</h4>
-    <div class="bars">${SC.map(([k, n]) => `<div class="bar"><span>${n}</span><span class="t"><i style="width:${r.scores[k]*10}%"></i></span><span class="v">${r.scores[k]}/10</span></div>`).join('')}</div>
-    ${r.dropPoints.length ? `<h4 class="res-h">離れやすい瞬間</h4>${r.dropPoints.map(d => `<div class="drop"><b>${esc(d.sec)}</b>　${esc(d.reason)}</div>`).join('')}` : ''}
-    ${r.good.length ? `<h4 class="res-h">効いているところ</h4><ul class="list">${r.good.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
-    ${r.fix.length ? `<h4 class="res-h">直すとよいところ</h4><ul class="list">${r.fix.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
-    ${r.rewrites.length ? `<h4 class="res-h">冒頭の言い換え案</h4>${r.rewrites.map((w, i) => `<div class="rw"><button class="btn3 copy" type="button" data-copy="${i}">コピー</button><span class="hk">${esc(w.hook)}</span>${w.visual ? `<div class="hint" style="margin:0">映すもの：${esc(w.visual)}</div>` : ''}<div style="font-size:13px;color:var(--sub)">${esc(w.why)}</div></div>`).join('')}` : ''}
-    <div class="btns"><button class="btn3" type="button" id="reBtn">言い換え案の1つ目で予測し直す</button></div>`;
-  $('result').querySelectorAll('h4.res-h').forEach(h => h.style.cssText = "font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px");
+    <div class="verdict">${esc(r.verdict)}</div>
+    <div class="chips">${r.hookType ? `<span class="chip">冒頭の型：${esc(r.hookType)}</span>` : ''}</div>
+    ${r.firstLine ? `<div class="voice">0〜1秒：「${esc(String(r.firstLine).replace(/^「|」$/g,''))}」</div>` : ''}
+    ${r.gates ? `<div class="gates">${[['g2','2秒の関門','指が止まるか'],['g6','6秒の関門','続きを見る理由があるか']].map(([k, n, d]) => `<div class="gate ${r.gates[k].result === '通る' ? 'gate-ok' : r.gates[k].result === '通らない' ? 'gate-ng' : 'gate-mid'}"><div class="gate-h">${n}<small>${d}</small></div><b>${esc(r.gates[k].result)}</b><div class="gate-r">${esc(r.gates[k].reason)}</div></div>`).join('')}</div>` : ''}
+    ${H4('伸びた例と同じ要素')}
+    <div class="match"><b>${fmtMatch(r.match)}</b><span>/ 8</span><span class="t"><i style="width:${r.match / 8 * 100}%"></i></span></div>
+    <p class="hint">点数の予測ではありません。実際に大きく伸びた例にあった8つの要素のうち、いくつあるかの目安です（弱い＝0.5）。</p>
+    <div class="els">${ELEMENTS.map(([k, n, d]) => `<div class="el"><span class="st ${stCls(r.elements[k].status)}">${esc(r.elements[k].status)}</span><div><b>${n}</b><div class="hint" style="margin:0">${esc(r.elements[k].note || d)}</div></div></div>`).join('')}</div>
+    ${r.timeline.length ? H4('秒ごとの分解') + `<div class="tl">${r.timeline.map(t => `<div class="tl-r risk-${t.risk === '大' ? 'hi' : t.risk === '中' ? 'mid' : 'lo'}"><div class="tl-s">${esc(t.sec)}<small>離れる人：${esc(t.risk)}</small></div><div>${t.title ? `<div class="tl-t">${esc(t.title)}</div>` : ''}${t.see ? `<div>👀 ${esc(t.see)}</div>` : ''}${t.hear ? `<div>💬 ${esc(t.hear)}</div>` : ''}${t.mind ? `<div class="tl-m">💭 ${esc(t.mind)}</div>` : ''}</div></div>`).join('')}</div>` : ''}
+    ${r.vsWinner ? H4('伸びた例との、いちばん大きな違い') + `<div class="drop">${esc(r.vsWinner)}</div>` : ''}
+    ${r.innerVoice ? H4('見た人の心の声') + `<div class="voice">「${esc(String(r.innerVoice).replace(/^「|」$/g,''))}」</div>` : ''}
+    ${r.strengths.length ? H4('効いているところ') + `<ul class="list">${r.strengths.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+    ${r.fix.length ? H4('直すとよいところ') + `<ul class="list">${r.fix.map(f => `<li>${f.reshoot ? `<span class="tag ${/不要/.test(f.reshoot) ? 'tag-ok' : 'tag-ng'}">${esc(f.reshoot)}</span>` : ''}${esc(f.what)}</li>`).join('')}</ul>` : ''}
+    ${r.rewrites.length ? H4('冒頭の言い換え案') + r.rewrites.map((w, i) => `<div class="rw"><button class="btn3 copy" type="button" data-copy="${i}">コピー</button><span class="hk">${esc(w.hook)}</span>${w.visual ? `<div class="hint" style="margin:0">映すもの：${esc(w.visual)}</div>` : ''}<div style="font-size:13px;color:var(--sub)">${esc(w.why)}</div></div>`).join('') : ''}
+    <div class="btns"><button class="btn3" type="button" id="reBtn">言い換え案の1つ目で分析し直す</button></div>
+    ${recordHTML()}`;
+  styleH4();
   $('result').classList.remove('hidden');
   $('result').querySelectorAll('[data-copy]').forEach(b => b.onclick = async () => {
     const w = r.rewrites[+b.dataset.copy];
@@ -519,8 +591,33 @@ function renderResult(){
     $('iText').value = w.hook || ''; $('iVisual').value = w.visual || '';
     $('iText').scrollIntoView({ behavior:'smooth', block:'center' });
   };
+  bindRecord();
   $('talk').classList.remove('hidden');
   renderChat();
+}
+function styleH4(){ $('result').querySelectorAll('h4.res-h').forEach(h => h.style.cssText = "font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:16px 0 4px"); }
+
+/* ---------- 投稿後の数字 ---------- */
+function recordHTML(){
+  const a = current.actual || {};
+  const f = (id, l, v, ph) => `<div><label for="${id}">${l}</label><input id="${id}" type="number" inputmode="decimal" min="0" step="any" value="${v == null ? '' : esc(v)}" placeholder="${ph}"></div>`;
+  return `<div class="rec">
+    ${H4('投稿後の数字を記録する')}
+    <p class="hint">Instagram のインサイト（リール→インサイトを見る）の数字を入れてください。3秒視聴率は「3秒以上見られた割合」、ない場合は「100 − スキップ率」で入れます。数字を入れると、伸びた投稿の要素が「これまでの分析」にたまり、次の分析でも手本として使われます。</p>
+    <div class="row">${f('aViews','ビュー（再生数）',a.views,'例：20000')}${f('aHold3','3秒視聴率（%）',a.hold3,'例：45')}</div>
+    <div class="row">${f('aWatch','平均視聴時間（秒）',a.watch,'例：6.5')}<div></div></div>
+    <div class="row">${f('aSaves','保存',a.saves,'例：12')}${f('aShares','シェア',a.shares,'例：30')}</div>
+    <button class="btn btn2" type="button" id="aSave">数字を記録する</button>
+    <div class="progress" id="aMsg"></div></div>`;
+}
+function bindRecord(){
+  const b = $('aSave'); if (!b) return;
+  b.onclick = () => {
+    const n = id => { const v = parseFloat($(id).value); return isFinite(v) && v >= 0 ? v : null; };
+    current.actual = { views: n('aViews'), hold3: n('aHold3'), watch: n('aWatch'), saves: n('aSaves'), shares: n('aShares'), at: new Date().toISOString() };
+    save(); renderHistory();
+    $('aMsg').textContent = '記録しました。';
+  };
 }
 
 function renderChat(){
@@ -533,13 +630,17 @@ $('askBtn').onclick = async () => {
   current.chat.push({ role:'me', text:q }); renderChat(); $('ask').value = '';
   $('askBtn').disabled = true; $('askBtn').innerHTML = '<span class="spin"></span>考えています…';
   const log = current.chat.slice(-8).map(m => (m.role === 'me' ? '相談者：' : 'あなた：') + m.text).join('\n');
-  const prompt = `あなたは縦型ショート動画の冒頭6秒を一緒に磨く編集者です。相談者は発信者本人です。上から目線にならず、すぐ使える形で答えてください。
+  const summary = r.elements
+    ? `見立て：${r.verdict}／伸びた例と同じ要素 ${fmtMatch(r.match)}/8（${ELEMENTS.map(([k, n]) => n + '：' + r.elements[k].status).join('、')}）／伸びた例との違い：${r.vsWinner}／直す点：${r.fix.map(f => f.what).join('／')}`
+    : `見立て：${r.verdict || ''}`;
+  const prompt = `あなたは縦型ショート動画の冒頭6秒を一緒に磨く編集者です。相談者は発信者本人です。上から目線にならず、すぐ使える形で答えてください。何%残るかの予測は言わないでください。
 【ターゲット】${b.persona}
 【避けたい伝え方】${b.avoid}
+【このアカウントで実際に大きく伸びた例】${b.winners}
 【元の入力】
 ${current.material.slice(0, 4000)}
-【予測結果】6秒残存${r.score}%／見立て：${r.verdict}／直す点：${r.fix.join('／')}
-【これまでに出した言い換え案】${r.rewrites.map(w => w.hook).join('／')}
+【分析結果】${summary}
+【これまでに出した言い換え案】${(r.rewrites || []).map(w => w.hook).join('／')}
 【これまでの会話】
 ${log}
 
@@ -554,13 +655,55 @@ ${log}
   $('askBtn').disabled = false; $('askBtn').textContent = '相談する';
 };
 
+/* ---------- これまでの分析 ---------- */
+function renderInsight(){
+  const done = store.history.filter(h => h.brand === store.brand && h.result && h.result.elements && h.actual && h.actual.views != null);
+  if (done.length < 2) {
+    $('insight').innerHTML = `<p class="hint">投稿後の数字を記録した動画が2本以上になると、「どの要素があると伸びているか」をここに出します（いま${done.length}本）。</p>`;
+    return;
+  }
+  const avg = a => a.length ? Math.round(a.reduce((s, x) => s + x, 0) / a.length) : null;
+  const rows = ELEMENTS.map(([k, n]) => {
+    const y = done.filter(h => h.result.elements[k].status === 'あり').map(h => h.actual.views);
+    const no = done.filter(h => h.result.elements[k].status !== 'あり').map(h => h.actual.views);
+    return { n, y: avg(y), ny: y.length, no: avg(no), nn: no.length };
+  }).sort((a, b) => ((b.y || 0) - (b.no || 0)) - ((a.y || 0) - (a.no || 0)));
+  const top = done.slice().sort((a, b) => b.actual.views - a.actual.views).slice(0, 5);
+  $('insight').innerHTML = `
+    <p class="hint">記録した${done.length}本の平均ビューを、要素が「あり」の動画と、それ以外の動画で比べています。本数が少ないうちは、たまたまの差も混ざります。</p>
+    <div class="ins">
+      <div class="ins-h"><span>要素</span><span>あり</span><span>それ以外</span></div>
+      ${rows.map(r => `<div class="ins-r"><span>${r.n}</span><span>${r.y == null ? '―' : r.y.toLocaleString() + '<small>（' + r.ny + '本）</small>'}</span><span>${r.no == null ? '―' : r.no.toLocaleString() + '<small>（' + r.nn + '本）</small>'}</span></div>`).join('')}
+    </div>
+    ${calibHTML(done)}
+    <h4 class="res-h" style="font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px">伸びた順</h4>
+    ${top.map(h => `<div class="hist" data-id="${esc(h.id)}"><span class="h">${esc(h.label || MODES[h.mode])}</span><span class="s">${Number(h.actual.views).toLocaleString()}<small class="hint" style="margin-left:4px">ビュー</small></span></div>`).join('')}`;
+  bindHist($('insight'));
+}
+
+function calibHTML(done){
+  const avg = (a, d) => { a = a.filter(x => x != null); return a.length ? (Math.round(a.reduce((s, x) => s + x, 0) / a.length * Math.pow(10, d)) / Math.pow(10, d)).toLocaleString() : '―'; };
+  const g = [['6〜8', h => h.result.match >= 6], ['4〜5.5', h => h.result.match >= 4 && h.result.match < 6], ['0〜3.5', h => h.result.match < 4]]
+    .map(([n, f]) => { const a = done.filter(f); return { n, c: a.length, v: avg(a.map(h => h.actual.views), 0), h3: avg(a.map(h => h.actual.hold3), 0), w: avg(a.map(h => h.actual.watch), 1) }; });
+  return `<h4 class="res-h" style="font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:var(--accent);margin:14px 0 4px">要素の数と、実際の数字は合っているか</h4>
+    <p class="hint">伸びた例と同じ要素の数ごとに、実際の数字の平均を並べています。上の段ほど数字が良ければ、この分析は自分のアカウントで当たっています。${done.length < 10 ? `いま${done.length}本。10本ほどたまると、目安として使えるようになります。` : ''}</p>
+    <div class="ins ins4"><div class="ins-h"><span>同じ要素</span><span>ビュー</span><span>3秒視聴率</span><span>平均視聴</span></div>
+    ${g.map(r => `<div class="ins-r"><span>${r.n}<small>（${r.c}本）</small></span><span>${r.v}</span><span>${r.h3 === '―' ? '―' : r.h3 + '%'}</span><span>${r.w === '―' ? '―' : r.w + '秒'}</span></div>`).join('')}</div>`;
+}
+
 function renderHistory(){
   const list = store.history;
   $('history').innerHTML = list.length ? list.map(h => {
-    const d = new Date(h.at);
-    return `<div class="hist" data-id="${esc(h.id)}"><span class="h">${esc((h.brand === 'cdl' ? '[CDL] ' : '') + (h.label || MODES[h.mode]))}</span><span class="s">${h.result.score}%<span class="hint" style="margin-left:6px">${d.getMonth()+1}/${d.getDate()}</span></span></div>`;
+    const d = new Date(h.at), r = h.result || {};
+    const s = r.elements ? `${fmtMatch(r.match)}/8` : (r.score != null ? `旧${r.score}%` : '');
+    const v = h.actual && h.actual.views != null ? `<span class="hint" style="margin-left:6px">${Number(h.actual.views).toLocaleString()}ビュー</span>` : '';
+    return `<div class="hist" data-id="${esc(h.id)}"><span class="h">${esc((h.brand === 'cdl' ? '[CDL] ' : '') + (h.label || MODES[h.mode]))}</span><span class="s">${s}${v}<span class="hint" style="margin-left:6px">${d.getMonth()+1}/${d.getDate()}</span></span></div>`;
   }).join('') : '<p class="hint">まだありません。</p>';
-  $('history').querySelectorAll('.hist').forEach(el => el.onclick = () => {
+  bindHist($('history'));
+  renderInsight();
+}
+function bindHist(root){
+  root.querySelectorAll('.hist').forEach(el => el.onclick = () => {
     current = store.history.find(h => h.id === el.dataset.id);
     if (!current) return;
     if (current.brand && current.brand !== store.brand) { store.brand = current.brand; save(); paintBrand(); }
@@ -568,9 +711,10 @@ function renderHistory(){
   });
 }
 $('clearBtn').onclick = () => {
-  if (!confirm('これまでの予測をすべて消します。よろしいですか？')) return;
+  if (!confirm('これまでの分析と記録した数字をすべて消します。よろしいですか？')) return;
   store.history = []; save(); renderHistory();
 };
+document.querySelectorAll('.brand-switch button').forEach(b => b.addEventListener('click', () => renderInsight()));
 renderHistory();
 
 })();
