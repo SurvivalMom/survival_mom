@@ -25,6 +25,11 @@ export default {
   async fetch(request, env) {
     const origin  = request.headers.get('Origin') || '';
     const allowed = ALLOWED_ORIGINS.includes(origin);
+    // ページ以外（例：リールの冒頭チェックを自動でかける content/_playbook/hook_check.py）からの呼び出しは、
+    // 合言葉ヘッダー x-sm-key が Worker のシークレット SERVER_KEY と一致したときだけ受け付ける。
+    // SERVER_KEY を設定していなければ、これまでどおり公開ページからの呼び出しだけを受け付ける。
+    const serverKey = request.headers.get('x-sm-key') || '';
+    const viaServer = !!env.SERVER_KEY && serverKey.length >= 16 && serverKey === env.SERVER_KEY;
     const cors = {
       'Access-Control-Allow-Origin': allowed ? origin : ALLOWED_ORIGINS[0],
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -36,7 +41,7 @@ export default {
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     if (request.method !== 'POST')    return json({ error: 'method_not_allowed' }, 405);
-    if (!allowed)                     return json({ error: 'forbidden_origin' }, 403);
+    if (!allowed && !viaServer)       return json({ error: 'forbidden_origin' }, 403);
     if (!env.GEMINI_API_KEY)          return json({ error: 'missing_api_key' }, 500);
 
     let body;
